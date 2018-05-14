@@ -61,8 +61,7 @@ def get_users():
             channel.strip('#')
         ))
         if r.status_code == 200:
-            if channel not in bot.users:
-                bot.users[channel] = []
+            bot.users[channel] = []
             data = r.json()
             bot.users[channel].extend(data['chatters']['viewers'])
             bot.users[channel].extend(data['chatters']['global_mods'])
@@ -86,6 +85,7 @@ def is_live(channel):
         logging.error(r.text)
 
 async def channel_watchtime_increment():
+    asyncio.ensure_future(start_channel_watchtime())
     try:
         get_users()
         for channel in config['channels']:
@@ -107,6 +107,8 @@ async def channel_watchtime_increment():
                     '''), data)
     except:
         logging.exception('channel_watchtime_increment')
+
+async def start_channel_watchtime():    
     await asyncio.sleep(60)
     bot.channel_watchtime_increment = \
         asyncio.ensure_future(channel_watchtime_increment())
