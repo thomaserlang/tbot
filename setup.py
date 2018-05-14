@@ -19,7 +19,7 @@ setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'tbot = tbot.runner:main',
+            'tbot = tbot.runner:irc',
         ],
     },
     classifiers=[],
