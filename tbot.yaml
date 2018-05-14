@@ -1,0 +1,12 @@
+debug: true
+user: lagitch_
+token: v49v01btlypsppodxbzmwrdgrheq2o
+client_id: 7liorhqqjkqz4iyu8wdquvf76cgsgz
+sql_url: 'mysql+pymysql://root:123456@localhost/tbot?charset=utf8mb4'
+channels:     
+  - "erleperle"
+  - "micheller"
+  - "kiwo"
+  - "orb"
+logging:
+  level: debug
