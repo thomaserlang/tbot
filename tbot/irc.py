@@ -61,13 +61,15 @@ def get_users():
             channel.strip('#')
         ))
         if r.status_code == 200:
-            bot.users[channel] = []
             data = r.json()
-            bot.users[channel].extend(data['chatters']['viewers'])
-            bot.users[channel].extend(data['chatters']['global_mods'])
-            bot.users[channel].extend(data['chatters']['admins'])
-            bot.users[channel].extend(data['chatters']['staff'])
-            bot.users[channel].extend(data['chatters']['moderators'])
+            users = []
+            users.extend(data['chatters']['viewers'])
+            users.extend(data['chatters']['global_mods'])
+            users.extend(data['chatters']['admins'])
+            users.extend(data['chatters']['staff'])
+            users.extend(data['chatters']['moderators'])
+            if users:
+                bot.users[channel] = users
         else:
             logging.error(r.text)
 
@@ -101,10 +103,11 @@ async def channel_watchtime_increment():
                     data = []
                     for user in bot.users[channel]:
                         data.append({'user': user, 'channel': channel})
-                    bot.conn.execute(sa.sql.text('''
-                        INSERT INTO current_stream_watchtime (channel, user, time) 
-                        VALUES (:channel, :user, 60) ON DUPLICATE KEY UPDATE time=time+60;
-                    '''), data)
+                    if data:
+                        bot.conn.execute(sa.sql.text('''
+                            INSERT INTO current_stream_watchtime (channel, user, time) 
+                            VALUES (:channel, :user, 60) ON DUPLICATE KEY UPDATE time=time+60;
+                        '''), data)
     except:
         logging.exception('channel_watchtime_increment')
 
