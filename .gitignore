@@ -46,7 +46,7 @@ coverage.xml
 *.db
 node_modules/
 package-lock.json
-logitch.yaml
+*.yaml
 
 # Rope
 .ropeproject
