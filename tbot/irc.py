@@ -8,7 +8,7 @@ from tbot import config
 
 bot = bottom.Client('a', 0)
 
-bot.users = {}
+bot.channels = {}
 
 bot.pong_check_callback = None
 bot.ping_callback = None
@@ -42,7 +42,13 @@ async def connect(**kwargs):
         future.cancel()
 
     for channel in config['channels']:
-        bot.send('JOIN', channel='#'+channel.strip('#'))
+        channel = channel.strip('#')
+        if channel not in bot.channels:
+            bot.channels[channel] = {
+                'is_live': False,
+                'users': [],
+            }
+        bot.send('JOIN', channel='#'+channel)
 
     if bot.pong_check_callback:
         bot.pong_check_callback.cancel()
@@ -69,7 +75,7 @@ def get_users():
             users.extend(data['chatters']['staff'])
             users.extend(data['chatters']['moderators'])
             if users:
-                bot.users[channel] = users
+                bot.channels[channel]['users'] = users
         else:
             logging.error(r.text)
 
@@ -80,11 +86,14 @@ def is_live(channel):
     ))
     if r.status_code == 200:
         data = r.json()
-        if data['stream']:
-            return data['stream']['created_at']
-        return False
+        if 'stream' in data:
+            if data['stream']:
+                bot.channels[channel]['is_live'] = True
+            else:
+                bot.channels[channel]['is_live'] = False
     else:
         logging.error(r.text)
+    return bot.channels[channel]['is_live'] 
 
 async def channel_watchtime_increment():
     asyncio.ensure_future(start_channel_watchtime())
@@ -99,15 +108,14 @@ async def channel_watchtime_increment():
                     'channel': channel,
                 })
             elif live:
-                if channel in bot.users:
-                    data = []
-                    for user in bot.users[channel]:
-                        data.append({'user': user, 'channel': channel})
-                    if data:
-                        bot.conn.execute(sa.sql.text('''
-                            INSERT INTO current_stream_watchtime (channel, user, time) 
-                            VALUES (:channel, :user, 60) ON DUPLICATE KEY UPDATE time=time+60;
-                        '''), data)
+                data = []
+                for user in bot.channels[channel]['users']:
+                    data.append({'user': user, 'channel': channel})
+                if data:
+                    bot.conn.execute(sa.sql.text('''
+                        INSERT INTO current_stream_watchtime (channel, user, time) 
+                        VALUES (:channel, :user, 60) ON DUPLICATE KEY UPDATE time=time+60;
+                    '''), data)
     except:
         logging.exception('channel_watchtime_increment')
 
