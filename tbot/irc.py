@@ -63,21 +63,26 @@ async def connect(**kwargs):
 
 def get_users():
     for channel in config['channels']:
-        r = requests.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(
-            channel.strip('#')
-        ))
-        if r.status_code == 200:
-            data = r.json()
-            users = []
-            users.extend(data['chatters']['viewers'])
-            users.extend(data['chatters']['global_mods'])
-            users.extend(data['chatters']['admins'])
-            users.extend(data['chatters']['staff'])
-            users.extend(data['chatters']['moderators'])
-            if users:
-                bot.channels[channel]['users'] = users
-        else:
-            logging.error(r.text)
+        try:
+            r = requests.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(
+                channel
+            ))
+            if r.status_code == 200:
+                data = r.json()
+                if data['chatter_count'] == 0:
+                    continue
+                users = []
+                users.extend(data['chatters']['viewers'])
+                users.extend(data['chatters']['global_mods'])
+                users.extend(data['chatters']['admins'])
+                users.extend(data['chatters']['staff'])
+                users.extend(data['chatters']['moderators'])
+                if users:
+                    bot.channels[channel]['users'] = users
+            else:
+                logging.error(r.text)
+        except:
+            logging.exception('get_users')
 
 def is_live(channel):
     r = requests.get('https://api.twitch.tv/kraken/streams/{}?client_id={}'.format(
@@ -101,13 +106,13 @@ async def channel_watchtime_increment():
         get_users()
         for channel in config['channels']:
             live = is_live(channel)
-            if live == False:
+            if not live:
                 bot.conn.execute(sa.sql.text('''
                     DELETE FROM current_stream_watchtime WHERE channel=:channel;
                 '''), {
                     'channel': channel,
                 })
-            elif live:
+            else:
                 data = []
                 for user in bot.channels[channel]['users']:
                     data.append({'user': user, 'channel': channel})
