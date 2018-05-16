@@ -25,6 +25,7 @@ async def channel_watchtime_increment():
             is_live = await get_is_live(channel)
             if not is_live:
                 if old_live != is_live:
+                    logging.info('{} went offline'.format(channel))
                     await bot.conn.execute(sa.sql.text('''
                         DELETE FROM current_stream_watchtime WHERE channel=:channel;
                     '''), {
@@ -32,6 +33,8 @@ async def channel_watchtime_increment():
                     })
                     bot.channels[channel]['inc_stream_watchtime_counter'] = 0
             else:
+                if old_live != is_live:
+                    logging.info('{} is now live'.format(channel))
                 data = []
                 bot.channels[channel]['inc_stream_watchtime_counter'] += 1
                 logging.debug('Incrementing watchtime for channel: {} - count: {}'.format(
