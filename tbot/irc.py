@@ -2,6 +2,7 @@ import bottom, logging, random
 import asyncio, aiohttp
 import sqlalchemy as sa
 import requests
+from sqlalchemy_aio import ASYNCIO_STRATEGY
 from dateutil.parser import parse
 from datetime import datetime
 from tbot.unpack import rfc2812_handler
@@ -24,7 +25,7 @@ async def channel_watchtime_increment():
             is_live = await get_is_live(channel)
             if not is_live:
                 if old_live != is_live:
-                    bot.conn.execute(sa.sql.text('''
+                    await bot.conn.execute(sa.sql.text('''
                         DELETE FROM current_stream_watchtime WHERE channel=:channel;
                     '''), {
                         'channel': channel,
@@ -40,7 +41,7 @@ async def channel_watchtime_increment():
                 for user in bot.channels[channel]['users']:
                     data.append({'user': user, 'channel': channel})
                 if data:
-                    bot.conn.execute(sa.sql.text('''
+                    await bot.conn.execute(sa.sql.text('''
                         INSERT INTO current_stream_watchtime (channel, user, time) 
                         VALUES (:channel, :user, 60) ON DUPLICATE KEY UPDATE time=time+60;
                     '''), data)
@@ -59,9 +60,9 @@ def message(nick, target, message, **kwargs):
     args = message.split(' ')
     cmd = args.pop(0)
     if cmd == '!streamwatchtime':
-        answer_streamwatchtime(nick, target, args)
+        asyncio.ensure_future(answer_streamwatchtime(nick, target, args))
 
-def answer_streamwatchtime(nick, target, args):
+async def answer_streamwatchtime(nick, target, args):
     try:
         user = nick
         if len(args) > 0:
@@ -74,10 +75,10 @@ def answer_streamwatchtime(nick, target, args):
             bot.send("PRIVMSG", target=target, message=msg)            
             return
 
-        r = bot.conn.execute(sa.sql.text('SELECT time FROM current_stream_watchtime WHERE channel=:channel AND user=:user'),
+        r = await bot.conn.execute(sa.sql.text('SELECT time FROM current_stream_watchtime WHERE channel=:channel AND user=:user'),
             {'channel': channel, 'user': user}
         )
-        r = r.fetchone()
+        r = await r.fetchone()
         if not r or (r['time'] == 0):    
             msg = 'I have nothing on {} yet, wait a minute'.format(user)
             bot.send("PRIVMSG", target=target, message=msg)
@@ -229,6 +230,7 @@ def main():
         pool_recycle=3599,
         encoding='UTF-8',
         connect_args={'charset': 'utf8mb4'},
+        strategy=ASYNCIO_STRATEGY,
     )
     bot.http_session = None
     return bot
