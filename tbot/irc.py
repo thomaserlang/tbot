@@ -112,21 +112,26 @@ def get_users():
             logging.exception('get_users')
 
 def is_live(channel):
-    r = requests.get('https://api.twitch.tv/kraken/streams/{}?client_id={}'.format(
-        channel,
-        config['client_id']
-    ))
-    if r.status_code == 200:
-        data = r.json()
-        if 'stream' in data:
-            if data['stream']:
-                bot.channels[channel]['is_live'] = True
-            else:
-                bot.channels[channel]['is_live'] = False
-    else:
-        logging.error(r.text)
+    if config['channel_always_live']:
+        return True
+    try:
+        r = requests.get('https://api.twitch.tv/kraken/streams/{}?client_id={}'.format(
+            channel,
+            config['client_id']
+        ))
+        if r.status_code == 200:
+            data = r.json()
+            if 'stream' in data:
+                if data['stream']:
+                    bot.channels[channel]['is_live'] = True
+                else:
+                    bot.channels[channel]['is_live'] = False
+        else:
+            logging.error(r.text)
+    except:
+        logging.exception('is_live')
     return bot.channels[channel]['is_live'] 
-    
+
 
 async def send_ping():
     await asyncio.sleep(random.randint(120, 240))
