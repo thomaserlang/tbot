@@ -14,6 +14,152 @@ bot.pong_check_callback = None
 bot.ping_callback = None
 bot.channel_watchtime_increment = None
 
+async def channel_watchtime_increment():
+    asyncio.ensure_future(start_channel_watchtime())
+    try:
+        get_users()
+        for channel in config['channels']:
+            live = is_live(channel)
+            if not live:
+                bot.conn.execute(sa.sql.text('''
+                    DELETE FROM current_stream_watchtime WHERE channel=:channel;
+                '''), {
+                    'channel': channel,
+                })
+            else:
+                data = []
+                for user in bot.channels[channel]['users']:
+                    data.append({'user': user, 'channel': channel})
+                if data:
+                    bot.conn.execute(sa.sql.text('''
+                        INSERT INTO current_stream_watchtime (channel, user, time) 
+                        VALUES (:channel, :user, 60) ON DUPLICATE KEY UPDATE time=time+60;
+                    '''), data)
+    except:
+        logging.exception('channel_watchtime_increment')
+
+async def start_channel_watchtime():    
+    await asyncio.sleep(60)
+    bot.channel_watchtime_increment = \
+        asyncio.ensure_future(channel_watchtime_increment())
+
+@bot.on('PRIVMSG')
+def message(nick, target, message, **kwargs):
+    if not message.startswith('!'):
+        return    
+    args = message.split(' ')
+    cmd = args.pop(0)
+    if cmd == '!streamwatchtime':
+        answer_streamwatchtime(nick, target, args)
+
+def answer_streamwatchtime(nick, target, args):
+    try:
+        user = nick
+        if len(args) > 0:
+            user = args[0].strip('@')
+
+        channel = target.strip('#')
+
+        if not bot.channels[channel]['is_live']:
+            msg = '{}, the stream seems to be offline'.format(nick)
+            bot.send("PRIVMSG", target=target, message=msg)            
+            return
+
+        r = bot.conn.execute(sa.sql.text('SELECT time FROM current_stream_watchtime WHERE channel=:channel AND user=:user'),
+            {'channel': channel, 'user': user}
+        )
+        r = r.fetchone()
+        if not r or (r['time'] == 0):    
+            msg = 'I have nothing on {} yet, wait a minute'.format(user)
+            bot.send("PRIVMSG", target=target, message=msg)
+            return
+
+        seconds = r['time']
+
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+
+        periods = [('hours', hours), ('minutes', minutes), ('seconds', seconds)]
+        time_string = ', '.join('{} {}'.format(value, name) for name, value in periods if value)
+
+        msg = '{} has watched this stream for {}'.format(user, time_string)
+        bot.send("PRIVMSG", target=target, message=msg)
+    except:
+        logging.exception('answer_streamwatchtime')
+
+
+def get_users():
+    for channel in config['channels']:
+        try:
+            r = requests.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(
+                channel
+            ))
+            if r.status_code == 200:
+                data = r.json()
+                if data['chatter_count'] == 0:
+                    continue
+                users = []
+                users.extend(data['chatters']['viewers'])
+                users.extend(data['chatters']['global_mods'])
+                users.extend(data['chatters']['admins'])
+                users.extend(data['chatters']['staff'])
+                users.extend(data['chatters']['moderators'])
+                if users:
+                    bot.channels[channel]['users'] = users
+            else:
+                logging.error(r.text)
+        except:
+            logging.exception('get_users')
+
+def is_live(channel):
+    r = requests.get('https://api.twitch.tv/kraken/streams/{}?client_id={}'.format(
+        channel,
+        config['client_id']
+    ))
+    if r.status_code == 200:
+        data = r.json()
+        if 'stream' in data:
+            if data['stream']:
+                bot.channels[channel]['is_live'] = True
+            else:
+                bot.channels[channel]['is_live'] = False
+    else:
+        logging.error(r.text)
+    return bot.channels[channel]['is_live'] 
+    
+
+async def send_ping():
+    await asyncio.sleep(random.randint(120, 240))
+    logging.debug('Sending ping')
+    bot.pong_check_callback = asyncio.ensure_future(wait_for_pong())
+    bot.send('PING')
+
+async def wait_for_pong():
+    await asyncio.sleep(10)
+    logging.error('Didn\'t receive a PONG in time, reconnecting')
+    if bot.ping_callback:
+        bot.ping_callback.cancel()
+    bot.ping_callback = asyncio.ensure_future(send_ping())
+    await bot.connect()
+
+@bot.on('CLIENT_DISCONNECT')
+async def disconnect(**kwargs):
+    logging.info('Disconnected')
+
+@bot.on('PING')
+def keepalive(message, **kwargs):
+    logging.debug('Received ping, sending PONG back')
+    bot.send('PONG', message=message)
+
+@bot.on('PONG')
+async def pong(message, **kwargs):
+    logging.debug('Received pong')
+    if bot.pong_check_callback:
+        bot.pong_check_callback.cancel()
+    if bot.ping_callback:
+        bot.ping_callback.cancel()
+    bot.ping_callback = asyncio.ensure_future(send_ping())
+
 @bot.on('CLIENT_CONNECT')
 async def connect(**kwargs):
     if bot.pong_check_callback:
@@ -60,150 +206,6 @@ async def connect(**kwargs):
         bot.channel_watchtime_increment.cancel()
     bot.channel_watchtime_increment = \
         asyncio.ensure_future(channel_watchtime_increment())
-
-def get_users():
-    for channel in config['channels']:
-        try:
-            r = requests.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(
-                channel
-            ))
-            if r.status_code == 200:
-                data = r.json()
-                if data['chatter_count'] == 0:
-                    continue
-                users = []
-                users.extend(data['chatters']['viewers'])
-                users.extend(data['chatters']['global_mods'])
-                users.extend(data['chatters']['admins'])
-                users.extend(data['chatters']['staff'])
-                users.extend(data['chatters']['moderators'])
-                if users:
-                    bot.channels[channel]['users'] = users
-            else:
-                logging.error(r.text)
-        except:
-            logging.exception('get_users')
-
-def is_live(channel):
-    r = requests.get('https://api.twitch.tv/kraken/streams/{}?client_id={}'.format(
-        channel,
-        config['client_id']
-    ))
-    if r.status_code == 200:
-        data = r.json()
-        if 'stream' in data:
-            if data['stream']:
-                bot.channels[channel]['is_live'] = True
-            else:
-                bot.channels[channel]['is_live'] = False
-    else:
-        logging.error(r.text)
-    return bot.channels[channel]['is_live'] 
-
-async def channel_watchtime_increment():
-    asyncio.ensure_future(start_channel_watchtime())
-    try:
-        get_users()
-        for channel in config['channels']:
-            live = is_live(channel)
-            if not live:
-                bot.conn.execute(sa.sql.text('''
-                    DELETE FROM current_stream_watchtime WHERE channel=:channel;
-                '''), {
-                    'channel': channel,
-                })
-            else:
-                data = []
-                for user in bot.channels[channel]['users']:
-                    data.append({'user': user, 'channel': channel})
-                if data:
-                    bot.conn.execute(sa.sql.text('''
-                        INSERT INTO current_stream_watchtime (channel, user, time) 
-                        VALUES (:channel, :user, 60) ON DUPLICATE KEY UPDATE time=time+60;
-                    '''), data)
-    except:
-        logging.exception('channel_watchtime_increment')
-
-async def start_channel_watchtime():    
-    await asyncio.sleep(60)
-    bot.channel_watchtime_increment = \
-        asyncio.ensure_future(channel_watchtime_increment())
-
-async def send_ping():
-    await asyncio.sleep(random.randint(120, 240))
-    logging.debug('Sending ping')
-    bot.pong_check_callback = asyncio.ensure_future(wait_for_pong())
-    bot.send('PING')
-
-async def wait_for_pong():
-    await asyncio.sleep(10)
-    logging.error('Didn\'t receive a PONG in time, reconnecting')
-    if bot.ping_callback:
-        bot.ping_callback.cancel()
-    bot.ping_callback = asyncio.ensure_future(send_ping())
-    await bot.connect()
-
-@bot.on('CLIENT_DISCONNECT')
-async def disconnect(**kwargs):
-    logging.info('Disconnected')
-
-@bot.on('PING')
-def keepalive(message, **kwargs):
-    logging.debug('Received ping, sending PONG back')
-    bot.send('PONG', message=message)
-
-@bot.on('PONG')
-async def pong(message, **kwargs):
-    logging.debug('Received pong')
-    if bot.pong_check_callback:
-        bot.pong_check_callback.cancel()
-    if bot.ping_callback:
-        bot.ping_callback.cancel()
-    bot.ping_callback = asyncio.ensure_future(send_ping())
-
-@bot.on('PRIVMSG')
-def message(nick, target, message, **kwargs):
-    if not message.startswith('!'):
-        return    
-    args = message.split(' ')
-    cmd = args.pop(0)
-    if cmd == '!streamwatchtime':
-        answer_streamwatchtime(nick, target, args)
-
-def answer_streamwatchtime(nick, target, args):
-    try:
-        user = nick
-        if len(args) > 0:
-            user = args[0].strip('@')
-
-        channel = target.strip('#')
-
-        if not bot.channels[channel]['is_live']:
-            msg = '{}, the stream seems to be offline'.format(nick)
-            bot.send("PRIVMSG", target=target, message=msg)            
-            return
-
-        r = bot.conn.execute(sa.sql.text('SELECT time FROM current_stream_watchtime WHERE channel=:channel AND user=:user'),
-            {'channel': channel, 'user': user}
-        )
-        r = r.fetchone()
-        if not r or (r['time'] == 0):    
-            msg = 'I have nothing on {} yet, wait a minute'.format(user)
-            bot.send("PRIVMSG", target=target, message=msg)
-            return
-
-        seconds = r['time']
-
-        minutes, seconds = divmod(seconds, 60)
-        hours, minutes = divmod(minutes, 60)
-
-        periods = [('hours', hours), ('minutes', minutes), ('seconds', seconds)]
-        time_string = ', '.join('{} {}'.format(value, name) for name, value in periods if value)
-
-        msg = '{} has watched this stream for {}'.format(user, time_string)
-        bot.send("PRIVMSG", target=target, message=msg)
-    except:
-        logging.exception('answer_streamwatchtime')
 
 def main():
     bot.host = config['irc']['host'] 
