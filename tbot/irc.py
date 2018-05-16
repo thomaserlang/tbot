@@ -58,9 +58,11 @@ def message(nick, target, message, **kwargs):
     if not message.startswith('!'):
         return    
     args = message.split(' ')
-    cmd = args.pop(0)
-    if cmd == '!streamwatchtime':
-        asyncio.ensure_future(answer_streamwatchtime(nick, target, args))
+    cmd = args.pop(0).lower()
+    if cmd == '!streamwatchtime' or cmd == '!swt':
+        asyncio.ensure_future(answer_streamwatchtime(kwargs['display-name'], target, args))
+    elif cmd == '!{}'.format(config['user'].lower()):        
+        bot.send("PRIVMSG", target=target, message='@{}, Commands: !streamwatchtime'.format(kwargs['display-name']))
 
 async def answer_streamwatchtime(nick, target, args):
     try:
@@ -71,7 +73,7 @@ async def answer_streamwatchtime(nick, target, args):
         channel = target.strip('#')
 
         if not bot.channels[channel]['is_live']:
-            msg = '{}, the stream seems to be offline'.format(nick)
+            msg = '@{}, the stream is offline'.format(nick)
             bot.send("PRIVMSG", target=target, message=msg)            
             return
 
@@ -80,23 +82,29 @@ async def answer_streamwatchtime(nick, target, args):
         )
         r = await r.fetchone()
         if not r or (r['time'] == 0):    
-            msg = 'I have nothing on {} yet, wait a minute'.format(user)
+            msg = '{} is unknown to me'.format(user)
             bot.send("PRIVMSG", target=target, message=msg)
             return
 
-        seconds = r['time']
-
-        minutes, seconds = divmod(seconds, 60)
+        minutes, seconds = divmod(r['time'], 60)
         hours, minutes = divmod(minutes, 60)
 
-        periods = [('hours', hours), ('minutes', minutes), ('seconds', seconds)]
-        time_string = ', '.join('{} {}'.format(value, name) for name, value in periods if value)
+        ts = []
+        if hours == 1:
+            ts.append('1 hour')
+        elif hours > 1:
+            ts.append('{} hours'.format(hours))
+        if minutes == 1:
+            ts.append('1 min')
+        elif minutes > 1:
+            ts.append('{} mins'.format(minutes))
+
+        time_string = ' '.join(ts)
 
         msg = '{} has watched this stream for {}'.format(user, time_string)
         bot.send("PRIVMSG", target=target, message=msg)
     except:
         logging.exception('answer_streamwatchtime')
-
 
 async def get_users():
     for channel in config['channels']:
