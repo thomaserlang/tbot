@@ -4,3 +4,6 @@ sqlalchemy==1.2.5
 click==6.7
 requests==2.18.4
 python-dateutil==2.7.3
+aiohttp==3.2.1
+cchardet==2.1.1
+aiodns==1.1.1

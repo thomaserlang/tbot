@@ -1,4 +1,5 @@
-import bottom, asyncio, logging, random
+import bottom, logging, random
+import asyncio, aiohttp
 import sqlalchemy as sa
 import requests
 from dateutil.parser import parse
@@ -17,17 +18,25 @@ bot.channel_watchtime_increment = None
 async def channel_watchtime_increment():
     asyncio.ensure_future(start_channel_watchtime())
     try:
-        get_users()
+        await get_users()
         for channel in config['channels']:
-            live = is_live(channel)
-            if not live:
-                bot.conn.execute(sa.sql.text('''
-                    DELETE FROM current_stream_watchtime WHERE channel=:channel;
-                '''), {
-                    'channel': channel,
-                })
+            old_live = bot.channels[channel]['is_live']
+            is_live = await get_is_live(channel)
+            if not is_live:
+                if old_live != is_live:
+                    bot.conn.execute(sa.sql.text('''
+                        DELETE FROM current_stream_watchtime WHERE channel=:channel;
+                    '''), {
+                        'channel': channel,
+                    })
+                    bot.channels[channel]['inc_stream_watchtime_counter'] = 0
             else:
                 data = []
+                bot.channels[channel]['inc_stream_watchtime_counter'] += 1
+                logging.debug('Incrementing watchtime for channel: {} - count: {}'.format(
+                    channel,
+                    bot.channels[channel]['inc_stream_watchtime_counter']
+                ))
                 for user in bot.channels[channel]['users']:
                     data.append({'user': user, 'channel': channel})
                 if data:
@@ -88,50 +97,41 @@ def answer_streamwatchtime(nick, target, args):
         logging.exception('answer_streamwatchtime')
 
 
-def get_users():
+async def get_users():
     for channel in config['channels']:
         try:
-            r = requests.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(
-                channel
-            ))
-            if r.status_code == 200:
-                data = r.json()
-                if data['chatter_count'] == 0:
-                    continue
-                users = []
-                users.extend(data['chatters']['viewers'])
-                users.extend(data['chatters']['global_mods'])
-                users.extend(data['chatters']['admins'])
-                users.extend(data['chatters']['staff'])
-                users.extend(data['chatters']['moderators'])
-                if users:
-                    bot.channels[channel]['users'] = users
-            else:
-                logging.error(r.text)
+            async with bot.http_session.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(channel)) as r:
+                if r.status == 200:
+                    data = await r.json()
+                    if data['chatter_count'] == 0:
+                        continue
+                    users = []
+                    users.extend(data['chatters']['viewers'])
+                    users.extend(data['chatters']['global_mods'])
+                    users.extend(data['chatters']['admins'])
+                    users.extend(data['chatters']['staff'])
+                    users.extend(data['chatters']['moderators'])
+                    if users:
+                        bot.channels[channel]['users'] = users
         except:
             logging.exception('get_users')
 
-def is_live(channel):
-    if config['channel_always_live']:
-        return True
+async def get_is_live(channel):
     try:
-        r = requests.get('https://api.twitch.tv/kraken/streams/{}?client_id={}'.format(
-            channel,
-            config['client_id']
-        ))
-        if r.status_code == 200:
-            data = r.json()
-            if 'stream' in data:
-                if data['stream']:
-                    bot.channels[channel]['is_live'] = True
-                else:
-                    bot.channels[channel]['is_live'] = False
-        else:
-            logging.error(r.text)
+        async with bot.http_session.get('https://api.twitch.tv/kraken/streams/{}'.format(channel),
+            params={'client_id': config['client_id']}) as r:
+            if r.status == 200:
+                data = await r.json()
+                if 'stream' in data:
+                    if data['stream']:
+                        bot.channels[channel]['is_live'] = True
+                    else:
+                        bot.channels[channel]['is_live'] = False
     except:
         logging.exception('is_live')
+    if config['channel_always_live']:
+        bot.channels[channel]['is_live'] = True
     return bot.channels[channel]['is_live'] 
-
 
 async def send_ping():
     await asyncio.sleep(random.randint(120, 240))
@@ -167,6 +167,8 @@ async def pong(message, **kwargs):
 
 @bot.on('CLIENT_CONNECT')
 async def connect(**kwargs):
+    if not bot.http_session:
+        bot.http_session = aiohttp.ClientSession()
     if bot.pong_check_callback:
         bot.pong_check_callback.cancel()
     logging.info('IRC Connecting to {}:{}'.format(config['irc']['host'], config['irc']['port']))
@@ -198,6 +200,7 @@ async def connect(**kwargs):
             bot.channels[channel] = {
                 'is_live': False,
                 'users': [],
+                'inc_stream_watchtime_counter': 0,
             }
         bot.send('JOIN', channel='#'+channel)
 
@@ -227,6 +230,7 @@ def main():
         encoding='UTF-8',
         connect_args={'charset': 'utf8mb4'},
     )
+    bot.http_session = None
     return bot
 
 if __name__ == '__main__':
