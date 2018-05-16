@@ -175,8 +175,16 @@ def answer_streamwatchtime(nick, target, args):
         user = nick
         if len(args) > 0:
             user = args[0].strip('@')
+
+        channel = target.strip('#')
+
+        if not bot.channels[channel]['is_live']:
+            msg = '{}, the stream seems to be offline'.format(nick)
+            bot.send("PRIVMSG", target=target, message=msg)            
+            return
+
         r = bot.conn.execute(sa.sql.text('SELECT time FROM current_stream_watchtime WHERE channel=:channel AND user=:user'),
-            {'channel': target.strip('#'), 'user': user}
+            {'channel': channel, 'user': user}
         )
         r = r.fetchone()
         if not r or (r['time'] == 0):    
