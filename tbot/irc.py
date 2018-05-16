@@ -213,6 +213,9 @@ async def connect(**kwargs):
         asyncio.ensure_future(channel_watchtime_increment())
 
 def main():
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+
     bot.host = config['irc']['host'] 
     bot.port = config['irc']['port'] 
     bot.ssl = config['irc']['use_ssl']
