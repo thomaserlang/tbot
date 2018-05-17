@@ -14,48 +14,57 @@ bot.channels = {}
 
 bot.pong_check_callback = None
 bot.ping_callback = None
-bot.channel_watchtime_increment = None
+bot.channels_check_callback = None
 bot.starttime = datetime.utcnow()
 
-async def channel_watchtime_increment():
-    asyncio.ensure_future(start_channel_watchtime())
+async def channels_check():
+    asyncio.ensure_future(start_channel_check_callback())
+    logging.info('Channels check')
     try:
         await get_users()
         for channel in config['channels']:
             old_is_live = bot.channels[channel]['is_live']
             is_live = await get_is_live(channel)
-            if not is_live:
+            if old_is_live == None:
+                continue
+            if is_live:
+                inc_time = 60
                 if old_is_live != is_live:
-                    logging.info('{} went offline'.format(channel))
-                    await bot.conn.execute(sa.sql.text('''
-                        DELETE FROM current_stream_watchtime WHERE channel=:channel;
-                    '''), {
-                        'channel': channel,
-                    })
-                    bot.channels[channel]['inc_stream_watchtime_counter'] = 0
-            else:
-                if old_is_live != is_live:
-                    logging.info('{} is now live'.format(channel))
+                    inc_time = round((datetime.utcnow() - bot.channels[channel]['went_live_at']).total_seconds())
+                    logging.info('{} is now live ({} seconds ago)'.format(channel, inc_time))
+                    await reset_stream_watchtime(channel)
                 data = []
-                bot.channels[channel]['inc_stream_watchtime_counter'] += 1
-                logging.debug('Incrementing watchtime for channel: {} - count: {}'.format(
+                bot.channels[channel]['channel_check_counter'] += 1
+                logging.debug('Channel check: {} - count: {}'.format(
                     channel,
-                    bot.channels[channel]['inc_stream_watchtime_counter']
+                    bot.channels[channel]['channel_check_counter']
                 ))
                 for user in bot.channels[channel]['users']:
-                    data.append({'user': user, 'channel': channel})
+                    data.append({'user': user, 'channel': channel, 'inc_time': inc_time})
                 if data:
                     await bot.conn.execute(sa.sql.text('''
                         INSERT INTO current_stream_watchtime (channel, user, time) 
-                        VALUES (:channel, :user, 60) ON DUPLICATE KEY UPDATE time=time+60;
+                        VALUES (:channel, :user, :inc_time) ON DUPLICATE KEY UPDATE time=time+VALUES(time);
                     '''), data)
+            else:
+                if old_is_live != is_live:
+                    logging.info('{} went offline'.format(channel))
+                    await reset_stream_watchtime(channel)
     except:
-        logging.exception('channel_watchtime_increment')
+        logging.exception('channels_check')
 
-async def start_channel_watchtime():    
+async def reset_stream_watchtime(channel):
+    await bot.conn.execute(sa.sql.text('''
+        DELETE FROM current_stream_watchtime WHERE channel=:channel;
+    '''), {
+        'channel': channel,
+    })
+    bot.channels[channel]['channel_check_counter'] = 0
+
+async def start_channel_check_callback():    
     await asyncio.sleep(60)
-    bot.channel_watchtime_increment = \
-        asyncio.ensure_future(channel_watchtime_increment())
+    bot.channels_check_callback = \
+        asyncio.ensure_future(channels_check())
 
 @bot.on('PRIVMSG')
 def message(nick, target, message, **kwargs):
@@ -94,7 +103,14 @@ async def cmd_streamwatchtime(nick, target, args):
             bot.send("PRIVMSG", target=target, message=msg)
             return
 
-        msg = '{} has watched this stream for {}'.format(user, seconds_to_pretty(r['time']))
+        total_live_seconds = round((bot.channels[channel]['last_channel_check'] - \
+            bot.channels[channel]['went_live_at']).total_seconds())
+        p = r['time'] / total_live_seconds
+        msg = '{} has been here for {} this stream ({:.0%})'.format(
+            user, 
+            seconds_to_pretty(r['time']),
+            p
+        )
         bot.send("PRIVMSG", target=target, message=msg)
     except:
         logging.exception('cmd_streamwatchtime')
@@ -163,6 +179,7 @@ async def get_is_live(channel):
                     else:
                         bot.channels[channel]['is_live'] = False
                         bot.channels[channel]['went_live_at'] = None
+                    bot.channels[channel]['last_channel_check'] = datetime.utcnow()
     except:
         logging.exception('is_live')
     if config['channel_always_live']:
@@ -235,10 +252,11 @@ async def connect(**kwargs):
         channel = channel.strip('#')
         if channel not in bot.channels:
             bot.channels[channel] = {
-                'is_live': False,
+                'is_live': None,
                 'went_live_at': None,
                 'users': [],
-                'inc_stream_watchtime_counter': 0,
+                'channel_check_counter': 0,
+                'last_channel_check': None,
             }
         bot.send('JOIN', channel='#'+channel)
 
@@ -248,10 +266,10 @@ async def connect(**kwargs):
         bot.ping_callback.cancel()
     bot.ping_callback = asyncio.ensure_future(send_ping())
 
-    if bot.channel_watchtime_increment:
-        bot.channel_watchtime_increment.cancel()
-    bot.channel_watchtime_increment = \
-        asyncio.ensure_future(channel_watchtime_increment())
+    if bot.channels_check_callback:
+        bot.channels_check_callback.cancel()
+    bot.channels_check_callback = \
+        asyncio.ensure_future(channels_check())
 
 def seconds_to_pretty(seconds):
     if seconds < 60:
