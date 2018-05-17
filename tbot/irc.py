@@ -15,6 +15,7 @@ bot.channels = {}
 bot.pong_check_callback = None
 bot.ping_callback = None
 bot.channel_watchtime_increment = None
+bot.starttime = datetime.utcnow()
 
 async def channel_watchtime_increment():
     asyncio.ensure_future(start_channel_watchtime())
@@ -63,11 +64,14 @@ def message(nick, target, message, **kwargs):
     args = message.split(' ')
     cmd = args.pop(0).lower()
     if cmd == '!streamwatchtime' or cmd == '!swt':
-        asyncio.ensure_future(answer_streamwatchtime(kwargs['display-name'], target, args))
-    elif cmd == '!{}'.format(config['user'].lower()):        
-        bot.send("PRIVMSG", target=target, message='@{}, Commands: !streamwatchtime'.format(kwargs['display-name']))
+        asyncio.ensure_future(cmd_streamwatchtime(kwargs['display-name'], target, args))
+    elif cmd == '!{}'.format(config['user'].lower()):
+        asyncio.ensure_future(cmd_bot(kwargs['display-name'], target, args))
+    elif cmd == '!betteruptime':
+        asyncio.ensure_future(cmd_better_uptime(kwargs['display-name'], target, args))
 
-async def answer_streamwatchtime(nick, target, args):
+
+async def cmd_streamwatchtime(nick, target, args):
     try:
         user = nick
         if len(args) > 0:
@@ -84,30 +88,48 @@ async def answer_streamwatchtime(nick, target, args):
             {'channel': channel, 'user': user}
         )
         r = await r.fetchone()
+
         if not r or (r['time'] == 0):    
             msg = '{} is unknown to me'.format(user)
             bot.send("PRIVMSG", target=target, message=msg)
             return
 
-        minutes, seconds = divmod(r['time'], 60)
-        hours, minutes = divmod(minutes, 60)
-
-        ts = []
-        if hours == 1:
-            ts.append('1 hour')
-        elif hours > 1:
-            ts.append('{} hours'.format(hours))
-        if minutes == 1:
-            ts.append('1 min')
-        elif minutes > 1:
-            ts.append('{} mins'.format(minutes))
-
-        time_string = ' '.join(ts)
-
-        msg = '{} has watched this stream for {}'.format(user, time_string)
+        msg = '{} has watched this stream for {}'.format(user, seconds_to_pretty(r['time']))
         bot.send("PRIVMSG", target=target, message=msg)
     except:
-        logging.exception('answer_streamwatchtime')
+        logging.exception('cmd_streamwatchtime')
+
+
+async def cmd_better_uptime(nick, target, args):
+    channel = target.strip('#')
+
+    if not bot.channels[channel]['is_live']:
+        msg = '@{}, the stream is offline'.format(nick)
+        bot.send("PRIVMSG", target=target, message=msg)
+        return
+
+    logging.info(bot.channels[channel]['went_live_at'])
+    if not bot.channels[channel]['went_live_at']:
+        msg = '@{}, the stream start time is unknown to me'.format(nick)
+        bot.send("PRIVMSG", target=target, message=msg)
+        return
+
+    seconds = (datetime.utcnow() - bot.channels[channel]['went_live_at']).total_seconds()
+    msg = 'This stream has been live for {}'.format(seconds_to_pretty(seconds))
+    bot.send("PRIVMSG", target=target, message=msg)            
+
+
+async def cmd_bot(nick, target, args):
+    
+    if len(args) == 0:
+        bot.send("PRIVMSG", target=target, message='@{}, Commands: !streamwatchtime (!swt), !betteruptime'.format(nick))
+        return
+
+    if args[0].lower() == 'uptime':
+        seconds = (datetime.utcnow() - bot.starttime).total_seconds()
+        msg = 'I\'ve been up for {}'.format(seconds_to_pretty(seconds))
+        bot.send("PRIVMSG", target=target, message=msg)
+
 
 async def get_users():
     for channel in config['channels']:
@@ -136,9 +158,12 @@ async def get_is_live(channel):
                 data = await r.json()
                 if 'stream' in data:
                     if data['stream']:
+                        if not bot.channels[channel]['is_live']:
+                            bot.channels[channel]['went_live_at'] = parse(data['stream']['created_at'])
                         bot.channels[channel]['is_live'] = True
                     else:
                         bot.channels[channel]['is_live'] = False
+                        bot.channels[channel]['went_live_at'] = None
     except:
         logging.exception('is_live')
     if config['channel_always_live']:
@@ -153,6 +178,7 @@ async def send_ping():
 
 async def wait_for_pong():
     await asyncio.sleep(10)
+
     logging.error('Didn\'t receive a PONG in time, reconnecting')
     if bot.ping_callback:
         bot.ping_callback.cancel()
@@ -211,6 +237,7 @@ async def connect(**kwargs):
         if channel not in bot.channels:
             bot.channels[channel] = {
                 'is_live': False,
+                'went_live_at': None,
                 'users': [],
                 'inc_stream_watchtime_counter': 0,
             }
@@ -226,6 +253,25 @@ async def connect(**kwargs):
         bot.channel_watchtime_increment.cancel()
     bot.channel_watchtime_increment = \
         asyncio.ensure_future(channel_watchtime_increment())
+
+def seconds_to_pretty(seconds):
+    if seconds < 60:
+        return '{} seconds'.format(round(seconds))
+
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+
+    ts = []
+    if hours == 1:
+        ts.append('1 hour')
+    elif hours > 1:
+        ts.append('{} hours'.format(round(hours)))
+    if minutes == 1:
+        ts.append('1 min')
+    elif minutes > 1:
+        ts.append('{} mins'.format(round(minutes)))
+
+    return ' '.join(ts)
 
 def main():
     logging.getLogger("requests").setLevel(logging.WARNING)
