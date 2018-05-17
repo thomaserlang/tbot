@@ -108,7 +108,6 @@ async def cmd_better_uptime(nick, target, args):
         bot.send("PRIVMSG", target=target, message=msg)
         return
 
-    logging.info(bot.channels[channel]['went_live_at'])
     if not bot.channels[channel]['went_live_at']:
         msg = '@{}, the stream start time is unknown to me'.format(nick)
         bot.send("PRIVMSG", target=target, message=msg)
@@ -159,7 +158,7 @@ async def get_is_live(channel):
                 if 'stream' in data:
                     if data['stream']:
                         if not bot.channels[channel]['is_live']:
-                            bot.channels[channel]['went_live_at'] = parse(data['stream']['created_at'])
+                            bot.channels[channel]['went_live_at'] = parse(data['stream']['created_at']).replace(tzinfo=None)
                         bot.channels[channel]['is_live'] = True
                     else:
                         bot.channels[channel]['is_live'] = False
