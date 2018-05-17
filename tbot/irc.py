@@ -34,10 +34,10 @@ async def channels_check():
                     logging.info('{} is now live ({} seconds ago)'.format(channel, inc_time))
                     await reset_stream_watchtime(channel)
                 data = []
-                bot.channels[channel]['channel_check_counter'] += 1
+                bot.channels[channel]['check_counter'] += 1
                 logging.debug('Channel check: {} - count: {}'.format(
                     channel,
-                    bot.channels[channel]['channel_check_counter']
+                    bot.channels[channel]['check_counter']
                 ))
                 for user in bot.channels[channel]['users']:
                     data.append({'user': user, 'channel': channel, 'inc_time': inc_time})
@@ -59,7 +59,7 @@ async def reset_stream_watchtime(channel):
     '''), {
         'channel': channel,
     })
-    bot.channels[channel]['channel_check_counter'] = 0
+    bot.channels[channel]['check_counter'] = 0
 
 async def start_channel_check_callback():    
     await asyncio.sleep(60)
@@ -103,7 +103,7 @@ async def cmd_streamwatchtime(nick, target, args):
             bot.send("PRIVMSG", target=target, message=msg)
             return
 
-        total_live_seconds = round((bot.channels[channel]['last_channel_check'] - \
+        total_live_seconds = round((bot.channels[channel]['last_check'] - \
             bot.channels[channel]['went_live_at']).total_seconds())
         p = r['time'] / total_live_seconds
         msg = '{} has been here for {} this stream ({:.0%})'.format(
@@ -179,7 +179,7 @@ async def get_is_live(channel):
                     else:
                         bot.channels[channel]['is_live'] = False
                         bot.channels[channel]['went_live_at'] = None
-                    bot.channels[channel]['last_channel_check'] = datetime.utcnow()
+                    bot.channels[channel]['last_check'] = datetime.utcnow()
     except:
         logging.exception('is_live')
     if config['channel_always_live']:
@@ -255,8 +255,8 @@ async def connect(**kwargs):
                 'is_live': None,
                 'went_live_at': None,
                 'users': [],
-                'channel_check_counter': 0,
-                'last_channel_check': None,
+                'check_counter': 0,
+                'last_check': None,
             }
         bot.send('JOIN', channel='#'+channel)
 
