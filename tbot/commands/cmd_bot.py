@@ -22,6 +22,9 @@ async def cmd_bot(client, nick, channel, target, args, **kwargs):
 
     if args[0].lower() == 'uptime':
         seconds = (datetime.utcnow() - client.starttime).total_seconds()
-        msg = 'I\'ve been up for {}'.format(utils.seconds_to_pretty(seconds))
+        msg = '@{}, I\'ve been up for {}'.format(
+            kwargs['display-name'],
+            utils.seconds_to_pretty(seconds)
+        )
         client.send("PRIVMSG", target=target, message=msg)
 
