@@ -1,5 +1,6 @@
 from tbot.command import command
 from tbot import utils
+from datetime import datetime
 
 @command('betteruptime')
 async def cmd_better_uptime(client, nick, channel, target, args, **kwargs):

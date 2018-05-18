@@ -1,5 +1,8 @@
+from tbot.command import command
 from tbot import utils
+from datetime import datetime
 
+@command('__thebotname')
 async def cmd_bot(client, nick, channel, target, args, **kwargs):
     if len(args) == 0:
         client.send("PRIVMSG", target=target, 

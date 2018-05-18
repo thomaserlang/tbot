@@ -70,14 +70,7 @@ async def start_channel_check_callback():
 
 @bot.on('PRIVMSG')
 def message(nick, target, message, **kwargs):
-    if not message.startswith('!'):
-        return    
-    args = message.split(' ')
-    cmd = args.pop(0).lower()
-    if cmd == '!{}'.format(config['user'].lower()):
-        bot.loop.create_task(cmd_bot(bot, nick, target, message, **kwargs))
-    else:
-        handle_command(bot, nick, target, message, **kwargs)
+    handle_command(bot, nick, target, message, **kwargs)
 
 async def get_users():
     for channel in config['channels']:

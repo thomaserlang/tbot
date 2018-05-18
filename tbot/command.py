@@ -1,5 +1,6 @@
 import asyncio
 import functools
+from tbot import config
 
 cmds = []
 _cmd_lookup = {}
@@ -26,6 +27,8 @@ def handle_command(client, nick, target, message, **kwargs):
         return    
     args = message.split(' ')
     cmd = args.pop(0).lower().strip('!')
+    if cmd == config['user']:
+        cmd = '__thebotname'
     if cmd in _cmd_lookup:
         f = _cmd_lookup[cmd]['func']
         client.loop.create_task(f(
