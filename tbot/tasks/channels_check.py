@@ -24,6 +24,7 @@ async def connect(**kwargs):
                 'users': [],
                 'check_counter': 0,
                 'last_check': None,
+                'user': None,
             }
     global _channels_check_callback
     if _channels_check_callback:
@@ -36,23 +37,26 @@ async def channels_check():
     try:
         await get_users()
         for channel in config['channels']:
-            old_is_live = bot.channels[channel]['is_live']
-            is_live = await get_is_live(channel)
-            if old_is_live == None:
-                continue
-            if is_live:
-                inc_time = 60
-                if old_is_live != is_live:
-                    await reset_stream_watchtime(channel)
-                    inc_time = round((datetime.utcnow() - bot.channels[channel]['went_live_at']).total_seconds())
-                    logging.info('{} is now live ({} seconds ago)'.format(channel, inc_time))
-                await inc_watchtime(channel, inc_time)
-            else:
-                if old_is_live != is_live:
-                    logging.info('{} went offline'.format(channel))
-                    await reset_stream_watchtime(channel)
+            bot.loop.create_task(channel_check(channel))
     except:
         logging.exception('channels_check')
+
+async def channel_check(channel):
+    old_is_live = bot.channels[channel]['is_live']
+    is_live = await get_is_live(channel)
+    if old_is_live == None:
+        return
+    if is_live:
+        inc_time = 60
+        if old_is_live != is_live:
+            await reset_stream_watchtime(channel)
+            inc_time = round((datetime.utcnow() - bot.channels[channel]['went_live_at']).total_seconds())
+            logging.info('{} is now live ({} seconds ago)'.format(channel, inc_time))
+        await inc_watchtime(channel, inc_time)
+    else:
+        if old_is_live != is_live:
+            logging.info('{} went offline'.format(channel))
+            await reset_stream_watchtime(channel)
 
 async def inc_watchtime(channel, inc_time):
     data = []
@@ -118,6 +122,14 @@ async def get_is_live(channel):
                     bot.channels[channel]['is_live'] = False
                     bot.channels[channel]['went_live_at'] = None
                 bot.channels[channel]['last_check'] = datetime.utcnow()
+        if not bot.channels[channel]['user']:
+            params = {'login': channel}
+            url = 'https://api.twitch.tv/helix/users'
+            async with bot.http_session.get(url, params=params, headers=headers) as r:
+                if r.status == 200:
+                    data = await r.json()
+                    if data['data']:
+                        bot.channels[channel]['user'] = data['data'][0]
     except:
         logging.exception('is_live')
     if config['channel_always_live']:
