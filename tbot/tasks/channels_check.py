@@ -32,7 +32,7 @@ async def connect(**kwargs):
 
 async def channels_check():
     bot.loop.create_task(start_channels_check_callback())
-    logging.info('Channels check')
+    logging.debug('Channels check')
     try:
         await get_users()
         for channel in config['channels']:
