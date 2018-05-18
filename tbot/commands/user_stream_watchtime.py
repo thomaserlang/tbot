@@ -27,7 +27,7 @@ async def user_stream_watchtime(client, nick, channel, target, args, **kwargs):
     total_live_seconds = (client.channels[channel]['last_check'].replace(second=0, microsecond=0) - \
         client.channels[channel]['went_live_at'].replace(second=0)).total_seconds()
     usertime = r['time']
-    if (usertime > total_live_seconds) or ((total_live_seconds - usertime) < 60):
+    if (usertime > total_live_seconds) or ((total_live_seconds - usertime) <= 60):
         usertime = total_live_seconds
     p = usertime / total_live_seconds
     msg = '{} has been here for {} this stream ({:.0%})'.format(
