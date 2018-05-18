@@ -2,8 +2,8 @@ from tbot.command import command
 from tbot import utils
 from datetime import datetime
 
-@command('betteruptime')
-async def cmd_better_uptime(client, nick, channel, target, args, **kwargs):
+@command('streamuptime')
+async def stream_uptime(client, nick, channel, target, args, **kwargs):
     if not client.channels[channel]['is_live']:
         msg = '@{}, the stream is offline'.format(kwargs['display-name'])
         client.send("PRIVMSG", target=target, message=msg)
