@@ -6,6 +6,8 @@ from sqlalchemy_aio import ASYNCIO_STRATEGY
 from dateutil.parser import parse
 from datetime import datetime
 from tbot.unpack import rfc2812_handler
+from tbot.command import handle_command
+from tbot.commands.cmd_bot import cmd_bot
 from tbot import config
 
 bot = bottom.Client('a', 0)
@@ -72,79 +74,10 @@ def message(nick, target, message, **kwargs):
         return    
     args = message.split(' ')
     cmd = args.pop(0).lower()
-    if cmd == '!streamwatchtime' or cmd == '!swt':
-        asyncio.ensure_future(cmd_streamwatchtime(kwargs['display-name'], target, args))
-    elif cmd == '!{}'.format(config['user'].lower()):
-        asyncio.ensure_future(cmd_bot(kwargs['display-name'], target, args))
-    elif cmd == '!betteruptime':
-        asyncio.ensure_future(cmd_better_uptime(kwargs['display-name'], target, args))
-
-
-async def cmd_streamwatchtime(nick, target, args):
-    try:
-        user = nick
-        if len(args) > 0:
-            user = args[0].strip('@')
-
-        channel = target.strip('#')
-
-        if not bot.channels[channel]['is_live']:
-            msg = '@{}, the stream is offline'.format(nick)
-            bot.send("PRIVMSG", target=target, message=msg)            
-            return
-
-        r = await bot.conn.execute(sa.sql.text('SELECT time FROM current_stream_watchtime WHERE channel=:channel AND user=:user'),
-            {'channel': channel, 'user': user}
-        )
-        r = await r.fetchone()
-
-        if not r or (r['time'] == 0):    
-            msg = '{} is unknown to me'.format(user)
-            bot.send("PRIVMSG", target=target, message=msg)
-            return
-
-        total_live_seconds = round((bot.channels[channel]['last_check'] - \
-            bot.channels[channel]['went_live_at']).total_seconds())
-        p = r['time'] / total_live_seconds
-        msg = '{} has been here for {} this stream ({:.0%})'.format(
-            user, 
-            seconds_to_pretty(r['time']),
-            p
-        )
-        bot.send("PRIVMSG", target=target, message=msg)
-    except:
-        logging.exception('cmd_streamwatchtime')
-
-
-async def cmd_better_uptime(nick, target, args):
-    channel = target.strip('#')
-
-    if not bot.channels[channel]['is_live']:
-        msg = '@{}, the stream is offline'.format(nick)
-        bot.send("PRIVMSG", target=target, message=msg)
-        return
-
-    if not bot.channels[channel]['went_live_at']:
-        msg = '@{}, the stream start time is unknown to me'.format(nick)
-        bot.send("PRIVMSG", target=target, message=msg)
-        return
-
-    seconds = (datetime.utcnow() - bot.channels[channel]['went_live_at']).total_seconds()
-    msg = 'This stream has been live for {}'.format(seconds_to_pretty(seconds))
-    bot.send("PRIVMSG", target=target, message=msg)            
-
-
-async def cmd_bot(nick, target, args):
-    
-    if len(args) == 0:
-        bot.send("PRIVMSG", target=target, message='@{}, Commands: !streamwatchtime (!swt), !betteruptime'.format(nick))
-        return
-
-    if args[0].lower() == 'uptime':
-        seconds = (datetime.utcnow() - bot.starttime).total_seconds()
-        msg = 'I\'ve been up for {}'.format(seconds_to_pretty(seconds))
-        bot.send("PRIVMSG", target=target, message=msg)
-
+    if cmd == '!{}'.format(config['user'].lower()):
+        bot.loop.create_task(cmd_bot(bot, nick, target, message, **kwargs))
+    else:
+        handle_command(bot, nick, target, message, **kwargs)
 
 async def get_users():
     for channel in config['channels']:
@@ -270,25 +203,6 @@ async def connect(**kwargs):
         bot.channels_check_callback.cancel()
     bot.channels_check_callback = \
         asyncio.ensure_future(channels_check())
-
-def seconds_to_pretty(seconds):
-    if seconds < 60:
-        return '{} seconds'.format(round(seconds))
-
-    minutes, seconds = divmod(seconds, 60)
-    hours, minutes = divmod(minutes, 60)
-
-    ts = []
-    if hours == 1:
-        ts.append('1 hour')
-    elif hours > 1:
-        ts.append('{} hours'.format(round(hours)))
-    if minutes == 1:
-        ts.append('1 min')
-    elif minutes > 1:
-        ts.append('{} mins'.format(round(minutes)))
-
-    return ' '.join(ts)
 
 def main():
     logging.getLogger("requests").setLevel(logging.WARNING)
