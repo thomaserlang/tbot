@@ -117,7 +117,6 @@ async def get_is_live(channel):
                         bot.channels[channel]['is_live'] = False
                         bot.channels[channel]['went_live_at'] = None
                     bot.channels[channel]['last_check'] = datetime.utcnow()
-                    logging.info(bot.channels[channel]['is_live'])
     except:
         logging.exception('is_live')
     if config['channel_always_live']:
