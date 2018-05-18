@@ -1,4 +1,3 @@
-import logging
 from tbot.command import command, cmds
 from tbot import utils
 from datetime import datetime
@@ -20,7 +19,7 @@ async def cmd_bot(client, nick, channel, target, args, **kwargs):
             )
         )
         return
-        
+
     if args[0].lower() == 'uptime':
         seconds = (datetime.utcnow() - client.starttime).total_seconds()
         msg = 'I\'ve been up for {}'.format(utils.seconds_to_pretty(seconds))

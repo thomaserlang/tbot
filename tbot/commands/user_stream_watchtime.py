@@ -1,8 +1,10 @@
+import sqlalchemy as sa
 from tbot.command import command
 from tbot import utils
 
 @command('streamwatchtime', alias='swt')
 async def user_stream_watchtime(client, nick, channel, target, args, **kwargs):
+    user = kwargs['display-name']
     if len(args) > 0:
         user = args[0].strip('@')
 
@@ -21,8 +23,8 @@ async def user_stream_watchtime(client, nick, channel, target, args, **kwargs):
         client.send("PRIVMSG", target=target, message=msg)
         return
 
-    total_live_seconds = round((client.channels[channel]['last_check'] - \
-        client.channels[channel]['went_live_at']).total_seconds())
+    total_live_seconds = (client.channels[channel]['last_check'].replace(second=0, microsecond=0) - \
+        client.channels[channel]['went_live_at'].replace(second=0)).total_seconds()
     p = r['time'] / total_live_seconds
     msg = '{} has been here for {} this stream ({:.0%})'.format(
         user, 
