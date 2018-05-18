@@ -104,19 +104,20 @@ async def get_users():
 
 async def get_is_live(channel):
     try:
-        async with bot.http_session.get('https://api.twitch.tv/kraken/streams/{}'.format(channel),
-            params={'client_id': config['client_id']}) as r:
+        headers = {'Client-ID': config['client_id']}
+        params = {'user_login': channel}
+        url = 'https://api.twitch.tv/helix/streams'
+        async with bot.http_session.get(url, params=params, headers=headers) as r:
             if r.status == 200:
                 data = await r.json()
-                if 'stream' in data:
-                    if data['stream']:
-                        if not bot.channels[channel]['is_live']:
-                            bot.channels[channel]['went_live_at'] = parse(data['stream']['created_at']).replace(tzinfo=None)
-                        bot.channels[channel]['is_live'] = True
-                    else:
-                        bot.channels[channel]['is_live'] = False
-                        bot.channels[channel]['went_live_at'] = None
-                    bot.channels[channel]['last_check'] = datetime.utcnow()
+                if data['data']:
+                    if not bot.channels[channel]['is_live']:
+                        bot.channels[channel]['went_live_at'] = parse(data['data'][0]['started_at']).replace(tzinfo=None)
+                    bot.channels[channel]['is_live'] = True
+                else:
+                    bot.channels[channel]['is_live'] = False
+                    bot.channels[channel]['went_live_at'] = None
+                bot.channels[channel]['last_check'] = datetime.utcnow()
     except:
         logging.exception('is_live')
     if config['channel_always_live']:
