@@ -12,12 +12,91 @@ from tbot import config
 
 bot = bottom.Client('a', 0)
 
-bot.channels = {}
 
-bot.pong_check_callback = None
-bot.ping_callback = None
-bot.channels_check_callback = None
-bot.starttime = datetime.utcnow()
+@bot.on('CLIENT_CONNECT')
+async def connect(**kwargs):
+    if not bot.http_session:
+        bot.http_session = aiohttp.ClientSession()
+    if bot.pong_check_callback:
+        bot.pong_check_callback.cancel()
+    logging.info('IRC Connecting to {}:{}'.format(config['irc']['host'], config['irc']['port']))
+    if config['token']:
+        bot.send('PASS', password='oauth:{}'.format(config['token']))
+    bot.send('NICK', nick=config['user'])
+    bot.send('USER', user=config['user'], realname=config['user'])
+
+    # Don't try to join channels until the server has
+    # sent the MOTD, or signaled that there's no MOTD.
+    done, pending = await asyncio.wait(
+        [bot.wait("RPL_ENDOFMOTD"),
+         bot.wait("ERR_NOMOTD")],
+        loop=bot.loop,
+        return_when=asyncio.FIRST_COMPLETED
+    )
+
+    bot.send_raw('CAP REQ :twitch.tv/tags')
+    bot.send_raw('CAP REQ :twitch.tv/commands')
+    bot.send_raw('CAP REQ :twitch.tv/membership')
+
+    # Cancel whichever waiter's event didn't come in.
+    for future in pending:
+        future.cancel()
+
+    for channel in config['channels']:
+        channel = channel.strip('#')
+        if channel not in bot.channels:
+            bot.channels[channel] = {
+                'is_live': None,
+                'went_live_at': None,
+                'users': [],
+                'check_counter': 0,
+                'last_check': None,
+            }
+        bot.send('JOIN', channel='#'+channel)
+
+    if bot.pong_check_callback:
+        bot.pong_check_callback.cancel()
+    if bot.ping_callback:
+        bot.ping_callback.cancel()
+    bot.ping_callback = asyncio.ensure_future(send_ping())
+
+    if bot.channels_check_callback:
+        bot.channels_check_callback.cancel()
+    bot.channels_check_callback = \
+        asyncio.ensure_future(channels_check())
+
+async def send_ping():
+    await asyncio.sleep(random.randint(120, 240))
+    logging.debug('Sending ping')
+    bot.pong_check_callback = asyncio.ensure_future(wait_for_pong())
+    bot.send('PING')
+
+async def wait_for_pong():
+    await asyncio.sleep(10)
+
+    logging.error('Didn\'t receive a PONG in time, reconnecting')
+    if bot.ping_callback:
+        bot.ping_callback.cancel()
+    bot.ping_callback = asyncio.ensure_future(send_ping())
+    await bot.connect()
+
+@bot.on('CLIENT_DISCONNECT')
+async def disconnect(**kwargs):
+    logging.info('Disconnected')
+
+@bot.on('PING')
+def keepalive(message, **kwargs):
+    logging.debug('Received ping, sending PONG back')
+    bot.send('PONG', message=message)
+
+@bot.on('PONG')
+async def pong(message, **kwargs):
+    logging.debug('Received pong')
+    if bot.pong_check_callback:
+        bot.pong_check_callback.cancel()
+    if bot.ping_callback:
+        bot.ping_callback.cancel()
+    bot.ping_callback = asyncio.ensure_future(send_ping())
 
 async def channels_check():
     asyncio.ensure_future(start_channel_check_callback())
@@ -112,91 +191,6 @@ async def get_is_live(channel):
         bot.channels[channel]['is_live'] = True
     return bot.channels[channel]['is_live'] 
 
-async def send_ping():
-    await asyncio.sleep(random.randint(120, 240))
-    logging.debug('Sending ping')
-    bot.pong_check_callback = asyncio.ensure_future(wait_for_pong())
-    bot.send('PING')
-
-async def wait_for_pong():
-    await asyncio.sleep(10)
-
-    logging.error('Didn\'t receive a PONG in time, reconnecting')
-    if bot.ping_callback:
-        bot.ping_callback.cancel()
-    bot.ping_callback = asyncio.ensure_future(send_ping())
-    await bot.connect()
-
-@bot.on('CLIENT_DISCONNECT')
-async def disconnect(**kwargs):
-    logging.info('Disconnected')
-
-@bot.on('PING')
-def keepalive(message, **kwargs):
-    logging.debug('Received ping, sending PONG back')
-    bot.send('PONG', message=message)
-
-@bot.on('PONG')
-async def pong(message, **kwargs):
-    logging.debug('Received pong')
-    if bot.pong_check_callback:
-        bot.pong_check_callback.cancel()
-    if bot.ping_callback:
-        bot.ping_callback.cancel()
-    bot.ping_callback = asyncio.ensure_future(send_ping())
-
-@bot.on('CLIENT_CONNECT')
-async def connect(**kwargs):
-    if not bot.http_session:
-        bot.http_session = aiohttp.ClientSession()
-    if bot.pong_check_callback:
-        bot.pong_check_callback.cancel()
-    logging.info('IRC Connecting to {}:{}'.format(config['irc']['host'], config['irc']['port']))
-    if config['token']:
-        bot.send('PASS', password='oauth:{}'.format(config['token']))
-    bot.send('NICK', nick=config['user'])
-    bot.send('USER', user=config['user'], realname=config['user'])
-
-    # Don't try to join channels until the server has
-    # sent the MOTD, or signaled that there's no MOTD.
-    done, pending = await asyncio.wait(
-        [bot.wait("RPL_ENDOFMOTD"),
-         bot.wait("ERR_NOMOTD")],
-        loop=bot.loop,
-        return_when=asyncio.FIRST_COMPLETED
-    )
-
-    bot.send_raw('CAP REQ :twitch.tv/tags')
-    bot.send_raw('CAP REQ :twitch.tv/commands')
-    bot.send_raw('CAP REQ :twitch.tv/membership')
-
-    # Cancel whichever waiter's event didn't come in.
-    for future in pending:
-        future.cancel()
-
-    for channel in config['channels']:
-        channel = channel.strip('#')
-        if channel not in bot.channels:
-            bot.channels[channel] = {
-                'is_live': None,
-                'went_live_at': None,
-                'users': [],
-                'check_counter': 0,
-                'last_check': None,
-            }
-        bot.send('JOIN', channel='#'+channel)
-
-    if bot.pong_check_callback:
-        bot.pong_check_callback.cancel()
-    if bot.ping_callback:
-        bot.ping_callback.cancel()
-    bot.ping_callback = asyncio.ensure_future(send_ping())
-
-    if bot.channels_check_callback:
-        bot.channels_check_callback.cancel()
-    bot.channels_check_callback = \
-        asyncio.ensure_future(channels_check())
-
 def main():
     logging.getLogger("requests").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
@@ -214,6 +208,11 @@ def main():
         strategy=ASYNCIO_STRATEGY,
     )
     bot.http_session = None
+    bot.channels = {}
+    bot.pong_check_callback = None
+    bot.ping_callback = None
+    bot.channels_check_callback = None
+    bot.starttime = datetime.utcnow()
     return bot
 
 if __name__ == '__main__':
