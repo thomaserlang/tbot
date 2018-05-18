@@ -1,3 +1,4 @@
+import logging
 import sqlalchemy as sa
 from tbot.command import command
 from tbot import utils
@@ -25,10 +26,13 @@ async def user_stream_watchtime(client, nick, channel, target, args, **kwargs):
 
     total_live_seconds = (client.channels[channel]['last_check'].replace(second=0, microsecond=0) - \
         client.channels[channel]['went_live_at'].replace(second=0)).total_seconds()
-    p = r['time'] / total_live_seconds
+    usertime = r['time']
+    if (usertime > total_live_seconds) or ((total_live_seconds - usertime) < 60):
+        usertime = total_live_seconds
+    p = usertime / total_live_seconds
     msg = '{} has been here for {} this stream ({:.0%})'.format(
         user, 
-        utils.seconds_to_pretty(r['time']),
+        utils.seconds_to_pretty(usertime),
         p
     )
     client.send("PRIVMSG", target=target, message=msg)
