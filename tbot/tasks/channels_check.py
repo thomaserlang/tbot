@@ -50,7 +50,8 @@ async def channel_check(channel):
         inc_time = 60
         if old_is_live != is_live:
             await reset_stream_watchtime(channel)
-            inc_time = round((datetime.utcnow() - bot.channels[channel]['went_live_at']).total_seconds())
+            inc_time = round((datetime.utcnow() - \
+                bot.channels[channel]['went_live_at']).total_seconds())
             logging.info('{} is now live ({} seconds ago)'.format(channel, inc_time))
         await inc_watchtime(channel, inc_time)
     else:
