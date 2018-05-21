@@ -1,5 +1,5 @@
 from tbot.command import command, cmds
-from tbot import utils
+from tbot import utils, constants
 from datetime import datetime
 
 @command('__thebotname')
@@ -18,9 +18,8 @@ async def cmd_bot(client, nick, channel, target, args, **kwargs):
                 kwargs['display-name'], ', '.join(m)
             )
         )
-        return
-
-    if args[0].lower() == 'uptime':
+    
+    elif args[0].lower() == 'uptime':
         seconds = (datetime.utcnow() - client.starttime).total_seconds()
         msg = '@{}, I\'ve been up for {}'.format(
             kwargs['display-name'],
@@ -28,3 +27,16 @@ async def cmd_bot(client, nick, channel, target, args, **kwargs):
         )
         client.send("PRIVMSG", target=target, message=msg)
 
+    elif args[0].lower() == 'version':
+        msg = '@{}, I\'m running version {}'.format(
+            kwargs['display-name'],
+            constants.VERSION,
+        )
+        client.send("PRIVMSG", target=target, message=msg)
+
+    elif args[0].lower() == 'time':
+        msg = '@{}, My time is {}Z'.format(
+            kwargs['display-name'],
+            datetime.utcnow().replace(microsecond=0).isoformat(),
+        )
+        client.send("PRIVMSG", target=target, message=msg)
