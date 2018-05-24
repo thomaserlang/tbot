@@ -15,8 +15,13 @@ async def user_stream_watchtime(client, nick, channel, target, args, **kwargs):
         client.send("PRIVMSG", target=target, message=msg)            
         return
 
-    r = await client.conn.execute(sa.sql.text('SELECT time FROM current_stream_watchtime WHERE channel=:channel AND user=:user'),
-        {'channel': channel, 'user': user}
+    r = await client.conn.execute(sa.sql.text(
+        'SELECT time FROM current_stream_watchtime WHERE channel=:channel AND stream_id=:stream_id AND user=:user'),
+        {
+            'channel': channel, 
+            'stream_id': client.channels[channel]['stream_id'], 
+            'user': user,
+        }
     )
     r = await r.fetchone()
 

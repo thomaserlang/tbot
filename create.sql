@@ -1,9 +1,17 @@
-CREATE SCHEMA `tbot` DEFAULT CHARACTER SET utf8mb4 ;
+
+CREATE SCHEMA IF NOT EXISTS `tbot` DEFAULT CHARACTER SET utf8mb4 ;
+USE `tbot` ;
 
 CREATE TABLE IF NOT EXISTS `tbot`.`current_stream_watchtime` (
   `channel` VARCHAR(45) NOT NULL,
+  `stream_id` VARCHAR(75) NOT NULL,
   `user` VARCHAR(45) NOT NULL,
-  `time` INT(11) NULL DEFAULT NULL,
-  PRIMARY KEY (`channel`, `user`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+  `time` INT NULL,
+  PRIMARY KEY (`channel`, `user`, `stream_id`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `tbot`.`channel_cache` (
+  `channel` VARCHAR(50) NOT NULL,
+  `data` TEXT NULL,
+  PRIMARY KEY (`channel`))
+ENGINE = InnoDB;
