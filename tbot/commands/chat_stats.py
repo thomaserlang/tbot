@@ -21,7 +21,7 @@ async def chat_stats(client, nick, channel, target, args, **kwargs):
 
     # get stats for the current stream
     q = await client.conn.execute(sa.sql.text(
-        '''SELECT count(message) as msgs, sum(length(message)) as chars 
+        '''SELECT count(message) as msgs, sum(word_count) as word_count 
            FROM logitch.entries WHERE 
            channel=:channel AND 
            user=:user AND 
@@ -36,8 +36,8 @@ async def chat_stats(client, nick, channel, target, args, **kwargs):
     )
     r = await q.fetchone()
     if r:
-        current_stream = 'This stream: {} messages / {} chars'.format(
-            r['msgs'], r['chars']
+        current_stream = 'This stream: {} messages / {} words'.format(
+            r['msgs'], r['words']
         )
     else:
         current_stream = 'This stream: nothing'
@@ -48,7 +48,7 @@ async def chat_stats(client, nick, channel, target, args, **kwargs):
         second=0, microsecond=0,
     )
     q = await client.conn.execute(sa.sql.text(
-        '''SELECT count(message) as msgs, sum(length(message)) as chars 
+        '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
            channel=:channel AND 
            user=:user AND 
@@ -63,8 +63,8 @@ async def chat_stats(client, nick, channel, target, args, **kwargs):
     )
     r = await q.fetchone()
     if r:
-        current_month = 'This month: {} messages / {} chars'.format(
-            r['msgs'], r['chars']
+        current_month = 'This month: {} messages / {} words'.format(
+            r['msgs'], r['words']
         )
     else:
         current_month = 'This month: nothing'
@@ -90,7 +90,7 @@ async def total_chat_stats(client, nick, channel, target, args, **kwargs):
 
     # get stats for the current stream
     q = await client.conn.execute(sa.sql.text(
-        '''SELECT count(message) as msgs, sum(length(message)) as chars
+        '''SELECT count(message) as msgs, sum(word_count) as words
            FROM logitch.entries WHERE 
            channel=:channel AND 
            created_at>=:from_date AND 
@@ -102,8 +102,8 @@ async def total_chat_stats(client, nick, channel, target, args, **kwargs):
     )
     r = await q.fetchone()
     if r:
-        current_stream = 'This stream: {} messages / {} chars'.format(
-            r['msgs'], r['chars']
+        current_stream = 'This stream: {} messages / {} words'.format(
+            r['msgs'], r['words']
         )
     else:
         current_stream = 'This stream: nothing'
