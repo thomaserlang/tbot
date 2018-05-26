@@ -4,7 +4,7 @@ import json
 import sqlalchemy as sa
 from dateutil.parser import parse
 from datetime import datetime
-from tbot import config
+from tbot import config, utils
 from tbot.irc import bot
 
 """
@@ -132,21 +132,19 @@ async def get_users():
 
 async def get_is_live(channel):
     try:
-        headers = {'Client-ID': config['client_id']}
         params = {'user_login': channel}
         url = 'https://api.twitch.tv/helix/streams'
-        async with bot.http_session.get(url, params=params, headers=headers) as r:
-            if r.status == 200:
-                data = await r.json()
-                if data['data']:
-                    if not bot.channels[channel]['is_live']:
-                        bot.channels[channel]['went_live_at'] = parse(data['data'][0]['started_at']).replace(tzinfo=None)
-                    bot.channels[channel]['is_live'] = True
-                    bot.channels[channel]['stream_id'] = data['data'][0]['id']
-                else:
-                    bot.channels[channel]['is_live'] = False
-                    bot.channels[channel]['went_live_at'] = None
-                    bot.channels[channel]['stream_id'] = None
+        data = await utils.twitch_request(bot.http_session, url, params)
+        if data:
+            if data['data']:
+                if not bot.channels[channel]['is_live']:
+                    bot.channels[channel]['went_live_at'] = parse(data['data'][0]['started_at']).replace(tzinfo=None)
+                bot.channels[channel]['is_live'] = True
+                bot.channels[channel]['stream_id'] = data['data'][0]['id']
+            else:
+                bot.channels[channel]['is_live'] = False
+                bot.channels[channel]['went_live_at'] = None
+                bot.channels[channel]['stream_id'] = None                
     except:
         logging.exception('is_live')
     if config['channel_always_live']:
