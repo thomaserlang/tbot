@@ -139,8 +139,8 @@ async def get_is_live(channel):
             if data['data']:
                 if not bot.channels[channel]['is_live']:
                     bot.channels[channel]['went_live_at'] = parse(data['data'][0]['started_at']).replace(tzinfo=None)
-                bot.channels[channel]['is_live'] = True
-                bot.channels[channel]['stream_id'] = data['data'][0]['id']
+                    bot.channels[channel]['stream_id'] = data['data'][0]['id']
+                    bot.channels[channel]['is_live'] = True
             else:
                 bot.channels[channel]['is_live'] = False
                 bot.channels[channel]['went_live_at'] = None
