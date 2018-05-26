@@ -32,8 +32,15 @@ async def twitch_request(http_session, url, params=None, headers={}):
 async def twitch_lookup_usernames(http_session, usernames):
     url = 'https://api.twitch.tv/helix/users'
     params = [('login', name) for name in usernames]
-    data = await twitch_request(url, params)
+    data = await twitch_request(http_session, url, params)
     if data:
         users = []
         for d in data['data']:
             users.append({'id': d['id'], 'user': d['login']})
+        return users
+
+async def twitch_lookup_user_id(http_session, username):
+    users = await twitch_lookup_usernames(http_session, [username])
+    if not users:
+        return
+    return users[0]['id']
