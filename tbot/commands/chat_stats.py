@@ -1,3 +1,4 @@
+import asyncio
 import sqlalchemy as sa
 import logging
 from tbot.command import command
@@ -9,7 +10,7 @@ async def chat_stats(client, nick, channel, target, args, **kwargs):
     user = kwargs['display-name']
     user_id = kwargs['user-id']
     if len(args) > 0:
-        user = args[0].strip('@')
+        user = utils.safe_username(args[0])
         user_id = await utils.twitch_lookup_user_id(client.http_session, user)
 
     if not client.channels[channel]['is_live']:
@@ -22,55 +23,10 @@ async def chat_stats(client, nick, channel, target, args, **kwargs):
         client.send("PRIVMSG", target=target, message=msg)
         return
 
-    # get stats for the current stream
-    q = await client.conn.execute(sa.sql.text(
-        '''SELECT count(message) as msgs, sum(word_count) as words 
-           FROM logitch.entries WHERE 
-           channel=:channel AND 
-           user_id=:user_id AND 
-           created_at>=:from_date AND 
-           type=1
-           GROUP BY user_id;'''),
-        {
-            'channel': channel, 
-            'user_id': user_id,
-            'from_date': client.channels[channel]['went_live_at'],
-        }
+    current_stream, current_month = await asyncio.gather(
+        current_stream_stats(client, channel, user_id),
+        user_month_stats(client, channel, user_id),
     )
-    r = await q.fetchone()
-    if r:
-        current_stream = 'This stream: {} messages / {} words'.format(
-            r['msgs'], r['words']
-        )
-    else:
-        current_stream = 'This stream: nothing'
-
-    # get stats for the current month
-    from_date = datetime.utcnow().replace(
-        day=1, hour=0, minute=0, 
-        second=0, microsecond=0,
-    )
-    q = await client.conn.execute(sa.sql.text(
-        '''SELECT count(message) as msgs, sum(word_count) as words 
-           FROM logitch.entries WHERE 
-           channel=:channel AND 
-           user_id=:user_id AND 
-           created_at>=:from_date AND 
-           type=1
-           GROUP BY user_id;'''),
-        {
-            'channel': channel, 
-            'user_id': user_id,
-            'from_date': from_date,
-        }
-    )
-    r = await q.fetchone()
-    if r:
-        current_month = 'This month: {} messages / {} words'.format(
-            r['msgs'], r['words']
-        )
-    else:
-        current_month = 'This month: nothing'
 
     msg = '{}: {} - {}'.format(
         user,
@@ -78,6 +34,7 @@ async def chat_stats(client, nick, channel, target, args, **kwargs):
         current_month,
     )
     client.send("PRIVMSG", target=target, message=msg)
+
 
 @command('totalchatstats')
 async def total_chat_stats(client, nick, channel, target, args, **kwargs):
@@ -111,7 +68,60 @@ async def total_chat_stats(client, nick, channel, target, args, **kwargs):
     else:
         current_stream = 'This stream: nothing'
 
-    msg = 'Total chat stats: {}'.format(
+    msg = 'Channel chat stats: {}'.format(
         current_stream,
     )
     client.send("PRIVMSG", target=target, message=msg)
+
+
+async def current_stream_stats(client, channel, user_id):
+    # get stats for the current stream
+    q = await client.conn.execute(sa.sql.text(
+        '''SELECT count(message) as msgs, sum(word_count) as words 
+           FROM logitch.entries WHERE 
+           channel=:channel AND 
+           user_id=:user_id AND 
+           created_at>=:from_date AND 
+           type=1
+           GROUP BY user_id;'''),
+        {
+            'channel': channel, 
+            'user_id': user_id,
+            'from_date': client.channels[channel]['went_live_at'],
+        }
+    )
+    r = await q.fetchone()
+    if r:
+        return 'This stream: {} messages / {} words'.format(
+            r['msgs'], r['words']
+        )
+    else:
+        return 'This stream: nothing'
+
+async def user_month_stats(client, channel, user_id):
+    # get stats for the current month
+    from_date = datetime.utcnow().replace(
+        day=1, hour=0, minute=0, 
+        second=0, microsecond=0,
+    )
+    q = await client.conn.execute(sa.sql.text(
+        '''SELECT count(message) as msgs, sum(word_count) as words 
+           FROM logitch.entries WHERE 
+           channel=:channel AND 
+           user_id=:user_id AND 
+           created_at>=:from_date AND 
+           type=1
+           GROUP BY user_id;'''),
+        {
+            'channel': channel, 
+            'user_id': user_id,
+            'from_date': from_date,
+        }
+    )
+    r = await q.fetchone()
+    if r:
+        return 'This month: {} messages / {} words'.format(
+            r['msgs'], r['words']
+        )
+    else:
+        return 'This month: nothing'
