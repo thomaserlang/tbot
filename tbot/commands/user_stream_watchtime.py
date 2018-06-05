@@ -8,7 +8,7 @@ from tbot import utils
 async def user_stream_watchtime(client, nick, channel, target, args, **kwargs):
     user = kwargs['display-name']
     if len(args) > 0:
-        user = args[0].strip('@')
+        user = utils.safe_username(args[0])
 
     if not client.channels[channel]['is_live']:
         msg = '@{}, the stream is offline'.format(kwargs['display-name'])

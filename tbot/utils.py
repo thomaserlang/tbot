@@ -1,4 +1,8 @@
+import re
 from tbot import config
+
+def safe_username(user):
+    return re.sub('[^a-zA-Z0-9_]', '', user)[:25]
 
 def seconds_to_pretty(seconds):
     seconds = round(seconds)
