@@ -3,7 +3,7 @@ import sqlalchemy as sa
 import logging
 from tbot.command import command
 from tbot import utils
-from datetime import datetime
+from datetime import datetime, timedelta
 
 @command('chatstats')
 async def chat_stats(client, nick, channel, target, args, **kwargs):
@@ -28,6 +28,22 @@ async def chat_stats(client, nick, channel, target, args, **kwargs):
     )
     client.send("PRIVMSG", target=target, message=msg)
 
+@command('chatstatslastmonth')
+async def chatstatslastmonth(client, nick, channel, target, args, **kwargs):
+    user = kwargs['display-name']
+    user_id = kwargs['user-id']
+
+    if len(args) == 1:
+        user = utils.safe_username(args[0])
+        user_id = await utils.twitch_lookup_user_id(client.http_session, user)
+
+    last_month = await user_last_month_stats(client, channel, user_id)
+
+    msg = '{}: {}'.format(
+        user,
+        last_month,
+    )
+    client.send("PRIVMSG", target=target, message=msg)
 
 @command('totalchatstats')
 async def total_chat_stats(client, nick, channel, target, args, **kwargs):
@@ -61,7 +77,6 @@ async def total_chat_stats(client, nick, channel, target, args, **kwargs):
 
 
 async def current_stream_stats(client, channel, user_id):
-    # get stats for the current stream
     q = await client.conn.execute(sa.sql.text(
         '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
@@ -84,8 +99,8 @@ async def current_stream_stats(client, channel, user_id):
     else:
         return 'This stream: nothing'
 
+
 async def user_month_stats(client, channel, user_id):
-    # get stats for the current month
     from_date = datetime.utcnow().replace(
         day=1, hour=0, minute=0, 
         second=0, microsecond=0,
@@ -111,6 +126,41 @@ async def user_month_stats(client, channel, user_id):
         )
     else:
         return 'This month: nothing'
+
+
+async def user_last_month_stats(client, channel, user_id):
+    to_date = datetime.utcnow().replace(
+        day=1, hour=0, minute=0, 
+        second=0, microsecond=0,
+    ) - timedelta(seconds=1)
+    from_date = to_date.replace(
+        day=1, hour=0, minute=0, 
+        second=0, microsecond=0,
+    )
+    q = await client.conn.execute(sa.sql.text(
+        '''SELECT count(message) as msgs, sum(word_count) as words 
+           FROM logitch.entries WHERE 
+           channel=:channel AND 
+           user_id=:user_id AND 
+           created_at>=:from_date AND 
+           created_at<=:to_date AND 
+           type=1
+           GROUP BY user_id;'''),
+        {
+            'channel': channel, 
+            'user_id': user_id,
+            'from_date': from_date,
+            'to_date': to_date,
+        }
+    )
+    r = await q.fetchone()
+    if r:
+        return 'Last month: {} messages / {} words'.format(
+            r['msgs'], r['words']
+        )
+    else:
+        return 'Last month: nothing'
+
 
 def check_channel(client, nick, channel, target, args, **kwargs):
     if not client.channels[channel]['is_live']:
