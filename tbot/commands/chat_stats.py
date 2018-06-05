@@ -13,14 +13,7 @@ async def chat_stats(client, nick, channel, target, args, **kwargs):
         user = utils.safe_username(args[0])
         user_id = await utils.twitch_lookup_user_id(client.http_session, user)
 
-    if not client.channels[channel]['is_live']:
-        msg = '@{}, the stream is offline'.format(kwargs['display-name'])
-        client.send("PRIVMSG", target=target, message=msg)
-        return
-
-    if not client.channels[channel]['went_live_at']:
-        msg = '@{}, the stream start time is unknown to me'.format(kwargs['display-name'])
-        client.send("PRIVMSG", target=target, message=msg)
+    if not check_channel(client, nick, channel, target, args, **kwargs):
         return
 
     current_stream, current_month = await asyncio.gather(
@@ -38,14 +31,7 @@ async def chat_stats(client, nick, channel, target, args, **kwargs):
 
 @command('totalchatstats')
 async def total_chat_stats(client, nick, channel, target, args, **kwargs):
-    if not client.channels[channel]['is_live']:
-        msg = '@{}, the stream is offline'.format(kwargs['display-name'])
-        client.send("PRIVMSG", target=target, message=msg)
-        return
-
-    if not client.channels[channel]['went_live_at']:
-        msg = '@{}, the stream start time is unknown to me'.format(kwargs['display-name'])
-        client.send("PRIVMSG", target=target, message=msg)
+    if not check_channel(client, nick, channel, target, args, **kwargs):
         return
 
     # get stats for the current stream
@@ -125,3 +111,16 @@ async def user_month_stats(client, channel, user_id):
         )
     else:
         return 'This month: nothing'
+
+def check_channel(client, nick, channel, target, args, **kwargs):
+    if not client.channels[channel]['is_live']:
+        msg = '@{}, the stream is offline'.format(kwargs['display-name'])
+        client.send("PRIVMSG", target=target, message=msg)
+        return
+
+    if not client.channels[channel]['went_live_at']:
+        msg = '@{}, the stream start time is unknown to me'.format(kwargs['display-name'])
+        client.send("PRIVMSG", target=target, message=msg)
+        return
+
+    return True
