@@ -80,7 +80,7 @@ async def inc_watchtime(channel, inc_time):
         })
     if data:
         await bot.conn.execute(sa.sql.text('''
-            INSERT INTO current_stream_watchtime (channel, user, stream_id, time) 
+            INSERT INTO stream_watchtime (channel, user, stream_id, time) 
             VALUES (:channel, :user, :stream_id, :inc_time) ON DUPLICATE KEY UPDATE time=time+VALUES(time);
         '''), data)
 

@@ -2,7 +2,7 @@
 CREATE SCHEMA IF NOT EXISTS `tbot` DEFAULT CHARACTER SET utf8mb4 ;
 USE `tbot` ;
 
-CREATE TABLE IF NOT EXISTS `tbot`.`current_stream_watchtime` (
+CREATE TABLE IF NOT EXISTS `tbot`.`stream_watchtime` (
   `channel` VARCHAR(45) NOT NULL,
   `stream_id` VARCHAR(75) NOT NULL,
   `user` VARCHAR(45) NOT NULL,
