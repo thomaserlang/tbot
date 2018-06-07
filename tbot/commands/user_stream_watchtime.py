@@ -7,8 +7,10 @@ from tbot import utils
 @command('streamwatchtime', alias='swt')
 async def user_stream_watchtime(client, nick, channel, target, args, **kwargs):
     user = kwargs['display-name']
+    user_id = kwargs['user-id']
     if len(args) > 0:
         user = utils.safe_username(args[0])
+        user_id = await utils.twitch_lookup_user_id(client.http_session, user)
 
     if not client.channels[channel]['is_live']:
         msg = '@{}, the stream is offline'.format(kwargs['display-name'])
@@ -16,11 +18,11 @@ async def user_stream_watchtime(client, nick, channel, target, args, **kwargs):
         return
 
     r = await client.conn.execute(sa.sql.text(
-        'SELECT time FROM stream_watchtime WHERE channel=:channel AND stream_id=:stream_id AND user=:user'),
+        'SELECT time FROM stream_watchtime WHERE channel=:channel AND stream_id=:stream_id AND user_id=:user_id'),
         {
             'channel': channel, 
             'stream_id': client.channels[channel]['stream_id'], 
-            'user': user,
+            'user_id': user_id,
         }
     )
     r = await r.fetchone()
