@@ -34,7 +34,7 @@ async def connect(**kwargs):
 
 
 async def start_channels_check_callback():    
-    await asyncio.sleep(60)
+    await asyncio.sleep(10)
     global _channels_check_callback
     _channels_check_callback = \
         bot.loop.create_task(channels_check())
@@ -43,7 +43,7 @@ async def channels_check():
     bot.loop.create_task(start_channels_check_callback())
     logging.debug('Channels check')
     try:
-        await get_users()
+        await set_chatters()
         for channel in config['channels']:
             bot.loop.create_task(channel_check(channel))
     except:
@@ -54,6 +54,7 @@ async def channel_check(channel):
     now = datetime.utcnow().replace(microsecond=0)
     bot.channels[channel]['last_check'] = now
     old_is_live = bot.channels[channel]['is_live']
+    stream_id = bot.channels[channel]['stream_id']    
     is_live = await get_is_live(channel)
     await cache_channel(channel)
     if old_is_live == None:
@@ -63,25 +64,33 @@ async def channel_check(channel):
         if old_is_live != is_live:
             inc_time = int((now - bot.channels[channel]['went_live_at']).total_seconds())
             logging.info('{} is now live ({} seconds ago)'.format(channel, inc_time))
+            await save_stream_created(
+                channel, 
+                bot.channels[channel]['stream_id'], 
+                bot.channels[channel]['went_live_at']
+            )
         await inc_watchtime(channel, inc_time)
     else:
         if old_is_live != is_live:
             logging.info('{} went offline'.format(channel))
+            await save_stream_ended(stream_id)
+            await reset_streams_in_a_row(channel, stream_id)
 
 async def inc_watchtime(channel, inc_time):
     data = []
     logging.debug('Increment {} viewers with {} secs'.format(channel, inc_time))
-    for user in bot.channels[channel]['users']:
+    for u in bot.channels[channel]['users']:
         data.append({
-            'user': user, 
+            'user_id': u['id'],
+            'user': u['user'], 
             'channel': channel, 
             'stream_id': bot.channels[channel]['stream_id'],
             'inc_time': inc_time,
         })
     if data:
         await bot.conn.execute(sa.sql.text('''
-            INSERT INTO stream_watchtime (channel, user, stream_id, time) 
-            VALUES (:channel, :user, :stream_id, :inc_time) ON DUPLICATE KEY UPDATE time=time+VALUES(time);
+            INSERT INTO stream_watchtime (channel, user_id, user, stream_id, time) 
+            VALUES (:channel, :user_id, :user, :stream_id, :inc_time) ON DUPLICATE KEY UPDATE time=time+VALUES(time);
         '''), data)
 
 async def cache_channel(channel):
@@ -111,7 +120,7 @@ async def load_channels_cache():
         bot.channels[r['channel']]['last_check'] = \
             parse(data['last_check']) if data['last_check'] else None
 
-async def get_users():
+async def set_chatters():
     for channel in config['channels']:
         try:
             async with bot.http_session.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(channel)) as r:
@@ -119,16 +128,17 @@ async def get_users():
                     data = await r.json()
                     if data['chatter_count'] == 0:
                         continue
-                    users = []
-                    users.extend(data['chatters']['viewers'])
-                    users.extend(data['chatters']['global_mods'])
-                    users.extend(data['chatters']['admins'])
-                    users.extend(data['chatters']['staff'])
-                    users.extend(data['chatters']['moderators'])
-                    if users:
-                        bot.channels[channel]['users'] = users
+                    usernames = []
+                    usernames.extend(data['chatters']['viewers'])
+                    usernames.extend(data['chatters']['global_mods'])
+                    usernames.extend(data['chatters']['admins'])
+                    usernames.extend(data['chatters']['staff'])
+                    usernames.extend(data['chatters']['moderators'])
+                    if usernames:
+                        bot.channels[channel]['users'] = \
+                            await utils.twitch_lookup_usernames(bot.http_session, usernames)
         except:
-            logging.exception('get_users')
+            logging.exception('set_chatters')
 
 async def get_is_live(channel):
     try:
@@ -150,3 +160,37 @@ async def get_is_live(channel):
     if config['channel_always_live']:
         bot.channels[channel]['is_live'] = True
     return bot.channels[channel]['is_live'] 
+
+async def reset_streams_in_a_row(channel, stream_id):
+    await bot.conn.execute(sa.sql.text('''
+        UPDATE user_stats us
+                LEFT JOIN
+            stream_watchtime uw ON (uw.stream_id = :stream_id
+                AND uw.user_id = us.user_id) 
+        SET 
+            streams_row = 0
+        WHERE
+            us.channel = :channel
+                AND ISNULL(uw.user_id);
+    '''), {
+        'stream_id': stream_id,
+        'channel': channel,
+    })
+
+async def save_stream_created(channel, stream_id, started_at):
+    await bot.conn.execute(sa.sql.text('''
+        INSERT INTO streams (stream_id, channel, started_at) 
+        VALUES (:stream_id, :channel, :started_at);
+    '''), {
+        'channel': channel,
+        'stream_id': stream_id,
+        'started_at': started_at,
+    })
+
+async def save_stream_ended(stream_id):
+    await bot.conn.execute(sa.sql.text('''
+        UPDATE streams SET ended_at=:ended_at WHERE stream_id=:stream_id;
+    '''), {
+        'stream_id': stream_id,
+        'ended_at': datetime.utcnow(),
+    })

@@ -1,0 +1,41 @@
+import logging
+import sqlalchemy as sa
+from datetime import datetime
+from tbot.command import command
+from tbot import utils
+
+@command('streamsinarow', alias='siar')
+async def streams_in_a_row(client, nick, channel, target, args, **kwargs):
+    user = kwargs['display-name']
+    user_id = kwargs['user-id']
+    if len(args) > 0:
+        user = utils.safe_username(args[0])
+        user_id = await utils.twitch_lookup_user_id(client.http_session, user)
+
+    r = await client.conn.execute(sa.sql.text(
+        'SELECT * FROM user_stats WHERE channel=:channel AND user_id=:user_id'),
+        {
+            'channel': channel, 
+            'user_id': user_id,
+        }
+    )
+    r = await r.fetchone()
+
+    if not r:
+        msg = '{} is unknown to me'.format(user)
+        client.send("PRIVMSG", target=target, message=msg)
+        return
+
+    msg = '{} has been here for {} {} in a row'.format(
+        user,
+        r['streams_row'],
+        'streams' if r['streams_row'] != 1 else 'stream',
+    )
+
+    if r['streams_row'] < r['streams_row_peak']:
+        msg += ' (Peak: {}, {})'.format(
+            r['streams_row_peak'],
+            r['streams_row_peak_date'].isoformat()
+        )
+
+    client.send("PRIVMSG", target=target, message=msg)
