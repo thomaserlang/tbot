@@ -38,11 +38,11 @@ async def twitch_lookup_usernames(http_session, usernames):
     url = 'https://api.twitch.tv/helix/users'
     users = []
     for u in usernames:
-        u = u.lower()
-        if u in _cached_user_ids:
+        ul = u.lower()
+        if ul in _cached_user_ids:
             users.append({
-                'id': _cached_user_ids[u],
-                'user': u, 
+                'id': _cached_user_ids[ul],
+                'user': ul, 
             })
             usernames.remove(u)
     for unames in chunks(usernames, 1):
