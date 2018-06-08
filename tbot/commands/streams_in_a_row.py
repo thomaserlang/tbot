@@ -38,4 +38,9 @@ async def streams_in_a_row(client, nick, channel, target, args, **kwargs):
             r['streams_row_peak_date'].isoformat()
         )
 
+    msg += ' and a total of {} {}'.format(
+        r['streams'],
+        'streams' if r['streams'] != 1 else 'stream',
+    )
+
     client.send("PRIVMSG", target=target, message=msg)
