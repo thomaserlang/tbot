@@ -28,7 +28,7 @@ async def user_stream_watchtime(client, nick, channel, target, args, **kwargs):
     r = await r.fetchone()
 
     if not r or (r['time'] == 0):    
-        msg = '{} is unknown to me'.format(user)
+        msg = 'I have no data on {} yet'.format(user)
         client.send("PRIVMSG", target=target, message=msg)
         return
 

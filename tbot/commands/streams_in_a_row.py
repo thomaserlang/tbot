@@ -22,7 +22,7 @@ async def streams_in_a_row(client, nick, channel, target, args, **kwargs):
     r = await r.fetchone()
 
     if not r:
-        msg = '{} is unknown to me'.format(user)
+        msg = 'I have no data on {} yet'.format(user)
         client.send("PRIVMSG", target=target, message=msg)
         return
 
