@@ -25,7 +25,6 @@ async def connect(**kwargs):
                 'went_live_at': None,
                 'users': [],
                 'last_check': None,
-                'user': None,
             }
     global _channels_check_callback
     if not _channels_check_callback:
@@ -54,8 +53,9 @@ async def channel_check(channel):
     now = datetime.utcnow().replace(microsecond=0)
     bot.channels[channel]['last_check'] = now
     old_is_live = bot.channels[channel]['is_live']
-    stream_id = bot.channels[channel]['stream_id']    
-    is_live = await get_is_live(channel)
+    old_stream_id = bot.channels[channel]['stream_id']    
+    await update_current_stream_metadata(channel)
+    is_live = bot.channels[channel]['is_live']
     await cache_channel(channel)
     if old_is_live == None:
         return
@@ -73,8 +73,8 @@ async def channel_check(channel):
     else:
         if old_is_live != is_live:
             logging.info('{} went offline'.format(channel))
-            await save_stream_ended(stream_id)
-            await reset_streams_in_a_row(channel, stream_id)
+            await save_stream_ended(old_stream_id)
+            await reset_streams_in_a_row(channel, old_stream_id)
 
 async def inc_watchtime(channel, inc_time):
     data = []
@@ -140,7 +140,7 @@ async def set_chatters():
         except:
             logging.exception('set_chatters')
 
-async def get_is_live(channel):
+async def update_current_stream_metadata(channel):
     try:
         params = {'user_login': channel}
         url = 'https://api.twitch.tv/helix/streams'
@@ -157,7 +157,6 @@ async def get_is_live(channel):
                 bot.channels[channel]['stream_id'] = None                
     except:
         logging.exception('is_live')
-    return bot.channels[channel]['is_live'] 
 
 async def reset_streams_in_a_row(channel, stream_id):
     await bot.conn.execute(sa.sql.text('''
