@@ -1,4 +1,5 @@
 import re
+import logging
 from tbot import config
 
 def safe_username(user):
@@ -35,23 +36,26 @@ async def twitch_request(http_session, url, params=None, headers={}):
 
 _cached_user_ids = {}
 async def twitch_lookup_usernames(http_session, usernames):
+    global _cached_user_ids
     url = 'https://api.twitch.tv/helix/users'
     users = []
+    lookup_usernames = list(usernames)
     for u in usernames:
         ul = u.lower()
         if ul in _cached_user_ids:
+            lookup_usernames.remove(u)
             users.append({
                 'id': _cached_user_ids[ul],
                 'user': ul, 
             })
-            usernames.remove(u)
-    for unames in chunks(usernames, 1):
-        params = [('login', name) for name in unames]
-        data = await twitch_request(http_session, url, params)
-        if data:
-            for d in data['data']:
-                _cached_user_ids[d['login'].lower()] = d['id']
-                users.append({'id': d['id'], 'user': d['login']})
+    if lookup_usernames:
+        for unames in chunks(lookup_usernames, 100):
+            params = [('login', name) for name in unames]
+            data = await twitch_request(http_session, url, params)
+            if data:
+                for d in data['data']:
+                    _cached_user_ids[d['login'].lower()] = d['id']
+                    users.append({'id': d['id'], 'user': d['login']})
     return users
 
 async def twitch_lookup_user_id(http_session, username):
