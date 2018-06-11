@@ -34,7 +34,7 @@ async def connect(**kwargs):
 
 
 async def start_channels_check_callback():    
-    await asyncio.sleep(60)
+    await asyncio.sleep(config['check_channels_every'])
     global _channels_check_callback
     _channels_check_callback = \
         bot.loop.create_task(channels_check())

@@ -2,6 +2,7 @@ import os, yaml
 
 config = {
     'debug': False,
+    'check_channels_every': 60, # seconds
     'user': '',
     'token': '',
     'sql_url': '',
