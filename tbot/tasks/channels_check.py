@@ -157,8 +157,6 @@ async def get_is_live(channel):
                 bot.channels[channel]['stream_id'] = None                
     except:
         logging.exception('is_live')
-    if config['channel_always_live']:
-        bot.channels[channel]['is_live'] = True
     return bot.channels[channel]['is_live'] 
 
 async def reset_streams_in_a_row(channel, stream_id):

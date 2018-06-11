@@ -7,7 +7,6 @@ config = {
     'sql_url': '',
     'channels': '',
     'client_id': '',
-    'channel_always_live': False,
     'irc': {
         'host': 'irc.chat.twitch.tv',
         'port': 6697,
