@@ -1,12 +1,11 @@
 from setuptools import setup
-from tbot.constants import VERSION
 
 with open('requirements.txt') as f:
     install_requires = f.read().splitlines()
 
 setup(
     name='tbot',
-    version=VERSION,
+    version='0.17',
     author='Thomas Erlang',
     author_email='thomas@erlang.dk',
     url='',
