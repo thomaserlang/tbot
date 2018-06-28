@@ -3,7 +3,7 @@ from tbot import utils, constants
 from datetime import datetime
 
 @command('__thebotname')
-async def cmd_bot(client, nick, channel, target, args, **kwargs):
+async def cmd_bot(client, nick, channel, channel_id, target, args, **kwargs):
     if len(args) == 0:
         m = []
         for c in cmds:

@@ -1,3 +1,4 @@
+import logging
 import asyncio
 import functools
 from tbot import config
@@ -34,7 +35,8 @@ def handle_command(client, nick, target, message, **kwargs):
         client.loop.create_task(f(
             client=client,
             nick=nick,
-            channel=target.strip('#'), 
+            channel=target.strip('#'),
+            channel_id=int(kwargs['room-id']),
             target=target,
             message=message,
             args=args,

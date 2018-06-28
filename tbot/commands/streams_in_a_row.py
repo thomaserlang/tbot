@@ -5,7 +5,7 @@ from tbot.command import command
 from tbot import utils
 
 @command('streamsinarow', alias='siar')
-async def streams_in_a_row(client, nick, channel, target, args, **kwargs):
+async def streams_in_a_row(client, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     user_id = kwargs['user-id']
     if len(args) > 0:
@@ -13,9 +13,9 @@ async def streams_in_a_row(client, nick, channel, target, args, **kwargs):
         user_id = await utils.twitch_lookup_user_id(client.http_session, user)
 
     r = await client.conn.execute(sa.sql.text(
-        'SELECT * FROM user_stats WHERE channel=:channel AND user_id=:user_id'),
+        'SELECT * FROM user_stats WHERE channel_id=:channel_id AND user_id=:user_id'),
         {
-            'channel': channel, 
+            'channel_id': channel_id,
             'user_id': user_id,
         }
     )

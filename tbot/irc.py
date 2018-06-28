@@ -9,6 +9,7 @@ from tbot.command import handle_command
 from tbot import config
 
 bot = bottom.Client('a', 0)
+bot.channels = {}
 
 @bot.on('CLIENT_CONNECT')
 async def connect(**kwargs):
@@ -40,14 +41,20 @@ async def connect(**kwargs):
     for future in pending:
         future.cancel()
 
-    for channel in config['channels']:
-        bot.send('JOIN', channel='#'+channel)
+    channels = await get_channels()
+    for c in channels:
+        bot.send('JOIN', channel='#'+c['name'])
+        bot.channels[c['channel_id']] = {
+            'channel_id': c['channel_id'],
+            'name': c['name'],
+        }
 
     if bot.pong_check_callback:
         bot.pong_check_callback.cancel()
     if bot.ping_callback:
         bot.ping_callback.cancel()
     bot.ping_callback = asyncio.ensure_future(send_ping())
+    bot.trigger('AFTER_CHANNEL_JOIN')
 
 async def send_ping():
     await asyncio.sleep(random.randint(120, 240))
@@ -63,6 +70,17 @@ async def wait_for_pong():
         bot.ping_callback.cancel()
     bot.ping_callback = asyncio.ensure_future(send_ping())
     await bot.connect()
+
+async def get_channels():
+    q = await bot.conn.execute('SELECT channel_id, name FROM channels WHERE active="Y";')
+    rows = await q.fetchall()
+    l = []
+    for r in rows:
+        l.append({
+            'channel_id': r['channel_id'],
+            'name': r['name'].lower(),
+        })
+    return l
 
 @bot.on('CLIENT_DISCONNECT')
 async def disconnect(**kwargs):

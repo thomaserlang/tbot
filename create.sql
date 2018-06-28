@@ -2,21 +2,19 @@ CREATE SCHEMA IF NOT EXISTS `tbot` DEFAULT CHARACTER SET utf8mb4 ;
 USE `tbot` ;
 
 CREATE TABLE IF NOT EXISTS `tbot`.`stream_watchtime` (
-  `channel` VARCHAR(45) NOT NULL,
+  `channel_id` INT(11) UNSIGNED NOT NULL,
   `stream_id` VARCHAR(75) NOT NULL,
-  `user_id` INT UNSIGNED NULL,
-  `user` VARCHAR(45) NOT NULL,
+  `user_id` INT(11) UNSIGNED NOT NULL,
+  `user` VARCHAR(45) NULL,
   `time` INT NULL,
-  PRIMARY KEY (`channel`, `stream_id`, `user`))
+  PRIMARY KEY (`stream_id`, `user_id`, `channel_id`))
 ENGINE = InnoDB;
-
 
 CREATE TABLE IF NOT EXISTS `tbot`.`channel_cache` (
-  `channel` VARCHAR(50) NOT NULL,
+  `channel_id` INT(11) UNSIGNED NOT NULL,
   `data` TEXT NULL,
-  PRIMARY KEY (`channel`))
+  PRIMARY KEY (`channel_id`))
 ENGINE = InnoDB;
-
 
 CREATE TABLE IF NOT EXISTS `tbot`.`commands` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -31,7 +29,6 @@ CREATE TABLE IF NOT EXISTS `tbot`.`commands` (
   UNIQUE INDEX `ix_commands_channel_cmd` (`channel` ASC, `cmd` ASC))
 ENGINE = InnoDB;
 
-
 CREATE TABLE IF NOT EXISTS `tbot`.`command_aliases` (
   `channel` VARCHAR(50) NOT NULL,
   `alias` VARCHAR(45) NOT NULL,
@@ -45,41 +42,53 @@ CREATE TABLE IF NOT EXISTS `tbot`.`command_aliases` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-
 CREATE TABLE IF NOT EXISTS `tbot`.`user_stats` (
-  `channel` VARCHAR(45) NOT NULL,
-  `user_id` INT UNSIGNED NOT NULL,
-  `streams` INT NOT NULL DEFAULT 0,
-  `streams_row` INT NOT NULL DEFAULT 0,
-  `streams_row_peak` INT NOT NULL DEFAULT 0,
+  `channel_id` INT(11) UNSIGNED NOT NULL,
+  `user_id` INT(11) UNSIGNED NOT NULL,
+  `user` VARCHAR(45) NULL,
+  `streams` INT UNSIGNED NOT NULL DEFAULT 0,
+  `streams_row` INT UNSIGNED NOT NULL DEFAULT 0,
+  `streams_row_peak` INT UNSIGNED NOT NULL DEFAULT 0,
   `streams_row_peak_date` DATE NULL,
   `last_viewed_stream_id` VARCHAR(75) NULL,
   `last_viewed_stream_date` DATE NULL,
-  PRIMARY KEY (`user_id`, `channel`))
+  PRIMARY KEY (`user_id`, `channel_id`))
 ENGINE = InnoDB;
-
 
 CREATE TABLE IF NOT EXISTS `tbot`.`streams` (
   `stream_id` VARCHAR(75) NOT NULL,
-  `channel` VARCHAR(45) NULL,
+  `channel_id` INT(11) UNSIGNED NOT NULL,
   `started_at` DATETIME NULL,
   `ended_at` DATETIME NULL,
   PRIMARY KEY (`stream_id`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `tbot`.`channels` (
+  `channel_id` INT(11) UNSIGNED NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `active` ENUM('Y', 'N') NULL DEFAULT 'Y',
+  `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NULL,
+  PRIMARY KEY (`channel_id`))
 ENGINE = InnoDB;
 
 USE `tbot`;
 
 DELIMITER $$
 USE `tbot`$$
-CREATE DEFINER = CURRENT_USER TRIGGER `tbot`.`stream_watchtime_AFTER_INSERT` AFTER INSERT ON `stream_watchtime` FOR EACH ROW
+CREATE
+TRIGGER `tbot`.`stream_watchtime_AFTER_INSERT`
+AFTER INSERT ON `tbot`.`stream_watchtime`
+FOR EACH ROW
 BEGIN
 	INSERT INTO user_stats 
-		(channel, user_id, streams, streams_row, streams_row_peak, 
+		(channel_id, user_id, user, streams, streams_row, streams_row_peak, 
         streams_row_peak_date, last_viewed_stream_id, 
         last_viewed_stream_date)
 	VALUES
-		(new.channel, new.user_id, 1, 1, 1, date(now()), new.stream_id, date(now()))
+		(new.channel_id, new.user_id, new.user, 1, 1, 1, date(now()), new.stream_id, date(now()))
 	ON DUPLICATE KEY UPDATE 
+		user=new.user,
 		streams=streams+1,
         streams_row=streams_row+1,
         last_viewed_stream_id=new.stream_id,
@@ -87,7 +96,10 @@ BEGIN
 END$$
 
 USE `tbot`$$
-CREATE DEFINER = CURRENT_USER TRIGGER `tbot`.`user_stats_BEFORE_UPDATE` BEFORE UPDATE ON `user_stats` FOR EACH ROW
+CREATE
+TRIGGER `tbot`.`user_stats_BEFORE_UPDATE`
+BEFORE UPDATE ON `tbot`.`user_stats`
+FOR EACH ROW
 BEGIN
 	if new.streams_row > new.streams_row_peak then
 		set new.streams_row_peak = new.streams_row;
@@ -97,7 +109,3 @@ END$$
 
 
 DELIMITER ;
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
