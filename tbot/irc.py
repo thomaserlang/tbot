@@ -41,10 +41,12 @@ async def connect(**kwargs):
     for future in pending:
         future.cancel()
 
+    channels = await get_channels()
+    for c in channels:
+        bot.send('JOIN', channel='#'+c['name'])
+
     if not bot.channels:
-        channels = await get_channels()
         for c in channels:
-            bot.send('JOIN', channel='#'+c['name'])
             bot.channels[c['channel_id']] = {
                 'channel_id': c['channel_id'],
                 'name': c['name'],
