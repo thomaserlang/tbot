@@ -3,6 +3,7 @@ import os, yaml
 config = {
     'debug': False,
     'check_channels_every': 60, # seconds
+    'delay_offline': 0, # seconds
     'user': '',
     'token': '',
     'sql_url': '',

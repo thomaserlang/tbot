@@ -14,6 +14,7 @@ async def stream_uptime(client, nick, channel, channel_id, target, args, **kwarg
         client.send("PRIVMSG", target=target, message=msg)
         return
 
-    seconds = (datetime.utcnow() - client.channels[channel_id]['went_live_at']).total_seconds()
-    msg = 'This stream has been live for {}'.format(utils.seconds_to_pretty(seconds))
+    msg = 'This stream has been live for {}'.format(utils.seconds_to_pretty(
+        client.channels[channel_id]['uptime']
+    ))
     client.send("PRIVMSG", target=target, message=msg)

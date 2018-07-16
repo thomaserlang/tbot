@@ -32,8 +32,7 @@ async def user_stream_watchtime(client, nick, channel, channel_id, target, args,
         client.send("PRIVMSG", target=target, message=msg)
         return
 
-    total_live_seconds = round((client.channels[channel_id]['last_check'] - \
-        client.channels[channel_id]['went_live_at']).total_seconds())
+    total_live_seconds = client.channels[channel_id]['uptime']
     usertime = r['time']
     
     if (usertime > total_live_seconds) or ((total_live_seconds - usertime) <= 60):

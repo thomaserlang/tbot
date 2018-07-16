@@ -23,8 +23,10 @@ async def connect(**kwargs):
                 'is_live': None,
                 'stream_id': None,
                 'went_live_at': None,
+                'went_offline_at_delay': None,
                 'users': [],
                 'last_check': None,
+                'uptime': 0,
             })
         await load_channels_cache()
         _channels_check_callback = bot.loop.create_task(channels_check())
@@ -50,11 +52,14 @@ async def channel_check(channel_id):
     now = datetime.utcnow().replace(microsecond=0)
     bot.channels[channel_id]['last_check'] = now
     old_is_live = bot.channels[channel_id]['is_live']
-    old_stream_id = bot.channels[channel_id]['stream_id']    
+    old_stream_id = bot.channels[channel_id]['stream_id']
+    old_uptime = bot.channels[channel_id]['uptime']
     await update_current_stream_metadata(channel_id)
     is_live = bot.channels[channel_id]['is_live']
     await cache_channel(channel_id)
     if old_is_live == None:
+        return
+    if bot.channels[channel_id]['went_offline_at_delay']:
         return
     if is_live:
         inc_time = time_since_last_check = int((now - last_check).total_seconds())
@@ -69,7 +74,7 @@ async def channel_check(channel_id):
     else:
         if old_is_live != is_live:
             logging.info('{} went offline'.format(bot.channels[channel_id]['name']))
-            await save_stream_ended(old_stream_id)
+            await save_stream_ended(old_stream_id, old_uptime)
             await reset_streams_in_a_row(channel_id, old_stream_id)
 
 async def inc_watchtime(channel_id, inc_time):
@@ -78,6 +83,8 @@ async def inc_watchtime(channel_id, inc_time):
         bot.channels[channel_id]['name'], 
         inc_time,
     ))
+    bot.channels[channel_id]['uptime'] += inc_time        
+    bot.loop.create_task(cache_channel(channel_id))
     for u in bot.channels[channel_id]['users']:
         data.append({
             'channel_id': channel_id,
@@ -95,6 +102,7 @@ async def inc_watchtime(channel_id, inc_time):
 async def cache_channel(channel_id):
     went_live_at = bot.channels[channel_id]['went_live_at']
     last_check = bot.channels[channel_id]['last_check']
+    went_offline_at_delay = bot.channels[channel_id]['went_offline_at_delay']
     await bot.conn.execute(sa.sql.text('''
         INSERT INTO channel_cache (channel_id, data) VALUES (:channel_id, :data) ON DUPLICATE KEY UPDATE data=VALUES(data);
     '''), {
@@ -104,6 +112,9 @@ async def cache_channel(channel_id):
             'stream_id': bot.channels[channel_id]['stream_id'],
             'went_live_at': went_live_at.isoformat() if went_live_at else None,
             'last_check': last_check.isoformat() if last_check else None,
+            'went_offline_at_delay': went_offline_at_delay.isoformat() \
+                if went_offline_at_delay else None,
+            'uptime': bot.channels[channel_id]['uptime'],
         })
     })
 
@@ -118,6 +129,9 @@ async def load_channels_cache():
             parse(data['went_live_at']) if data['went_live_at'] else None
         bot.channels[r['channel_id']]['last_check'] = \
             parse(data['last_check']) if data['last_check'] else None
+        bot.channels[r['channel_id']]['went_offline_at_delay'] = \
+            parse(data['went_offline_at_delay']) if data.get('went_offline_at_delay') else None
+        bot.channels[r['channel_id']]['uptime'] = data['uptime'] if data.get('uptime') else 0
 
 async def set_chatters():
     for channel_id in bot.channels:
@@ -147,14 +161,31 @@ async def update_current_stream_metadata(channel_id):
         data = await utils.twitch_request(bot.http_session, url, params)
         if data:
             if data['data']:
-                if not bot.channels[channel_id]['is_live']:
-                    bot.channels[channel_id]['went_live_at'] = parse(data['data'][0]['started_at']).replace(tzinfo=None)
-                    bot.channels[channel_id]['stream_id'] = data['data'][0]['id']
-                    bot.channels[channel_id]['is_live'] = True
+                if bot.channels[channel_id]['is_live']:
+                    return
+                bot.channels[channel_id]['went_live_at'] = parse(data['data'][0]['started_at']).replace(tzinfo=None)
+                bot.channels[channel_id]['stream_id'] = data['data'][0]['id']
+                bot.channels[channel_id]['is_live'] = True
+                bot.channels[channel_id]['uptime'] = 0
             else:
+                if not bot.channels[channel_id]['is_live']:
+                    return
+                if config['delay_offline'] and not bot.channels[channel_id]['went_offline_at_delay']:
+                    logging.info('{} was detected as offline but will be delayed with {} seconds'.format(
+                        bot.channels[channel_id]['name'],
+                        config['delay_offline'],
+                    ))
+                    bot.channels[channel_id]['went_offline_at_delay'] = datetime.utcnow()
+                    return
+                woa = bot.channels[channel_id]['went_offline_at_delay']
+                if woa and int((datetime.utcnow() - woa).total_seconds()) <= \
+                    config['delay_offline']:
+                    return
                 bot.channels[channel_id]['is_live'] = False
                 bot.channels[channel_id]['went_live_at'] = None
-                bot.channels[channel_id]['stream_id'] = None                
+                bot.channels[channel_id]['stream_id'] = None
+                bot.channels[channel_id]['went_offline_at_delay'] = None
+                bot.channels[channel_id]['uptime'] = 0
     except:
         logging.exception('is_live')
 
@@ -184,10 +215,10 @@ async def save_stream_created(channel_id):
         'started_at': bot.channels[channel_id]['went_live_at'],
     })
 
-async def save_stream_ended(stream_id):
+async def save_stream_ended(stream_id, uptime):
     await bot.conn.execute(sa.sql.text('''
-        UPDATE streams SET ended_at=:ended_at WHERE stream_id=:stream_id;
+        UPDATE streams SET uptime=:uptime WHERE stream_id=:stream_id;
     '''), {
         'stream_id': stream_id,
-        'ended_at': datetime.utcnow(),
+        'uptime': uptime,
     })
