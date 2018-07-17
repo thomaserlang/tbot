@@ -161,6 +161,13 @@ async def update_current_stream_metadata(channel_id):
         data = await utils.twitch_request(bot.http_session, url, params)
         if data:
             if data['data']:
+                woa = bot.channels[channel_id]['went_offline_at_delay']
+                if woa:
+                    bot.channels[channel_id]['went_offline_at_delay'] = None
+                    logging.info('{} was detected as online again after {} seconds'.format(
+                        bot.channels[channel_id]['name'],
+                        int((datetime.utcnow() - woa).total_seconds()),
+                    ))
                 if bot.channels[channel_id]['is_live']:
                     return
                 bot.channels[channel_id]['went_live_at'] = parse(data['data'][0]['started_at']).replace(tzinfo=None)
