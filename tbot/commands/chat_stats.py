@@ -17,8 +17,8 @@ async def chat_stats(client, nick, channel, channel_id, target, args, **kwargs):
         return
 
     current_stream, current_month = await asyncio.gather(
-        current_stream_stats(client, channel, channel_id, user_id),
-        user_month_stats(client, channel, user_id),
+        current_stream_stats(client, channel_id, user_id),
+        user_month_stats(client, channel_id, user_id),
     )
 
     msg = '{}: {} - {}'.format(
@@ -37,7 +37,7 @@ async def chatstatslastmonth(client, nick, channel, channel_id, target, args, **
         user = utils.safe_username(args[0])
         user_id = await utils.twitch_lookup_user_id(client.http_session, user)
 
-    last_month = await user_last_month_stats(client, channel, user_id)
+    last_month = await user_last_month_stats(client, channel_id, user_id)
 
     msg = '{}: {}'.format(
         user,
@@ -54,11 +54,11 @@ async def total_chat_stats(client, nick, channel, channel_id, target, args, **kw
     q = await client.conn.execute(sa.sql.text(
         '''SELECT count(message) as msgs, sum(word_count) as words
            FROM logitch.entries WHERE 
-           channel=:channel AND 
+           channel_id=:channel_id AND 
            created_at>=:from_date AND 
            type=1;'''),
         {
-            'channel': channel, 
+            'channel_id': channel_id, 
             'from_date': client.channels[channel_id]['went_live_at'],
         }
     )
@@ -76,17 +76,17 @@ async def total_chat_stats(client, nick, channel, channel_id, target, args, **kw
     client.send("PRIVMSG", target=target, message=msg)
 
 
-async def current_stream_stats(client, channel, channel_id, user_id):
+async def current_stream_stats(client, channel_id, user_id):
     q = await client.conn.execute(sa.sql.text(
         '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
-           channel=:channel AND 
+           channel_id=:channel_id AND 
            user_id=:user_id AND 
            created_at>=:from_date AND 
            type=1
            GROUP BY user_id;'''),
         {
-            'channel': channel, 
+            'channel_id': channel_id, 
             'user_id': user_id,
             'from_date': client.channels[channel_id]['went_live_at'],
         }
@@ -100,7 +100,7 @@ async def current_stream_stats(client, channel, channel_id, user_id):
         return 'This stream: nothing'
 
 
-async def user_month_stats(client, channel, user_id):
+async def user_month_stats(client, channel_id, user_id):
     from_date = datetime.utcnow().replace(
         day=1, hour=0, minute=0, 
         second=0, microsecond=0,
@@ -108,13 +108,13 @@ async def user_month_stats(client, channel, user_id):
     q = await client.conn.execute(sa.sql.text(
         '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
-           channel=:channel AND 
+           channel_id=:channel_id AND 
            user_id=:user_id AND 
            created_at>=:from_date AND 
            type=1
            GROUP BY user_id;'''),
         {
-            'channel': channel, 
+            'channel_id': channel_id, 
             'user_id': user_id,
             'from_date': from_date,
         }
@@ -128,7 +128,7 @@ async def user_month_stats(client, channel, user_id):
         return 'This month: nothing'
 
 
-async def user_last_month_stats(client, channel, user_id):
+async def user_last_month_stats(client, channel_id, user_id):
     to_date = datetime.utcnow().replace(
         day=1, hour=0, minute=0, 
         second=0, microsecond=0,
@@ -140,14 +140,14 @@ async def user_last_month_stats(client, channel, user_id):
     q = await client.conn.execute(sa.sql.text(
         '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
-           channel=:channel AND 
+           channel_id=:channel_id AND 
            user_id=:user_id AND 
            created_at>=:from_date AND 
            created_at<=:to_date AND 
            type=1
            GROUP BY user_id;'''),
         {
-            'channel': channel, 
+            'channel_id': channel_id, 
             'user_id': user_id,
             'from_date': from_date,
             'to_date': to_date,
