@@ -7,8 +7,11 @@ config = {
     'user': '',
     'token': '',
     'sql_url': '',
-    'channels': '',
     'client_id': '',
+    'client_secret': '',
+    'redirect_uri': '',
+    'cookie_secret': '',
+    'web_port': 8001,
     'irc': {
         'host': 'irc.chat.twitch.tv',
         'port': 6697,

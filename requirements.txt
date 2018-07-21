@@ -4,7 +4,9 @@ sqlalchemy==1.2.5
 click==6.7
 requests==2.18.4
 python-dateutil==2.7.3
-aiohttp==3.0.0b0
+websockets>=5.0,<6.0
+tornado==5.0.1
+aiohttp>=3.3.0,<3.4.0
 cchardet==2.1.1
 aiodns==1.1.1
 sqlalchemy_aio==0.12.0
