@@ -46,8 +46,8 @@ async def twitch_sync_channel(client, info):
             seconds = (datetime.utcnow() - subbed_at).total_seconds()
             months = math.ceil(seconds / 60 / 60 / 24 / 30)
             if twitch_id in cached_sub_months:
-                if months < cached_sub_months[twitch_id]:
-                    months = cached_sub_months[twitch_id]
+                if months < cached_sub_months[twitch_id]+1:
+                    months = cached_sub_months[twitch_id]+1
             time_role = None
             for role in roles:
                 if not role['role_id']:
