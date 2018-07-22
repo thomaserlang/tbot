@@ -146,9 +146,10 @@ async def get_subscribers(client, info):
     headers = {
         'Authorization': 'OAuth {}'.format(info['twitch_token']),
         'Client-ID': config['client_id'],
+        'Accept': 'application/vnd.twitchtv.v5+json',
     }
     url = 'https://api.twitch.tv/kraken/channels/{}/subscriptions'.format(
-        info['name'].lower()
+        info['channel_id']
     )
     params = {
         'offset': 0,
