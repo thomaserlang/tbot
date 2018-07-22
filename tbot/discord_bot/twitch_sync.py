@@ -14,7 +14,7 @@ async def twitch_sync(client):
             q = await client.conn.execute(sa.sql.text('SELECT * FROM channels WHERE not isnull(discord_server_id) and active="Y";'))
             channels = await q.fetchall()
             for info in channels:
-                client.loop.create_task(twitch_sync_channel(client, info))
+                client.loop.create_task(twitch_sync_channel(client, dict(info)))
         except:
             logging.exception('twitch_sync')
         
