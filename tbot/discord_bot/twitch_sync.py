@@ -86,6 +86,8 @@ async def get_twitch_ids(client, server):
         try:
             if str(user.id) in users and users[str(user.id)]:
                 continue
+            if str(user.status) == 'offline':
+                continue
             data = await discord_request(
                 client.ahttp,
                 'https://discordapp.com/api/v6/users/{}/profile'.format(
