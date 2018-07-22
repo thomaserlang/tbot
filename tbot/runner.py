@@ -13,7 +13,7 @@ def cli(config, log_path, log_level):
     if log_level:
         config['logging']['level'] = log_level
 
-@click.command()
+@cli.command()
 def twitch_irc():
     logger.set_logger('twitch_irc.log')
 
@@ -30,5 +30,14 @@ def web():
     import tbot.web
     tbot.web.main() 
 
+@cli.command()
+def discord():
+    logger.set_logger('discord.log')
+    import tbot.discord_bot.bot
+    tbot.discord_bot.bot.main() 
+
+def main():
+    cli()
+
 if __name__ == "__main__":
-    irc()
+    main()

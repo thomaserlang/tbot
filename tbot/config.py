@@ -17,6 +17,12 @@ config = {
         'port': 6697,
         'use_ssl': True,
     },
+    'discord': {
+        'token': None,
+        'bot': True,
+        'user_token': None,
+        'twitch_sync_every': 3600,
+    },
     'logging': {
         'level': 'warning',
         'path': None,
