@@ -8,9 +8,9 @@ from tbot import config
 async def twitch_sync(client):
     await client.wait_until_ready()
     await asyncio.sleep(1)
-    logging.info('Twitch sync')
     while not client.is_closed():
         try:
+            logging.info('Twitch sync')
             q = await client.conn.execute(sa.sql.text('SELECT * FROM channels WHERE not isnull(discord_server_id) and active="Y";'))
             channels = await q.fetchall()
             for info in channels:
@@ -100,9 +100,9 @@ async def get_twitch_ids(client, server):
                     continue
                 if con['type'] != 'twitch':
                     continue
-                users[user.id] = int(con['id'])
+                users[str(user.id)] = int(con['id'])
                 await client.conn.execute(sa.sql.text('''
-                    INSERT INTO users (discord_id, twitch_id) VALUES (:discord_id, :twitch_id);
+                    INSERT IGNORE INTO users (discord_id, twitch_id) VALUES (:discord_id, :twitch_id);
                 '''), {
                     'discord_id': user.id,
                     'twitch_id': con['id'],
@@ -122,12 +122,12 @@ async def discord_request(http_session, url, params=None, headers={}):
             return data
 
 async def get_subscribers(client, info):
-    '''
+
     return [
         {
             "_id": "e5e2ddc37e74aa9636625e8d2cc2e54648a30418",
             "created_at": "2018-05-21T00:14:13Z",
-            "sub_plan": "1000",
+            "sub_plan": "3000",
             "sub_plan_name": "Channel Subscription (erleperle)",
             "user": {
                 "_id": "36981191",
@@ -141,7 +141,7 @@ async def get_subscribers(client, info):
             }
         },
     ]
-    '''
+
     headers = {
         'Authorization': 'OAuth {}'.format(info['twitch_token']),
         'Client-ID': config['client_id'],
