@@ -1,4 +1,4 @@
-from tbot.command import command, cmds
+from tbot.irc.command import command, cmds
 from tbot import utils, constants
 from datetime import datetime
 

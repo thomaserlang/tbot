@@ -4,8 +4,9 @@ import sqlalchemy as sa
 import requests
 from sqlalchemy_aio import ASYNCIO_STRATEGY
 from datetime import datetime
-from tbot.unpack import rfc2812_handler
-from tbot.command import handle_command
+from tbot.irc.unpack import rfc2812_handler
+from tbot.irc.command import handle_command
+from tbot.irc.sub_log import log_sub
 from tbot import config
 
 bot = bottom.Client('a', 0)
@@ -104,8 +105,9 @@ async def pong(message, **kwargs):
     bot.ping_callback = asyncio.ensure_future(send_ping())
 
 @bot.on('PRIVMSG')
-def message(nick, target, message, **kwargs):
+async def message(nick, target, message, **kwargs):
     handle_command(bot, nick, target, message, **kwargs)
+    bot.loop.create_task(log_sub(bot, nick, target, message, **kwargs))
 
 def main():
     logging.getLogger("requests").setLevel(logging.WARNING)
@@ -128,3 +130,12 @@ def main():
     bot.ping_callback = None
     bot.starttime = datetime.utcnow()
     return bot
+
+if __name__ == '__main__':
+    from tbot import config_load, logger
+    config_load('../../tbot.yaml')
+    logger.set_logger('bot.log')
+    print('test')
+    loop = asyncio.get_event_loop()
+    loop.create_task(main().connect())
+    loop.run_forever()

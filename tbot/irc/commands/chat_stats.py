@@ -1,7 +1,7 @@
 import asyncio
 import sqlalchemy as sa
 import logging
-from tbot.command import command
+from tbot.irc.command import command
 from tbot import utils
 from datetime import datetime, timedelta
 

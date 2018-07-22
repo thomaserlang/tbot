@@ -19,8 +19,8 @@ def twitch_irc():
 
     loop = asyncio.get_event_loop()
 
-    import tbot.irc
-    loop.create_task(tbot.irc.main().connect())
+    import tbot.irc.bot
+    loop.create_task(tbot.irc.bot.main().connect())
 
     loop.run_forever()
 

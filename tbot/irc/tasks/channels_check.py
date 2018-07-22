@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from dateutil.parser import parse
 from datetime import datetime
 from tbot import config, utils
-from tbot.irc import bot
+from tbot.irc.bot import bot
 
 """
 Responsible for monitoring a channel's live status
@@ -16,6 +16,7 @@ _channels_check_callback = None
 
 @bot.on('AFTER_CHANNEL_JOIN')
 async def connect(**kwargs):
+    logging.info('WHAT')
     global _channels_check_callback
     if not _channels_check_callback:
         for channel_id in bot.channels:

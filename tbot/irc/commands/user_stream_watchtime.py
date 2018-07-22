@@ -1,7 +1,7 @@
 import logging
 import sqlalchemy as sa
 from datetime import datetime
-from tbot.command import command
+from tbot.irc.command import command
 from tbot import utils
 
 @command('streamwatchtime', alias='swt')
