@@ -62,7 +62,7 @@ def App():
     return web.Application(
         [
             (r'/register', Login_handler),
-            (r'/oauth', OAuth_handler),
+            (r'/register/oauth', OAuth_handler),
         ], 
         debug=config['debug'], 
         cookie_secret=config['cookie_secret'],
