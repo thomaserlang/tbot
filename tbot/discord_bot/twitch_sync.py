@@ -217,6 +217,8 @@ async def refresh_twitch_token(client, info):
                 'twitch_token': data['access_token'],
                 'twitch_refresh_token': data['refresh_token'],
             })
+            info['twitch_token'] = data['access_token']
+            info['twitch_refresh_token'] = data['refresh_token']
         else:
             error = await r.text()
             raise Exception('Failed to refresh token for channel_id: {} - Error: {}: {}'.format(
