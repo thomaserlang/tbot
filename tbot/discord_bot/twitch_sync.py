@@ -8,6 +8,7 @@ from tbot import config
 async def twitch_sync(client):
     await client.wait_until_ready()
     await asyncio.sleep(1)
+    logging.info('Twitch sync')
     while not client.is_closed():
         try:
             q = await client.conn.execute(sa.sql.text('SELECT * FROM channels WHERE not isnull(discord_server_id) and active="Y";'))

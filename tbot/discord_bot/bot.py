@@ -13,6 +13,10 @@ from tbot import config
 
 client = discord.Client()
 
+@client.event
+async def on_ready():    
+    client.ahttp = aiohttp.ClientSession()
+
 def main():
     client.conn = sa.create_engine(config['sql_url'],
         convert_unicode=True,
@@ -22,7 +26,6 @@ def main():
         connect_args={'charset': 'utf8mb4'},
         strategy=ASYNCIO_STRATEGY,
     )
-    client.ahttp = aiohttp.ClientSession()
     client.loop.create_task(twitch_sync(client))
     client.run(config['discord']['token'], bot=config['discord']['bot'])
 
