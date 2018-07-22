@@ -72,7 +72,6 @@ async def twitch_sync_channel(client, info):
             member_roles_ids = [r.id for r in member.roles]
             for r in give_roles_ids:
                 if r not in member_roles_ids:
-                    if server_roles
                     give_roles.append(server_roles[str(r)])
 
             if give_roles:
