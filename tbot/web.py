@@ -61,7 +61,7 @@ class OAuth_handler(web.RequestHandler):
 def App():
     return web.Application(
         [
-            (r'/', Login_handler),
+            (r'/register', Login_handler),
             (r'/oauth', OAuth_handler),
         ], 
         debug=config['debug'], 
