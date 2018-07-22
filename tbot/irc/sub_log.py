@@ -3,7 +3,6 @@ import sqlalchemy as sa
 from tbot import config, utils
 
 subs = {}
-
 async def log_sub(bot, nick, target, message, **kwargs):
     if not subs:
         for channel in bot.channels:
@@ -12,20 +11,24 @@ async def log_sub(bot, nick, target, message, **kwargs):
         rows = await q.fetchall()
         for r in rows:
             subs[r['channel_id']][r['user_id']] = r['months']
-
     if kwargs['subscriber'] == '1':
-        m = re.match(r'subscriber/([0-9]+)', kwargs['badges'])
+        months = None
+        for b in kwargs['badges'].split(','):
+            b2 = b.split('/')
+            if b2[0] == 'subscriber':
+                months = int(b2[1])
+                break
         user_id = int(kwargs['user-id'])
         channel_id = int(kwargs['room-id'])
-        if m:
+        if months != None:
             if user_id not in subs[channel_id] or \
-                subs[channel_id][user_id] != int(m.group(1)):
+                subs[channel_id][user_id] != months:
                 await bot.conn.execute(sa.sql.text('''
                     INSERT INTO subscribers (channel_id, user_id, months) 
                     VALUES (:channel_id, :user_id, :months) ON DUPLICATE KEY UPDATE months=VALUES(months)
                 '''), {
                     'channel_id': channel_id,
                     'user_id': user_id,
-                    'months': m.group(1),
+                    'months': months,
                 })
-                subs[channel_id][user_id] = int(m.group(1))
+                subs[channel_id][user_id] = months
