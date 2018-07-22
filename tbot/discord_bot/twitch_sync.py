@@ -31,6 +31,7 @@ async def twitch_sync_channel(client, info):
     roles = await get_twitch_roles(client, server, info)
     roles_ids = [r['role_id'] for r in roles if r['role_id']]
     server_roles = {str(r.id): r for r in server.roles}
+    cached_sub_months = await get_cached_subscriber_months(client, info)
 
     for member in server.members:
         give_roles = []
@@ -44,6 +45,9 @@ async def twitch_sync_channel(client, info):
             subbed_at = parse(subinfo['created_at']).replace(tzinfo=None)
             seconds = (datetime.utcnow() - subbed_at).total_seconds()
             months = math.ceil(seconds / 60 / 60 / 24 / 30)
+            if twitch_id in cached_sub_months:
+                if months < cached_sub_months[twitch_id]:
+                    months = cached_sub_months[twitch_id]
             time_role = None
             for role in roles:
                 if not role['role_id']:
@@ -122,7 +126,7 @@ async def discord_request(http_session, url, params=None, headers={}):
             return data
 
 async def get_subscribers(client, info):
-    '''
+
     return [
         {
             "_id": "e5e2ddc37e74aa9636625e8d2cc2e54648a30418",
@@ -141,8 +145,6 @@ async def get_subscribers(client, info):
             }
         },
     ]
-    '''
-
     headers = {
         'Authorization': 'OAuth {}'.format(info['twitch_token']),
         'Client-ID': config['client_id'],
@@ -177,6 +179,15 @@ async def get_subscribers(client, info):
                     error,
                 ))
     return subs
+
+async def get_cached_subscriber_months(client, info):
+    q = await client.conn.execute(sa.sql.text(
+        'SELECT * FROM subscribers WHERE channel_id=:channel_id'
+    ), {
+        'channel_id': info['channel_id'],
+    })
+    rows = await q.fetchall()
+    return {r['user_id']: r['months'] for r in rows}
 
 async def get_twitch_roles(client, server, info):
     q = await client.conn.execute(sa.sql.text(
