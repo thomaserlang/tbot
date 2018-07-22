@@ -165,7 +165,6 @@ async def get_subscribers(client, info):
     while not total or (params['offset'] <= total):
         async with client.ahttp.get(url, params=params, headers=headers) as r:
             if r.status == 200:
-                logging.info(params)
                 data = await r.json()
                 subs.extend(data['subscriptions'])
                 params['offset'] += params['limit']
