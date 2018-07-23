@@ -27,7 +27,7 @@ async def twitchsync(ctx):
         message += ' Added {} roles.'.format(info['added_roles'])
     if info['removed_roles']:
         message += ' Removed {} roles.'.format(info['removed_roles'])
-    logging.info(info['errors'])
+
     if info['errors'][:10]:
         message += '\n\n **Errors**:'
         message += '```'
