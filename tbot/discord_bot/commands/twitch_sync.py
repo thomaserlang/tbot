@@ -5,7 +5,7 @@ from tbot import utils
 from tbot.discord_bot import bot
 from tbot.discord_bot.twitch_sync import twitch_sync_channel
 
-@bot.command()
+@bot.command(description='Sync subscriber roles from twitch. Must have `Manage roles` permission to use.')
 async def twitchsync(ctx):
     if not ctx.message.author.guild_permissions.manage_roles:
         return
@@ -34,7 +34,7 @@ async def twitchsync(ctx):
             utils.pluralize(info['removed_roles'], 'role'),
             utils.pluralize(info['removed_users'], 'user'),
         )
-    if not info['removed_roles'] and not info['added_roles']:
+    if not info['removed_roles'] and not info['added_roles'] and not info['errors']:
         message += ' There was nothing to change.'
 
     if info['errors'][:10]:

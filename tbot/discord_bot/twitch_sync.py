@@ -94,27 +94,27 @@ async def twitch_sync_channel(bot, info):
                             give_roles.append(server_roles[str(r)])
 
                     if give_roles:
-                        returninfo['added_users'] += 1
                         logging.debug('Give roles to {}: {}'.format(member.name, give_roles))
                         for r in give_roles:
                             try:
                                 await member.add_roles(r)
                                 returninfo['added_roles'] += 1
                             except:
-                                e = 'Failed to give role {} to {}'.format(r.name, member.name)
+                                e = 'Failed to give role `{}` to `{}`'.format(r.name, member.name)
                                 logging.exception(e)
                                 returninfo['errors'].append(e)
+                        returninfo['added_users'] += 1
                     if remove_roles:
-                        returninfo['removed_users'] += 1
                         logging.debug('Remove roles from {}: {}'.format(member.name, remove_roles))
                         for r in remove_roles:
                             try:
                                 await member.remove_roles(r)
                                 returninfo['removed_roles'] += 1
                             except:
-                                e = 'Failed to give role {} to {}'.format(r.name, member.name)
+                                e = 'Failed to give role `{}` to `{}`'.format(r.name, member.name)
                                 logging.exception(e)
                                 returninfo['errors'].append(e)
+                        returninfo['removed_users'] += 1
         except Exception as e:
             logging.exception('twitch_sync_channel {}'.format(info['name']))
             returninfo['errors'].append(str(e))
@@ -169,7 +169,7 @@ async def discord_request(http_session, url, params=None, headers={}):
             return data
 
 async def get_subscribers(bot, info):
-    '''
+
     return [
         {
             "_id": "e5e2ddc37e74aa9636625e8d2cc2e54648a30418",
@@ -188,7 +188,7 @@ async def get_subscribers(bot, info):
             }
         },
     ]
-    '''
+ 
     headers = {
         'Authorization': 'OAuth {}'.format(info['twitch_token']),
         'Client-ID': config['client_id'],
