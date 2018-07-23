@@ -16,7 +16,6 @@ _channels_check_callback = None
 
 @bot.on('AFTER_CHANNEL_JOIN')
 async def connect(**kwargs):
-    logging.info('WHAT')
     global _channels_check_callback
     if not _channels_check_callback:
         for channel_id in bot.channels:
