@@ -169,7 +169,7 @@ async def discord_request(http_session, url, params=None, headers={}):
             return data
 
 async def get_subscribers(bot, info):
-
+    '''
     return [
         {
             "_id": "e5e2ddc37e74aa9636625e8d2cc2e54648a30418",
@@ -188,7 +188,7 @@ async def get_subscribers(bot, info):
             }
         },
     ]
- 
+    '''
     headers = {
         'Authorization': 'OAuth {}'.format(info['twitch_token']),
         'Client-ID': config['client_id'],
