@@ -14,7 +14,7 @@ async def twitchsync(ctx):
         'discord_server_id': ctx.guild.id,
     })
     info = await q.fetchone()
-    logging.info(info)
+
     if not info:
         return
     info = dict(info)
