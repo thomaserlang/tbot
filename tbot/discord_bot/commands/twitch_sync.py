@@ -1,6 +1,7 @@
 import sqlalchemy as sa
 import logging
 import discord
+from tbot import utils
 from tbot.discord_bot import bot
 from tbot.discord_bot.twitch_sync import twitch_sync_channel
 
@@ -22,11 +23,19 @@ async def twitchsync(ctx):
     msg = await ctx.send('Syncing, please wait...')
     info = await twitch_sync_channel(bot, info)
 
-    message = 'Done. Found {} subs.'.format(info['subs'])
+    message = 'Sync complete.'
     if info['added_roles']:
-        message += ' Added {} roles.'.format(info['added_roles'])
+        message += ' Added {} to {}.'.format(
+            utils.pluralize(info['added_roles'], 'role'),
+            utils.pluralize(info['added_users'], 'user'),
+        )
     if info['removed_roles']:
-        message += ' Removed {} roles.'.format(info['removed_roles'])
+        message += ' Removed {} from {}.'.format(
+            utils.pluralize(info['removed_roles'], 'role'),
+            utils.pluralize(info['removed_users'], 'user'),
+        )
+    if not info['removed_roles'] and not info['added_roles']:
+        message += ' There was nothing to change.'
 
     if info['errors'][:10]:
         message += '\n\n **Errors**:'

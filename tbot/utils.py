@@ -68,3 +68,8 @@ def chunks(l, n):
     """Yield successive n-sized chunks from l."""
     for i in range(0, len(l), n):
         yield l[i:i + n]
+
+def pluralize(num, word):
+    if num != 1:
+        word += 's'
+    return '{} {}'.format(num, word)

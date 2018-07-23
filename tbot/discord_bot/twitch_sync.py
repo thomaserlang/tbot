@@ -25,7 +25,9 @@ async def twitch_sync_channel(bot, info):
     returninfo = {
         'errors': [],
         'added_roles': 0,
+        'added_users': 0,
         'removed_roles': 0,
+        'removed_users': 0,
         'subs': 0,
     }
     server = bot.get_guild(int(info['discord_server_id']))
@@ -92,6 +94,7 @@ async def twitch_sync_channel(bot, info):
                             give_roles.append(server_roles[str(r)])
 
                     if give_roles:
+                        returninfo['added_users'] += 1
                         logging.debug('Give roles to {}: {}'.format(member.name, give_roles))
                         for r in give_roles:
                             try:
@@ -102,6 +105,7 @@ async def twitch_sync_channel(bot, info):
                                 logging.exception(e)
                                 returninfo['errors'].append(e)
                     if remove_roles:
+                        returninfo['removed_users'] += 1
                         logging.debug('Remove roles from {}: {}'.format(member.name, remove_roles))
                         for r in remove_roles:
                             try:
