@@ -221,7 +221,7 @@ async def get_subscribers(bot, info):
 
 async def get_cached_badges_months(bot, info):
     q = await bot.conn.execute(sa.sql.text(
-        'SELECT sub, bits FROM twitch_badges WHERE channel_id=:channel_id'
+        'SELECT * FROM twitch_badges WHERE channel_id=:channel_id'
     ), {
         'channel_id': info['channel_id'],
     })
