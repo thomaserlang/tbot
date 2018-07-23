@@ -1,4 +1,3 @@
-print('INIT!!!')
 try:
     import discord
 except ImportError:
