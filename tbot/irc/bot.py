@@ -6,7 +6,7 @@ from sqlalchemy_aio import ASYNCIO_STRATEGY
 from datetime import datetime
 from tbot.irc.unpack import rfc2812_handler
 from tbot.irc.command import handle_command
-from tbot.irc.sub_log import log_sub
+from tbot.irc.badge_log import badge_log
 from tbot import config
 
 bot = bottom.Client('a', 0)
@@ -107,7 +107,7 @@ async def pong(message, **kwargs):
 @bot.on('PRIVMSG')
 async def message(nick, target, message, **kwargs):
     handle_command(bot, nick, target, message, **kwargs)
-    bot.loop.create_task(log_sub(bot, nick, target, message, **kwargs))
+    bot.loop.create_task(badge_log(bot, nick, target, message, **kwargs))
 
 def main():
     logging.getLogger("requests").setLevel(logging.WARNING)
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     from tbot import config_load, logger
     config_load('../../tbot.yaml')
     logger.set_logger('bot.log')
-    print('test')
+
     loop = asyncio.get_event_loop()
     loop.create_task(main().connect())
     loop.run_forever()

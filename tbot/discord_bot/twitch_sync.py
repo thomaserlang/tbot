@@ -45,7 +45,7 @@ async def twitch_sync_channel(bot, info):
             roles = await get_twitch_roles(bot, server, info)
             roles_ids = [r['role_id'] for r in roles if r['role_id']]
             server_roles = {str(r.id): r for r in server.roles}
-            cached_sub_months = await get_cached_subscriber_months(bot, info)
+            cached_badges = await get_cached_badges_months(bot, info)
 
             for member in server.members:
                 give_roles = []
@@ -60,9 +60,9 @@ async def twitch_sync_channel(bot, info):
                     subbed_at = parse(subinfo['created_at']).replace(tzinfo=None)
                     seconds = (datetime.utcnow() - subbed_at).total_seconds()
                     months = math.ceil(seconds / 60 / 60 / 24 / 30)
-                    if twitch_id in cached_sub_months:
-                        if months < cached_sub_months[twitch_id]+1:
-                            months = cached_sub_months[twitch_id]+1
+                    if twitch_id in cached_badges and cached_badges[twitch_id]['sub'] != None:
+                        if months < cached_badges[twitch_id]['sub']+1:
+                            months = cached_badges[twitch_id]['sub']+1
                     time_role = None
                     for role in roles:
                         if not role['role_id']:
@@ -219,14 +219,14 @@ async def get_subscribers(bot, info):
                 ))
     return subs
 
-async def get_cached_subscriber_months(bot, info):
+async def get_cached_badges_months(bot, info):
     q = await bot.conn.execute(sa.sql.text(
-        'SELECT * FROM subscribers WHERE channel_id=:channel_id'
+        'SELECT subs, cheer FROM twitch_badges WHERE channel_id=:channel_id'
     ), {
         'channel_id': info['channel_id'],
     })
     rows = await q.fetchall()
-    return {r['user_id']: r['months'] for r in rows}
+    return {r['user_id']: dict(r) for r in rows}
 
 async def get_twitch_roles(bot, server, info):
     q = await bot.conn.execute(sa.sql.text(
