@@ -33,8 +33,8 @@ def web():
 @cli.command()
 def discord():
     logger.set_logger('discord.log')
-    import tbot.discord_bot.bot
-    tbot.discord_bot.bot.main() 
+    import tbot.discord_bot.bot_main
+    tbot.discord_bot.bot_main.main() 
 
 def main():
     cli()
