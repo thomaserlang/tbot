@@ -52,12 +52,14 @@ async def twitch_sync_channel(client, info):
             for role in roles:
                 if not role['role_id']:
                     continue
+                if role['role_id'] not in server_roles:
+                    continue
                 if role['type'] == 'sub_tier' and role['value'] == subinfo['sub_plan']:
-                    if role['role_id'] in server_roles:
-                        give_roles.append(server_roles[role['role_id']])
+                    give_roles.append(server_roles[role['role_id']])
                 elif role['type'] == 'sub_time' and months >= int(role['value']):
-                    if role['role_id'] in server_roles:
-                        time_role = server_roles[role['role_id']]
+                    time_role = server_roles[role['role_id']]
+                elif role['type'] == 'sub':
+                    give_roles.append(server_roles[role['role_id']])
             if time_role:
                 give_roles.append(time_role)
         finally:
