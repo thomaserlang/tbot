@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `tbot`.`streams` (
   `stream_id` VARCHAR(75) NOT NULL,
   `channel_id` INT(11) UNSIGNED NOT NULL,
   `started_at` DATETIME NULL,
-  `ended_at` DATETIME NULL,
+  `uptime` INT UNSIGNED NULL,
   PRIMARY KEY (`stream_id`))
 ENGINE = InnoDB;
 
@@ -69,7 +69,37 @@ CREATE TABLE IF NOT EXISTS `tbot`.`channels` (
   `active` ENUM('Y', 'N') NULL DEFAULT 'Y',
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
+  `twitch_token` VARCHAR(200) NULL,
+  `twitch_refresh_token` VARCHAR(200) NULL,
+  `discord_server_id` VARCHAR(30) NULL,
   PRIMARY KEY (`channel_id`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `tbot`.`users` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `twitch_id` INT(11) NULL,
+  `discord_id` VARCHAR(30) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `twitch_user_id_UNIQUE` (`twitch_id` ASC),
+  UNIQUE INDEX `discord_id_UNIQUE` (`discord_id` ASC))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `tbot`.`twitch_discord_roles` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `channel_id` INT(11) UNSIGNED NULL,
+  `role_id` VARCHAR(30) NULL,
+  `role_name` VARCHAR(45) NULL,
+  `type` VARCHAR(45) NULL,
+  `value` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `tbot`.`twitch_badges` (
+  `channel_id` INT(11) UNSIGNED NOT NULL,
+  `user_id` INT(11) UNSIGNED NOT NULL,
+  `sub` INT UNSIGNED NULL,
+  `bits` INT UNSIGNED NULL,
+  PRIMARY KEY (`channel_id`, `user_id`))
 ENGINE = InnoDB;
 
 USE `tbot`;
@@ -109,3 +139,7 @@ END$$
 
 
 DELIMITER ;
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
