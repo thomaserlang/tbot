@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from dateutil.parser import parse
 from datetime import datetime
 from tbot import config, utils
-from tbot.irc import bot
+from tbot.twitch_bot import bot
 
 """
 Responsible for monitoring a channel's live status

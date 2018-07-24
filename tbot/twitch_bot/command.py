@@ -2,7 +2,7 @@ import logging
 import asyncio
 import functools
 from tbot import config
-from tbot.irc import bot
+from tbot.twitch_bot import bot
 
 cmds = []
 _cmd_lookup = {}

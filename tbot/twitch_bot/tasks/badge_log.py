@@ -1,22 +1,22 @@
 import logging
 import sqlalchemy as sa
-from tbot.irc import bot
+from tbot.twitch_bot import bot
 
 badges = {}
 
 @bot.on('PRIVMSG')
 async def badge_log(nick, target, message, **kwargs):
-    logging.info(kwargs)
     if not badges:
         for channel in bot.channels:
             badges[channel] = {}
         q = await bot.conn.execute('SELECT * FROM twitch_badges')
         rows = await q.fetchall()
         for r in rows:
-            badges[r['channel_id']][r['user_id']] = {
-                'sub': r['sub'],
-                'bits': r['bits'],
-            }
+            if r['channel_id'] in badges:
+                badges[r['channel_id']][r['user_id']] = {
+                    'sub': r['sub'],
+                    'bits': r['bits'],
+                }
     if not kwargs['badges']:
         return
 

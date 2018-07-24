@@ -3,10 +3,10 @@ import asyncio, aiohttp
 import sqlalchemy as sa
 from sqlalchemy_aio import ASYNCIO_STRATEGY
 from datetime import datetime
-from tbot.irc.unpack import rfc2812_handler
+from tbot.twitch_bot.unpack import rfc2812_handler
 from tbot import config
-from tbot.irc import bot
-from tbot.irc import commands, tasks
+from tbot.twitch_bot import bot
+from tbot.twitch_bot import commands, tasks
 
 bot.channels = {}
 

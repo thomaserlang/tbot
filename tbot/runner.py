@@ -14,10 +14,10 @@ def cli(config, log_path, log_level):
         config['logging']['level'] = log_level
 
 @cli.command()
-def twitch_irc():
-    logger.set_logger('twitch_irc.log')
-    import tbot.irc.bot_main
-    tbot.irc.bot_main.main()
+def twitch():
+    logger.set_logger('twitch.log')
+    import tbot.twitch_bot.bot_main
+    tbot.twitch_bot.bot_main.main()
 
 @cli.command()
 def web():
