@@ -8,8 +8,8 @@ import tbot.discord_bot.tasks
 
 @bot.event
 async def on_connect():
-    bot.ahttp = aiohttp.ClientSession()
-    bot.loop.create_task(tbot.discord_bot.tasks.twitch_sync.twitch_sync())
+    if not hasattr(bot, 'ahttp'):
+        bot.ahttp = aiohttp.ClientSession()
 
 def main():
     bot.conn = sa.create_engine(config['sql_url'],
@@ -20,6 +20,7 @@ def main():
         connect_args={'charset': 'utf8mb4'},
         strategy=ASYNCIO_STRATEGY,
     )
+    bot.loop.create_task(tbot.discord_bot.tasks.twitch_sync.twitch_sync())
     bot.run(config['discord']['token'], bot=config['discord']['bot'])
 
 if __name__ == '__main__':
