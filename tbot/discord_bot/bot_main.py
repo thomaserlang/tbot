@@ -7,8 +7,9 @@ import tbot.discord_bot.commands
 import tbot.discord_bot.tasks
 
 @bot.event
-async def on_ready():
+async def on_connect():
     bot.ahttp = aiohttp.ClientSession()
+    bot.loop.create_task(tbot.discord_bot.tasks.twitch_sync.twitch_sync())
 
 def main():
     bot.conn = sa.create_engine(config['sql_url'],

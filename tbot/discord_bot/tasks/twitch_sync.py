@@ -6,10 +6,6 @@ from datetime import datetime
 from tbot import config
 from tbot.discord_bot import bot
 
-@bot.event
-async def on_read():    
-    bot.loop.create_task(twitch_sync(bot))
-
 async def twitch_sync():
     await bot.wait_until_ready()
     await asyncio.sleep(1)
