@@ -4,8 +4,13 @@ from urllib.parse import urlencode
 from dateutil.parser import parse
 from datetime import datetime
 from tbot import config
+from tbot.discord_bot import bot
 
-async def twitch_sync(bot):
+@bot.event
+async def on_read():    
+    bot.loop.create_task(twitch_sync(bot))
+
+async def twitch_sync():
     await bot.wait_until_ready()
     await asyncio.sleep(1)
     while not bot.is_closed():
@@ -14,14 +19,14 @@ async def twitch_sync(bot):
             q = await bot.conn.execute(sa.sql.text('SELECT * FROM channels WHERE not isnull(discord_server_id) and active="Y";'))
             channels = await q.fetchall()
             for info in channels:
-                bot.loop.create_task(twitch_sync_channel(bot, dict(info)))
+                bot.loop.create_task(twitch_sync_channel(dict(info)))
         except:
             logging.exception('twitch_sync')
         
         await asyncio.sleep(config['discord']['twitch_sync_every'])
 
 running = {}
-async def twitch_sync_channel(bot, info):
+async def twitch_sync_channel(info):
     returninfo = {
         'errors': [],
         'added_roles': 0,
@@ -41,13 +46,13 @@ async def twitch_sync_channel(bot, info):
     running[info['channel_id']] = True
     try:
         try:
-            users = await get_twitch_ids(bot, server)
-            subs = await get_subscribers(bot, info)
+            users = await get_twitch_ids(server)
+            subs = await get_subscribers(info)
             subs = {int(d['user']['_id']): d for d in subs}
-            roles = await get_twitch_roles(bot, server, info)
+            roles = await get_twitch_roles(server, info)
             roles_ids = [r['role_id'] for r in roles if r['role_id']]
             server_roles = {str(r.id): r for r in server.roles}
-            cached_badges = await get_cached_badges_months(bot, info)
+            cached_badges = await get_cached_badges_months(info)
 
             for member in server.members:
                 give_roles = []
@@ -122,7 +127,7 @@ async def twitch_sync_channel(bot, info):
         running[info['channel_id']] = False
         return returninfo
 
-async def get_twitch_ids(bot, server):
+async def get_twitch_ids(server):
     q = await bot.conn.execute(sa.sql.text(
         'SELECT discord_id, twitch_id FROM users;'
     ))
@@ -168,7 +173,7 @@ async def discord_request(http_session, url, params=None, headers={}):
             data = await r.json()
             return data
 
-async def get_subscribers(bot, info):
+async def get_subscribers(info):
     '''
     return [
         {
@@ -211,8 +216,8 @@ async def get_subscribers(bot, info):
                 params['offset'] += params['limit']
                 total = data['_total']
             elif r.status == 401:
-                await refresh_twitch_token(bot, info)
-                d = await get_subscribers(bot, info)
+                await refresh_twitch_token(info)
+                d = await get_subscribers(info)
                 return d
             else:              
                 error = await r.text()
@@ -223,7 +228,7 @@ async def get_subscribers(bot, info):
                 ))
     return subs
 
-async def get_cached_badges_months(bot, info):
+async def get_cached_badges_months(info):
     q = await bot.conn.execute(sa.sql.text(
         'SELECT * FROM twitch_badges WHERE channel_id=:channel_id'
     ), {
@@ -232,7 +237,7 @@ async def get_cached_badges_months(bot, info):
     rows = await q.fetchall()
     return {r['user_id']: dict(r) for r in rows}
 
-async def get_twitch_roles(bot, server, info):
+async def get_twitch_roles(server, info):
     q = await bot.conn.execute(sa.sql.text(
         'SELECT * FROM twitch_discord_roles WHERE channel_id=:channel_id'
     ), {
@@ -253,7 +258,7 @@ async def get_twitch_roles(bot, server, info):
                     role['role_id'] = str(r.id)
     return db_roles
 
-async def refresh_twitch_token(bot, info):
+async def refresh_twitch_token(info):
     url = 'https://id.twitch.tv/oauth2/token'
     params = {
         'grant_type': 'refresh_token',

@@ -3,7 +3,7 @@ import logging
 import discord
 from tbot import utils
 from tbot.discord_bot import bot
-from tbot.discord_bot.twitch_sync import twitch_sync_channel
+from tbot.discord_bot.tasks.twitch_sync import twitch_sync_channel
 
 @bot.command(description='Sync subscriber roles from twitch. Must have `Manage roles` permission to use.')
 async def twitchsync(ctx):
@@ -21,7 +21,7 @@ async def twitchsync(ctx):
     info = dict(info)
 
     msg = await ctx.send('Syncing, please wait...')
-    info = await twitch_sync_channel(bot, info)
+    info = await twitch_sync_channel(info)
 
     message = 'Sync complete.'
     if info['added_roles']:
