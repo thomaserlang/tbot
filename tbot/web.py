@@ -8,9 +8,9 @@ class Login_handler(web.RequestHandler):
 
     def get(self):
         self.redirect('https://id.twitch.tv/oauth2/authorize?'+parse.urlencode({
-                'client_id': config['client_id'],
+                'client_id': config['twitch']['client_id'],
                 'response_type': 'code',
-                'redirect_uri': config['redirect_uri'],
+                'redirect_uri': config['twitch']['redirect_uri'],
                 'scope': 'channel_subscriptions',
             })
         )
@@ -21,10 +21,10 @@ class OAuth_handler(web.RequestHandler):
         code = self.get_argument('code')
         http = httpclient.AsyncHTTPClient()
         response = await http.fetch('https://id.twitch.tv/oauth2/token?'+parse.urlencode({
-            'client_id': config['client_id'],
-            'client_secret': config['client_secret'],
+            'client_id': config['twitch']['client_id'],
+            'client_secret': config['twitch']['client_secret'],
             'code': code,
-            'redirect_uri': config['redirect_uri'],
+            'redirect_uri': config['twitch']['redirect_uri'],
             'grant_type': 'authorization_code',
         }), body='', method='POST', raise_error=False)
         if response.code != 200:

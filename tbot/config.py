@@ -1,21 +1,21 @@
 import os, yaml
 
 config = {
-    'debug': False,
-    'check_channels_every': 60, # seconds
-    'delay_offline': 0, # seconds
-    'user': '',
-    'token': '',
     'sql_url': '',
-    'client_id': '',
-    'client_secret': '',
-    'redirect_uri': '',
+    'debug': False,
     'cookie_secret': '',
     'web_port': 8001,
-    'irc': {
-        'host': 'irc.chat.twitch.tv',
-        'port': 6697,
-        'use_ssl': True,
+    'twitch': {
+        'user': '',
+        'token': '',
+        'client_id': '',
+        'client_secret': '',
+        'redirect_uri': '',        
+        'irc_host': 'irc.chat.twitch.tv',
+        'irc_port': 6697,
+        'irc_use_ssl': True,
+        'check_channels_every': 60, # seconds
+        'delay_offline': 0, # seconds
     },
     'discord': {
         'token': None,

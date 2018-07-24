@@ -32,7 +32,7 @@ async def connect(**kwargs):
         _channels_check_callback = bot.loop.create_task(channels_check())
 
 async def start_channels_check_callback():    
-    await asyncio.sleep(config['check_channels_every'])
+    await asyncio.sleep(config['twitch']['check_channels_every'])
     global _channels_check_callback
     _channels_check_callback = \
         bot.loop.create_task(channels_check())
@@ -177,16 +177,16 @@ async def update_current_stream_metadata(channel_id):
             else:
                 if not bot.channels[channel_id]['is_live']:
                     return
-                if config['delay_offline'] and not bot.channels[channel_id]['went_offline_at_delay']:
+                if config['twitch']['delay_offline'] and not bot.channels[channel_id]['went_offline_at_delay']:
                     logging.info('{} was detected as offline but will be delayed with {} seconds'.format(
                         bot.channels[channel_id]['name'],
-                        config['delay_offline'],
+                        config['twitch']['delay_offline'],
                     ))
                     bot.channels[channel_id]['went_offline_at_delay'] = datetime.utcnow()
                     return
                 woa = bot.channels[channel_id]['went_offline_at_delay']
                 if woa and int((datetime.utcnow() - woa).total_seconds()) <= \
-                    config['delay_offline']:
+                    config['twitch']['delay_offline']:
                     return
                 bot.channels[channel_id]['is_live'] = False
                 bot.channels[channel_id]['went_live_at'] = None

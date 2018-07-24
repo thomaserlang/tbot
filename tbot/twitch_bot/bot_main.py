@@ -17,11 +17,11 @@ async def connect(**kwargs):
     if bot.pong_check_callback:
         bot.pong_check_callback.cancel()
 
-    logging.info('IRC Connecting to {}:{}'.format(config['irc']['host'], config['irc']['port']))
-    if config['token']:
-        bot.send('PASS', password='oauth:{}'.format(config['token']))
-    bot.send('NICK', nick=config['user'])
-    bot.send('USER', user=config['user'], realname=config['user'])
+    logging.info('IRC Connecting to {}:{}'.format(config['twitch']['irc_host'], config['twitch']['irc_port']))
+    if config['twitch']['token']:
+        bot.send('PASS', password='oauth:{}'.format(config['twitch']['token']))
+    bot.send('NICK', nick=config['twitch']['user'])
+    bot.send('USER', user=config['twitch']['user'], realname=config['twitch']['user'])
 
     # Don't try to join channels until the server has
     # sent the MOTD, or signaled that there's no MOTD.
@@ -103,9 +103,9 @@ async def pong(message, **kwargs):
     bot.ping_callback = asyncio.ensure_future(send_ping())
 
 def main():
-    bot.host = config['irc']['host'] 
-    bot.port = config['irc']['port'] 
-    bot.ssl = config['irc']['use_ssl']
+    bot.host = config['twitch']['irc_host'] 
+    bot.port = config['twitch']['irc_port'] 
+    bot.ssl = config['twitch']['irc_use_ssl']
     bot.raw_handlers = [rfc2812_handler(bot)]
     bot.conn = sa.create_engine(config['sql_url'],
         convert_unicode=True,

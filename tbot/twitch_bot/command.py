@@ -30,7 +30,7 @@ def handle_command(nick, target, message, **kwargs):
         return    
     args = message.split(' ')
     cmd = args.pop(0).lower().strip('!')
-    if cmd == config['user'].lower():
+    if cmd == config['twitch']['user'].lower():
         cmd = '__thebotname'
     if cmd in _cmd_lookup:
         f = _cmd_lookup[cmd]['func']

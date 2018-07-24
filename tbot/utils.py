@@ -27,7 +27,7 @@ def seconds_to_pretty(seconds):
 
 async def twitch_request(http_session, url, params=None, headers={}):    
     headers.update({
-        'Authorization': 'Bearer {}'.format(config['token'])
+        'Authorization': 'Bearer {}'.format(config['twitch']['token'])
     })
     async with http_session.get(url, params=params, headers=headers) as r:
         if r.status == 200:

@@ -192,7 +192,7 @@ async def get_subscribers(info):
     '''
     headers = {
         'Authorization': 'OAuth {}'.format(info['twitch_token']),
-        'Client-ID': config['client_id'],
+        'Client-ID': config['twitch']['client_id'],
         'Accept': 'application/vnd.twitchtv.v5+json',
     }
     url = 'https://api.twitch.tv/kraken/channels/{}/subscriptions'.format(
@@ -259,8 +259,8 @@ async def refresh_twitch_token(info):
     params = {
         'grant_type': 'refresh_token',
         'refresh_token': info['twitch_refresh_token'],
-        'client_id': config['client_id'],
-        'client_secret': config['client_secret'],
+        'client_id': config['twitch']['client_id'],
+        'client_secret': config['twitch']['client_secret'],
     }
     logging.debug('Refresh token for channel: {}'.format(info['name']))
     async with bot.ahttp.post(url, params=params) as r:
