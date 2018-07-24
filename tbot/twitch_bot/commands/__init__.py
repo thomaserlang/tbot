@@ -1,7 +1,5 @@
-import pkgutil
+import pkgutil 
 
-__all__ = []
-for loader, module_name, is_pkg in  pkgutil.walk_packages(__path__):
-    __all__.append(module_name)
-    module = loader.find_module(module_name).load_module(module_name)
-    exec('%s = module' % module_name)
+__path__ = pkgutil.extend_path(__path__, __name__)
+for importer, modname, ispkg in pkgutil.walk_packages(path=__path__, prefix=__name__+'.'):
+      __import__(modname)
