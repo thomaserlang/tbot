@@ -1,9 +1,12 @@
-import logging, re
+import logging
 import sqlalchemy as sa
-from tbot import config, utils
+from tbot.irc import bot
 
 badges = {}
-async def badge_log(bot, nick, target, message, **kwargs):
+
+@bot.on('PRIVMSG')
+async def badge_log(nick, target, message, **kwargs):
+    logging.info(kwargs)
     if not badges:
         for channel in bot.channels:
             badges[channel] = {}

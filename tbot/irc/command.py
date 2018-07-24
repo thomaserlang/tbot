@@ -2,6 +2,7 @@ import logging
 import asyncio
 import functools
 from tbot import config
+from tbot.irc import bot
 
 cmds = []
 _cmd_lookup = {}
@@ -23,7 +24,8 @@ def command(cmd, alias=None, arg_desc=None):
             _cmd_lookup[alias] = d
     return wrapper
 
-def handle_command(client, nick, target, message, **kwargs):
+@bot.on('PRIVMSG')
+def handle_command(nick, target, message, **kwargs):
     if not message.startswith('!'):
         return    
     args = message.split(' ')
@@ -32,8 +34,8 @@ def handle_command(client, nick, target, message, **kwargs):
         cmd = '__thebotname'
     if cmd in _cmd_lookup:
         f = _cmd_lookup[cmd]['func']
-        client.loop.create_task(f(
-            client=client,
+        bot.loop.create_task(f(
+            bot=bot,
             nick=nick,
             channel=target.strip('#'),
             channel_id=int(kwargs['room-id']),

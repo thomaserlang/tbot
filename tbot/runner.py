@@ -16,13 +16,8 @@ def cli(config, log_path, log_level):
 @cli.command()
 def twitch_irc():
     logger.set_logger('twitch_irc.log')
-
-    loop = asyncio.get_event_loop()
-
-    import tbot.irc.bot
-    loop.create_task(tbot.irc.bot.main().connect())
-
-    loop.run_forever()
+    import tbot.irc.bot_main
+    tbot.irc.bot_main.main()
 
 @cli.command()
 def web():

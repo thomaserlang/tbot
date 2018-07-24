@@ -5,14 +5,14 @@ from tbot.irc.command import command
 from tbot import utils
 
 @command('streamsinarow', alias='siar')
-async def streams_in_a_row(client, nick, channel, channel_id, target, args, **kwargs):
+async def streams_in_a_row(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     user_id = kwargs['user-id']
     if len(args) > 0:
         user = utils.safe_username(args[0])
-        user_id = await utils.twitch_lookup_user_id(client.http_session, user)
+        user_id = await utils.twitch_lookup_user_id(bot.http_session, user)
 
-    r = await client.conn.execute(sa.sql.text(
+    r = await bot.conn.execute(sa.sql.text(
         'SELECT * FROM user_stats WHERE channel_id=:channel_id AND user_id=:user_id'),
         {
             'channel_id': channel_id,
@@ -23,7 +23,7 @@ async def streams_in_a_row(client, nick, channel, channel_id, target, args, **kw
 
     if not r:
         msg = 'I have no data on {} yet'.format(user)
-        client.send("PRIVMSG", target=target, message=msg)
+        bot.send("PRIVMSG", target=target, message=msg)
         return
 
     msg = '{} has been here for {} {} in a row'.format(
@@ -43,4 +43,4 @@ async def streams_in_a_row(client, nick, channel, channel_id, target, args, **kw
         'streams' if r['streams'] != 1 else 'stream',
     )
 
-    client.send("PRIVMSG", target=target, message=msg)
+    bot.send("PRIVMSG", target=target, message=msg)

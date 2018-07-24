@@ -6,19 +6,19 @@ from tbot import utils
 from datetime import datetime, timedelta
 
 @command('chatstats')
-async def chat_stats(client, nick, channel, channel_id, target, args, **kwargs):
+async def chat_stats(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     user_id = kwargs['user-id']
     if len(args) > 0:
         user = utils.safe_username(args[0])
-        user_id = await utils.twitch_lookup_user_id(client.http_session, user)
+        user_id = await utils.twitch_lookup_user_id(bot.http_session, user)
 
-    if not check_channel(client, nick, channel, channel_id, target, args, **kwargs):
+    if not check_channel(bot, nick, channel, channel_id, target, args, **kwargs):
         return
 
     current_stream, current_month = await asyncio.gather(
-        current_stream_stats(client, channel_id, user_id),
-        user_month_stats(client, channel_id, user_id),
+        current_stream_stats(bot, channel_id, user_id),
+        user_month_stats(bot, channel_id, user_id),
     )
 
     msg = '{}: {} - {}'.format(
@@ -26,32 +26,32 @@ async def chat_stats(client, nick, channel, channel_id, target, args, **kwargs):
         current_stream,
         current_month,
     )
-    client.send("PRIVMSG", target=target, message=msg)
+    bot.send("PRIVMSG", target=target, message=msg)
 
 @command('chatstatslastmonth')
-async def chatstatslastmonth(client, nick, channel, channel_id, target, args, **kwargs):
+async def chatstatslastmonth(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     user_id = kwargs['user-id']
 
     if len(args) == 1:
         user = utils.safe_username(args[0])
-        user_id = await utils.twitch_lookup_user_id(client.http_session, user)
+        user_id = await utils.twitch_lookup_user_id(bot.http_session, user)
 
-    last_month = await user_last_month_stats(client, channel_id, user_id)
+    last_month = await user_last_month_stats(bot, channel_id, user_id)
 
     msg = '{}: {}'.format(
         user,
         last_month,
     )
-    client.send("PRIVMSG", target=target, message=msg)
+    bot.send("PRIVMSG", target=target, message=msg)
 
 @command('totalchatstats')
-async def total_chat_stats(client, nick, channel, channel_id, target, args, **kwargs):
-    if not check_channel(client, nick, channel, channel_id, target, args, **kwargs):
+async def total_chat_stats(bot, nick, channel, channel_id, target, args, **kwargs):
+    if not check_channel(bot, nick, channel, channel_id, target, args, **kwargs):
         return
 
     # get stats for the current stream
-    q = await client.conn.execute(sa.sql.text(
+    q = await bot.conn.execute(sa.sql.text(
         '''SELECT count(message) as msgs, sum(word_count) as words
            FROM logitch.entries WHERE 
            channel_id=:channel_id AND 
@@ -59,7 +59,7 @@ async def total_chat_stats(client, nick, channel, channel_id, target, args, **kw
            type=1;'''),
         {
             'channel_id': channel_id, 
-            'from_date': client.channels[channel_id]['went_live_at'],
+            'from_date': bot.channels[channel_id]['went_live_at'],
         }
     )
     r = await q.fetchone()
@@ -73,11 +73,11 @@ async def total_chat_stats(client, nick, channel, channel_id, target, args, **kw
     msg = 'Channel chat stats: {}'.format(
         current_stream,
     )
-    client.send("PRIVMSG", target=target, message=msg)
+    bot.send("PRIVMSG", target=target, message=msg)
 
 
-async def current_stream_stats(client, channel_id, user_id):
-    q = await client.conn.execute(sa.sql.text(
+async def current_stream_stats(bot, channel_id, user_id):
+    q = await bot.conn.execute(sa.sql.text(
         '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
            channel_id=:channel_id AND 
@@ -88,7 +88,7 @@ async def current_stream_stats(client, channel_id, user_id):
         {
             'channel_id': channel_id, 
             'user_id': user_id,
-            'from_date': client.channels[channel_id]['went_live_at'],
+            'from_date': bot.channels[channel_id]['went_live_at'],
         }
     )
     r = await q.fetchone()
@@ -100,12 +100,12 @@ async def current_stream_stats(client, channel_id, user_id):
         return 'This stream: nothing'
 
 
-async def user_month_stats(client, channel_id, user_id):
+async def user_month_stats(bot, channel_id, user_id):
     from_date = datetime.utcnow().replace(
         day=1, hour=0, minute=0, 
         second=0, microsecond=0,
     )
-    q = await client.conn.execute(sa.sql.text(
+    q = await bot.conn.execute(sa.sql.text(
         '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
            channel_id=:channel_id AND 
@@ -128,7 +128,7 @@ async def user_month_stats(client, channel_id, user_id):
         return 'This month: nothing'
 
 
-async def user_last_month_stats(client, channel_id, user_id):
+async def user_last_month_stats(bot, channel_id, user_id):
     to_date = datetime.utcnow().replace(
         day=1, hour=0, minute=0, 
         second=0, microsecond=0,
@@ -137,7 +137,7 @@ async def user_last_month_stats(client, channel_id, user_id):
         day=1, hour=0, minute=0, 
         second=0, microsecond=0,
     )
-    q = await client.conn.execute(sa.sql.text(
+    q = await bot.conn.execute(sa.sql.text(
         '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
            channel_id=:channel_id AND 
@@ -162,15 +162,15 @@ async def user_last_month_stats(client, channel_id, user_id):
         return 'Last month: nothing'
 
 
-def check_channel(client, nick, channel, channel_id, target, args, **kwargs):
-    if not client.channels[channel_id]['is_live']:
+def check_channel(bot, nick, channel, channel_id, target, args, **kwargs):
+    if not bot.channels[channel_id]['is_live']:
         msg = '@{}, the stream is offline'.format(kwargs['display-name'])
-        client.send("PRIVMSG", target=target, message=msg)
+        bot.send("PRIVMSG", target=target, message=msg)
         return
 
-    if not client.channels[channel_id]['went_live_at']:
+    if not bot.channels[channel_id]['went_live_at']:
         msg = '@{}, the stream start time is unknown to me'.format(kwargs['display-name'])
-        client.send("PRIVMSG", target=target, message=msg)
+        bot.send("PRIVMSG", target=target, message=msg)
         return
 
     return True

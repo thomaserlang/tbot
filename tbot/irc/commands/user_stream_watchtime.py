@@ -5,23 +5,23 @@ from tbot.irc.command import command
 from tbot import utils
 
 @command('streamwatchtime', alias='swt')
-async def user_stream_watchtime(client, nick, channel, channel_id, target, args, **kwargs):
+async def user_stream_watchtime(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     user_id = kwargs['user-id']
     if len(args) > 0:
         user = utils.safe_username(args[0])
-        user_id = await utils.twitch_lookup_user_id(client.http_session, user)
+        user_id = await utils.twitch_lookup_user_id(bot.http_session, user)
 
-    if not client.channels[channel_id]['is_live']:
+    if not bot.channels[channel_id]['is_live']:
         msg = '@{}, the stream is offline'.format(kwargs['display-name'])
-        client.send("PRIVMSG", target=target, message=msg)            
+        bot.send("PRIVMSG", target=target, message=msg)            
         return
 
-    r = await client.conn.execute(sa.sql.text(
+    r = await bot.conn.execute(sa.sql.text(
         'SELECT time FROM stream_watchtime WHERE channel_id=:channel_id AND stream_id=:stream_id AND user_id=:user_id'),
         {
             'channel_id': channel_id,
-            'stream_id': client.channels[channel_id]['stream_id'], 
+            'stream_id': bot.channels[channel_id]['stream_id'], 
             'user_id': user_id,
         }
     )
@@ -29,10 +29,10 @@ async def user_stream_watchtime(client, nick, channel, channel_id, target, args,
 
     if not r or (r['time'] == 0):    
         msg = 'I have no data on {} yet'.format(user)
-        client.send("PRIVMSG", target=target, message=msg)
+        bot.send("PRIVMSG", target=target, message=msg)
         return
 
-    total_live_seconds = client.channels[channel_id]['uptime']
+    total_live_seconds = bot.channels[channel_id]['uptime']
     usertime = r['time']
     
     if (usertime > total_live_seconds) or ((total_live_seconds - usertime) <= 60):
@@ -44,4 +44,4 @@ async def user_stream_watchtime(client, nick, channel, channel_id, target, args,
         utils.seconds_to_pretty(usertime),
         p
     )
-    client.send("PRIVMSG", target=target, message=msg)
+    bot.send("PRIVMSG", target=target, message=msg)

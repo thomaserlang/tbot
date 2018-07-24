@@ -1,15 +1,13 @@
-import bottom, logging, random
+import logging, random
 import asyncio, aiohttp
 import sqlalchemy as sa
-import requests
 from sqlalchemy_aio import ASYNCIO_STRATEGY
 from datetime import datetime
 from tbot.irc.unpack import rfc2812_handler
-from tbot.irc.command import handle_command
-from tbot.irc.badge_log import badge_log
 from tbot import config
+from tbot.irc import bot
+from tbot.irc import commands, tasks
 
-bot = bottom.Client('a', 0)
 bot.channels = {}
 
 @bot.on('CLIENT_CONNECT')
@@ -104,15 +102,7 @@ async def pong(message, **kwargs):
         bot.ping_callback.cancel()
     bot.ping_callback = asyncio.ensure_future(send_ping())
 
-@bot.on('PRIVMSG')
-async def message(nick, target, message, **kwargs):
-    handle_command(bot, nick, target, message, **kwargs)
-    bot.loop.create_task(badge_log(bot, nick, target, message, **kwargs))
-
 def main():
-    logging.getLogger("requests").setLevel(logging.WARNING)
-    logging.getLogger("urllib3").setLevel(logging.WARNING)
-
     bot.host = config['irc']['host'] 
     bot.port = config['irc']['port'] 
     bot.ssl = config['irc']['use_ssl']
@@ -129,13 +119,13 @@ def main():
     bot.pong_check_callback = None
     bot.ping_callback = None
     bot.starttime = datetime.utcnow()
-    return bot
+
+    loop = asyncio.get_event_loop()
+    loop.create_task(bot.connect())
+    loop.run_forever()
 
 if __name__ == '__main__':
     from tbot import config_load, logger
     config_load('../../tbot.yaml')
     logger.set_logger('bot.log')
-
-    loop = asyncio.get_event_loop()
-    loop.create_task(main().connect())
-    loop.run_forever()
+    main()
