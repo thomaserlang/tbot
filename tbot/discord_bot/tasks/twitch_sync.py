@@ -170,7 +170,7 @@ async def discord_request(http_session, url, params=None, headers={}):
             return data
 
 async def get_subscribers(info):
-    '''
+    
     return [
         {
             "_id": "e5e2ddc37e74aa9636625e8d2cc2e54648a30418",
@@ -189,7 +189,7 @@ async def get_subscribers(info):
             }
         },
     ]
-    '''
+    
     headers = {
         'Authorization': 'OAuth {}'.format(info['twitch_token']),
         'Client-ID': config['twitch']['client_id'],
@@ -242,8 +242,10 @@ async def get_twitch_roles(server, info):
     db_roles = await q.fetchall()
     db_roles = [dict(d) for d in db_roles]
     for role in db_roles:
+        found = False
         for r in server.roles:
             if r.name == role['role_name']:
+                found = True
                 if role['role_id'] != str(r.id):
                     await bot.conn.execute(sa.sql.text(
                         'UPDATE twitch_discord_roles SET role_id=:role_id WHERE id=:id;'
@@ -252,6 +254,18 @@ async def get_twitch_roles(server, info):
                         'role_id': r.id,
                     })
                     role['role_id'] = str(r.id)
+                    continue
+            elif role['role_id'] == str(r.id):
+                found = True
+                continue
+        if not found and role['role_id']:
+            await bot.conn.execute(sa.sql.text(
+                'UPDATE twitch_discord_roles SET role_id=:role_id WHERE id=:id;'
+            ), {
+                'id': role['id'],
+                'role_id': None,
+            })
+            role['role_id'] = None
     return db_roles
 
 async def refresh_twitch_token(info):
