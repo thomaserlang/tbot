@@ -79,6 +79,9 @@ async def twitch_sync_channel(info):
                             time_role = server_roles[role['role_id']]
                         elif role['type'] == 'sub':
                             give_roles.append(server_roles[role['role_id']])
+                        elif role['type'] == 'bits':
+                            if cached_badges[twitch_id]['bits'] == role['value']:
+                                give_roles.append(server_roles[role['role_id']])
                     if time_role:
                         give_roles.append(time_role)
                 finally:
