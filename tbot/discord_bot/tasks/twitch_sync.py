@@ -80,7 +80,7 @@ async def twitch_sync_channel(info):
                         elif role['type'] == 'sub':
                             give_roles.append(server_roles[role['role_id']])
                         elif role['type'] == 'bits':
-                            if twitch_id in cached_badges and cached_badges[twitch_id]['bits'] == role['value']:
+                            if twitch_id in cached_badges and cached_badges[twitch_id]['bits'] == int(role['value']):
                                 give_roles.append(server_roles[role['role_id']])
                     if time_role:
                         give_roles.append(time_role)
