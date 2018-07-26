@@ -29,6 +29,13 @@ config = {
         'max_size': 100 * 1000 * 1000,# ~ 95 mb
         'num_backups': 10,
     },
+    'mysql': {
+        'host': '127.0.0.1',
+        'port': 3306,
+        'user': 'root',
+        'password': '',
+        'database': 'tbot',
+    }
 }
 
 def load(path=None):

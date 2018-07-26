@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from dateutil.parser import parse
 from datetime import datetime
 from tbot import config
-from tbot.discord_bot import bot
+from tbot.discord_bot import bot, db
 
 async def twitch_sync():
     await bot.wait_until_ready()
@@ -12,10 +12,9 @@ async def twitch_sync():
     while not bot.is_closed():
         try:
             logging.info('Twitch sync')
-            q = await bot.conn.execute(sa.sql.text('SELECT * FROM channels WHERE not isnull(discord_server_id) and active="Y";'))
-            channels = await q.fetchall()
+            channels = await db.fetchall('SELECT * FROM channels WHERE not isnull(discord_server_id) and active="Y";')
             for info in channels:
-                bot.loop.create_task(twitch_sync_channel(dict(info)))
+                bot.loop.create_task(twitch_sync_channel(info))
         except:
             logging.exception('twitch_sync')
         
@@ -128,10 +127,7 @@ async def twitch_sync_channel(info):
         return returninfo
 
 async def get_twitch_ids(server):
-    q = await bot.conn.execute(sa.sql.text(
-        'SELECT discord_id, twitch_id FROM users;'
-    ))
-    rows = await q.fetchall()
+    rows = await db.fetchall('SELECT discord_id, twitch_id FROM users;')
     users = {r['discord_id']: r['twitch_id'] for r in rows}
 
     for user in server.members:
@@ -153,12 +149,11 @@ async def get_twitch_ids(server):
                 if con['type'] != 'twitch':
                     continue
                 users[str(user.id)] = int(con['id'])
-                await bot.conn.execute(sa.sql.text('''
-                    INSERT IGNORE INTO users (discord_id, twitch_id) VALUES (:discord_id, :twitch_id);
-                '''), {
-                    'discord_id': user.id,
-                    'twitch_id': con['id'],
-                })
+                await db.execute(
+                    'INSERT IGNORE INTO users (discord_id, twitch_id) VALUES (%s, %s)', 
+                    (user.id, con['id'])
+                )
+                break
         except:
             logging.exception('get_twitch_ids')
     return users
@@ -174,7 +169,6 @@ async def discord_request(http_session, url, params=None, headers={}):
             return data
 
 async def get_subscribers(info):
-    '''
     return [
         {
             "_id": "e5e2ddc37e74aa9636625e8d2cc2e54648a30418",
@@ -193,7 +187,6 @@ async def get_subscribers(info):
             }
         },
     ]
-    '''
     
     headers = {
         'Authorization': 'OAuth {}'.format(info['twitch_token']),
@@ -230,21 +223,17 @@ async def get_subscribers(info):
     return subs
 
 async def get_cached_badges_months(info):
-    q = await bot.conn.execute(sa.sql.text(
-        'SELECT * FROM twitch_badges WHERE channel_id=:channel_id'
-    ), {
-        'channel_id': info['channel_id'],
-    })
-    rows = await q.fetchall()
+    rows = await db.fetchall(
+        'SELECT * FROM twitch_badges WHERE channel_id=%s',
+        (info['channel_id']),
+    )
     return {r['user_id']: dict(r) for r in rows}
 
 async def get_twitch_roles(server, info):
-    q = await bot.conn.execute(sa.sql.text(
-        'SELECT * FROM twitch_discord_roles WHERE channel_id=:channel_id'
-    ), {
-        'channel_id': info['channel_id'],
-    })
-    db_roles = await q.fetchall()
+    db_roles = await db.fetchall(
+        'SELECT * FROM twitch_discord_roles WHERE channel_id=%s',
+        (info['channel_id'])
+    )
     db_roles = [dict(d) for d in db_roles]
     for role in db_roles:
         found = False
@@ -252,24 +241,20 @@ async def get_twitch_roles(server, info):
             if r.name == role['role_name']:
                 found = True
                 if role['role_id'] != str(r.id):
-                    await bot.conn.execute(sa.sql.text(
-                        'UPDATE twitch_discord_roles SET role_id=:role_id WHERE id=:id;'
-                    ), {
-                        'id': role['id'],
-                        'role_id': r.id,
-                    })
+                    await db.execute(
+                        'UPDATE twitch_discord_roles SET role_id=%s WHERE id=%s;', 
+                        (r.id, role['id'])
+                    )
                     role['role_id'] = str(r.id)
                     continue
             elif role['role_id'] == str(r.id):
                 found = True
                 continue
         if not found and role['role_id']:
-            await bot.conn.execute(sa.sql.text(
-                'UPDATE twitch_discord_roles SET role_id=:role_id WHERE id=:id;'
-            ), {
-                'id': role['id'],
-                'role_id': None,
-            })
+            await db.execute(
+                'UPDATE twitch_discord_roles SET role_id=%s WHERE id=%s;',
+                (None, role['id'])
+            )
             role['role_id'] = None
     return db_roles
 
@@ -285,13 +270,10 @@ async def refresh_twitch_token(info):
     async with bot.ahttp.post(url, params=params) as r:
         if r.status == 200:
             data = await r.json()
-            await bot.conn.execute(sa.sql.text(
-                'UPDATE channels SET twitch_token=:twitch_token, twitch_refresh_token=:twitch_refresh_token WHERE channel_id=:channel_id;'
-            ), {
-                'channel_id': info['channel_id'],
-                'twitch_token': data['access_token'],
-                'twitch_refresh_token': data['refresh_token'],
-            })
+            await db.execute(
+                'UPDATE channels SET twitch_token=%s, twitch_refresh_token=%s WHERE channel_id=%s;',
+                (data['access_token'], data['refresh_token'], info['channel_id'])
+            )
             info['twitch_token'] = data['access_token']
             info['twitch_refresh_token'] = data['refresh_token']
         else:

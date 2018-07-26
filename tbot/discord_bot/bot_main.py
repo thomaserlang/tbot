@@ -1,4 +1,4 @@
-import logging, aiohttp
+import logging, aiohttp, aiomysql
 import sqlalchemy as sa
 from sqlalchemy_aio import ASYNCIO_STRATEGY
 from tbot import config
@@ -10,16 +10,19 @@ import tbot.discord_bot.tasks
 async def on_connect():
     if not hasattr(bot, 'ahttp'):
         bot.ahttp = aiohttp.ClientSession()
+        bot.pool = await aiomysql.create_pool(
+            host=config['mysql']['host'], 
+            port=config['mysql']['port'],
+            user=config['mysql']['user'], 
+            password=config['mysql']['password'],
+            db=config['mysql']['database'], 
+            loop=bot.loop,
+            charset='utf8mb4',
+            use_unicode=True,
+            echo=False,
+        )
 
 def main():
-    bot.conn = sa.create_engine(config['sql_url'],
-        convert_unicode=True,
-        echo=False,
-        pool_recycle=3599,
-        encoding='UTF-8',
-        connect_args={'charset': 'utf8mb4'},
-        strategy=ASYNCIO_STRATEGY,
-    )
     bot.loop.create_task(tbot.discord_bot.tasks.twitch_sync.twitch_sync())
     bot.run(config['discord']['token'], bot=config['discord']['bot'])
 

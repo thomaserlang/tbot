@@ -2,7 +2,7 @@ import sqlalchemy as sa
 import logging
 import discord
 from tbot import utils
-from tbot.discord_bot import bot
+from tbot.discord_bot import bot, db
 from tbot.discord_bot.tasks.twitch_sync import twitch_sync_channel
 
 @bot.command(description='Sync subscriber roles from twitch. Must have `Manage roles` permission to use.')
@@ -10,16 +10,12 @@ async def twitchsync(ctx):
     if not ctx.message.author.guild_permissions.manage_roles:
         return
     
-    q = await bot.conn.execute(sa.sql.text(
-        'SELECT * FROM channels WHERE discord_server_id=:discord_server_id;'), {
-        'discord_server_id': ctx.guild.id,
-    })
-    info = await q.fetchone()
-
+    info = await db.fetchone(
+        'SELECT * FROM channels WHERE discord_server_id=%s;',
+        (ctx.guild.id)
+    )
     if not info:
         return
-    info = dict(info)
-
     msg = await ctx.send('Syncing, please wait...')
     info = await twitch_sync_channel(info)
 
