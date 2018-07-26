@@ -1,5 +1,5 @@
 import logging, random
-import asyncio, aiohttp
+import asyncio, aiohttp, aiomysql
 import sqlalchemy as sa
 from sqlalchemy_aio import ASYNCIO_STRATEGY
 from datetime import datetime
@@ -14,6 +14,19 @@ bot.channels = {}
 async def connect(**kwargs):
     if not bot.http_session:
         bot.http_session = aiohttp.ClientSession()
+    if not bot.pool:
+        bot.pool = await aiomysql.create_pool(
+            host=config['mysql']['host'], 
+            port=config['mysql']['port'],
+            user=config['mysql']['user'], 
+            password=config['mysql']['password'],
+            db=config['mysql']['database'], 
+            loop=bot.loop,
+            charset='utf8mb4',
+            use_unicode=True,
+            echo=False,
+        )
+
     if bot.pong_check_callback:
         bot.pong_check_callback.cancel()
 
@@ -116,6 +129,7 @@ def main():
         strategy=ASYNCIO_STRATEGY,
     )
     bot.http_session = None
+    bot.pool = None
     bot.pong_check_callback = None
     bot.ping_callback = None
     bot.starttime = datetime.utcnow()
