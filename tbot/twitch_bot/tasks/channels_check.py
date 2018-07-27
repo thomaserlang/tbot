@@ -8,7 +8,20 @@ from tbot.twitch_bot import bot
 
 """
 Responsible for monitoring a channel's live status
-and a user's watch time
+and a user's watch time.
+
+Updates the bot.channels with the following info:
+
+bot.channels[channel_id] = {
+    'is_live': True/False,
+    'stream_id': id of the stream id when first detected as live,
+    'went_live_at': datetime,
+    'went_offline_at_delay': datetime, used by the delay offline
+    'users': list({'id': int, 'user': str}) chatters,
+    'last_check': datetime,
+    'uptime': int of seconds, 
+}
+
 """
 
 _channels_check_callback = None
