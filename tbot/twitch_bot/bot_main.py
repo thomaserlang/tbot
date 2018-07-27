@@ -12,7 +12,7 @@ bot.channels = {}
 async def connect(**kwargs):
     if not bot.http_session:
         bot.http_session = aiohttp.ClientSession()
-    if not bot.pool:
+    if not bot.db:
         bot.db = await db.Db().connect(bot.loop)
 
     if bot.pong_check_callback:
@@ -108,7 +108,7 @@ def main():
     bot.ssl = config['twitch']['irc_use_ssl']
     bot.raw_handlers = [rfc2812_handler(bot)]
     bot.http_session = None
-    bot.pool = None
+    bot.db = None
     bot.pong_check_callback = None
     bot.ping_callback = None
     bot.starttime = datetime.utcnow()
