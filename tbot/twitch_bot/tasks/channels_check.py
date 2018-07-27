@@ -1,7 +1,6 @@
 import logging
 import asyncio
 import json
-import sqlalchemy as sa
 from dateutil.parser import parse
 from datetime import datetime
 from tbot import config, utils
@@ -86,28 +85,28 @@ async def inc_watchtime(channel_id, inc_time):
     bot.channels[channel_id]['uptime'] += inc_time        
     bot.loop.create_task(cache_channel(channel_id))
     for u in bot.channels[channel_id]['users']:
-        data.append({
-            'channel_id': channel_id,
-            'user_id': u['id'],
-            'user': u['user'],
-            'stream_id': bot.channels[channel_id]['stream_id'],
-            'inc_time': inc_time,
-        })
+        data.append((
+            channel_id,
+            u['id'],
+            u['user'],
+            bot.channels[channel_id]['stream_id'],
+            inc_time,
+        ))
     if data:
-        await bot.conn.execute(sa.sql.text('''
+        await bot.db.executemany('''
             INSERT INTO stream_watchtime (channel_id, user_id, user, stream_id, time) 
-            VALUES (:channel_id, :user_id, :user, :stream_id, :inc_time) ON DUPLICATE KEY UPDATE time=time+VALUES(time);
-        '''), data)
+            VALUES (%s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE time=time+VALUES(time);
+        ''', data)
 
 async def cache_channel(channel_id):
     went_live_at = bot.channels[channel_id]['went_live_at']
     last_check = bot.channels[channel_id]['last_check']
     went_offline_at_delay = bot.channels[channel_id]['went_offline_at_delay']
-    await bot.conn.execute(sa.sql.text('''
-        INSERT INTO channel_cache (channel_id, data) VALUES (:channel_id, :data) ON DUPLICATE KEY UPDATE data=VALUES(data);
-    '''), {
-        'channel_id': channel_id,
-        'data': json.dumps({
+    await bot.db.execute('''
+        INSERT INTO channel_cache (channel_id, data) VALUES (%s, %s) ON DUPLICATE KEY UPDATE data=VALUES(data);
+    ''', (
+        channel_id,
+        json.dumps({
             'is_live': bot.channels[channel_id]['is_live'],
             'stream_id': bot.channels[channel_id]['stream_id'],
             'went_live_at': went_live_at.isoformat() if went_live_at else None,
@@ -116,11 +115,10 @@ async def cache_channel(channel_id):
                 if went_offline_at_delay else None,
             'uptime': bot.channels[channel_id]['uptime'],
         })
-    })
+    ))
 
 async def load_channels_cache(): 
-    q = await bot.conn.execute('SELECT cc.channel_id, cc.data FROM channel_cache cc, channels c WHERE c.channel_id=cc.channel_id and c.active="Y";')
-    rows = await q.fetchall()
+    rows = await bot.db.fetchall('SELECT cc.channel_id, cc.data FROM channel_cache cc, channels c WHERE c.channel_id=cc.channel_id and c.active="Y";')
     for r in rows:
         data = json.loads(r['data'])
         bot.channels[r['channel_id']]['is_live'] = data['is_live']
@@ -197,35 +195,35 @@ async def update_current_stream_metadata(channel_id):
         logging.exception('is_live')
 
 async def reset_streams_in_a_row(channel_id, stream_id):
-    await bot.conn.execute(sa.sql.text('''
+    await bot.db.execute('''
         UPDATE user_stats us
-                LEFT JOIN
-            stream_watchtime uw ON (uw.stream_id = :stream_id
-                AND uw.user_id = us.user_id) 
+            LEFT JOIN
+                stream_watchtime uw ON (uw.stream_id = %s
+                    AND uw.user_id = us.user_id) 
         SET 
             streams_row = 0
         WHERE
-            us.channel_id = :channel_id
-                AND ISNULL(uw.user_id);
-    '''), {
-        'stream_id': stream_id,
-        'channel_id': channel_id,
-    })
+            us.channel_id = %s AND 
+            ISNULL(uw.user_id);
+    ''', (
+        stream_id,
+        channel_id,
+    ))
 
 async def save_stream_created(channel_id):
-    await bot.conn.execute(sa.sql.text('''
+    await bot.db.execute('''
         INSERT INTO streams (stream_id, channel_id, started_at) 
-        VALUES (:stream_id, :channel_id, :started_at);
-    '''), {
-        'channel_id': channel_id,
-        'stream_id': bot.channels[channel_id]['stream_id'],
-        'started_at': bot.channels[channel_id]['went_live_at'],
-    })
+        VALUES (%s, %s, %s);
+    ''', (
+        bot.channels[channel_id]['stream_id'],
+        channel_id,
+        bot.channels[channel_id]['went_live_at'],
+    ))
 
 async def save_stream_ended(stream_id, uptime):
-    await bot.conn.execute(sa.sql.text('''
-        UPDATE streams SET uptime=:uptime WHERE stream_id=:stream_id;
-    '''), {
-        'stream_id': stream_id,
-        'uptime': uptime,
-    })
+    await bot.db.execute('''
+        UPDATE streams SET uptime=%s WHERE stream_id=%s;
+    ''', (
+        uptime,
+        stream_id,
+    ))

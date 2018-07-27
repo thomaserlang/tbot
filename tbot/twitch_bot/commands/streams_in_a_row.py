@@ -1,5 +1,4 @@
 import logging
-import sqlalchemy as sa
 from datetime import datetime
 from tbot.twitch_bot.command import command
 from tbot import utils
@@ -12,14 +11,13 @@ async def streams_in_a_row(bot, nick, channel, channel_id, target, args, **kwarg
         user = utils.safe_username(args[0])
         user_id = await utils.twitch_lookup_user_id(bot.http_session, user)
 
-    r = await bot.conn.execute(sa.sql.text(
-        'SELECT * FROM user_stats WHERE channel_id=:channel_id AND user_id=:user_id'),
-        {
-            'channel_id': channel_id,
-            'user_id': user_id,
-        }
+    r = await bot.db.fetchone(
+        'SELECT * FROM user_stats WHERE channel_id=%s AND user_id=%s',
+        (
+            channel_id,
+            user_id,
+        )
     )
-    r = await r.fetchone()
 
     if not r:
         msg = 'I have no data on {} yet'.format(user)

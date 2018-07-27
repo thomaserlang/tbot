@@ -1,5 +1,4 @@
 import asyncio
-import sqlalchemy as sa
 import logging
 from tbot.twitch_bot.command import command
 from tbot import utils
@@ -51,18 +50,17 @@ async def total_chat_stats(bot, nick, channel, channel_id, target, args, **kwarg
         return
 
     # get stats for the current stream
-    q = await bot.conn.execute(sa.sql.text(
+    r = await bot.db.fetchone(
         '''SELECT count(message) as msgs, sum(word_count) as words
            FROM logitch.entries WHERE 
-           channel_id=:channel_id AND 
-           created_at>=:from_date AND 
-           type=1;'''),
-        {
-            'channel_id': channel_id, 
-            'from_date': bot.channels[channel_id]['went_live_at'],
-        }
+           channel_id=%s AND 
+           created_at>=%s AND 
+           type=1;''',
+        (
+            channel_id, 
+            bot.channels[channel_id]['went_live_at'],
+        )
     )
-    r = await q.fetchone()
     if r:
         current_stream = 'This stream: {} messages / {} words'.format(
             r['msgs'], r['words']
@@ -77,21 +75,20 @@ async def total_chat_stats(bot, nick, channel, channel_id, target, args, **kwarg
 
 
 async def current_stream_stats(bot, channel_id, user_id):
-    q = await bot.conn.execute(sa.sql.text(
+    r = await bot.db.fetchone(
         '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
-           channel_id=:channel_id AND 
-           user_id=:user_id AND 
-           created_at>=:from_date AND 
+           channel_id=%s AND 
+           user_id=%s AND 
+           created_at>=%s AND 
            type=1
-           GROUP BY user_id;'''),
-        {
-            'channel_id': channel_id, 
-            'user_id': user_id,
-            'from_date': bot.channels[channel_id]['went_live_at'],
-        }
+           GROUP BY user_id;''',
+        (
+            channel_id, 
+            user_id,
+            bot.channels[channel_id]['went_live_at'],
+        )
     )
-    r = await q.fetchone()
     if r:
         return 'This stream: {} messages / {} words'.format(
             r['msgs'], r['words']
@@ -105,21 +102,20 @@ async def user_month_stats(bot, channel_id, user_id):
         day=1, hour=0, minute=0, 
         second=0, microsecond=0,
     )
-    q = await bot.conn.execute(sa.sql.text(
+    r = await bot.db.fetchone(
         '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
-           channel_id=:channel_id AND 
-           user_id=:user_id AND 
-           created_at>=:from_date AND 
+           channel_id=%s AND 
+           user_id=%s AND 
+           created_at>=%s AND 
            type=1
-           GROUP BY user_id;'''),
-        {
-            'channel_id': channel_id, 
-            'user_id': user_id,
-            'from_date': from_date,
-        }
+           GROUP BY user_id;''',
+        (
+            channel_id, 
+            user_id,
+            from_date,
+        )
     )
-    r = await q.fetchone()
     if r:
         return 'This month: {} messages / {} words'.format(
             r['msgs'], r['words']
@@ -137,23 +133,22 @@ async def user_last_month_stats(bot, channel_id, user_id):
         day=1, hour=0, minute=0, 
         second=0, microsecond=0,
     )
-    q = await bot.conn.execute(sa.sql.text(
+    r = await bot.db.fetchone(
         '''SELECT count(message) as msgs, sum(word_count) as words 
            FROM logitch.entries WHERE 
-           channel_id=:channel_id AND 
-           user_id=:user_id AND 
-           created_at>=:from_date AND 
-           created_at<=:to_date AND 
+           channel_id=%s AND 
+           user_id=%s AND 
+           created_at>=%s AND 
+           created_at<=%s AND 
            type=1
-           GROUP BY user_id;'''),
-        {
-            'channel_id': channel_id, 
-            'user_id': user_id,
-            'from_date': from_date,
-            'to_date': to_date,
-        }
+           GROUP BY user_id;''',
+        (
+            channel_id, 
+            user_id,
+            from_date,
+            to_date,
+        )
     )
-    r = await q.fetchone()
     if r:
         return 'Last month: {} messages / {} words'.format(
             r['msgs'], r['words']

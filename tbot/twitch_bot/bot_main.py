@@ -1,10 +1,8 @@
 import logging, random
 import asyncio, aiohttp, aiomysql
-import sqlalchemy as sa
-from sqlalchemy_aio import ASYNCIO_STRATEGY
 from datetime import datetime
 from tbot.twitch_bot.unpack import rfc2812_handler
-from tbot import config
+from tbot import config, db
 from tbot.twitch_bot import bot
 from tbot.twitch_bot import commands, tasks
 
@@ -15,17 +13,7 @@ async def connect(**kwargs):
     if not bot.http_session:
         bot.http_session = aiohttp.ClientSession()
     if not bot.pool:
-        bot.pool = await aiomysql.create_pool(
-            host=config['mysql']['host'], 
-            port=config['mysql']['port'],
-            user=config['mysql']['user'], 
-            password=config['mysql']['password'],
-            db=config['mysql']['database'], 
-            loop=bot.loop,
-            charset='utf8mb4',
-            use_unicode=True,
-            echo=False,
-        )
+        bot.db = await db.Db().connect(bot.loop)
 
     if bot.pong_check_callback:
         bot.pong_check_callback.cancel()
@@ -87,8 +75,7 @@ async def wait_for_pong():
     await bot.connect()
 
 async def get_channels():
-    q = await bot.conn.execute('SELECT channel_id, name FROM channels WHERE active="Y";')
-    rows = await q.fetchall()
+    rows = await bot.db.fetchall('SELECT channel_id, name FROM channels WHERE active="Y";')
     l = []
     for r in rows:
         l.append({
@@ -120,14 +107,6 @@ def main():
     bot.port = config['twitch']['irc_port'] 
     bot.ssl = config['twitch']['irc_use_ssl']
     bot.raw_handlers = [rfc2812_handler(bot)]
-    bot.conn = sa.create_engine(config['sql_url'],
-        convert_unicode=True,
-        echo=False,
-        pool_recycle=3599,
-        encoding='UTF-8',
-        connect_args={'charset': 'utf8mb4'},
-        strategy=ASYNCIO_STRATEGY,
-    )
     bot.http_session = None
     bot.pool = None
     bot.pong_check_callback = None

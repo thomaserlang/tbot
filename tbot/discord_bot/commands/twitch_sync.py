@@ -1,4 +1,3 @@
-import sqlalchemy as sa
 import logging
 import discord
 from tbot import utils

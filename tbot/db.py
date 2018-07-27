@@ -45,8 +45,25 @@ class Db():
 
     async def execute(self, *args, **kwargs):
         async with cursor(self.pool) as c:
-            await c.execute(*args, **kwargs)
-            await c.connection.commit()
+            try:
+                await c.execute(*args, **kwargs)
+                await c.connection.commit()
+            except pymysql.err.InternalError as e:
+                logging.exception('execute')
+                await c.connection.ping()
+                await c.execute(*args, **kwargs)
+                await c.connection.commit()     
+
+    async def executemany(self, *args, **kwargs):
+        async with cursor(self.pool) as c:
+            try:
+                await c.executemany(*args, **kwargs)
+                await c.connection.commit()
+            except pymysql.err.InternalError as e:
+                logging.exception('executemany')
+                await c.connection.ping()
+                await c.executemany(*args, **kwargs)
+                await c.connection.commit() 
 
 class cursor():
 

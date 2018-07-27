@@ -1,5 +1,4 @@
 import logging, asyncio, math
-import sqlalchemy as sa
 from urllib.parse import urlencode
 from dateutil.parser import parse
 from datetime import datetime

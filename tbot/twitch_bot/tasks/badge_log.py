@@ -1,5 +1,4 @@
 import logging
-import sqlalchemy as sa
 from tbot.twitch_bot import bot
 
 badges = {}
@@ -9,8 +8,7 @@ async def badge_log(nick, target, message, **kwargs):
     if not badges:
         for channel in bot.channels:
             badges[channel] = {}
-        q = await bot.conn.execute('SELECT * FROM twitch_badges')
-        rows = await q.fetchall()
+        rows = await bot.db.fetchall('SELECT * FROM twitch_badges')
         for r in rows:
             if r['channel_id'] in badges:
                 badges[r['channel_id']][r['user_id']] = {
@@ -43,15 +41,12 @@ async def badge_log(nick, target, message, **kwargs):
         badges[channel_id][user_id] = {}
 
     if update:
-        await bot.conn.execute(sa.sql.text('''
+        await bot.db.execute('''
             INSERT INTO twitch_badges (channel_id, user_id, sub, bits) 
-            VALUES (:channel_id, :user_id, :sub, :bits) 
+            VALUES (%s, %s, %s, %s) 
             ON DUPLICATE KEY UPDATE sub=VALUES(sub), bits=VALUES(bits)
-        '''), {
-            'channel_id': channel_id,
-            'user_id': user_id,
-            'sub': sub,
-            'bits': bits,
-        })
+            ''', 
+            (channel_id, user_id, sub, bits)
+        )
         badges[channel_id][user_id]['sub'] = sub
         badges[channel_id][user_id]['bits'] = bits

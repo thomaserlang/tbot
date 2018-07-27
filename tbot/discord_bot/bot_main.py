@@ -1,6 +1,4 @@
 import logging, aiohttp, aiomysql
-import sqlalchemy as sa
-from sqlalchemy_aio import ASYNCIO_STRATEGY
 from tbot import config, db
 from tbot.discord_bot import bot
 import tbot.discord_bot.commands

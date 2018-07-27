@@ -1,5 +1,4 @@
 import logging
-import sqlalchemy as sa
 from datetime import datetime
 from tbot.twitch_bot.command import command
 from tbot import utils
@@ -17,15 +16,14 @@ async def user_stream_watchtime(bot, nick, channel, channel_id, target, args, **
         bot.send("PRIVMSG", target=target, message=msg)            
         return
 
-    r = await bot.conn.execute(sa.sql.text(
-        'SELECT time FROM stream_watchtime WHERE channel_id=:channel_id AND stream_id=:stream_id AND user_id=:user_id'),
-        {
-            'channel_id': channel_id,
-            'stream_id': bot.channels[channel_id]['stream_id'], 
-            'user_id': user_id,
-        }
+    r = await bot.db.fetchone(
+        'SELECT time FROM stream_watchtime WHERE channel_id=%s AND stream_id=%s AND user_id=%s',
+        (
+            channel_id,
+            bot.channels[channel_id]['stream_id'], 
+            user_id,
+        )
     )
-    r = await r.fetchone()
 
     if not r or (r['time'] == 0):    
         msg = 'I have no data on {} yet'.format(user)
