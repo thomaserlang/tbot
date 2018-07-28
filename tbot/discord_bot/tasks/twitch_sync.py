@@ -44,7 +44,7 @@ class Twitch_sync_channel:
             returninfo['errors'].append('Already syncing')
             return returninfo
         self.running[self.info['channel_id']] = True
-        
+
         try:
             self.twitch_ids = await self.get_twitch_ids()
             self.roles = await self.get_twitch_roles()
@@ -177,8 +177,8 @@ class Twitch_sync_channel:
                     params['offset'] += params['limit']
                     total = data['_total']
                 elif r.status == 401:
-                    await self.refresh_twitch_token(info)
-                    d = await self.get_subscribers(info)
+                    await self.refresh_twitch_token()
+                    d = await self.get_subscribers()
                     return d
                 else:              
                     error = await r.text()
@@ -231,7 +231,7 @@ class Twitch_sync_channel:
         return roles
 
     async def refresh_twitch_token(self):
-        url = 'httself.ps://id.twitch.tv/oauth2/token'
+        url = 'https://id.twitch.tv/oauth2/token'
         params = {
             'grant_type': 'refresh_token',
             'refresh_token': self.info['twitch_refresh_token'],
