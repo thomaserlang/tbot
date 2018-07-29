@@ -51,6 +51,8 @@ class Twitch_sync_channel:
             self.give_roles = {member: [] for member in self.server.members}
             await self.set_sub_roles(returninfo)
             await self.sync_roles(returninfo)
+        except Twitch_exception as e:
+            returninfo['errors'].append(str(e))
         except Exception as e:
             logging.exception('sync {}'.format(self.info['name']))
             returninfo['errors'].append(str(e))
@@ -182,7 +184,10 @@ class Twitch_sync_channel:
                     return d
                 else:              
                     error = await r.text()
-                    raise Exception('Error getting subscribers for: {} - Error: {}: {}'.format(
+                    e = Exception
+                    if r.status == 400:
+                        e = Twitch_exception
+                    raise e('Error getting subscribers for: {} - Error: {}: {}'.format(
                         self.info['name'],
                         r.status,
                         error,
@@ -250,7 +255,7 @@ class Twitch_sync_channel:
                 self.info['twitch_refresh_token'] = data['refresh_token']
             else:
                 error = await r.text()
-                raise Exception('Failed to refresh token for channel_id: {} - Error: {}: {}'.format(
+                raise Exception('Failed to refresh token for channel: {} - Error: {}: {}'.format(
                     self.info['name'],
                     r.status,
                     error,
@@ -297,3 +302,6 @@ async def discord_request(ahttp, url, params=None, headers={}):
         if r.status == 200:
             data = await r.json()
             return data
+
+class Twitch_exception(Exception):
+    pass
