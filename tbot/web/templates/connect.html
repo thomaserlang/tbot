@@ -1,0 +1,17 @@
+{% extends base.html %}
+{% block title %}Connect - TBot{% end %}
+{% block body %}
+        <h2>{{handler.current_user['user']}}</h2>
+        <style>
+            .btn { font-size: 26px; width: 200px;}
+        </style>
+        <div class="mb-3">
+            <a class="btn btn-secondary {% if apps['twitch'] == 'Y' %}btn-success{% end %}" href="/connect/twitch">Twitch</a>
+        </div>
+        <div class="mb-3">
+            <a class="btn btn-secondary {% if apps['discord'] == 'Y' %}btn-success{% end %}" href="/connect/discord">Discord</a>
+        </div>
+        <div class="mb-3">
+            <a class="btn btn-secondary {% if apps['spotify'] == 'Y' %}btn-success{% end %}" href="/connect/spotify">Spotify</a>
+        </div>
+{% end %}

@@ -18,6 +18,10 @@ config = {
         'delay_offline': 0, # seconds
     },
     'discord': {
+        'client_id': None,
+        'client_secret': None,
+        'redirect_uri': None,
+        'permissions': 268437504,
         'token': None,
         'bot': True,
         'user_token': None,

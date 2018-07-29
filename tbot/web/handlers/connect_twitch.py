@@ -1,30 +1,27 @@
 import logging, json, os
-from tornado import web, ioloop, httpclient, escape
+from tornado import web, httpclient, escape
 from urllib import parse
-from tbot import config, db
+from tbot import config
+from .base import Base_handler
 
-class Base_handler(web.RequestHandler):
-
-    @property
-    def db(self):
-        return self.application.db
-    
-
-class Login_handler(Base_handler):
-
-    def get(self):
-        self.redirect('https://id.twitch.tv/oauth2/authorize?'+parse.urlencode({
-                'client_id': config['twitch']['client_id'],
-                'response_type': 'code',
-                'redirect_uri': config['twitch']['redirect_uri'],
-                'scope': 'channel_subscriptions',
-            })
-        )
-
-class OAuth_handler(Base_handler):
+class Handler(Base_handler):
 
     async def get(self):
-        code = self.get_argument('code')
+        code = self.get_argument('code', None)
+        error = self.get_argument('error', None)
+        if error:
+            self.write(error)
+            return
+        if not code:
+            self.redirect('https://id.twitch.tv/oauth2/authorize?'+parse.urlencode({
+                    'client_id': config['twitch']['client_id'],
+                    'response_type': 'code',
+                    'redirect_uri': config['twitch']['redirect_uri'],
+                    'scope': 'channel_subscriptions',
+                })
+            )
+            return
+
         http = httpclient.AsyncHTTPClient()
         response = await http.fetch('https://id.twitch.tv/oauth2/token?'+parse.urlencode({
             'client_id': config['twitch']['client_id'],
@@ -62,32 +59,10 @@ class OAuth_handler(Base_handler):
             token['refresh_token'],
         ))
 
-        self.write('Done, you can close this page')
+        self.set_secure_cookie('data', json.dumps({
+            'user_id': userinfo['user_id'],
+            'user': userinfo['login'],
+            'access_token': token['access_token'],
+        }), expires_days=None)
 
-def App():
-    return web.Application(
-        [
-            (r'/register', Login_handler),
-            (r'/register/oauth', OAuth_handler),
-        ], 
-        debug=config['debug'], 
-        cookie_secret=config['cookie_secret'],
-        template_path=os.path.join(os.path.dirname(__file__), 'templates'),
-        autoescape=None,
-    )
-
-def main():
-    app = App()
-    app.listen(config['web_port'])
-    loop = ioloop.IOLoop.current()
-    loop.add_callback(db_connect, app)
-    loop.start()
-
-async def db_connect(app):
-    app.db = await db.Db().connect(None)
-
-if __name__ == '__main__':
-    from tbot import config_load, logger
-    config_load()
-    logger.set_logger('web.log')
-    main()
+        self.redirect('/connect')
