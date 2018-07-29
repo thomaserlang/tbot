@@ -25,17 +25,17 @@ def seconds_to_pretty(seconds):
 
     return ' '.join(ts)
 
-async def twitch_request(http_session, url, params=None, headers={}):    
+async def twitch_request(ahttp, url, params=None, headers={}):    
     headers.update({
         'Authorization': 'Bearer {}'.format(config['twitch']['token'])
     })
-    async with http_session.get(url, params=params, headers=headers) as r:
+    async with ahttp.get(url, params=params, headers=headers) as r:
         if r.status == 200:
             data = await r.json()
             return data
 
 _cached_user_ids = {}
-async def twitch_lookup_usernames(http_session, usernames):
+async def twitch_lookup_usernames(ahttp, usernames):
     global _cached_user_ids
     url = 'https://api.twitch.tv/helix/users'
     users = []
@@ -51,15 +51,15 @@ async def twitch_lookup_usernames(http_session, usernames):
     if lookup_usernames:
         for unames in chunks(lookup_usernames, 100):
             params = [('login', name) for name in unames]
-            data = await twitch_request(http_session, url, params)
+            data = await twitch_request(ahttp, url, params)
             if data:
                 for d in data['data']:
                     _cached_user_ids[d['login'].lower()] = d['id']
                     users.append({'id': d['id'], 'user': d['login']})
     return users
 
-async def twitch_lookup_user_id(http_session, username):
-    users = await twitch_lookup_usernames(http_session, [username])
+async def twitch_lookup_user_id(ahttp, username):
+    users = await twitch_lookup_usernames(ahttp, [username])
     if not users:
         return
     return users[0]['id']

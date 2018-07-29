@@ -10,7 +10,7 @@ async def chat_stats(bot, nick, channel, channel_id, target, args, **kwargs):
     user_id = kwargs['user-id']
     if len(args) > 0:
         user = utils.safe_username(args[0])
-        user_id = await utils.twitch_lookup_user_id(bot.http_session, user)
+        user_id = await utils.twitch_lookup_user_id(bot.ahttp, user)
 
     if not check_channel(bot, nick, channel, channel_id, target, args, **kwargs):
         return
@@ -34,7 +34,7 @@ async def chatstatslastmonth(bot, nick, channel, channel_id, target, args, **kwa
 
     if len(args) == 1:
         user = utils.safe_username(args[0])
-        user_id = await utils.twitch_lookup_user_id(bot.http_session, user)
+        user_id = await utils.twitch_lookup_user_id(bot.ahttp, user)
 
     last_month = await user_last_month_stats(bot, channel_id, user_id)
 

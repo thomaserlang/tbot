@@ -6,6 +6,7 @@ from .base import Base_handler
 
 class Handler(Base_handler):
 
+    @web.authenticated
     async def get(self):
         code = self.get_argument('code', None)
         if not code:

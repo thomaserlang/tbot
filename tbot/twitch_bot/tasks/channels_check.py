@@ -148,7 +148,7 @@ async def set_chatters():
     for channel_id in bot.channels:
         try:
             channel = bot.channels[channel_id]['name']
-            async with bot.http_session.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(channel)) as r:
+            async with bot.ahttp.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(channel)) as r:
                 if r.status == 200:
                     data = await r.json()
                     if data['chatter_count'] == 0:
@@ -161,7 +161,7 @@ async def set_chatters():
                     usernames.extend(data['chatters']['moderators'])
                     if usernames:
                         bot.channels[channel_id]['users'] = \
-                            await utils.twitch_lookup_usernames(bot.http_session, usernames)
+                            await utils.twitch_lookup_usernames(bot.ahttp, usernames)
         except:
             logging.exception('set_chatters')
 
@@ -169,7 +169,7 @@ async def update_current_stream_metadata(channel_id):
     try:
         params = {'user_id': channel_id}
         url = 'https://api.twitch.tv/helix/streams'
-        data = await utils.twitch_request(bot.http_session, url, params)
+        data = await utils.twitch_request(bot.ahttp, url, params)
         if data:
             if data['data']:
                 woa = bot.channels[channel_id]['went_offline_at_delay']

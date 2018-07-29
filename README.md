@@ -18,6 +18,9 @@ Default you have 1 hour to resume the stream. The uptime only counts the online 
 | !totalchatstats | | Channel chat stats: This stream: 1215 messages / 6372 words |
 | !chatstats | | Wossadinho: This stream: 398 messages / 1359 words - This month: 3919 messages / 12143 words |
 | !chatstatslastmonth | | Wossadinho: Last month: 15401 messages / 56488 words | 
+| !spotifysong | !ssong | Playing: Shots by Imagine Dragons (0:18/3:52) | 
+| !spotifyprevsong | !sprevsong | Previous song: Stressed Out by Twenty One Pilots |
+| !spotifyplaylist | !splaylist | Current playlist: https://open.spotify.com/user/... | 
 
 ## Discord
 Gives roles to users for their sub streak and sub tier for the connected Twitch channel. Syncs once an hour.

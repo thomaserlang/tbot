@@ -288,12 +288,12 @@ class Twitch_sync_channel:
                 logging.exception('get_twitch_ids')
         return twitch_ids
 
-async def discord_request(http_session, url, params=None, headers={}):    
+async def discord_request(ahttp, url, params=None, headers={}):    
     headers.update({
         'Authorization': config['discord']['user_token'] or \
             config['discord']['token']
     })
-    async with http_session.get(url, params=params, headers=headers) as r:
+    async with ahttp.get(url, params=params, headers=headers) as r:
         if r.status == 200:
             data = await r.json()
             return data

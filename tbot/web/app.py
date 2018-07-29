@@ -9,6 +9,7 @@ def App():
             (r'/connect', handlers.connect.Handler),
             (r'/connect/twitch', handlers.connect_twitch.Handler),
             (r'/connect/discord', handlers.connect_discord.Handler),
+            (r'/connect/spotify', handlers.connect_spotify.Handler),
         ], 
         login_url='/connect/twitch',
         debug=config['debug'], 

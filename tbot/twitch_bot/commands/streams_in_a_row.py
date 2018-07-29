@@ -9,7 +9,7 @@ async def streams_in_a_row(bot, nick, channel, channel_id, target, args, **kwarg
     user_id = kwargs['user-id']
     if len(args) > 0:
         user = utils.safe_username(args[0])
-        user_id = await utils.twitch_lookup_user_id(bot.http_session, user)
+        user_id = await utils.twitch_lookup_user_id(bot.ahttp, user)
 
     r = await bot.db.fetchone(
         'SELECT * FROM user_stats WHERE channel_id=%s AND user_id=%s',

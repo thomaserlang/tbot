@@ -10,8 +10,8 @@ bot.channels = {}
 
 @bot.on('CLIENT_CONNECT')
 async def connect(**kwargs):
-    if not bot.http_session:
-        bot.http_session = aiohttp.ClientSession()
+    if not bot.ahttp:
+        bot.ahttp = aiohttp.ClientSession()
     if not bot.db:
         bot.db = await db.Db().connect(bot.loop)
 
@@ -107,7 +107,7 @@ def main():
     bot.port = config['twitch']['irc_port'] 
     bot.ssl = config['twitch']['irc_use_ssl']
     bot.raw_handlers = [rfc2812_handler(bot)]
-    bot.http_session = None
+    bot.ahttp = None
     bot.db = None
     bot.pong_check_callback = None
     bot.ping_callback = None

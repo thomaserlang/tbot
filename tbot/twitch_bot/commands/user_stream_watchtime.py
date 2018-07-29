@@ -9,7 +9,7 @@ async def user_stream_watchtime(bot, nick, channel, channel_id, target, args, **
     user_id = kwargs['user-id']
     if len(args) > 0:
         user = utils.safe_username(args[0])
-        user_id = await utils.twitch_lookup_user_id(bot.http_session, user)
+        user_id = await utils.twitch_lookup_user_id(bot.ahttp, user)
 
     if not bot.channels[channel_id]['is_live']:
         msg = '@{}, the stream is offline'.format(kwargs['display-name'])

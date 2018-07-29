@@ -27,6 +27,11 @@ config = {
         'user_token': None,
         'twitch_sync_every': 3600,
     },
+    'spotify': {
+        'client_id': None,
+        'client_secret': None,
+        'redirect_uri': None,
+    },
     'logging': {
         'level': 'warning',
         'path': None,
