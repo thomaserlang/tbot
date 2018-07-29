@@ -33,7 +33,7 @@ async def spotify_song(bot, nick, channel, channel_id, target, args, **kwargs):
     bot.send("PRIVMSG", target=target, message=msg)
 
 @command('spotifyplaylist', alias='splaylist')
-async def spotify_song(bot, nick, channel, channel_id, target, args, **kwargs):
+async def spotify_playlist(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     if len(args) > 0:
         user = utils.safe_username(args[0])
