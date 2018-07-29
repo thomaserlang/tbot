@@ -30,7 +30,7 @@ class Twitch_sync_channel:
     async def sync(self):
         self.server = bot.get_guild(int(self.info['discord_server_id']))
         if not self.server:
-            logging.error('Discord server id was not found: {}'.format(self.info['discord_server_id']))
+            logging.debug('Discord server id was not found: {}'.format(self.info['discord_server_id']))
             return
         returninfo = {
             'errors': [],
