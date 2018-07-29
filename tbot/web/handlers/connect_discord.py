@@ -31,6 +31,13 @@ class Handler(Base_handler):
             self.write('Unable to verify you at Discord, please try again.')
             return
         data = json.loads(escape.native_str(response.body))
+        if 'guild' not in data:
+            e = 'oAuth2 grant is not enabled for the bot. Enable it here: https://discordapp.com/developers/applications/{}/bots'.format(\
+                config['discord']['client_id']
+            )
+            logging.error(logging.error)
+            self.write(e)
+            return
         await self.db.execute('UPDATE channels SET discord_server_id=%s WHERE channel_id=%s',
             (data['guild']['id'], self.current_user['user_id'])
         )
