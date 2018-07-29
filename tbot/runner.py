@@ -22,8 +22,8 @@ def twitch():
 @cli.command()
 def web():
     logger.set_logger('web.log')
-    import tbot.web
-    tbot.web.main() 
+    import tbot.web.app
+    tbot.web.app.main() 
 
 @cli.command()
 def discord():
