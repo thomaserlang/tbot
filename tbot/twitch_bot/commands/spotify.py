@@ -7,7 +7,12 @@ async def spotify_song(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     if len(args) > 0:
         user = utils.safe_username(args[0])
-    
+
+    if not bot.channels[channel_id]['is_live']:
+        msg = '@{}, the stream is offline'.format(kwargs['display-name'])
+        bot.send("PRIVMSG", target=target, message=msg)
+        return
+
     data = await request(bot, channel_id, 'https://api.spotify.com/v1/me/player/currently-playing')
     if data == None:
         return
@@ -33,6 +38,11 @@ async def spotify_song(bot, nick, channel, channel_id, target, args, **kwargs):
     if len(args) > 0:
         user = utils.safe_username(args[0])
 
+    if not bot.channels[channel_id]['is_live']:
+        msg = '@{}, the stream is offline'.format(kwargs['display-name'])
+        bot.send("PRIVMSG", target=target, message=msg)
+        return
+
     data = await request(bot, channel_id, 'https://api.spotify.com/v1/me/player/currently-playing')
     if data == None:
         return
@@ -51,6 +61,11 @@ async def spotify_prev_song(bot, nick, channel, channel_id, target, args, **kwar
     user = kwargs['display-name']
     if len(args) > 0:
         user = utils.safe_username(args[0])
+
+    if not bot.channels[channel_id]['is_live']:
+        msg = '@{}, the stream is offline'.format(kwargs['display-name'])
+        bot.send("PRIVMSG", target=target, message=msg)
+        return
     
     data = await request(bot, channel_id, 'https://api.spotify.com/v1/me/player/recently-played?limit=1')
     if data == None:
