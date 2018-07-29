@@ -14,6 +14,7 @@ class Handler(Base_handler):
             return
         if not code:
             _next = self.get_argument('next', None)
+            self.clear_cookie('next')
             if _next:
                 self.set_secure_cookie('next', _next, expires_days=None)
             self.redirect('https://id.twitch.tv/oauth2/authorize?'+parse.urlencode({
