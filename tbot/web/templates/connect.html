@@ -5,6 +5,11 @@
         <style>
             .btn { font-size: 26px; width: 200px;}
         </style>
+        {% if success_msg %}
+        <div class="alert alert-success">
+            {{escape(success_msg)}}
+        </div>
+        {% end %}
         <div class="mb-3">
             <a class="btn btn-secondary {% if apps['twitch'] == 'Y' %}btn-success{% end %}" href="/connect/twitch">Twitch</a>
         </div>

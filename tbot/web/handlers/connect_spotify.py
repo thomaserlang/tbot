@@ -38,4 +38,5 @@ class Handler(Base_handler):
             ''',
             (self.current_user['user_id'], data['access_token'], data['refresh_token'])
         )
+        self.set_secure_cookie('connect_success', 'Spotify was successfully connected.')
         self.redirect('/connect')

@@ -16,4 +16,6 @@ class Handler(Base_handler):
             WHERE
                 c.channel_id=%s;
         ''', (self.current_user['user_id']))
-        self.render('connect.html', apps=apps)
+        success_msg = self.get_secure_cookie('connect_success')
+        self.clear_cookie('connect_success')
+        self.render('connect.html', apps=apps, success_msg=success_msg)

@@ -34,4 +34,5 @@ class Handler(Base_handler):
         await self.db.execute('UPDATE channels SET discord_server_id=%s WHERE channel_id=%s',
             (data['guild']['id'], self.current_user['user_id'])
         )
+        self.set_secure_cookie('connect_success', 'Discord was successfully connected.')
         self.redirect('/connect')
