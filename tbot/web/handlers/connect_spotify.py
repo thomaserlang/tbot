@@ -31,12 +31,23 @@ class Handler(Base_handler):
             logging.error(escape.native_str(response.body))
             self.write('Unable to verify you at Spotify, please try again.')
             return
-        data = json.loads(escape.native_str(response.body))
+        token = json.loads(escape.native_str(response.body))
+
+        response = await http.fetch('https://api.spotify.com/v1/me', headers={
+            'Authorization': 'Bearer {}'.format(token['access_token']),
+        })
+        if response.code != 200:
+            logging.error(escape.native_str(response.body))
+            self.write('Unable retrive your Spotify profile, please try again.')
+            return
+        user = json.loads(escape.native_str(response.body))
+
         await self.db.execute('''
-            INSERT INTO spotify (channel_id, token, refresh_token) VALUES (%s, %s, %s) 
-            ON DUPLICATE KEY UPDATE token=VALUES(token), refresh_token=VALUES(refresh_token)
+            INSERT INTO spotify (channel_id, token, refresh_token, user) VALUES (%s, %s, %s, %s) 
+            ON DUPLICATE KEY UPDATE token=VALUES(token), refresh_token=VALUES(refresh_token), 
+            user=VALUES(user)
             ''',
-            (self.current_user['user_id'], data['access_token'], data['refresh_token'])
+            (self.current_user['user_id'], token['access_token'], token['refresh_token'], user['id'])
         )
         self.set_secure_cookie('connect_success', 'Spotify was successfully connected.')
         self.redirect('/connect')

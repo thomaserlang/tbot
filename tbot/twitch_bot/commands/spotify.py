@@ -50,8 +50,15 @@ async def spotify_playlist(bot, nick, channel, channel_id, target, args, **kwarg
         msg = '{}, Spotify is currently not playing'.format(user)
         bot.send("PRIVMSG", target=target, message=msg)
         return
-    msg = '{}, Current playlist: {}'.format(
+    
+    playlist = await request(bot, channel_id, data['context']['href'])
+    playlistname = ''
+    if playlist:
+        playlistname = playlist['name']
+    
+    msg = '{}, Current playlist: {} - {}'.format(
         user,
+        playlistname,
         data['context']['external_urls']['spotify'],
     )
     bot.send("PRIVMSG", target=target, message=msg)
@@ -99,10 +106,11 @@ async def request(bot, channel_id, url, params=None, headers={}):
         elif r.status == 401:
             await refresh_token(bot, channel_id, t['refresh_token'])
             return await request(bot, channel_id, url, params, headers)
-        text = await r.text()
-        logging.error(text)
-        logging.error(r.status)
-
+        error = await r.text()
+        raise Exception('Spotify request error {}: {}'.format(
+            r.status,
+            error,
+        ))
 
 async def refresh_token(bot, channel_id, refresh_token):
     url = 'https://accounts.spotify.com/api/token'
