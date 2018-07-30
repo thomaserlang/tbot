@@ -13,10 +13,6 @@ class Handler(Base_handler):
             self.write(error)
             return
         if not code:
-            _next = self.get_argument('next', None)
-            self.clear_cookie('next')
-            if _next:
-                self.set_secure_cookie('next', _next, expires_days=None)
             self.redirect('https://id.twitch.tv/oauth2/authorize?'+parse.urlencode({
                     'client_id': config['twitch']['client_id'],
                     'response_type': 'code',
@@ -70,6 +66,7 @@ class Handler(Base_handler):
         }), expires_days=None)
 
         _next = self.get_secure_cookie('next')
+        self.clear_cookie('next')
         if _next:
             self.redirect(_next)
         else:

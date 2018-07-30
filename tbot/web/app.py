@@ -5,13 +5,14 @@ from tbot.web import handlers
 
 def App():
     return web.Application(
-        [
+        [            
+            (r'/login', handlers.login.Handler),
             (r'/connect', handlers.connect.Handler),
             (r'/connect/twitch', handlers.connect_twitch.Handler),
             (r'/connect/discord', handlers.connect_discord.Handler),
             (r'/connect/spotify', handlers.connect_spotify.Handler),
         ], 
-        login_url='/connect/twitch',
+        login_url='/login',
         debug=config['debug'], 
         cookie_secret=config['cookie_secret'],
         template_path=os.path.join(os.path.dirname(__file__), 'templates'),
