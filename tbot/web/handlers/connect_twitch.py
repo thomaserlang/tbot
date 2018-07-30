@@ -41,7 +41,7 @@ class Handler(Base_handler):
         })
         if response.code != 200:
             logging.error(response.body)
-            self.clear_cookie('data')
+            self.clear_cookie('connect_user')
             self.clear_cookie('auto_login')
             self.write('Unable to verify you at Twitch')
             return
@@ -59,7 +59,7 @@ class Handler(Base_handler):
             token['refresh_token'],
         ))
 
-        self.set_secure_cookie('data', json.dumps({
+        self.set_secure_cookie('connect_user', json.dumps({
             'user_id': userinfo['user_id'],
             'user': userinfo['login'],
             'access_token': token['access_token'],
