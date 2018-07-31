@@ -32,7 +32,7 @@ class Handler(Base_handler):
         }), body='', method='POST', raise_error=False)
         if response.code != 200:
             logging.error(response.body)
-            self.write('Unable to verify you at Twitch, please try again.')
+            self.write('Unable to verify you at Twitch, <a href="/connect/twitch">please try again</a>.')
             return
         token = json.loads(escape.native_str(response.body))
         
@@ -43,7 +43,7 @@ class Handler(Base_handler):
             logging.error(response.body)
             self.clear_cookie('connect_user')
             self.clear_cookie('auto_login')
-            self.write('Unable to verify you at Twitch')
+            self.write('Unable to verify you at Twitch, <a href="/connect/twitch">please try again</a>')
             return
         userinfo = json.loads(escape.native_str(response.body))
 

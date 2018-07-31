@@ -29,7 +29,7 @@ class Handler(Base_handler):
         }), method='POST', headers={'Content-Type': 'application/x-www-form-urlencoded'}, raise_error=False)
         if response.code != 200:
             logging.error(escape.native_str(response.body))
-            self.write('Unable to verify you at Spotify, please try again.')
+            self.write('Unable to verify you at Spotify, <a href="/connect/spotify">please try again</a>.')
             return
         token = json.loads(escape.native_str(response.body))
 
@@ -38,7 +38,7 @@ class Handler(Base_handler):
         })
         if response.code != 200:
             logging.error(escape.native_str(response.body))
-            self.write('Unable retrive your Spotify profile, please try again.')
+            self.write('Unable retrive your Spotify profile, <a href="/connect/spotify">please try again</a>.')
             return
         user = json.loads(escape.native_str(response.body))
 

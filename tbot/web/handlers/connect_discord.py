@@ -28,7 +28,7 @@ class Handler(Base_handler):
         }), method='POST', headers={'Content-Type': 'application/x-www-form-urlencoded'}, raise_error=False)
         if response.code != 200:
             logging.error(escape.native_str(response.body))
-            self.write('Unable to verify you at Discord, please try again.')
+            self.write('Unable to verify you at Discord, <a href="/connect/discord">please try again</a>.')
             return
         data = json.loads(escape.native_str(response.body))
         if 'guild' not in data:
