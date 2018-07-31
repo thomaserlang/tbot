@@ -17,8 +17,8 @@ async def spotify_song(bot, nick, channel, channel_id, target, args, **kwargs):
     if not data or not data['is_playing']:
         return
     artists = [r['name'] for r in data['item']['artists']]
-    duration = '{}:{}'.format(*divmod(round(data['item']['duration_ms']/1000), 60))
-    progress = '{}:{}'.format(*divmod(round(data['progress_ms']/1000), 60))
+    duration = '{}:{:02d}'.format(*divmod(round(data['item']['duration_ms']/1000), 60))
+    progress = '{}:{:02d}'.format(*divmod(round(data['progress_ms']/1000), 60))
     msg = '{}, Playing: "{}" by {} ({}/{})'.format(
         user,
         data['item']['name'],
