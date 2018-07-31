@@ -12,17 +12,15 @@ def seconds_to_pretty(seconds):
 
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
 
     ts = []
-    if hours == 1:
-        ts.append('1 hour')
-    elif hours > 1:
-        ts.append('{} hours'.format(hours))
-    if minutes == 1:
-        ts.append('1 min')
-    elif minutes > 1:
-        ts.append('{} mins'.format(minutes))
-
+    if days:
+        ts.append(pluralize(days, 'day'))
+    if hours:
+        ts.append(pluralize(hours, 'hour'))
+    if minutes:        
+        ts.append(pluralize(minutes, 'min'))
     return ' '.join(ts)
 
 async def twitch_request(ahttp, url, params=None, headers={}):    

@@ -1,5 +1,4 @@
 import logging
-import discord
 from tbot import utils
 from tbot.discord_bot import bot
 from tbot.discord_bot.tasks.twitch_sync import Twitch_sync_channel

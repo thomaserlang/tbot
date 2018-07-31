@@ -16,7 +16,7 @@ def main():
 
 if __name__ == '__main__':
     from tbot import config_load, logger
-    config_load('../../tbot.yaml')    
+    config_load('../../tbot.yaml')
     logger.set_logger('discord.log')
 
     main()
