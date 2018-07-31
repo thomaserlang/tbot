@@ -23,7 +23,7 @@ async def spotify_song(bot, nick, channel, channel_id, target, args, **kwargs):
     artists = [r['name'] for r in data['item']['artists']]
     duration = '{}:{}'.format(*divmod(round(data['item']['duration_ms']/1000), 60))
     progress = '{}:{}'.format(*divmod(round(data['progress_ms']/1000), 60))
-    msg = '{}, Playing: {} by {} ({}/{})'.format(
+    msg = '{}, Playing: "{}" by {} ({}/{})'.format(
         user,
         data['item']['name'],
         ', '.join(artists),
@@ -56,7 +56,7 @@ async def spotify_playlist(bot, nick, channel, channel_id, target, args, **kwarg
     if playlist:
         playlistname = playlist['name']
     
-    msg = '{}, Current playlist: {} - {}'.format(
+    msg = '{}, Current playlist: "{}" - {}'.format(
         user,
         playlistname,
         data['context']['external_urls']['spotify'],
@@ -83,7 +83,7 @@ async def spotify_prev_song(bot, nick, channel, channel_id, target, args, **kwar
         return
     data = data['items'][0]
     artists = [r['name'] for r in data['track']['artists']]
-    msg = '{}, Previous song: {} by {}'.format(
+    msg = '{}, Previous song: "{}" by {}'.format(
         user,
         data['track']['name'],
         ', '.join(artists),
