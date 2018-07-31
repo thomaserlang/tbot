@@ -2,23 +2,19 @@ import logging
 from tbot.twitch_bot.command import command
 from tbot import config, utils
 
-@command('spotifysong', alias='song')
+@command('song')
 async def spotify_song(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     if len(args) > 0:
         user = utils.safe_username(args[0])
 
     if not bot.channels[channel_id]['is_live']:
-        msg = '@{}, the stream is offline'.format(kwargs['display-name'])
-        bot.send("PRIVMSG", target=target, message=msg)
         return
 
     data = await request(bot, channel_id, 'https://api.spotify.com/v1/me/player/currently-playing')
     if data == None:
         return
     if not data or not data['is_playing']:
-        msg = '{}, Spotify is currently not playing'.format(user)
-        bot.send("PRIVMSG", target=target, message=msg)
         return
     artists = [r['name'] for r in data['item']['artists']]
     duration = '{}:{}'.format(*divmod(round(data['item']['duration_ms']/1000), 60))
@@ -32,23 +28,19 @@ async def spotify_song(bot, nick, channel, channel_id, target, args, **kwargs):
     )
     bot.send("PRIVMSG", target=target, message=msg)
 
-@command('spotifyplaylist', alias='playlist')
+@command('playlist')
 async def spotify_playlist(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     if len(args) > 0:
         user = utils.safe_username(args[0])
 
     if not bot.channels[channel_id]['is_live']:
-        msg = '@{}, the stream is offline'.format(kwargs['display-name'])
-        bot.send("PRIVMSG", target=target, message=msg)
         return
 
     data = await request(bot, channel_id, 'https://api.spotify.com/v1/me/player/currently-playing')
     if data == None:
         return
     if not data or not data['is_playing']:
-        msg = '{}, Spotify is currently not playing'.format(user)
-        bot.send("PRIVMSG", target=target, message=msg)
         return
     
     playlist = await request(bot, channel_id, data['context']['href'])
@@ -63,23 +55,19 @@ async def spotify_playlist(bot, nick, channel, channel_id, target, args, **kwarg
     )
     bot.send("PRIVMSG", target=target, message=msg)
 
-@command('spotifyprevsong', alias='prevsong')
+@command('prevsong')
 async def spotify_prev_song(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     if len(args) > 0:
         user = utils.safe_username(args[0])
 
     if not bot.channels[channel_id]['is_live']:
-        msg = '@{}, the stream is offline'.format(kwargs['display-name'])
-        bot.send("PRIVMSG", target=target, message=msg)
         return
     
     data = await request(bot, channel_id, 'https://api.spotify.com/v1/me/player/recently-played?limit=1')
     if data == None:
         return
     if not data or not data['items']:
-        msg = '{}, No previous songs played on Spotify'.format(user)
-        bot.send("PRIVMSG", target=target, message=msg)
         return
     data = data['items'][0]
     artists = [r['name'] for r in data['track']['artists']]
@@ -126,7 +114,6 @@ async def refresh_token(bot, channel_id, refresh_token):
     async with bot.ahttp.post(url, params=body, headers=headers) as r:
         if r.status == 200:
             data = await r.json()
-            logging.info(data)
             await bot.db.execute(
                 'UPDATE spotify SET token=%s WHERE channel_id=%s;',
                 (data['access_token'], channel_id)
