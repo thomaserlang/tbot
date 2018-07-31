@@ -21,7 +21,7 @@ config = {
         'client_id': None,
         'client_secret': None,
         'redirect_uri': None,
-        'permissions': 268437504,
+        'permissions': 268486656,
         'token': None,
         'bot': True,
         'user_token': None,
