@@ -2,7 +2,7 @@ import logging
 from tbot.twitch_bot.command import command
 from tbot import config, utils
 
-@command('spotifysong', alias='ssong')
+@command('spotifysong', alias='song')
 async def spotify_song(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     if len(args) > 0:
@@ -32,7 +32,7 @@ async def spotify_song(bot, nick, channel, channel_id, target, args, **kwargs):
     )
     bot.send("PRIVMSG", target=target, message=msg)
 
-@command('spotifyplaylist', alias='splaylist')
+@command('spotifyplaylist', alias='playlist')
 async def spotify_playlist(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     if len(args) > 0:
@@ -63,7 +63,7 @@ async def spotify_playlist(bot, nick, channel, channel_id, target, args, **kwarg
     )
     bot.send("PRIVMSG", target=target, message=msg)
 
-@command('spotifyprevsong', alias='sprevsong')
+@command('spotifyprevsong', alias='prevsong')
 async def spotify_prev_song(bot, nick, channel, channel_id, target, args, **kwargs):
     user = kwargs['display-name']
     if len(args) > 0:
