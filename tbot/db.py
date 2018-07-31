@@ -15,6 +15,7 @@ class Db():
             charset='utf8mb4',
             use_unicode=True,
             echo=False,
+            autocommit=False,
         )
         return self
 
@@ -23,12 +24,14 @@ class Db():
             try:
                 await c.execute(*args, **kwargs)
                 r = await c.fetchone()
+                await c.connection.commit()
                 return r 
             except pymysql.err.InternalError as e:
                 logging.exception('fetchone')
                 await c.connection.ping()        
                 await c.execute(*args, **kwargs)
                 r = await c.fetchone()
+                await c.connection.commit()
                 return r 
 
     async def fetchall(self, *args, **kwargs):
@@ -36,12 +39,14 @@ class Db():
             try:
                 await c.execute(*args, **kwargs)
                 r = await c.fetchall()
+                await c.connection.commit()
                 return r
             except pymysql.err.InternalError as e:
                 logging.exception('fetchall')
                 await c.connection.ping()            
                 await c.execute(*args, **kwargs)
                 r = await c.fetchall()
+                await c.connection.commit()
 
     async def execute(self, *args, **kwargs):
         async with cursor(self.pool) as c:
