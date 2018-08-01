@@ -10,7 +10,7 @@ async def mst(ctx):
         seconds = randint(0, 86400)
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
-        await ctx.send('Current time in Michelle Summer Time: {}'.format(
+        await ctx.send('Current time in Michelle Summer Time (MST): {}'.format(
             '{:02d}:{:02d}'.format(hours, minutes)
         ))
     except:

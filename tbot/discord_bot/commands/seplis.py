@@ -28,12 +28,16 @@ async def tvshow(ctx, *, title):
         
         if episodes:
             episode = episodes[0]
-            embed.description = '**Next episode**: S{}E{} in {}.\n'.format(
+            seconds_to_air = (parse(episode['air_datetime']).replace(tzinfo=None) - datetime.utcnow()).total_seconds()
+            in_or_ago = 'in'
+            if seconds_to_air < 0:
+                in_or_ago = 'ago'
+                seconds_to_air = abs(seconds_to_air)
+            embed.description = '**Next episode**: S{}E{} {} {}.\n'.format(
                 str(episode['season']).zfill(2),
                 str(episode['episode']).zfill(2),
-                utils.seconds_to_pretty(
-                    (parse(episode['air_datetime']).replace(tzinfo=None) - datetime.utcnow()).total_seconds()
-                )
+                in_or_ago,
+                utils.seconds_to_pretty(seconds_to_air)
             )
 
         total_episodes = 0
