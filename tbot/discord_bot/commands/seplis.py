@@ -23,22 +23,34 @@ async def tvshow(ctx, *, title):
 
         episodes = await request('/shows/{}/episodes'.format(show['id']), {
             'q': 'air_date:>={}'.format(datetime.utcnow().date().isoformat()),
+            'per_page': 2,
         })
         embed.description = ''
         
         if episodes:
             episode = episodes[0]
-            seconds_to_air = (parse(episode['air_datetime']).replace(tzinfo=None) - datetime.utcnow()).total_seconds()
+            just_aired = None
+            airing = parse(episode['air_datetime']).replace(tzinfo=None)
+            if datetime.utcnow().time() > airing.time():
+                episode = episodes[1] if len(episodes) > 1 else None
+                just_aired = episodes[0]
             
-            if seconds_to_air < 0:
-                when = 'aired {} ago'.format(utils.seconds_to_pretty(abs(seconds_to_air)))
-            else:
-                when = 'in {}'.format(utils.seconds_to_pretty(seconds_to_air))
-            embed.description = '**Next episode**: S{}E{} {}.\n'.format(
-                str(episode['season']).zfill(2),
-                str(episode['episode']).zfill(2),
-                when
-            )
+            if just_aired:
+                embed.description = 'Episode {} in season {} just aired {} ago.\n\n'.format(
+                    just_aired['episode'],
+                    just_aired['season'],
+                    utils.seconds_to_pretty(
+                        abs((airing - datetime.utcnow()).total_seconds())
+                    )
+                )
+            if episode:
+                embed.description = '**Next episode**: S{:02d}E{:02d} in {}.\n'.format(
+                    episode['season'],
+                    episode['episode'],
+                    utils.seconds_to_pretty(
+                        (parse(episode['air_datetime']).replace(tzinfo=None) - datetime.utcnow()).total_seconds()
+                    )
+                )
 
         total_episodes = 0
         for season in show['seasons']:
