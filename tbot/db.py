@@ -47,6 +47,7 @@ class Db():
                 await c.execute(*args, **kwargs)
                 r = await c.fetchall()
                 await c.connection.commit()
+                return r
 
     async def execute(self, *args, **kwargs):
         async with cursor(self.pool) as c:
