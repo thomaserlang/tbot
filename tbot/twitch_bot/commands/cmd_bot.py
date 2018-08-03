@@ -2,7 +2,7 @@ from tbot.twitch_bot.command import command, cmds
 from tbot import utils, constants
 from datetime import datetime
 
-@command('__thebotname')
+@command('__thebotname', alias='commands')
 async def cmd_bot(bot, nick, channel, channel_id, target, args, **kwargs):
     if len(args) == 0:
         m = []
