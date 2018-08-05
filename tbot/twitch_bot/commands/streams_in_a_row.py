@@ -24,10 +24,9 @@ async def streams_in_a_row(bot, nick, channel, channel_id, target, args, **kwarg
         bot.send("PRIVMSG", target=target, message=msg)
         return
 
-    msg = '{} has been here for {} {} in a row'.format(
+    msg = '{} has been here for {} in a row'.format(
         user,
-        r['streams_row'],
-        'streams' if r['streams_row'] != 1 else 'stream',
+        utils.pluralize(r['streams_row'], 'stream')
     )
 
     if r['streams_row'] < r['streams_row_peak']:
@@ -36,9 +35,8 @@ async def streams_in_a_row(bot, nick, channel, channel_id, target, args, **kwarg
             r['streams_row_peak_date'].isoformat()
         )
 
-    msg += ' and a total of {} {}'.format(
-        r['streams'],
-        'streams' if r['streams'] != 1 else 'stream',
+    msg += ' and a total of {}'.format(
+        utils.pluralize(r['streams'], 'stream')
     )
 
     bot.send("PRIVMSG", target=target, message=msg)

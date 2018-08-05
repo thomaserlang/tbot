@@ -62,8 +62,9 @@ async def total_chat_stats(bot, nick, channel, channel_id, target, args, **kwarg
         )
     )
     if r:
-        current_stream = 'This stream: {} messages / {} words'.format(
-            r['msgs'], r['words']
+        current_stream = 'This stream: {} / {}'.format(
+            utils.pluralize(r['msgs'], 'message'),
+            utils.pluralize(r['words'], 'word'),
         )
     else:
         current_stream = 'This stream: nothing'
@@ -90,8 +91,9 @@ async def current_stream_stats(bot, channel_id, user_id):
         )
     )
     if r:
-        return 'This stream: {} messages / {} words'.format(
-            r['msgs'], r['words']
+        return 'This stream: {} / {}'.format(
+            utils.pluralize(r['msgs'], 'message'),
+            utils.pluralize(r['words'], 'word'),
         )
     else:
         return 'This stream: nothing'
@@ -117,8 +119,9 @@ async def user_month_stats(bot, channel_id, user_id):
         )
     )
     if r:
-        return 'This month: {} messages / {} words'.format(
-            r['msgs'], r['words']
+        return 'This month: {} / {}'.format(
+            utils.pluralize(r['msgs'], 'message'),
+            utils.pluralize(r['words'], 'word'),
         )
     else:
         return 'This month: nothing'
@@ -150,8 +153,9 @@ async def user_last_month_stats(bot, channel_id, user_id):
         )
     )
     if r:
-        return 'Last month: {} messages / {} words'.format(
-            r['msgs'], r['words']
+        return 'Last month: {} / {}'.format(
+            utils.pluralize(r['msgs'], 'message'),
+            utils.pluralize(r['words'], 'word'),
         )
     else:
         return 'Last month: nothing'
