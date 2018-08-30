@@ -74,8 +74,8 @@ class Twitch_sync_channel:
                 seconds = (datetime.utcnow() - subbed_at).total_seconds()
                 months = math.ceil(seconds / 60 / 60 / 24 / 30)
                 if twitch_id in cached_badges and cached_badges[twitch_id]['sub'] != None:
-                    if months < cached_badges[twitch_id]['sub']+1:
-                        months = cached_badges[twitch_id]['sub']+1
+                    if months < cached_badges[twitch_id]['sub']:
+                        months = cached_badges[twitch_id]['sub']
                 sub_streak_role = None
                 for role in self.roles:
                     if role['type'] == 'sub_tier' and role['value'] == subinfo['sub_plan']:
