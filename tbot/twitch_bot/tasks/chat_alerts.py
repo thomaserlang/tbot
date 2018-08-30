@@ -16,4 +16,9 @@ async def usernotice(**kwargs):
             return
         bot.send("PRIVMSG", target=kwargs['channel'], message=alert['message'])
 
-        await badge_log(**kwargs)
+        await badge_log( 
+            nick=kwargs['login'],
+            target=kwargs['channel'],
+            message='', 
+            **kwargs
+        )
