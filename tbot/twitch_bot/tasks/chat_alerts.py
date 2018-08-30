@@ -1,6 +1,7 @@
 import logging
 from tbot import config, utils
 from tbot.twitch_bot import bot
+from .badge_log import badge_log
 
 @bot.on('USERNOTICE')
 async def usernotice(**kwargs):
@@ -14,3 +15,5 @@ async def usernotice(**kwargs):
         if not alert:
             return
         bot.send("PRIVMSG", target=kwargs['channel'], message=alert['message'])
+
+        await badge_log(**kwargs)
