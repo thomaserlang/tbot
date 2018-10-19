@@ -1,5 +1,4 @@
 import click
-import asyncio
 from tbot import config, config_load, logger
 
 @click.group()

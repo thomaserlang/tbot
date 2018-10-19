@@ -1,0 +1,41 @@
+{
+  "name": "tbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-cli -d -w",
+    "build": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thomaserlang/tbot.git"
+  },
+  "author": "Thomas Erlang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thomaserlang/tbot/issues"
+  },
+  "homepage": "https://github.com/thomaserlang/tbot#readme",
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "axios": "^0.18.0",
+    "babel-loader": "^8.0.4",
+    "css-loader": "^1.0.0",
+    "downshift": "^3.1.1",
+    "html-loader": "^0.5.5",
+    "mini-css-extract-plugin": "^0.4.4",
+    "moment": "^2.22.2",
+    "node-sass": "^4.9.4",
+    "prop-types": "^15.6.2",
+    "query-string": "^6.2.0",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-router-dom": "^4.3.1",
+    "sass-loader": "^7.1.0",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
+  }
+}

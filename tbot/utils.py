@@ -1,5 +1,5 @@
-import re
 import logging
+import re, json, datetime
 from tbot import config
 
 def safe_username(user):
@@ -71,3 +71,35 @@ def pluralize(num, word):
     if num != 1:
         word += 's'
     return '{} {}'.format(num, word)
+
+
+def isoformat(dt):
+    r = dt.isoformat()
+    if isinstance(dt, datetime.datetime) and not dt.tzinfo:
+        r += 'Z'
+    return r
+
+class JsonEncoder(json.JSONEncoder):
+    def default(self, value):
+        """Convert more Python data types to ES-understandable JSON."""
+        if isinstance(value, (datetime.datetime, datetime.time)):
+            return isoformat(value)
+        elif isinstance(value, datetime.date):
+            return value.isoformat()
+        if isinstance(value, set):
+            return list(value)
+        if isinstance(value, bytes):
+            return value.decode('utf-8')
+        return super().default(value)
+
+def json_dumps(obj, **kwargs):
+    return json.dumps(
+        obj,
+        cls=JsonEncoder,
+        **kwargs
+    ).replace("</", "<\\/")
+
+def json_loads(s, charset='utf-8'):
+    if isinstance(s, bytes):
+        s = s.decode(charset)
+    return json.loads(s)

@@ -1,0 +1,31 @@
+* {
+    border-radius: 0 !important;
+}
+
+.form-control {    
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+body {
+    background-color: #26282e;
+    color: #fff;
+}
+
+#main-wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#content {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.access-denied {
+    color: #F72020;
+    font-size: 26px;
+    text-align: center;
+    margin-top: 40vh
+}

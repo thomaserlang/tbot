@@ -1,0 +1,48 @@
+#logviewer {
+    margin: 0.5rem;
+    
+    .filter {
+        margin-bottom: 0.5rem;
+        input, button {
+            margin-right: 0.5rem;
+        }
+    }
+
+    .userChatStats {
+        padding: 0.5rem;
+        background-color: #36c;
+        margin-bottom: 0.5rem;
+        span {
+            margin-right: 1rem;
+        }
+    }
+
+    .sticky-top {
+        background-color: #26282e;
+    }
+
+    .badge {
+        margin-right: 0.5rem;
+    }
+}
+
+#select-channels {
+
+    background-color: #3C3C3C;
+    padding: 3rem;
+    width: 500px;
+    margin: 10vh auto;
+
+    font-size: 26px;
+
+    h1 {
+        text-align: center;
+        margin-bottom: 1rem;
+        color: #ADADAD;
+    }
+
+    .suggest-channel {
+        margin-bottom: 1rem;
+    }
+
+}
