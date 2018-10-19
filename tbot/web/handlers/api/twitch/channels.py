@@ -4,7 +4,7 @@ from tornado import web
 class Handler(Api_handler):
 
     async def get(self):
-        sql = 'SELECT channel_id as id, name FROM logitch.channels WHERE active="Y"'
+        sql = 'SELECT channel_id as id, name FROM channels WHERE active="Y"'
         args = []
         name = self.get_argument('name', None)
         suggest_name = self.get_argument('suggest_name', None)

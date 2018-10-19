@@ -6,6 +6,9 @@ def main():
     path = os.path.dirname(os.path.realpath(__file__))
 
     start = [
+        ('twitch_bot', ['python', 'runner.py', 'twitch_bot'], path),
+        ('twitch_chatlog', ['python', 'runner.py', 'twitch_chatlog'], path),
+        ('discord', ['python', 'runner.py', 'discord'], path),
         ('web', ['python', 'runner.py', 'web'], path),
         ('npm', ['npm', 'start'], os.path.join(path, 'web/static/app')),
     ]

@@ -12,8 +12,8 @@ class Handler(Api_handler):
             SELECT 
                 c.channel_id AS id, c.name
             FROM
-                logitch.channels c,
-                logitch.mods m
+                channels c,
+                twitch_channel_mods m
             WHERE
                 m.user_id = %s
                     AND m.channel_id = c.channel_id

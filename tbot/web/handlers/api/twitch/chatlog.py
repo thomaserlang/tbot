@@ -10,17 +10,17 @@ class Handler(Api_handler):
         if True:
             if not self.current_user:
                 raise web.HTTPError(401, 'Authentication required')
-            mod = await self.db.fetchone('SELECT user_id FROM logitch.mods WHERE channel_id=%s AND user_id=%s',
+            mod = await self.db.fetchone('SELECT user_id FROM twitch_channel_mods WHERE channel_id=%s AND user_id=%s',
                 [channel_id, self.current_user['user_id']])
             if not mod:
                 raise web.HTTPError(403, 'You are not a moderator of this channel')
 
         args = [channel_id]
-        sql = 'SELECT * FROM logitch.entries WHERE channel_id=%s'
+        sql = 'SELECT * FROM twitch_chatlog WHERE channel_id=%s'
 
         user = self.get_argument('user', None)
         if user:
-            u = await self.db.fetchone('SELECT user_id FROM logitch.usernames WHERE user=%s', [user])
+            u = await self.db.fetchone('SELECT user_id FROM twitch_usernames WHERE name=%s', [user])
             user_id = 0
             if u:
                 user_id = u['user_id']
@@ -64,11 +64,11 @@ class User_stats_handler(Api_handler):
             SELECT 
                 bans, timeouts, purges, chat_messages
             FROM
-                logitch.user_stats us,
-                logitch.usernames u
+                twitch_user_chat_stats us,
+                twitch_usernames u
             WHERE
                 us.channel_id = %s
-            AND u.user = %s
+            AND u.name = %s
             AND us.user_id = u.user_id
         '''
         stats = await self.db.fetchone(sql, [channel_id, user])

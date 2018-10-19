@@ -1,4 +1,5 @@
 import click
+import asyncio
 from tbot import config, config_load, logger
 
 @click.group()
@@ -13,10 +14,23 @@ def cli(config, log_path, log_level):
         config['logging']['level'] = log_level
 
 @cli.command()
-def twitch():
-    logger.set_logger('twitch.log')
+def twitch_bot():
+    logger.set_logger('twitch_bot.log')
     import tbot.twitch_bot.bot_main
     tbot.twitch_bot.bot_main.main()
+
+@cli.command()
+def twitch_chatlog():
+    logger.set_logger('twitch_chatlog.log')
+
+    loop = asyncio.get_event_loop()
+
+    from tbot.twitch_chatlog import chatlog, modlog
+
+    loop.create_task(chatlog.main().connect())
+    loop.create_task(modlog.main().run())
+
+    loop.run_forever()
 
 @cli.command()
 def web():

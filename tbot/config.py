@@ -16,6 +16,7 @@ config = {
         'irc_use_ssl': True,
         'check_channels_every': 60, # seconds
         'delay_offline': 0, # seconds
+        'pubsub_url': 'wss://pubsub-edge.twitch.tv',
     },
     'discord': {
         'client_id': None,
