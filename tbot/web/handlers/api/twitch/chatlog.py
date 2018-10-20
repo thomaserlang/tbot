@@ -16,7 +16,7 @@ class Handler(Api_handler):
                 raise web.HTTPError(403, 'You are not a moderator of this channel')
 
         args = [channel_id]
-        sql = 'SELECT * FROM twitch_chatlog WHERE channel_id=%s'
+        sql = 'SELECT * FROM twitch_chatlog WHERE channel_id=%s AND type IN (1,100) '
 
         user = self.get_argument('user', None)
         if user:
@@ -47,6 +47,7 @@ class Handler(Api_handler):
             sql += ' AND type=100'
 
         sql += ' ORDER BY id DESC LIMIT %s'
+
         per_page = 10
         args.append(per_page)
         log = await self.db.fetchall(sql, args)

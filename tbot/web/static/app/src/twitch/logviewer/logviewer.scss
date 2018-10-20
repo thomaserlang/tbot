@@ -1,8 +1,11 @@
 #logviewer {
     margin: 0.5rem;
     
+    .sticky-top {        
+        padding-bottom: 0.5rem;
+    }
+
     .filter {
-        margin-bottom: 0.5rem;
         input, button {
             margin-right: 0.5rem;
         }
@@ -38,11 +41,15 @@
     h1 {
         text-align: center;
         margin-bottom: 1rem;
-        color: #ADADAD;
+        color: #FFFFFF;
     }
 
     .suggest-channel {
         margin-bottom: 1rem;
+
+        .suggest-input {
+            margin: 0;
+        }
     }
 
 }

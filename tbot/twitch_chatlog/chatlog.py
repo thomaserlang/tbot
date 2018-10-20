@@ -38,7 +38,7 @@ async def connect(**kwargs):
         future.cancel()
 
     bot.channels = await get_channels()
-    for c in bot.channels:
+    for c in bot.channels.values():
         bot.send('JOIN', channel='#'+c['name'])
         bot.send("PRIVMSG", target='#'+c['name'], message='/mods')
 
@@ -82,6 +82,9 @@ async def pong(message, **kwargs):
 
 @bot.on('PRIVMSG')
 async def message(nick, target, message, **kwargs):
+    if not bot.channels[int(kwargs['room-id'])]['enabled']:
+        return
+
     bot.loop.create_task(
         save(1, target, kwargs['room-id'], nick, kwargs['user-id'], message)
     )
@@ -97,6 +100,8 @@ async def message(nick, target, message, **kwargs):
 @bot.on('CLEARCHAT')
 async def clearchat(channel, banned_user, **kwargs):
     if 'ban-reason' not in kwargs:
+        return
+    if not bot.channels[int(kwargs['room-id'])]['enabled']:
         return
     type_ = 2
     reason = kwargs['ban-reason'] or 'empty'
@@ -129,7 +134,7 @@ async def save_mods(target, message):
         mods = []
     mods.append(channel)
     channel_id = None
-    for c in bot.channels:
+    for c in bot.channels.values():
         if c['name'].lower() == channel:
             channel_id = c['channel_id'] 
 
@@ -185,13 +190,22 @@ async def save(type_, channel, channel_id, user, user_id, message):
         logging.exception('sql')
 
 async def get_channels():
-    rows = await bot.db.fetchall('SELECT channel_id, name FROM channels WHERE active="Y";')
-    l = []
+    rows = await bot.db.fetchall('''
+    SELECT 
+        c.channel_id, c.name, m.name as module
+    FROM
+        channels c
+            LEFT JOIN
+        twitch_enabled_modules m ON (m.channel_id = c.channel_id
+            AND m.name = 'chatlog');
+    ''')
+    l = {}
     for r in rows:
-        l.append({
+        l[r['channel_id']] = {
             'channel_id': r['channel_id'],
             'name': r['name'].lower(),
-        })
+            'enabled': r['module'] != None,
+        }
     return l
 
 def main():

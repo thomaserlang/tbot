@@ -7,7 +7,6 @@ class Pubsub():
     def __init__(self, url, token):
         self.url = url
         self.channels = []
-        self.channel_lookup = {}
         self.token = token
         self.ping_callback = None
         self.pong_check_callback = None
@@ -15,7 +14,6 @@ class Pubsub():
         self.loop = asyncio.get_event_loop()
 
     async def parse_message(self, message):
-        logging.debug(message)
         if message['type'] == 'PONG':
             asyncio.ensure_future(self.ping())
             if self.pong_check_callback:
@@ -30,6 +28,8 @@ class Pubsub():
         if 'moderation_action' not in data:
             return
         c = topic.split('.')
+        if not self.channels[int(c[2])]['enabled']:
+            return
         try:
             await self.db.execute('''
                 INSERT INTO twitch_modlog (created_at, channel_id, user, user_id, command, args, target_user, target_user_id) VALUES
@@ -95,8 +95,7 @@ class Pubsub():
         current_user_id = self.get_current_user_id()
         self.channels = await self.get_channels() 
         topics = []
-        for c in self.channels:
-            self.channel_lookup[c['channel_id']] = c['name']
+        for c in self.channels.values():
             topics.append('chat_moderator_actions.{}.{}'.format(
                 current_user_id,
                 c['channel_id'],
@@ -138,13 +137,22 @@ class Pubsub():
         return response.json()['data'][0]['id']
 
     async def get_channels(self):
-        rows = await self.db.fetchall('SELECT channel_id, name FROM channels WHERE active="Y";')
-        l = []
+        rows = await self.db.fetchall('''
+        SELECT 
+            c.channel_id, c.name, m.name as module
+        FROM
+            channels c
+                LEFT JOIN
+            twitch_enabled_modules m ON (m.channel_id = c.channel_id
+                AND m.name = 'chatlog');
+        ''')
+        l = {}
         for r in rows:
-            l.append({
+            l[r['channel_id']] = {
                 'channel_id': r['channel_id'],
                 'name': r['name'].lower(),
-            })
+                'enabled': r['module'] != None,
+            }
         return l
 
 def main():

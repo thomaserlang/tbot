@@ -50,7 +50,7 @@ class SuggestChannelInput extends React.Component {
                 <div className="suggest-input">
                     <input {...getInputProps({
                         name: 'channel',
-                        placeholder: 'Search for channel',
+                        placeholder: 'Channel search',
                         onChange: this.fetch,
                         className: 'form-control',
                     })} />
