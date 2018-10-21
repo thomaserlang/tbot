@@ -13,6 +13,7 @@ class SelectChannel extends React.Component {
     }
 
     componentDidMount() {
+        document.title = `Twitch Logviewer - ${window.tbot.name}`
         api.get('/api/twitch/user/mod-of').then(r => {
             this.setState({
                 modOf: r.data,

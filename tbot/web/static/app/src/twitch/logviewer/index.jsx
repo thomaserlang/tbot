@@ -27,6 +27,7 @@ class Logviewer extends React.Component {
 
     componentDidMount() {
         let channel = this.props.match.params.channel;
+        document.title = `${channel} Twitch Logviewer - ${window.tbot.name}`
         api.get(`/api/twitch/channels`, {params: {name:channel}}).then(data => {
             this.setState({
                 channel: data.data[0],
@@ -185,7 +186,7 @@ class Logviewer extends React.Component {
         if (this.state.accessDenied)
             return this.renderAccessDenied()
         return <div id="logviewer">
-            <h2>{this.state.channel.name} - Chatlog</h2>
+            <h2>{this.state.channel.name} - Logviewer</h2>
             <div className="sticky-top">
                 <div className="filter">
                     <form className="form-inline">
