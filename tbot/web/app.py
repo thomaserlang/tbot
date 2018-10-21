@@ -25,14 +25,14 @@ def App():
         ], 
         login_url='/twitch-login',
         debug=config['debug'], 
-        cookie_secret=config['cookie_secret'],
+        cookie_secret=config['web']['cookie_secret'],
         template_path=os.path.join(os.path.dirname(__file__), 'templates'),
         autoescape=None,
     )
 
 def main():
     app = App()
-    app.listen(config['web_port'])
+    app.listen(config['web']['port'])
     loop = ioloop.IOLoop.current()
     loop.add_callback(db_connect, app)
     loop.start()

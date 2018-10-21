@@ -1,10 +1,12 @@
 import os, yaml
 
 config = {
-    'sql_url': '',
     'debug': False,
-    'cookie_secret': '',
-    'web_port': 8001,
+    'web': {
+        'port': 8001,
+        'cookie_secret': '',
+        'name': 'TBot',
+    },
     'twitch': {
         'user': '',
         'token': '',

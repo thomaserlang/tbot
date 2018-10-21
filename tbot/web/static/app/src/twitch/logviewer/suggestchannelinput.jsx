@@ -27,7 +27,7 @@ class SuggestChannelInput extends React.Component {
     }
 
     selected(s) {
-        location.href = '/logviewer/'+s.name
+        location.href = '/twitch/logviewer/'+s.name
     }
 
     render() {

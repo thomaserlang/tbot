@@ -1,27 +1,24 @@
 #logviewer {
-    margin: 0.5rem;
-    
-    .sticky-top {        
-        padding-bottom: 0.5rem;
+    h2 {
+        padding: 0.5rem;
+        background-color: #36c;
+        margin: 0;
     }
 
     .filter {
+        padding: 0.5rem;
+        background-color: #36c;
         input, button {
             margin-right: 0.5rem;
         }
     }
 
     .userChatStats {
+        background-color: #26282e;
         padding: 0.5rem;
-        background-color: #36c;
-        margin-bottom: 0.5rem;
         span {
             margin-right: 1rem;
         }
-    }
-
-    .sticky-top {
-        background-color: #26282e;
     }
 
     .badge {
@@ -30,12 +27,10 @@
 }
 
 #select-channels {
-
     background-color: #3C3C3C;
     padding: 3rem;
     width: 500px;
     margin: 10vh auto;
-
     font-size: 26px;
 
     h1 {

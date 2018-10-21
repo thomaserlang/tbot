@@ -22,14 +22,14 @@ class SelectChannel extends React.Component {
 
     render() {
         return <div id="select-channels">
-            <h1>Log viewer</h1>
+            <h1>Twitch Logviewer</h1>
             <div className="suggest-channel">
                 <SuggestChannelInput />
             </div>
             <div className="mod-of">
                 {this.state.modOf.map(c => (
                     <div key={c.id}>
-                        <a href={`/logviewer/${c.name}`}>
+                        <a href={`/twitch/logviewer/${c.name}`}>
                             {c.name}
                         </a>
                     </div>

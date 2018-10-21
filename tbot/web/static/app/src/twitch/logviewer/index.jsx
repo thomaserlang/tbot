@@ -104,11 +104,6 @@ class Logviewer extends React.Component {
         if (this.state.loadChatlog)
             return <h2>Loading chatlog...</h2>;
         return <table className="chatlog table table-dark table-striped table-sm table-hover">
-            <thead><tr>
-                <th width="10px">Date</th>
-                <th width="10px">User</th>           
-                <th>Message</th>
-            </tr></thead>
             <tbody>
                 {this.state.showLoadBefore?
                     <tr><td colSpan="3" style={{textAlign: 'center'}}><a href="#" onClick={this.loadBefore}>Load more</a></td></tr>
@@ -116,12 +111,13 @@ class Logviewer extends React.Component {
                 {this.state.chatlog.map(l => (
                     <tr key={l.id}>
                         <td 
+                            width="10px"
                             dateTime={l.created_at}
                             style={{whiteSpace:'nowrap'}}
                         >
                             <a href={`?before_id=${l.id+1}`}>{this.iso8601toLocalTime(l.created_at)}</a>
                         </td>
-                        <td><a href={`?user=${l.user}`}>{l.user}</a></td>
+                        <td width="10px"><a href={`?user=${l.user}`}>{l.user}</a></td>
                         <td>
                             {this.renderTypeSymbol(l)}
                             {l.message} 
@@ -165,11 +161,10 @@ class Logviewer extends React.Component {
             return null
 
         return <div className="userChatStats">
-            <span><b>Userstats</b></span>
-            <span><b>Total messages:</b> {this.state.userChatStats.chat_messages}</span>
-            <span><b>Purges:</b> {this.state.userChatStats.purges}</span>
-            <span><b>Timeouts:</b> {this.state.userChatStats.timeouts}</span>
-            <span><b>Bans:</b> {this.state.userChatStats.bans}</span>
+            <span><b>Total messages:</b> {this.state.userChatStats.chat_messages||0}</span>
+            <span><b>Purges:</b> {this.state.userChatStats.purges||0}</span>
+            <span><b>Timeouts:</b> {this.state.userChatStats.timeouts||0}</span>
+            <span><b>Bans:</b> {this.state.userChatStats.bans||0}</span>
         </div>
 
     }
@@ -188,8 +183,8 @@ class Logviewer extends React.Component {
         if (this.state.accessDenied)
             return this.renderAccessDenied()
         return <div id="logviewer">
+            <h2>{this.state.channel.name} - Chatlog</h2>
             <div className="sticky-top">
-                <h2>{this.state.channel.name} chatlog</h2>
                 <div className="filter">
                     <form className="form-inline">
                         <UserInput defaultValue={this.query.user} channel_id={this.state.channel.id} />
@@ -200,7 +195,7 @@ class Logviewer extends React.Component {
                             placeholder="Message"
                             defaultValue={this.query.message}
                         />
-                        <button type="submit" className="btn btn-primary">Search</button>
+                        <button type="submit" className="btn btn-warning">Search</button>
                         <input 
                             type="checkbox" 
                             value="yes" 
