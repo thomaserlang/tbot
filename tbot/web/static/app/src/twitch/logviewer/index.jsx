@@ -102,7 +102,9 @@ class Logviewer extends React.Component {
 
     renderChatlog() {
         if (this.state.loadChatlog)
-            return <h2>Loading chatlog...</h2>;
+            return <h2>Loading chatlog...</h2>
+        if (this.state.chatlog.length == 0)
+            return <div className="m-2"><center>No results found</center></div>
         return <table className="chatlog table table-dark table-striped table-sm table-hover">
             <tbody>
                 {this.state.showLoadBefore?
