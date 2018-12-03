@@ -15,10 +15,10 @@ async def usernotice(**kwargs):
         if not alert:
             return
         bot.send("PRIVMSG", target=kwargs['channel'], message=alert['message'])
-
+        if 'message' not in kwargs:
+            kwargs['message'] = ''
         await badge_log( 
             nick=kwargs['login'],
             target=kwargs['channel'],
-            message='', 
             **kwargs
         )
