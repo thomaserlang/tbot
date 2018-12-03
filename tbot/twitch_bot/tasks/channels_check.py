@@ -154,11 +154,8 @@ async def set_chatters():
                     if data['chatter_count'] == 0:
                         continue
                     usernames = []
-                    usernames.extend(data['chatters']['viewers'])
-                    usernames.extend(data['chatters']['global_mods'])
-                    usernames.extend(data['chatters']['admins'])
-                    usernames.extend(data['chatters']['staff'])
-                    usernames.extend(data['chatters']['moderators'])
+                    for k in data['chatters']:
+                        usernames.extend(data['chatters'][k])
                     if usernames:
                         bot.channels[channel_id]['users'] = \
                             await utils.twitch_lookup_usernames(bot.ahttp, usernames)
