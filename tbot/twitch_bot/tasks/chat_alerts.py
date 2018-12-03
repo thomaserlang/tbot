@@ -12,11 +12,9 @@ async def usernotice(**kwargs):
         alert = await bot.db.fetchone('SELECT message FROM chat_alerts WHERE channel_id=%s and type="sub"', (
             kwargs['room-id'],
         ))
-        if not alert:
-            return
-        bot.send("PRIVMSG", target=kwargs['channel'], message=alert['message'])
-        if 'message' not in kwargs:
-            kwargs['message'] = ''
+        if alert:
+            bot.send("PRIVMSG", target=kwargs['channel'], message=alert['message'])
+        
         await badge_log( 
             nick=kwargs['login'],
             target=kwargs['channel'],
