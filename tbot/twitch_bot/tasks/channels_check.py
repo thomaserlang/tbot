@@ -161,9 +161,33 @@ async def load_channels_cache():
             parse(data['last_check']) if data['last_check'] else None
         bot.channels_check[r['channel_id']]['went_offline_at_delay'] = \
             parse(data['went_offline_at_delay']) if data.get('went_offline_at_delay') else None
+<<<<<<< HEAD
         bot.channels_check[r['channel_id']]['uptime'] = data['uptime'] if data.get('uptime') else 0
 
 async def set_chatters(channel_id):
+=======
+        bot.channels[r['channel_id']]['uptime'] = data['uptime'] if data.get('uptime') else 0
+
+async def set_chatters():
+    for channel_id in bot.channels:
+        try:
+            channel = bot.channels[channel_id]['name']
+            async with bot.ahttp.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(channel)) as r:
+                if r.status == 200:
+                    data = await r.json()
+                    if data['chatter_count'] == 0:
+                        continue
+                    usernames = []
+                    for k in data['chatters']:
+                        usernames.extend(data['chatters'][k])
+                    if usernames:
+                        bot.channels[channel_id]['users'] = \
+                            await utils.twitch_lookup_usernames(bot.ahttp, usernames)
+        except:
+            logging.exception('set_chatters')
+
+async def update_current_stream_metadata(channel_id):
+>>>>>>> b7301fd460420808aee330d46b1880912344ef3d
     try:
         if channel_id not in bot.channels:
             return
