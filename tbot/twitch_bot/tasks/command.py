@@ -71,6 +71,8 @@ async def db_command(cmd, target, data):
         WHERE channel_id=%s AND cmd=%s
         ORDER BY user_level DESC, enabled_status DESC, id ASC
     ''', (data['channel_id'], cmd))
+    if not cmds:
+        return
     user_level = await get_user_level(data['badges'], data['user_id'], data['channel_id'], max([cmd['user_level'] for cmd in cmds]))
     for cmd in cmds:
         try:
