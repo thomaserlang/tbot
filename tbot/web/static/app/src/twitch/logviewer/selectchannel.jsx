@@ -1,5 +1,7 @@
 import React from 'react'
-import api from 'tbot/api'
+import api from 'tbot/twitch/api'
+import {isAuthed, requireAuth} from 'tbot/twitch/utils'
+import {setTitle} from 'tbot/utils'
 
 import SuggestChannelInput from './suggestchannelinput'
 
@@ -10,10 +12,15 @@ class SelectChannel extends React.Component {
         this.state = {
             modOf: [],
         }
+        setTitle('Twitch Logviewer')
+        this.twitchLoginClick = this.twitchLoginClick.bind(this);
+    }
+
+    twitchLoginClick() {
+        requireAuth();
     }
 
     componentDidMount() {
-        document.title = `Twitch Logviewer - ${window.tbot.name}`
         api.get('/api/twitch/user/mod-of').then(r => {
             this.setState({
                 modOf: r.data,
@@ -21,12 +28,10 @@ class SelectChannel extends React.Component {
         })
     }
 
-    render() {
-        return <div id="select-channels">
-            <h1>Twitch Logviewer</h1>
-            <div className="suggest-channel">
-                <SuggestChannelInput />
-            </div>
+    renderModOf() {
+        if (!isAuthed())
+            return null;
+        return (
             <div className="mod-of">
                 {this.state.modOf.map(c => (
                     <div key={c.id}>
@@ -36,6 +41,27 @@ class SelectChannel extends React.Component {
                     </div>
                 ))}
             </div>
+        )
+    }
+
+    renderLoginButton() {
+        if (isAuthed())
+            return null;
+        return (
+            <center>
+                <button className="btn btn-primary" onClick={this.twitchLoginClick}>Login with Twitch</button>
+            </center>
+        )
+    }
+
+    render() {
+        return <div id="select-channels">
+            <h1>Twitch Logviewer</h1>
+            <div className="suggest-channel">
+                <SuggestChannelInput />
+            </div>
+            {this.renderModOf()}
+            {this.renderLoginButton()}            
         </div>
     }
 }

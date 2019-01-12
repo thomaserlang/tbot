@@ -1,6 +1,6 @@
 import React from 'react'
 import Downshift from 'downshift'
-import api from 'tbot/api'
+import api from 'tbot/twitch/api'
 
 import './suggestinput.scss'
 

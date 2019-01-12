@@ -16,19 +16,11 @@ def cli(config, log_path, log_level):
 @cli.command()
 def twitch_bot():
     logger.set_logger('twitch_bot.log')
-    import tbot.twitch_bot.bot_main
-    tbot.twitch_bot.bot_main.main()
-
-@cli.command()
-def twitch_chatlog():
-    logger.set_logger('twitch_chatlog.log')
+    from tbot.twitch_bot import bot_main, modlog
 
     loop = asyncio.get_event_loop()
-
-    from tbot.twitch_chatlog import chatlog, modlog
-
-    loop.create_task(chatlog.main().connect())
-    loop.create_task(modlog.main().run())
+    loop.create_task(bot_main.bot.connect())
+    loop.create_task(modlog.Pubsub().run())
 
     loop.run_forever()
 

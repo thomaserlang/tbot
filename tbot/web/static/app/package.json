@@ -19,6 +19,7 @@
   "homepage": "https://github.com/thomaserlang/tbot#readme",
   "devDependencies": {
     "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "axios": "^0.18.0",
@@ -37,5 +38,6 @@
     "sass-loader": "^7.1.0",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2"
-  }
+  },
+  "dependencies": {}
 }

@@ -16,11 +16,11 @@ class Handler(Api_handler):
                 raise web.HTTPError(403, 'You are not a moderator of this channel')
 
         args = [channel_id]
-        sql = 'SELECT * FROM twitch_chatlog WHERE channel_id=%s AND type IN (1,100) '
+        sql = 'SELECT * FROM twitch_chatlog WHERE channel_id=%s  AND type IN (1,100) '
 
         user = self.get_argument('user', None)
         if user:
-            u = await self.db.fetchone('SELECT user_id FROM twitch_usernames WHERE name=%s', [user])
+            u = await self.db.fetchone('SELECT user_id FROM twitch_usernames WHERE user=%s', [user])
             user_id = 0
             if u:
                 user_id = u['user_id']
@@ -36,6 +36,7 @@ class Handler(Api_handler):
         if after_id:
             sql += ' AND id>%s'
             args.append(after_id)
+            logging.info(after_id)
 
         message = self.get_argument('message', None)
         if message:
@@ -46,8 +47,10 @@ class Handler(Api_handler):
         if show_mod_actions_only == 'yes':
             sql += ' AND type=100'
 
-        sql += ' ORDER BY id DESC LIMIT %s'
-
+        if not after_id:
+            sql += ' ORDER BY id DESC LIMIT %s'
+        else:            
+            sql += ' ORDER BY id ASC LIMIT %s'
         per_page = 10
         args.append(per_page)
         log = await self.db.fetchall(sql, args)
@@ -55,7 +58,10 @@ class Handler(Api_handler):
             self.set_status(204)
         else:
             self.set_header('X-Per-Page', per_page)
-            self.write_object(list(reversed(log)))
+            if not after_id:
+                self.write_object(list(reversed(log)))
+            else:
+                self.write_object(list(log))
 
 class User_stats_handler(Api_handler):
 
@@ -69,7 +75,7 @@ class User_stats_handler(Api_handler):
                 twitch_usernames u
             WHERE
                 us.channel_id = %s
-            AND u.name = %s
+            AND u.user = %s
             AND us.user_id = u.user_id
         '''
         stats = await self.db.fetchone(sql, [channel_id, user])

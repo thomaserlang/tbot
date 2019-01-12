@@ -9,7 +9,7 @@ async def twitchsync(ctx):
         return
     
     info = await bot.db.fetchone(
-        'SELECT * FROM channels WHERE discord_server_id=%s;',
+        'SELECT * FROM twitch_channels WHERE discord_server_id=%s;',
         (ctx.guild.id)
     )
     if not info:

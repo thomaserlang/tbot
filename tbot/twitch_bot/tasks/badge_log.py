@@ -1,5 +1,5 @@
 import logging
-from tbot.twitch_bot import bot
+from tbot.twitch_bot.bot_main import bot
 
 badges = {}
 

@@ -11,7 +11,7 @@ async def twitch_sync():
     while not bot.is_closed():
         try:
             logging.info('Twitch sync')
-            channels = await bot.db.fetchall('SELECT * FROM channels WHERE not isnull(discord_server_id) and active="Y";')
+            channels = await bot.db.fetchall('SELECT * FROM twitch_channels WHERE not isnull(discord_server_id) and active="Y";')
             for info in channels:
                 bot.loop.create_task(Twitch_sync_channel(info).sync())
         except:
@@ -248,7 +248,7 @@ class Twitch_sync_channel:
             if r.status == 200:
                 data = await r.json()
                 await bot.db.execute(
-                    'UPDATE channels SET twitch_token=%s, twitch_refresh_token=%s WHERE channel_id=%s;',
+                    'UPDATE twitch_channels SET twitch_token=%s, twitch_refresh_token=%s WHERE channel_id=%s;',
                     (data['access_token'], data['refresh_token'], self.info['channel_id'])
                 )
                 self.info['twitch_token'] = data['access_token']
@@ -262,7 +262,7 @@ class Twitch_sync_channel:
                 ))
 
     async def get_twitch_ids(self):
-        rows = await bot.db.fetchall('SELECT discord_id, twitch_id FROM users;')
+        rows = await bot.db.fetchall('SELECT discord_id, twitch_id FROM twitch_discord_users;')
         twitch_ids = {int(r['discord_id']): r['twitch_id'] for r in rows}
 
         for member in self.server.members:
@@ -285,7 +285,7 @@ class Twitch_sync_channel:
                         continue
                     twitch_ids[member.id] = int(con['id'])
                     await bot.db.execute(
-                        'INSERT IGNORE INTO users (discord_id, twitch_id) VALUES (%s, %s)', 
+                        'INSERT IGNORE INTO twitch_discord_users (discord_id, twitch_id) VALUES (%s, %s)', 
                         (member.id, con['id'])
                     )
                     break

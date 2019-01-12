@@ -5,15 +5,12 @@ class Front extends React.Component {
 
     render() {
         return <div id="front">
-            <div className="title">
-                {window.tbot.name}
-            </div>
             <div className="items">
                 <div className="title">
                     Twitch
                 </div>
-                <a href="/twitch/bot" className="item twitch">                    
-                    Bot Settings
+                <a href="/twitch/dashboard" className="item twitch">                    
+                    Dashboard
                 </a>
                 <a href="/twitch/logviewer" className="item twitch">
                     Logviewer
@@ -24,7 +21,7 @@ class Front extends React.Component {
                     Discord
                 </div>
                 <a className="item discord">
-                    Bot Settings
+                    Dashboard
                 </a>
                 <a className="item discord">
                     Logviewer

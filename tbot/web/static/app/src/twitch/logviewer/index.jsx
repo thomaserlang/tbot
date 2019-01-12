@@ -1,8 +1,8 @@
 import React from 'react'
-import api from 'tbot/api'
+import api from 'tbot/twitch/api'
 import qs from 'query-string'
 import moment from 'moment'
-
+import {setTitle} from 'tbot/utils'
 import UserInput from './userinput'
 import './logviewer.scss'
 
@@ -27,7 +27,7 @@ class Logviewer extends React.Component {
 
     componentDidMount() {
         let channel = this.props.match.params.channel;
-        document.title = `${channel} Twitch Logviewer - ${window.tbot.name}`
+        setTitle(`${channel} | Twitch Logviewer`)
         api.get(`/api/twitch/channels`, {params: {name:channel}}).then(data => {
             this.setState({
                 channel: data.data[0],
@@ -186,7 +186,7 @@ class Logviewer extends React.Component {
         if (this.state.accessDenied)
             return this.renderAccessDenied()
         return <div id="logviewer">
-            <h2>{this.state.channel.name} - Logviewer</h2>
+            <h2>Logviewer for {this.state.channel.name}</h2>
             <div className="sticky-top">
                 <div className="filter">
                     <form className="form-inline">

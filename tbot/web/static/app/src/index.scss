@@ -1,7 +1,3 @@
-* {
-    border-radius: 0 !important;
-}
-
 .form-control {    
     outline: none !important;
     box-shadow: none !important;
@@ -18,9 +14,12 @@ body {
     align-items: stretch;
 }
 
+#content-wrapper {
+    flex-grow: 1;
+}
+
 #content {
-    margin-left: 1rem;
-    margin-right: 1rem;
+    margin: 1rem;
 }
 
 .access-denied {
@@ -28,4 +27,53 @@ body {
     font-size: 26px;
     text-align: center;
     margin-top: 40vh
+}
+
+.box {
+    border:1px solid #36c;
+    border-radius: .25rem;
+    .title {
+        padding: 0.5rem;
+        background-color: #36C;
+    }
+    .content {
+        margin: 0.5rem;
+    }
+    .buttons {
+        margin: 0.5rem;
+
+        button {
+            width: 100%;
+            margin-bottom: 0.25rem;
+        }
+        button:last-child {
+            margin: 0;
+        }
+    }
+}
+
+.table-click-row tbody tr {
+    cursor: pointer;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.modal {
+    display: block;
+
+    .modal-content {
+        background-color: #34363A;
+    }
+    .close {
+        color: #fff;
+    }
+}
+
+.table .td-ellipsis {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

@@ -1,5 +1,5 @@
 import logging
-import re, json, datetime
+import re, json, datetime, time, asyncio
 from tbot import config
 
 def safe_username(user):
@@ -31,36 +31,55 @@ async def twitch_request(ahttp, url, params=None, headers={}):
         if r.status == 200:
             data = await r.json()
             return data
+        if r.status == 415:
+            w = int(time.time())-int(r.headers['Ratelimit-Reset'])
+            if w > 0:
+                await asyncio.sleep(w)
+            return await twitch_request(ahttp, url, params, headers)
+        if r.status >= 400:
+            error = await r.text()
+            raise Exception('Error: {} - {}'.format(r.status, error))
 
-_cached_user_ids = {}
-async def twitch_lookup_usernames(ahttp, usernames):
-    global _cached_user_ids
-    url = 'https://api.twitch.tv/helix/users'
+async def twitch_lookup_usernames(ahttp, db, usernames):
     users = []
-    lookup_usernames = list(usernames)
-    for u in usernames:
-        ul = u.lower()
-        if ul in _cached_user_ids:
-            lookup_usernames.remove(u)
-            users.append({
-                'id': _cached_user_ids[ul],
-                'user': ul, 
-            })
-    if lookup_usernames:
-        for unames in chunks(lookup_usernames, 100):
+    now = datetime.datetime.utcnow()
+    m1 = now + datetime.timedelta(days=30)
+    for unames in chunks(list(usernames), 5000):
+        rs = await db.fetchall(
+            'SELECT user_id as id, user FROM twitch_usernames WHERE expires > %s AND user IN ({})'.format(
+                ','.join(['%s'] * len(unames))),
+            (now, *unames)
+        )
+        for r in rs:
+            usernames.remove(r['user'])
+            users.append(r)
+
+    url = 'https://api.twitch.tv/helix/users'
+    if usernames:
+        users_to_save = []
+        for unames in chunks(usernames, 100):
             params = [('login', name) for name in unames]
+            params.append(('first', '100'))
             data = await twitch_request(ahttp, url, params)
             if data:
                 for d in data['data']:
-                    _cached_user_ids[d['login'].lower()] = d['id']
                     users.append({'id': d['id'], 'user': d['login']})
+                    users_to_save.append((d['id'], d['login'], m1))
+        await db.executemany('''
+            INSERT INTO twitch_usernames (user_id, user, expires) 
+            VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE user=VALUES(user), expires=VALUES(expires)
+        ''', users_to_save)
     return users
 
-async def twitch_lookup_user_id(ahttp, username):
-    users = await twitch_lookup_usernames(ahttp, [username])
+async def twitch_lookup_user_id(ahttp, db, username):
+    users = await twitch_lookup_usernames(ahttp, db, [username])
     if not users:
         return
     return users[0]['id']
+
+async def twitch_current_user(ahttp):
+    data = await twitch_request(ahttp, 'https://api.twitch.tv/helix/users')
+    return data['data'][0]
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
@@ -103,3 +122,17 @@ def json_loads(s, charset='utf-8'):
     if isinstance(s, bytes):
         s = s.decode(charset)
     return json.loads(s)
+
+def validate_cmd(cmd):
+    if not (1 <= len(cmd) <= 20):
+        raise Exception('The command must be between 1 and 20 chars')
+    if not re.match('^[a-z0-9A-Z]+$', cmd):
+        raise Exception('The command must only contain: a-z 0-9')
+    return True
+
+def validate_cmd_response(response):
+    if not (1 <= len(response) <= 500):
+        raise Exception('The response must be between 1 and 500 chars')
+    if response[0] == '!':
+        raise Exception('The response must not start with a !, use alias to trigger another command')
+    return True

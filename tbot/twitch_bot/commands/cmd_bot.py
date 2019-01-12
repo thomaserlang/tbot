@@ -1,24 +1,11 @@
-from tbot.twitch_bot.command import command, cmds
+from tbot.twitch_bot.tasks.command import command
 from tbot import utils, constants
 from datetime import datetime
 
 @command('__thebotname', alias='commands')
 async def cmd_bot(bot, nick, channel, channel_id, target, args, **kwargs):
     if len(args) == 0:
-        m = []
-        for c in cmds:
-            if c['cmd'].startswith('_'):
-                continue
-            a = '!{}'.format(c['cmd'])
-            if c['alias']:
-                a += ' (!{})'.format(c['alias'])
-            m.append(a)
-        bot.send("PRIVMSG", target=target, 
-            message='@{}, Commands: {}'.format(
-                kwargs['display-name'], ', '.join(m)
-            )
-        )
-    
+        return    
     elif args[0].lower() == 'uptime':
         seconds = (datetime.utcnow() - bot.starttime).total_seconds()
         msg = '@{}, I\'ve been up for {}'.format(

@@ -6,16 +6,16 @@ config = {
         'port': 8001,
         'cookie_secret': '',
         'name': 'TBot',
+        'base_url': 'https://botashell.com'
     },
     'twitch': {
-        'user': '',
         'token': '',
         'client_id': '',
         'client_secret': '',
-        'redirect_uri': '',        
         'irc_host': 'irc.chat.twitch.tv',
         'irc_port': 6697,
         'irc_use_ssl': True,
+        'irc_rate_limit': 80, # messages every 30 second
         'check_channels_every': 60, # seconds
         'delay_offline': 0, # seconds
         'pubsub_url': 'wss://pubsub-edge.twitch.tv',
@@ -23,7 +23,6 @@ config = {
     'discord': {
         'client_id': None,
         'client_secret': None,
-        'redirect_uri': None,
         'permissions': 268486656,
         'token': None,
         'bot': True,
@@ -33,7 +32,6 @@ config = {
     'spotify': {
         'client_id': None,
         'client_secret': None,
-        'redirect_uri': None,
     },
     'logging': {
         'level': 'warning',
@@ -47,6 +45,12 @@ config = {
         'user': 'root',
         'password': '',
         'database': 'tbot',
+    },
+    'redis': {
+        'host': '127.0.0.1',
+        'port': 6379,
+        'pool_min_size': 5,
+        'pool_max_size': 20,
     }
 }
 
@@ -78,3 +82,5 @@ def load(path=None):
                 config[key].update(data[key])
             else:
                 config[key] = data[key]
+    if config['twitch']['token']:
+        config['twitch']['token'] = config['twitch']['token'].replace('oauth:', '')

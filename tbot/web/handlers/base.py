@@ -7,6 +7,10 @@ class Base_handler(web.RequestHandler):
     def db(self):
         return self.application.db
 
+    @property
+    def redis(self):
+        return self.application.redis
+
     def get_current_user(self):
         data = self.get_secure_cookie('twitch_user', max_age_days=1)
         if not data:

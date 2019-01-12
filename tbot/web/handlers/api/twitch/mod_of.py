@@ -1,5 +1,4 @@
 import logging
-from tornado import web
 from ..base import Api_handler
 
 class Handler(Api_handler):
@@ -12,11 +11,12 @@ class Handler(Api_handler):
             SELECT 
                 c.channel_id AS id, c.name
             FROM
-                channels c,
+                twitch_channels c,
                 twitch_channel_mods m
             WHERE
                 m.user_id = %s
                     AND m.channel_id = c.channel_id
-                    AND c.active = 'Y';
+                    AND c.active = 'Y'
+                    AND c.chatlog_enabled = 'Y';
         ''', [self.current_user['user_id']])
         self.write_object(mod_of)
