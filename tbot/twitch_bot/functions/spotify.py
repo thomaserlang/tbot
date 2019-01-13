@@ -1,3 +1,4 @@
+import logging
 from tbot.twitch_bot.var_filler import fills_vars, Send_error
 from tbot import utils, config
 
@@ -37,13 +38,18 @@ async def playlist(bot, channel_id, **kwargs):
     }
 
 @fills_vars('spotify.prev_song_name', 'spotify.prev_song_artists')
-async def prev_song(bot, channel_id, **kwargs):
-    data = await request(bot, channel_id, 'https://api.spotify.com/v1/me/player/currently-playing')
+async def prev_song(bot, channel_id, args, **kwargs):
+    num = utils.find_int(args) or 1
+    if num > 10:
+        raise Send_error('Only allowed to go back 10 songs')
+    data = await request(bot, channel_id, 'https://api.spotify.com/v1/me/player/recently-played?limit={}'.format(num))
     if data == None:
         raise Send_error('ERROR: Spotify failed to load')
-    if not data or not data['is_playing']:
-        raise Send_error('Spotify is not playing')
-    data = data['items'][0]
+    if 'items' not in data or not data['items']:
+        raise Send_error('No previous song found')
+    if num > len(data['items']):
+        raise Send_error('No previous song found')
+    data = data['items'][num-1]
     artists = [r['name'] for r in data['track']['artists']]
     return {
         'spotify.prev_song_name': data['track']['name'],

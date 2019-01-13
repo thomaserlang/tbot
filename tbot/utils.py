@@ -1,9 +1,18 @@
 import logging
 import re, json, datetime, time, asyncio
+from typing import List, Optional
 from tbot import config
 
 def safe_username(user):
     return re.sub('[^a-zA-Z0-9_]', '', user)[:25]
+
+def find_int(l: List[str]) -> Optional[int]:
+    for a in l:
+        try:
+            return int(a)
+        except ValueError:
+            pass
+    return None
 
 def seconds_to_pretty(seconds):
     seconds = round(seconds)
@@ -44,6 +53,7 @@ async def twitch_lookup_usernames(ahttp, db, usernames):
     users = []
     now = datetime.datetime.utcnow()
     m1 = now + datetime.timedelta(days=30)
+    usernames = [s.lower() for s in usernames]
     for unames in chunks(list(usernames), 5000):
         rs = await db.fetchall(
             'SELECT user_id as id, user FROM twitch_usernames WHERE expires > %s AND user IN ({})'.format(
