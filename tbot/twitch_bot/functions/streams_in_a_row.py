@@ -7,7 +7,11 @@ async def handler(bot, channel_id, user_id, args, display_name, **kwargs):
     user = display_name
     if len(args) > 0:
         user = utils.safe_username(args[0])
-        user_id = await utils.twitch_lookup_user_id(bot.ahttp, bot.db, user)
+        uid = await utils.twitch_lookup_user_id(bot.ahttp, bot.db, user)
+        if not uid:
+            user = display_name
+        else:
+            user_id = uid 
 
     r = await bot.db.fetchone(
         'SELECT * FROM twitch_user_stats WHERE channel_id=%s AND user_id=%s',
