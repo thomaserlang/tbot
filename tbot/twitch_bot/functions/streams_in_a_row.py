@@ -37,10 +37,9 @@ async def handler(bot, channel_id, user_id, args, display_name, **kwargs):
             r['streams_row_peak'],
             r['streams_row_peak_date'].isoformat()
         )
-    if r['streams'] != r['streams_row']:
-        msg += ' and a total of {}'.format(
-            utils.pluralize(r['streams'], 'stream')
-        )
+    msg += ' and a total of {}'.format(
+        utils.pluralize(r['streams'], 'stream')
+    )
     return {
         'user.streams_row': utils.pluralize(r['streams_row'], 'stream'),
         'user.streams_total': utils.pluralize(r['streams'], 'stream'),
