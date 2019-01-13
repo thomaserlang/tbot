@@ -125,6 +125,6 @@ class Template_collection(Api_handler):
             SELECT * 
             FROM twitch_commands 
             WHERE channel_id=0 
-            ORDER BY cmd ASC
+            ORDER BY title ASC
         ''')
         self.write_object(cmds)
