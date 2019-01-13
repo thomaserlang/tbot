@@ -82,6 +82,8 @@ async def twitch_lookup_usernames(ahttp, db, usernames):
     return users
 
 async def twitch_lookup_user_id(ahttp, db, username):
+    if not re.match('^[a-z0-9A-Z_]{4,25}$', username):
+        return
     users = await twitch_lookup_usernames(ahttp, db, [username])
     if not users:
         return
