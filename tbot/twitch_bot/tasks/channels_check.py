@@ -162,6 +162,8 @@ async def load_channels_cache():
         bot.channels_check[r['channel_id']]['went_offline_at_delay'] = \
             parse(data['went_offline_at_delay']) if data.get('went_offline_at_delay') else None
         bot.channels_check[r['channel_id']]['uptime'] = data['uptime'] if data.get('uptime') else 0
+
+async def set_chatters(channel_id):
     try:
         if channel_id not in bot.channels:
             return
@@ -172,11 +174,8 @@ async def load_channels_cache():
                 if data['chatter_count'] == 0:
                     return
                 usernames = []
-                usernames.extend(data['chatters']['viewers'])
-                usernames.extend(data['chatters']['global_mods'])
-                usernames.extend(data['chatters']['admins'])
-                usernames.extend(data['chatters']['staff'])
-                usernames.extend(data['chatters']['moderators'])
+                for k in data['chatters']:
+                    usernames.extend(data['chatters'][k])
                 if usernames:
                     bot.channels_check[channel_id]['users'] = \
                         await utils.twitch_lookup_usernames(bot.ahttp, bot.db, usernames)
