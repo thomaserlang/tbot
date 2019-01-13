@@ -87,12 +87,12 @@ async def refresh_token(bot, channel_id, refresh_token):
         if r.status == 200:
             data = await r.json()
             await bot.db.execute(
-                'UPDATE spotify SET token=%s WHERE channel_id=%s;',
+                'UPDATE twitch_spotify SET token=%s WHERE channel_id=%s;',
                 (data['access_token'], channel_id)
             )
             if 'refresh_token' in data:
                 await bot.db.execute(
-                    'UPDATE spotify SET refresh_token=%s WHERE channel_id=%s;',
+                    'UPDATE twitch_spotify SET refresh_token=%s WHERE channel_id=%s;',
                     (data['refresh_token'], channel_id)
                 )
         else:
