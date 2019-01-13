@@ -19,9 +19,9 @@ async def handler(bot, channel_id, user_id, args, display_name, **kwargs):
 
     if not r:
         return {
-            'user.streams_row': 0,
-            'user.streams_total': 0,
-            'user.streams_row_peak': 0,
+            'user.streams_row': '0',
+            'user.streams_total': '0',
+            'user.streams_row_peak': '0',
             'user.streams_row_peak_date': 'unknown date',
             'user.streams_row_text': '{} has been here for 0 streams in a row'.format(
                 user,
