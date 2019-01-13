@@ -15,6 +15,7 @@ class Commands extends React.Component {
 
     componentDidMount() {
         this.getCommands()
+        document.title = `${managedUser.name} - Commands | ${tbot.name}`
     }
 
     getCommands() {        
