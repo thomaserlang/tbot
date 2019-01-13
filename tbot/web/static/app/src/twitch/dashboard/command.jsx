@@ -11,6 +11,7 @@ class Command extends React.Component {
         super(props)
         this.state = {
             cmd: {
+
                 cmd: '',
                 response: '',
                 user_level: 0,
@@ -58,12 +59,6 @@ class Command extends React.Component {
     getTemplates() {        
         let id = this.props.match.params.id
         api.get(`/api/twitch/template-commands`).then(r => {
-            for (let c of r.data) {
-                for (let key in c) {
-                    if (!(key in this.state.cmd))
-                        delete c[key]
-                }
-            }
             this.setState({
                 templates: r.data,
             })
@@ -111,8 +106,14 @@ class Command extends React.Component {
 
     handleTemplate = (e) => {
         for (let t of this.state.templates) {
-            if (t.cmd == e.target.value)
-                this.setState({cmd: JSON.parse(JSON.stringify(t))})
+            if (t.cmd == e.target.value){
+                let d = JSON.parse(JSON.stringify(t))
+                for (let key in d) {
+                    if (!(key in this.state.cmd))
+                        delete d[key]
+                }
+                this.setState({cmd: d})
+            }
         }
     }
 
@@ -142,7 +143,7 @@ class Command extends React.Component {
             <select className="form-control" onChange={this.handleTemplate}>
                 <option value=""></option>
                 {this.state.templates.map(temp =>
-                    <option key={temp.cmd} value={temp.cmd}>!{temp.cmd}</option>
+                    <option key={temp.cmd} value={temp.cmd}>{temp.title}</option>
                 )}
             </select>
         </div>
