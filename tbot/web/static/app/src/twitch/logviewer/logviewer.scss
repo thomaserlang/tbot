@@ -1,7 +1,5 @@
 #logviewer {
     h2 {
-        padding: 0.5rem;
-        background-color: #36c;
         margin: 0;
         border-bottom: 1px solid #000;
         font-size: 22px;
@@ -30,10 +28,12 @@
 
 #select-channels {
     background-color: #3C3C3C;
-    padding: 3rem;
+    padding: 2rem;
     width: 500px;
     margin: 10vh auto;
     font-size: 26px;
+    border-radius: .25rem;
+
 
     h1 {
         text-align: center;
@@ -48,5 +48,4 @@
             margin: 0;
         }
     }
-
 }

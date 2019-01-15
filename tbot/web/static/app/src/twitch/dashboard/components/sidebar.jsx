@@ -54,6 +54,10 @@ class Sidebar extends React.Component {
                         <NavLink to={`/twitch/${managedUser.name}/admins`} activeClassName="active">Admins</NavLink>
                     : null }
                     {this.renderConnect()}
+
+                    <div className="title">LINKS</div>
+                    <NavLink to={`/twitch/logviewer/${managedUser.name}`}>Logviewer</NavLink> 
+
                 </div>
                 {this.state.showSelectChannel?
                     <SelectChannel onClose={this.onClose} />

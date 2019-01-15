@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 import api from 'tbot/twitch/api'
 import {isAuthed, requireAuth} from 'tbot/twitch/utils'
 import {setTitle} from 'tbot/utils'
@@ -35,9 +36,9 @@ class SelectChannel extends React.Component {
             <div className="mod-of">
                 {this.state.modOf.map(c => (
                     <div key={c.id}>
-                        <a href={`/twitch/logviewer/${c.name}`}>
+                        <Link to={`/twitch/logviewer/${c.name}`} className="text-white">
                             {c.name}
-                        </a>
+                        </Link>
                     </div>
                 ))}
             </div>
@@ -56,6 +57,9 @@ class SelectChannel extends React.Component {
 
     render() {
         return <div id="select-channels">
+            <div className="text-center">
+                <Link to="/">{tbot.name}</Link>
+            </div>
             <h1>Twitch Logviewer</h1>
             <div className="suggest-channel">
                 <SuggestChannelInput />

@@ -18,7 +18,7 @@ class Main extends React.Component {
             </div>
         }
         return <div className="container">
-            <Route exact path='/twitch/c/:channel/commands' component={Commands}/>
+            <Route exact path='/t/:channel/commands' component={Commands}/>
         </div>
     }
 

@@ -1,10 +1,13 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 import api from 'tbot/twitch/api'
 import qs from 'query-string'
 import moment from 'moment'
 import {setTitle} from 'tbot/utils'
+import Loading from 'tbot/components/loading'
 import UserInput from './userinput'
 import './logviewer.scss'
+import '../dashboard/components/topbar.scss'
 
 class Logviewer extends React.Component {
 
@@ -15,7 +18,8 @@ class Logviewer extends React.Component {
             channel: null,
             loading: true,
             chatlog: [],
-            loadingChatLog: true,
+            loading: true,
+            loadingChannel: true,
             userChatStats: null,
             showLoadBefore: false,
             showLoadAfter: true,
@@ -31,7 +35,7 @@ class Logviewer extends React.Component {
         api.get(`/api/twitch/channels`, {params: {name:channel}}).then(data => {
             this.setState({
                 channel: data.data[0],
-                loading: false,
+                loadingChannel: false,
             }, state => {
                 this.loadChatlog({
                     before_id: this.query.before_id,
@@ -42,6 +46,7 @@ class Logviewer extends React.Component {
     }
 
     loadChatlog(params) {
+        this.setState({loading: true})
         params['user'] = this.query.user
         params['message'] = this.query.message
         params['show_mod_actions_only'] = this.query.show_mod_actions_only
@@ -60,7 +65,7 @@ class Logviewer extends React.Component {
                 }
             }
             this.setState({
-                loadingChatLog: false,
+                loading: false,
                 chatlog: l,
             })
         }).catch(e => {
@@ -89,6 +94,7 @@ class Logviewer extends React.Component {
     loadUserChatStats() {
         this.setState({
             userChatStats: null,
+            loading: true,
         })
         if (!this.query.user)
             return
@@ -97,19 +103,25 @@ class Logviewer extends React.Component {
         }}).then(r => {
             this.setState({
                 userChatStats: r.data,
+                loading: false,
             })
         })   
     }
 
     renderChatlog() {
-        if (this.state.loadChatlog)
-            return <h2>Loading chatlog...</h2>
         if (this.state.chatlog.length == 0)
-            return <div className="m-2"><center>No results found</center></div>
+            if (this.state.loading)
+                return <Loading text="LOADING" />
+            else
+                return <div className="m-2"><center>No results found</center></div>
         return <table className="chatlog table table-dark table-striped table-sm table-hover">
             <tbody>
                 {this.state.showLoadBefore?
-                    <tr><td colSpan="3" style={{textAlign: 'center'}}><a href="#" onClick={this.loadBefore}>Load more</a></td></tr>
+                    <tr><td colSpan="3" style={{textAlign: 'center'}}>
+                        {this.state.loading?
+                            <div class="spinner-grow text-primary" role="status"></div>:
+                            <a href="#" onClick={this.loadBefore}>Load more</a>}
+                        </td></tr>
                 : null}
                 {this.state.chatlog.map(l => (
                     <tr key={l.id}>
@@ -126,9 +138,13 @@ class Logviewer extends React.Component {
                             {l.message} 
                         </td>
                     </tr>
-                ))}
+                ))}                
                 {this.state.showLoadAfter?
-                    <tr><td colSpan="3" style={{textAlign: 'center'}}><a href="#" onClick={this.loadAfter}>Load more</a></td></tr>
+                    <tr><td colSpan="3" style={{textAlign: 'center'}}>
+                        {this.state.loading?
+                            <div class="spinner-grow text-primary" role="status"></div>:
+                            <a href="#" onClick={this.loadAfter}>Load more</a>}
+                        </td></tr>
                 : null}
             </tbody>
         </table>
@@ -181,12 +197,18 @@ class Logviewer extends React.Component {
     }
 
     render() {
-        if (this.state.loading)
-            return null
+        if (this.state.loadingChannel)
+            return <Loading text="LOADING" />
         if (this.state.accessDenied)
             return this.renderAccessDenied()
         return <div id="logviewer">
-            <h2>Logviewer for {this.state.channel.name}</h2>
+            <div id="topbar" style={{'border': 'none', 'borderBottom': '1px solid #000', 'padding-left': '0.5rem', 'padding-left': '0.5rem'}}>
+                <div className="title" id="top-title">
+                    <Link to="/twitch/logviewer" className="text-white">
+                        <i className="material-icons material-inline ">arrow_back</i></Link> Logviewer for {this.state.channel.name}
+                </div>
+                <div className="signed-as">Signed in as <b>{tbot['twitch_user']['user']}</b>, <a href="/twitch/logout">log out</a></div>
+            </div>
             <div className="sticky-top">
                 <div className="filter">
                     <form className="form-inline">

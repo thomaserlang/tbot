@@ -38,7 +38,7 @@ class Commands extends React.Component {
                         <Link className="btn btn-primary" to="commands/new">New command</Link>
                     </div>
                     <div className="ml-auto">
-                        <a href={`/twitch/c/${managedUser.name}/commands`} target="_blank" className="btn btn-link">Public commands</a>
+                        <a href={`/t/${managedUser.name}/commands`} target="_blank" className="btn btn-link">Public commands</a>
                     </div>
                 </div>
                 <table className="table table-dark table-hover">
