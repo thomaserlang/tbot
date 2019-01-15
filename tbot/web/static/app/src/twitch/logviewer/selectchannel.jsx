@@ -36,7 +36,7 @@ class SelectChannel extends React.Component {
             <div className="mod-of">
                 {this.state.modOf.map(c => (
                     <div key={c.id}>
-                        <Link to={`/twitch/logviewer/${c.name}`} className="text-white">
+                        <Link to={`/twitch/logviewer/${c.name}`}>
                             {c.name}
                         </Link>
                     </div>
