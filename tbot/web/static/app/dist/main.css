@@ -1,6 +1,6 @@
 #front {
   width: 600px;
-  margin: 15vh auto; }
+  margin: 3rem auto; }
   #front .title {
     font-size: 56px;
     color: #fff;
@@ -45,8 +45,6 @@
       padding: 0.5rem; }
 
 #logviewer h2 {
-  padding: 0.5rem;
-  background-color: #36c;
   margin: 0;
   border-bottom: 1px solid #000;
   font-size: 22px; }
@@ -68,10 +66,11 @@
 
 #select-channels {
   background-color: #3C3C3C;
-  padding: 3rem;
+  padding: 2rem;
   width: 500px;
   margin: 10vh auto;
-  font-size: 26px; }
+  font-size: 26px;
+  border-radius: .25rem; }
   #select-channels h1 {
     text-align: center;
     margin-bottom: 1rem;
@@ -80,6 +79,25 @@
     margin-bottom: 1rem; }
     #select-channels .suggest-channel .suggest-input {
       margin: 0; }
+
+#topbar {
+  flex-grow: 1;
+  display: flex;
+  background-color: #36c;
+  width: 100%;
+  height: 3.2rem;
+  line-height: 3.2rem;
+  border-left: 1px solid #000;
+  overflow: hidden;
+  padding-left: 1rem;
+  padding-right: 1rem; }
+  #topbar .title {
+    font-size: 20px; }
+  #topbar .signed-as {
+    margin-left: auto;
+    color: #fff; }
+    #topbar .signed-as a {
+      color: #fff; }
 
 #sidebar {
   flex-shrink: 0;
@@ -115,25 +133,6 @@
       color: #9F9F9F; }
     #sidebar #items a.active {
       color: #007bff; }
-
-#topbar {
-  flex-grow: 1;
-  display: flex;
-  background-color: #36c;
-  width: 100%;
-  height: 3.2rem;
-  line-height: 3.2rem;
-  border-left: 1px solid #000;
-  overflow: hidden;
-  padding-left: 1rem;
-  padding-right: 1rem; }
-  #topbar .title {
-    font-size: 20px; }
-  #topbar .signed-as {
-    margin-left: auto;
-    color: #fff; }
-    #topbar .signed-as a {
-      color: #fff; }
 
 .form-control {
   outline: none !important;
@@ -194,6 +193,10 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap; }
+
+.material-inline {
+  top: .125em;
+  position: relative; }
 
 
 /*# sourceMappingURL=main.css.map*/
