@@ -20,7 +20,7 @@ ReactDOM.render((
             <Route exact path='/twitch/logviewer' component={TwitchLogViewerSelectChannel}/>
             <Route exact path='/twitch/logviewer/:channel' component={TwitchLogviewer}/>
 
-            <Route path='/twitch/c/:channel' component={TwitchPublic}/>
+            <Route path='/t/:channel' component={TwitchPublic}/>
             
             <Route path='/twitch/dashboard' component={TwitchDashboard}/>
             <Route path='/twitch/:channel' component={TwitchDashboard}/>
