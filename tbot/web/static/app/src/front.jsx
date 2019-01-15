@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 import './front.scss'
 
 class Front extends React.Component {
@@ -9,12 +10,12 @@ class Front extends React.Component {
                 <div className="title">
                     Twitch
                 </div>
-                <a href="/twitch/dashboard" className="item twitch">                    
+                <Link to="/twitch/dashboard" className="item twitch">                    
                     Dashboard
-                </a>
-                <a href="/twitch/logviewer" className="item twitch">
+                </Link>
+                <Link to="/twitch/logviewer" className="item twitch">
                     Logviewer
-                </a>
+                </Link>
             </div>
             <div className="items">
                 <div className="title">
