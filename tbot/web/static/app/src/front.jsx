@@ -6,6 +6,7 @@ class Front extends React.Component {
 
     render() {
         return <div id="front">
+            <div className="title">{tbot.name}</div>
             <div className="items">
                 <div className="title">
                     Twitch
