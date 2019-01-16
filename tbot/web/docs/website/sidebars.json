@@ -1,5 +1,11 @@
 {
   "docs": {
-    "Variables": ["vars/general", "vars/user_streams", "vars/chatstats", "vars/spotify"]
+    "Variables": [
+        "vars/general", 
+        "vars/user_streams", 
+        "vars/chatstats", 
+        "vars/spotify",
+        "vars/time"
+    ]
   }
 }

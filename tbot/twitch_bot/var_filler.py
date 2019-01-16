@@ -29,7 +29,7 @@ async def fill_message(message, **kwargs):
     return format_response(message, parsed)
 
 def parse(s):
-    matched = re.findall('\{([a-z0-9_. ]+)\}', s, flags=re.IGNORECASE)
+    matched = re.findall(r'\{([a-z0-9]+[ ]?.*?)\}', s, flags=re.IGNORECASE)
     l = []
     for m in matched:
         b = m.split(' ', 1)
