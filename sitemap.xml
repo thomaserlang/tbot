@@ -3,5 +3,6 @@
 <url> <loc>https://docs.botashell.com/vars/chatstats</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/chatstats" /> </url>
 <url> <loc>https://docs.botashell.com/vars/general</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/general" /> </url>
 <url> <loc>https://docs.botashell.com/vars/spotify</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/spotify" /> </url>
+<url> <loc>https://docs.botashell.com/vars/time</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/time" /> </url>
 <url> <loc>https://docs.botashell.com/vars/user_streams</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/user_streams" /> </url>
 </urlset>
