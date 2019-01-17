@@ -1,4 +1,5 @@
-import bottom, asyncio, logging
+import bottom, asyncio, logging, random
+from tbot.twitch_bot.unpack import rfc2812_handler
 from tbot import config
 
 '''
@@ -9,6 +10,7 @@ the bots own messages on the main connection.
 bot_sender = bottom.Client('a', 0)
 bot_sender.pong_check_callback = None
 bot_sender.ping_callback = None
+bot_sender.raw_handlers = [rfc2812_handler(bot_sender)]
 
 def setup(bot):
 
