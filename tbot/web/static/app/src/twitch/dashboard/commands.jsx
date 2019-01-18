@@ -46,8 +46,8 @@ class Commands extends React.Component {
                     <tr>
                         <th width="100px">Command</th>
                         <th>Response</th>
-                        <th width="5px" title="User cooldown">UCD</th>
                         <th width="5px" title="Global cooldown">GCD</th>
+                        <th width="5px" title="User cooldown">UCD</th>
                         <th width="100px" title="User level">UL</th>
                         <th width="5px" title="Enabled when stream is">ES</th>
                         <th width="5px" title="Enabled">E</th>
@@ -59,8 +59,8 @@ class Commands extends React.Component {
                         <tr key={cmd.id}>
                             <td>!{cmd.cmd}</td>
                             <td className="td-ellipsis">{cmd.response}</td>
-                            <td>{cmd.user_cooldown}</td>
                             <td>{cmd.global_cooldown}</td>
+                            <td>{cmd.user_cooldown}</td>
                             <td>{userLevelName(cmd.user_level)}</td>
                             <td>{enabledWhenName(cmd.enabled_status)}</td>
                             <td>{cmd.enabled==1?'Yes':'No'}</td>
