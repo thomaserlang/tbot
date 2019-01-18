@@ -28,7 +28,6 @@ class UserInput extends React.Component {
     }
 
     stateChange(e) {
-        console.log(e)
         switch (e.type) {
             case Downshift.stateChangeTypes.clickItem:
             case Downshift.stateChangeTypes.changeInput:
