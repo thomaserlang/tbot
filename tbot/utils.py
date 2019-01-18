@@ -22,15 +22,32 @@ def seconds_to_pretty(seconds):
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
+    months, days = divmod(days, 30)
+    years, months = divmod(months, 12)
 
     ts = []
+    if years:
+        ts.append(pluralize(years, 'year'))
+    if months:
+        ts.append(pluralize(months, 'month'))
     if days:
         ts.append(pluralize(days, 'day'))
     if hours:
         ts.append(pluralize(hours, 'hour'))
     if minutes:        
-        ts.append(pluralize(minutes, 'min'))
-    return ' '.join(ts)
+        ts.append(pluralize(minutes, 'minute'))
+    if seconds:        
+        ts.append(pluralize(seconds, 'second'))
+    if len(ts) > 2 and seconds:
+        ts.pop(len(ts)-1)
+    if len(ts) > 4 and minutes:
+        ts.pop(len(ts)-1)
+    if len(ts) >= 2:
+        last = ts.pop(len(ts)-1)
+        s = ', '.join(ts)
+        s += ' and {}'.format(last)
+        return s
+    return ts[0]
 
 async def twitch_request(ahttp, url, params=None, headers={}):    
     headers.update({
