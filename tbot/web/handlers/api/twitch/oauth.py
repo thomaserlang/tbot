@@ -72,7 +72,7 @@ class Handler(Base_handler):
         self.set_secure_cookie('twitch_user', json.dumps({
             'user_id': userinfo['user_id'],
             'user': userinfo['login'],
-        }), expires_days=None)
+        }), expires_days=1)
 
         _next = self.get_secure_cookie('next')
         self.clear_cookie('next')
