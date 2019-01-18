@@ -13,5 +13,5 @@ async def time(bot, var_args, **kwargs):
         datetime.utcnow(),
     ).astimezone(pytz.timezone(var_args['time'][0]))
     return {
-        'time': dt.strftime('%H:%M:%S')
+        'time': dt.strftime('%H:%M')
     }
