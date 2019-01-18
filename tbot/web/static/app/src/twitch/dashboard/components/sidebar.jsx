@@ -32,7 +32,7 @@ class Sidebar extends React.Component {
 
     render() {
         return (
-            <div id="sidebar">
+            <div id="sidebar" className="sticky-top">
                 <div 
                     className="d-flex" 
                     id="managed-user" 
