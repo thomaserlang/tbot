@@ -26,7 +26,7 @@ Name of the user that triggered the command.
 
 `{user}`
 
-Defaults to the user that triggered the command or the user mentioned in the first argument of the commend `!test ErlePerle`.
+Defaults to the user that triggered the command or the user mentioned in the first argument of the command `!test ErlePerle`.
 
 ## Channel
 
@@ -48,3 +48,32 @@ You can trigger multiple commands by separating them by a space, example: `{alia
 Manage your commands from the chat.
 
 Example: `!cmd add/edit/delete/get [cmd] <response>`
+
+## Accountage
+
+`{accountage}`
+
+Example response: `5 years, 8 months, 13 days and 2 hours`
+
+`{accountage_date}`
+
+Example response: `2013-06-03`
+
+`{accountage_datetime}`
+
+Example response: `2013-06-03 19:12:02 UTC`
+
+
+## Followage
+
+`{followage}`
+
+Example response: `5 years, 8 months, 13 days and 2 hours`
+
+`{followage_date}`
+
+Example response: `2013-06-03`
+
+`{followage_datetime}`
+
+Example response: `2013-06-03 19:12:02 UTC`
