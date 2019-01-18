@@ -17,7 +17,7 @@ def find_int(l: List[str]) -> Optional[int]:
 def seconds_to_pretty(seconds):
     seconds = round(seconds)
     if seconds < 60:
-        return '{} seconds'.format(seconds)
+        return pluralize(seconds, 'sec')
 
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
@@ -35,19 +35,14 @@ def seconds_to_pretty(seconds):
     if hours:
         ts.append(pluralize(hours, 'hour'))
     if minutes:        
-        ts.append(pluralize(minutes, 'minute'))
+        ts.append(pluralize(minutes, 'min'))
     if seconds:        
-        ts.append(pluralize(seconds, 'second'))
+        ts.append(pluralize(seconds, 'sec'))
     if len(ts) > 2 and seconds:
         ts.pop(len(ts)-1)
     if len(ts) > 4 and minutes:
         ts.pop(len(ts)-1)
-    if len(ts) >= 2:
-        last = ts.pop(len(ts)-1)
-        s = ', '.join(ts)
-        s += ' and {}'.format(last)
-        return s
-    return ts[0]
+    return ' '.join(ts)
 
 async def twitch_request(ahttp, url, params=None, headers={}):
     if '/kraken/' in url:
