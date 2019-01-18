@@ -202,7 +202,7 @@ class Logviewer extends React.Component {
         if (this.state.accessDenied)
             return this.renderAccessDenied()
         return <div id="logviewer">
-            <div id="topbar" style={{'border': 'none', 'borderBottom': '1px solid #000', 'padding-left': '0.5rem', 'padding-left': '0.5rem'}}>
+            <div id="topbar" style={{'border': 'none', 'borderBottom': '1px solid #000', 'paddingLeft': '0.5rem'}}>
                 <div className="title" id="top-title">
                     <Link to="/twitch/logviewer" className="text-white">
                         <i className="material-icons material-inline ">arrow_back</i></Link> Logviewer for {this.state.channel.name}
