@@ -17,7 +17,7 @@ class Command extends React.Component {
                 user_level: 0,
                 enabled_status: 0,
                 global_cooldown: 5,
-                user_cooldown: 5,
+                user_cooldown: 15,
                 mod_cooldown: 0,
                 enabled: 1,
                 public: 1,
