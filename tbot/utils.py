@@ -49,10 +49,16 @@ def seconds_to_pretty(seconds):
         return s
     return ts[0]
 
-async def twitch_request(ahttp, url, params=None, headers={}):    
-    headers.update({
-        'Authorization': 'Bearer {}'.format(config['twitch']['token'])
-    })
+async def twitch_request(ahttp, url, params=None, headers={}):
+    if '/kraken/' in url:
+        headers.update({
+            'Accept': 'application/vnd.twitchtv.v5+json',
+            'Authorization': 'OAuth {}'.format(config['twitch']['token'])
+        })
+    else:
+        headers.update({
+            'Authorization': 'Bearer {}'.format(config['twitch']['token'])
+        })
     async with ahttp.get(url, params=params, headers=headers) as r:
         if r.status == 200:
             data = await r.json()

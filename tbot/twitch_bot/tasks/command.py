@@ -56,7 +56,7 @@ def handle_command(nick, target, message, **kwargs):
             'user': kwargs['user'],
             'display_name': kwargs['display-name'] or kwargs['user'],
             'user_id': int(kwargs['user-id']),
-            'channel': target.strip('#'),        
+            'channel': target.strip('#'),
             'channel_id': int(kwargs['room-id']),
             'badges': kwargs['badges'],
             'emotes': kwargs['emotes'],

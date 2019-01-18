@@ -11,6 +11,7 @@ def fills_vars(*vars):
             raise Exception('The method must be async')
         for var in vars:
             var_fillers[var] = f
+        return f
     return wrapper
 
 async def fill_message(message, **kwargs):
