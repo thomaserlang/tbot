@@ -1,6 +1,7 @@
 from tbot.twitch_bot.var_filler import fills_vars, Send_error
 from tbot.twitch_bot.tasks.command import db_command
 from tbot import utils
+from datetime import datetime
 import logging
 
 @fills_vars('cmd_manager')
@@ -25,8 +26,9 @@ async def cmd_manager(bot, display_name, args, cmd, channel_id, **kwargs):
         if r:
             raise Send_error('Cmd "{0}" already exists, use: !{1} edit {0} <response>'.format(cmd_name, cmd))
         await bot.db.execute(
-            'INSERT INTO twitch_commands (channel_id, cmd, response) VALUES (%s, %s, %s)',
-            (channel_id, cmd_name, ' '.join(args),)
+            'INSERT INTO twitch_commands (channel_id, cmd, response, created_at, updated_at) '
+            'VALUES (%s, %s, %s, %s, %s)',
+            (channel_id, cmd_name, ' '.join(args), datetime.utcnow(), datetime.utcnow())
         )
         raise Send_error('!{} successfully saved'.format(cmd_name))
 
@@ -36,8 +38,8 @@ async def cmd_manager(bot, display_name, args, cmd, channel_id, **kwargs):
             raise Send_error('Cmd "{0}" does not exist, use !{1} add {0} <response>'.format(cmd_name, cmd))
 
         await bot.db.execute(
-            'UPDATE twitch_commands SET response=%s WHERE channel_id=%s and cmd=%s',
-            (' '.join(args), channel_id, cmd_name,)
+            'UPDATE twitch_commands SET response=%s, updated_at=%s WHERE channel_id=%s and cmd=%s',
+            (' '.join(args), datetime.utcnow(), channel_id, cmd_name,)
         )
         raise Send_error('!{} successfully saved'.format(cmd_name))
 
