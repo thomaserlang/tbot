@@ -32,7 +32,7 @@ async def set_title(bot, cmd, channel_id, args, var_args, **kwargs):
             ))
         )
     except utils.Twitch_request_error as e:
-        raise Send_error('Unable to change game. Error: {}'.format(str(e)))
+        raise Send_error('Unable to change title. Error: {}'.format(str(e)))
     raise Send_error('Title changed to: {}'.format(data['status']))
 
 @fills_vars('set_game')

@@ -81,7 +81,7 @@ async def twitch_request(ahttp, url, params=None, headers={},
             return await twitch_request(ahttp, url, params, headers, method, data, json)
         if r.status >= 400:
             error = await r.text()
-            raise Twitch_request_error('Error: {} - {}'.format(r.status, error), r.status)
+            raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
 
 async def twitch_channel_token_request(bot, channel_id, url, method='GET', 
     params=None, headers={}, data=None, json=None):
@@ -92,7 +92,11 @@ async def twitch_channel_token_request(bot, channel_id, url, method='GET',
     if not channel:
         raise Exception('Unknown channel {}'.format(channel_id))
     if not channel['twitch_token'] or not channel['twitch_refresh_token']:
-        raise Exception('Missing twitch_token or twitch_refresh_token for channel {}'.format(channel_id))
+        raise Twitch_request_error(
+            'Extra authorization is needed, please sign in to the dashboard and '
+            'grant the bot extra authorization',
+            400
+        )
     try:
         d = await twitch_request(
             bot.ahttp, url=url, params=params, headers=headers,
@@ -131,12 +135,21 @@ async def twitch_refresh_token(bot, channel_id, refresh_token):
             )
             return data['access_token']
         else:
+            if r.status == 400:
+                await bot.db.execute(
+                    'UPDATE twitch_channels SET twitch_token=null, twitch_refresh_token=null WHERE channel_id=%s;',
+                    (channel_id,)
+                )
+                raise Twitch_request_error(
+                    'Extra authorization is needed, please sign in to the dashboard and '
+                    'grant the bot extra authorization',
+                    400
+                )
             error = await r.text()
-            raise Exception('Failed to refresh token for channel: {} - Error: {}: {}'.format(
-                channel_id,
+            raise Twitch_request_error('{}: {}'.format(
                 r.status,
                 error,
-            ))
+            ), r.status)
 
 async def twitch_lookup_usernames(ahttp, db, usernames):
     users = []

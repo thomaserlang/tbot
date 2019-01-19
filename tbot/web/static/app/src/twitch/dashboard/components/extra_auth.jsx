@@ -28,7 +28,7 @@ class ExtraAuth extends React.Component {
         if (this.state.data.has_extra_auth)
             return null
         return <div className="box mr-3" style={{width: '400px'}}>
-            <div className="title">Extra authorization needed</div>
+            <div className="title">Extra authorization</div>
             <div className="content">
                 For the bot to be able to change title, game category and 
                 read subscribers, extra authorization is needed.
@@ -39,7 +39,7 @@ class ExtraAuth extends React.Component {
                             href="/twitch/login?request_extra_auth=true"
                             className="btn btn-success"
                         >
-                            Give extra authorization
+                            Grant extra authorization
                         </a>
                     </div>
                 </div>
