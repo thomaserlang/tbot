@@ -39,7 +39,7 @@ class Test(unittest.TestCase):
             )
         ))
         self.assertEqual(s, {
-            'followage': '11 months, 5 days, 7 hours and 52 minutes',
+            'followage': '11 months 5 days 7 hours 52 mins',
             'followage_date': '2018-02-15',
             'followage_datetime': '2018-02-15 13:44:37 UTC',
         })
