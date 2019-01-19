@@ -7,7 +7,7 @@ title: Time
 
 `{time CET}`
 
-Return example: `16:00:15`
+Return example: `16:00`
 
 ## Valid timezones
 ```plaintext

@@ -44,17 +44,33 @@ def seconds_to_pretty(seconds):
         ts.pop(len(ts)-1)
     return ' '.join(ts)
 
-async def twitch_request(ahttp, url, params=None, headers={}):
+class Twitch_request_error(Exception):
+
+    def __init__(self, message, status_code):
+        self.status_code = status_code
+        self.message = message
+        super().__init__(message)
+
+async def twitch_request(ahttp, url, params=None, headers={}, 
+    method='GET', data=None, json=None, token=None):
+    if not token:
+        token = config['twitch']['token']
     if '/kraken/' in url:
         headers.update({
+            'Client-ID': config['twitch']['client_id'],
             'Accept': 'application/vnd.twitchtv.v5+json',
-            'Authorization': 'OAuth {}'.format(config['twitch']['token'])
+            'Authorization': 'OAuth {}'.format(token)
         })
+        if data:
+            headers.update({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            })
     else:
         headers.update({
-            'Authorization': 'Bearer {}'.format(config['twitch']['token'])
+            'Authorization': 'Bearer {}'.format(token)
         })
-    async with ahttp.get(url, params=params, headers=headers) as r:
+    async with ahttp.request(method, url, params=params, 
+        headers=headers, data=data, json=json) as r:
         if r.status == 200:
             data = await r.json()
             return data
@@ -62,10 +78,65 @@ async def twitch_request(ahttp, url, params=None, headers={}):
             w = int(time.time())-int(r.headers['Ratelimit-Reset'])
             if w > 0:
                 await asyncio.sleep(w)
-            return await twitch_request(ahttp, url, params, headers)
+            return await twitch_request(ahttp, url, params, headers, method, data, json)
         if r.status >= 400:
             error = await r.text()
-            raise Exception('Error: {} - {}'.format(r.status, error))
+            raise Twitch_request_error('Error: {} - {}'.format(r.status, error), r.status)
+
+async def twitch_channel_token_request(bot, channel_id, url, method='GET', 
+    params=None, headers={}, data=None, json=None):
+    channel = await bot.db.fetchone(
+        'SELECT twitch_token, twitch_refresh_token FROM twitch_channels WHERE channel_id=%s',
+        (channel_id,)
+    )
+    if not channel:
+        raise Exception('Unknown channel {}'.format(channel_id))
+    if not channel['twitch_token'] or not channel['twitch_refresh_token']:
+        raise Exception('Missing twitch_token or twitch_refresh_token for channel {}'.format(channel_id))
+    try:
+        d = await twitch_request(
+            bot.ahttp, url=url, params=params, headers=headers,
+            method=method, data=data, json=json, token=channel['twitch_token'],
+        )
+        return d
+    except Twitch_request_error as e:
+        if e.status_code == 401:
+            token = await twitch_refresh_token(
+                bot, 
+                channel_id, 
+                channel['twitch_refresh_token'],
+            )
+            d = await twitch_request(
+                bot.ahttp, url=url, params=params, headers=headers,
+                method=method, data=data, json=json, token=token,
+            )
+            return d
+        else:
+            raise
+
+async def twitch_refresh_token(bot, channel_id, refresh_token):
+    url = 'https://id.twitch.tv/oauth2/token'
+    params = {
+        'grant_type': 'refresh_token',
+        'refresh_token': refresh_token,
+        'client_id': config['twitch']['client_id'],
+        'client_secret': config['twitch']['client_secret'],
+    }
+    async with bot.ahttp.post(url, params=params) as r:
+        if r.status == 200:
+            data = await r.json()
+            await bot.db.execute(
+                'UPDATE twitch_channels SET twitch_token=%s, twitch_refresh_token=%s WHERE channel_id=%s;',
+                (data['access_token'], data['refresh_token'], channel_id)
+            )
+            return data['access_token']
+        else:
+            error = await r.text()
+            raise Exception('Failed to refresh token for channel: {} - Error: {}: {}'.format(
+                channel_id,
+                r.status,
+                error,
+            ))
 
 async def twitch_lookup_usernames(ahttp, db, usernames):
     users = []
@@ -156,8 +227,8 @@ def json_loads(s, charset='utf-8'):
 def validate_cmd(cmd):
     if not (1 <= len(cmd) <= 20):
         raise Exception('The command must be between 1 and 20 chars')
-    if not re.match('^[a-z0-9A-Z]+$', cmd):
-        raise Exception('The command must only contain: a-z 0-9')
+    if not re.match('^[a-z0-9A-Z_]+$', cmd):
+        raise Exception('The command must only contain: a-z, 0-9 and _')
     return True
 
 def validate_cmd_response(response):

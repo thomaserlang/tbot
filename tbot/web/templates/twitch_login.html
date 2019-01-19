@@ -16,7 +16,7 @@
             <h1>Waiting on Twitch</h1>
         </div>
     </div>
-    {% if handler.get_argument('request_extra_auth') %}
+    {% if handler.get_argument('request_extra_auth', None) %}
         <script>location.href = '/twitch/login?redirect=true&request_extra_auth=true';</script>
     {% else %}
         <script>location.href = '/twitch/login?redirect=true';</script>

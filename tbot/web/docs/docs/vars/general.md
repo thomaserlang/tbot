@@ -53,7 +53,7 @@ Example: `!cmd add/edit/delete/get [cmd] <response>`
 
 `{accountage}`
 
-Example response: `5 years, 8 months, 13 days and 2 hours`
+Example response: `5 years 8 months 13 days 2 hours`
 
 `{accountage_date}`
 
@@ -68,7 +68,7 @@ Example response: `2013-06-03 19:12:02 UTC`
 
 `{followage}`
 
-Example response: `5 years, 8 months, 13 days and 2 hours`
+Example response: `5 years 8 months 13 days 2 hours`
 
 `{followage_date}`
 
@@ -77,3 +77,59 @@ Example response: `2013-06-03`
 `{followage_datetime}`
 
 Example response: `2013-06-03 19:12:02 UTC`
+
+## Game
+
+`{game}`
+
+The current game being played.
+
+Example response: `Counter-Strike: Global Offensive`
+
+`{set_game}`
+
+This requires extra authorization. 
+
+Example: `!setgame Counter-Strike: Global Offensive`
+
+Example response: `@User, Game changed to: Counter-Strike: Global Offensive`
+
+`{set_game Hearthstone}`
+
+Example: `!gamehs`
+
+Example response: `@User, Game changed to: Hearthstone`
+
+## Title
+
+`{title}`
+
+The streams current title.
+
+Example response: `Counter-Strike: Global Offensive`
+
+`{set_title}`
+
+This requires extra authorization. 
+
+Example: `!settitle Test stream`
+
+Example response: `@User, Title changed to: Test stream`
+
+`{set_title Test stream}`
+
+Example: `!settitletest`
+
+Example response: `@User, Title changed to: Test stream`
+
+## Views
+
+`{views}`
+
+Current number of channel views
+
+## Followers
+
+`{followers}`
+
+Current number of channel followers
