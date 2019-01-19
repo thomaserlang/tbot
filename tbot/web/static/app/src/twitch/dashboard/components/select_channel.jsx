@@ -26,9 +26,9 @@ class SelectChannel extends React.Component {
     }
 
     render() {
-        return <div className="modal " tabIndex="-1" role="dialog">
-            <div className="modal-dialog" role="document">
-                <div className="modal-content">
+        return <div className="modal" tabIndex="-1" role="dialog">
+            <div className="modal-dialog" role="document" style={{margin: 0, marginTop: '3.2rem', width:'350px'}}>
+                <div className="modal-content" style={{borderRadius:0}}>
                     <div className="modal-header">
                         <h5 className="modal-title">Channels you manage</h5>
                         <button 
