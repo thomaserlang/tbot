@@ -1,7 +1,7 @@
 import logging, json, os
 from tornado import web, httpclient, escape
 from urllib import parse
-from tbot import config
+from tbot import config, utils
 from ..base import Base_handler
 
 class Handler(Base_handler):
@@ -13,13 +13,7 @@ class Handler(Base_handler):
             self.write(error)
             return
         if not code:
-            self.redirect('https://id.twitch.tv/oauth2/authorize?'+parse.urlencode({
-                    'client_id': config['twitch']['client_id'],
-                    'response_type': 'code',                    
-                    'redirect_uri': parse.urljoin(config['web']['base_url'], 'connect/twitch'),
-                    'scope': 'channel_subscriptions channel_editor',
-                })
-            )
+            self.write('Missing code argument')
             return
 
         http = httpclient.AsyncHTTPClient()
@@ -46,18 +40,18 @@ class Handler(Base_handler):
             self.write('Unable to verify you at Twitch, please try again')
             return
         userinfo = json.loads(escape.native_str(response.body))
-        
         if userinfo['scopes']:
             await self.db.execute('''
-                INSERT INTO twitch_channels (channel_id, name, active, created_at, updated_at, twitch_token, twitch_refresh_token)
-                VALUES (%s, %s, "Y", now(), null, %s, %s) ON DUPLICATE KEY UPDATE 
+                INSERT INTO twitch_channels (channel_id, name, active, created_at, updated_at, twitch_token, twitch_refresh_token, twitch_scope)
+                VALUES (%s, %s, "Y", now(), null, %s, %s, %s) ON DUPLICATE KEY UPDATE 
                 name=VALUES(name), updated_at=now(), active=VALUES(active), twitch_token=VALUES(twitch_token), 
-                twitch_refresh_token=VALUES(twitch_refresh_token);
+                twitch_refresh_token=VALUES(twitch_refresh_token), twitch_scope=VALUES(twitch_scope);
             ''', (
                 userinfo['user_id'],
                 userinfo['login'],
                 token['access_token'],
                 token['refresh_token'],
+                utils.json_dumps(userinfo['scopes']),
             ))
         else:
             await self.db.execute('''
@@ -85,11 +79,13 @@ class Login_handler(Base_handler):
     
     def get(self):
         if self.get_argument('redirect', None):
+            logging.info(' '.join(config['twitch']['request_scope']))
             self.redirect('https://id.twitch.tv/oauth2/authorize?'+parse.urlencode({
                     'client_id': config['twitch']['client_id'],
                     'response_type': 'code',                    
                     'redirect_uri': parse.urljoin(config['web']['base_url'], 'connect/twitch'),
-                    'scope': '',
+                    'scope': ' '.join(config['twitch']['request_scope']) \
+                        if self.get_argument('request_extra_auth', None) else '',
                 })
             )
         else:

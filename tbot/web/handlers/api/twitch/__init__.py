@@ -9,4 +9,5 @@ from . import (
     connect_spotify,
     connect_discord,
     admin_of,
+    check_extra_auth,
 )

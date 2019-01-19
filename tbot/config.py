@@ -19,6 +19,12 @@ config = {
         'check_channels_every': 60, # seconds
         'delay_offline': 0, # seconds
         'pubsub_url': 'wss://pubsub-edge.twitch.tv',
+        'request_scope':['channel_subscriptions',
+                        'channel_check_subscription',
+                        'channel_editor',
+                        'bits:read',
+                        'clips:edit',
+                        'user:edit:broadcast',],
     },
     'discord': {
         'client_id': None,
