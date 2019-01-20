@@ -207,7 +207,9 @@ class Logviewer extends React.Component {
                     <Link to="/twitch/logviewer" className="text-white">
                         <i className="material-icons material-inline ">arrow_back</i></Link> Logviewer for {this.state.channel.name}
                 </div>
-                <div className="signed-as">Signed in as <b>{tbot['twitch_user']['user']}</b>, <a href="/twitch/logout">log out</a></div>
+                {tbot.twitch_user?
+                <div className="signed-as">Signed in as <b>{tbot.twitch_user.user}</b>, <a href="/twitch/logout">log out</a></div>
+                :null}
             </div>
             <div className="sticky-top">
                 <div className="filter">
