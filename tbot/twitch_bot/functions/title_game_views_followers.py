@@ -1,8 +1,6 @@
 import logging, urllib.parse
 from tbot.twitch_bot.var_filler import fills_vars, Send_error
 from tbot import utils
-from datetime import datetime
-from dateutil.parser import parse
 
 @fills_vars('title', 'game', 'views', 'followers')
 async def title_game_views_followers(bot, channel_id, **kwargs):
