@@ -31,7 +31,7 @@ class UserInput extends React.Component {
         switch (e.type) {
             case Downshift.stateChangeTypes.clickItem:
             case Downshift.stateChangeTypes.changeInput:
-                this.setState({value: (e.inputValue ? e.inputValue: e.selectedItem.name)})
+                this.setState({value: (e.selectedItem?e.selectedItem.name:e.inputValue)})
             break
             case Downshift.stateChangeTypes.keyDownArrowUp:
             case Downshift.stateChangeTypes.keyDownArrowDown:
