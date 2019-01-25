@@ -1,5 +1,4 @@
-import click
-import asyncio
+import click, asyncio, os
 from tbot import config, config_load, logger
 
 @click.group()
@@ -35,6 +34,22 @@ def discord():
     logger.set_logger('discord.log')
     import tbot.discord_bot.bot_main
     tbot.discord_bot.bot_main.main() 
+
+@cli.command()
+def upgrade():
+    from yoyo import read_migrations
+    from yoyo import get_backend
+
+    backend = get_backend('mysql://{}:{}@{}:{}/{}'.format(
+        config['mysql']['user'],
+        config['mysql']['password'],
+        config['mysql']['host'],
+        config['mysql']['port'],
+        config['mysql']['database'],
+    ))
+    migrations = read_migrations(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'migrations'))
+    with backend.lock():
+        backend.apply_migrations(backend.to_apply(migrations))
 
 def main():
     cli()
