@@ -8,16 +8,16 @@ __depends__ = {'20190125_01_00zOx-init'}
 
 steps = [
     step('''
-        UPDATE twitch_user_chat_stats SET bans=0 WHERE bans is null
+        UPDATE twitch_user_chat_stats c SET bans=(SELECT count(m.id) FROM twitch_modlog m WHERE m.channel_id=c.channel_id AND m.target_user_id=c.user_id AND command='ban');
     '''),
     step('''
-        UPDATE twitch_user_chat_stats SET timeouts=0 WHERE timeouts is null
+        UPDATE twitch_user_chat_stats c SET timeouts=(SELECT count(m.id) FROM twitch_modlog m WHERE m.channel_id=c.channel_id AND m.target_user_id=c.user_id AND command='timeout');
     '''),
     step('''
-        UPDATE twitch_user_chat_stats SET purges=0 WHERE purges is null
+        UPDATE twitch_user_chat_stats SET purges=0;
     '''),
     step('''
-        UPDATE twitch_user_chat_stats SET chat_messages=0 WHERE chat_messages is null
+        UPDATE twitch_user_chat_stats SET chat_messages=0 WHERE chat_messages is null;
     '''),
     step('''
         ALTER TABLE `twitch_user_chat_stats` 
