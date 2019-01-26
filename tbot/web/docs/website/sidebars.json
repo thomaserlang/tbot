@@ -1,7 +1,14 @@
 {
   "docs": {
     "Variables": [
-        "vars/general", 
+    	"vars/general",
+        "vars/uptime",
+        "vars/alias",
+        "vars/cmd_manager",
+        "vars/accountage",
+        "vars/followage",
+        "vars/game",
+        "vars/title",
         "vars/user_streams", 
         "vars/chat_stats", 
         "vars/spotify",
