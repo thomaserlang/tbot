@@ -47,7 +47,7 @@ def parse(s):
 def format_response(s, values):
     for v in values:
         if v['value'] != None:
-            s = s.replace('{'+v['matched']+'}', v['value'])
+            s = s.replace('{'+v['matched']+'}', str(v['value']))
     return s
 
 class Send_error(Exception):

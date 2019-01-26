@@ -3,7 +3,7 @@
     "Variables": [
         "vars/general", 
         "vars/user_streams", 
-        "vars/chatstats", 
+        "vars/chat_stats", 
         "vars/spotify",
         "vars/time"
     ]
