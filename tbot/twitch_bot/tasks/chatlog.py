@@ -23,7 +23,7 @@ async def message(nick, target, message, **kwargs):
 
 async def save(type_, channel, channel_id, user, user_id, message):
     try:
-        await bot.db.execute('''
+        bot.loop.create_task(bot.db.execute('''
             INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message, word_count) VALUES
                 (%s, %s, %s, %s, %s, %s, %s)
         ''', (
@@ -34,7 +34,16 @@ async def save(type_, channel, channel_id, user, user_id, message):
             user_id,
             message,
             len(message.split(' ')),
-        ))
+        )))
+        
+        c = await bot.db.execute('''
+            UPDATE twitch_user_chat_stats SET chat_messages=chat_messages+1 WHERE channel_id=%s AND user_id=%s
+        ''', (channel_id, user_id,))
+        if not c.rowcount:
+            bot.loop.create_task(bot.db.execute('''
+                INSERT INTO twitch_user_chat_stats (channel_id, user_id, chat_messages) 
+                VALUES (%s, %s, 1) ON DUPLICATE KEY UPDATE chat_messages=chat_messages+1
+            ''', (channel_id, user_id,)))
     except:
         logging.exception('sql')
 

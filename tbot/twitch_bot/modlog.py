@@ -28,7 +28,7 @@ class Pubsub():
             return
         c = topic.split('.')
         try:
-            await self.db.execute('''
+            self.loop.create_task(self.db.execute('''
                 INSERT INTO twitch_modlog (created_at, channel_id, user, user_id, command, args, target_user, target_user_id) VALUES
                     (%s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
@@ -40,10 +40,9 @@ class Pubsub():
                 ' '.join(data['args']).strip() if data['args'] else '',
                 data['args'][0] if data['target_user_id'] else None,
                 data['target_user_id'] if data['target_user_id'] else None,
-            )) 
-
+            )))
             if data['target_user_id']:
-                await self.db.execute('''
+                self.loop.create_task(self.db.execute('''
                     INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message) VALUES
                         (%s, %s, %s, %s, %s, %s)
                 ''', (
@@ -57,7 +56,21 @@ class Pubsub():
                         ' '+' '.join(data['args']).strip() if data['args'] else '',
                         data['created_by'] or 'twitch',
                     ),
-                )) 
+                )))
+
+                if data['moderation_action'] in ['ban', 'timeout', 'delete']:
+                    field = data['moderation_action'] + 's'
+                    if field == 'timeouts' and data['args'][1] == '1':
+                        field = 'purges'
+                    r = await self.db.execute('''
+                        UPDATE twitch_user_chat_stats SET {0}={0}+1 WHERE channel_id=%s AND user_id=%s
+                    '''.format(field), (c[2], data['target_user_id'],))
+                    if not r.rowcount:
+                        self.loop.create_task(self.db.execute('''
+                            INSERT INTO twitch_user_chat_stats (channel_id, user_id, {0}) 
+                            VALUES (%s, %s, 1) ON DUPLICATE KEY UPDATE {0}={0}+1
+                        '''.format(field), (c[2], data['target_user_id'],)))
+
         except:
             logging.exception('log_mod_action')
 
