@@ -5,7 +5,7 @@ from tbot import config, utils
 
 @bot.on('PRIVMSG')
 async def message(nick, target, message, **kwargs):
-    if not bot.channels[int(kwargs['room-id'])]['chatlog_enabled']:
+    if not bot.channels[kwargs['room-id']]['chatlog_enabled']:
         return
 
     bot.loop.create_task(
@@ -18,7 +18,7 @@ async def message(nick, target, message, **kwargs):
     is_mod = 'moderator' in kwargs['badges'] or 'broadcaster' in kwargs['badges']
     if is_mod and message == '!updatemods':
         bot.send("PRIVMSG", target=target, message='/mods')
-        if not bot.channels[int(kwargs['room-id'])]['muted']:
+        if not bot.channels[kwargs['room-id']]['muted']:
             bot.send("PRIVMSG", target=target, message='Affirmative, {}'.format(nick))
 
 async def save(type_, channel, channel_id, user, user_id, message):

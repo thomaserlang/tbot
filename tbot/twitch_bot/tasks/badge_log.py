@@ -27,8 +27,8 @@ async def badge_log(nick, target, message, **kwargs):
         elif b2[0] == 'bits':
             bits = int(b2[1])
 
-    user_id = int(kwargs['user-id'])
-    channel_id = int(kwargs['room-id'])
+    user_id = kwargs['user-id']
+    channel_id = kwargs['room-id']
 
     update = False
     if user_id in badges[channel_id]:

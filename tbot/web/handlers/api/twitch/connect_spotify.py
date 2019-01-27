@@ -33,7 +33,6 @@ class Handler(Api_handler):
         )
         if not r:
             raise Exception('Unknown channel {}'.format(channel_id))
-        logging.info(parse.urljoin(config['web']['base_url'], 'connect/spotify'))
         self.redirect('https://accounts.spotify.com/authorize?'+parse.urlencode({
             'client_id': config['spotify']['client_id'],
             'redirect_uri': parse.urljoin(config['web']['base_url'], 'connect/spotify'),

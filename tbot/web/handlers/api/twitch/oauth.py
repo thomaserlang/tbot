@@ -79,7 +79,6 @@ class Login_handler(Base_handler):
     
     def get(self):
         if self.get_argument('redirect', None):
-            logging.info(' '.join(config['twitch']['request_scope']))
             self.redirect('https://id.twitch.tv/oauth2/authorize?'+parse.urlencode({
                     'client_id': config['twitch']['client_id'],
                     'response_type': 'code',                    

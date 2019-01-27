@@ -1,4 +1,4 @@
-import click, asyncio, os
+import click, asyncio, os, logging
 from tbot import config, config_load, logger
 
 @click.group()
@@ -37,6 +37,7 @@ def discord():
 
 @cli.command()
 def upgrade():
+    logger.set_logger('', fmt='%(message)s')
     from yoyo import read_migrations
     from yoyo import get_backend
 
@@ -50,6 +51,7 @@ def upgrade():
     migrations = read_migrations(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'migrations'))
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migrations))
+    logging.info('Upgrade done')
 
 def main():
     cli()

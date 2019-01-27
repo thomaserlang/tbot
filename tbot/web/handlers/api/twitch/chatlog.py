@@ -36,7 +36,6 @@ class Handler(Api_handler):
         if after_id:
             sql += ' AND id>%s'
             args.append(after_id)
-            logging.info(after_id)
 
         message = self.get_argument('message', None)
         if message:

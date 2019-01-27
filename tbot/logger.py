@@ -6,15 +6,15 @@ from tbot import config
 class logger(object):
 
     @classmethod
-    def set_logger(cls, filename, to_sentry=False):
+    def set_logger(cls, filename, to_sentry=False, fmt='[%(levelname)s %(asctime)s.%(msecs)d %(module)s:%(lineno)d]: %(message)s'):
         logger = logging.getLogger()
         logger.setLevel(getattr(logging, config['logging']['level'].upper()))
         #logger.handlers = []
         format_ = logging.Formatter(
-            '[%(levelname)s %(asctime)s.%(msecs)d %(module)s:%(lineno)d]: %(message)s', 
+            fmt, 
             datefmt='%Y-%m-%d %H:%M:%S'
         )
-        if config['logging']['path']:
+        if config['logging']['path'] and filename:
             channel = logging.handlers.RotatingFileHandler(
                 filename=os.path.join(config['logging']['path'], filename),
                 maxBytes=config['logging']['max_size'],

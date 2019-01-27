@@ -191,7 +191,7 @@ async def update_channels_check():
             params.append(('first', '100'))
             data = await utils.twitch_request(bot.ahttp, url, params)
             for stream in data['data']:
-                streams[int(stream['user_id'])] = stream
+                streams[stream['user_id']] = stream
         for channel_id, stream in streams.items():
             if stream:                
                 bot.channels_check[channel_id]['is_streaming'] = True

@@ -24,7 +24,7 @@ class Single_handle(Api_handler):
     async def get(self, channel):
         user_id = None
         if self.current_user:
-            user_id = int(self.current_user['user_id'])
+            user_id = self.current_user['user_id']
         channel = await self.db.fetchone('''
             SELECT 
                 c.channel_id as id, c.name, a.level
