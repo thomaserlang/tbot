@@ -61,7 +61,7 @@ class Twitch_sync_channel:
 
     async def set_sub_roles(self, returninfo):
         subs = await self.get_subscribers()
-        subs = {int(d['user']['_id']): d for d in subs}
+        subs = {d['user']['_id']: d for d in subs}
         cached_badges = await self.get_cached_badges_months()
 
         for member in self.server.members:
@@ -131,13 +131,13 @@ class Twitch_sync_channel:
                         await member.remove_roles(r)
                         returninfo['removed_roles'] += 1
                     except:
-                        e = 'Failed to give role `{}` to `{}`'.format(r.name, member.name)
+                        e = 'Failed to remove role `{}` to `{}`'.format(r.name, member.name)
                         logging.exception(e)
                         returninfo['errors'].append(e)
                 returninfo['removed_users'] += 1
 
     async def get_subscribers(self):
-        '''
+        
         return [
             {
                 "_id": "e5e2ddc37e74aa9636625e8d2cc2e54648a30418",
@@ -156,7 +156,7 @@ class Twitch_sync_channel:
                 }
             },
         ]
-        '''
+        
         headers = {
             'Authorization': 'OAuth {}'.format(self.info['twitch_token']),
             'Client-ID': config['twitch']['client_id'],
@@ -264,33 +264,34 @@ class Twitch_sync_channel:
     async def get_twitch_ids(self):
         rows = await bot.db.fetchall('SELECT discord_id, twitch_id FROM twitch_discord_users;')
         twitch_ids = {int(r['discord_id']): r['twitch_id'] for r in rows}
-
-        for member in self.server.members:
-            try:
-                if twitch_ids.get(member.id):
-                    continue
-                if str(member.status) == 'offline':
-                    continue
-                data = await discord_request(
-                    bot.ahttp,
-                    'https://discordapp.com/api/v6/users/{}/profile'.format(
-                    member.id
-                ))
-                if not data:
-                    continue
-                for con in data['connected_accounts']:
-                    if not con['verified']:
+        try:
+            for member in self.server.members:
+                    if twitch_ids.get(member.id):
                         continue
-                    if con['type'] != 'twitch':
+                    if str(member.status) == 'offline':
                         continue
-                    twitch_ids[member.id] = int(con['id'])
-                    await bot.db.execute(
-                        'INSERT IGNORE INTO twitch_discord_users (discord_id, twitch_id) VALUES (%s, %s)', 
-                        (member.id, con['id'])
-                    )
-                    break
-            except:
-                logging.exception('get_twitch_ids')
+                    data = await discord_request(
+                        bot.ahttp,
+                        'https://discordapp.com/api/v6/users/{}/profile'.format(
+                        member.id
+                    ))
+                    logging.info(member.id)
+                    logging.info(data)
+                    if not data:
+                        continue
+                    for con in data['connected_accounts']:
+                        if not con['verified']:
+                            continue
+                        if con['type'] != 'twitch':
+                            continue
+                        twitch_ids[member.id] = con['id']
+                        await bot.db.execute(
+                            'INSERT IGNORE INTO twitch_discord_users (discord_id, twitch_id) VALUES (%s, %s)', 
+                            (member.id, con['id'])
+                        )
+                        break
+        except:
+            logging.exception('get_twitch_ids')
         return twitch_ids
 
 async def discord_request(ahttp, url, params=None, headers={}):    
@@ -299,9 +300,14 @@ async def discord_request(ahttp, url, params=None, headers={}):
             config['discord']['token']
     })
     async with ahttp.get(url, params=params, headers=headers) as r:
+        data = await r.json()
         if r.status == 200:
-            data = await r.json()
             return data
+        elif r.status in (401, 403):
+            data = await r.json()
+            if data['code'] == 50001:
+                raise Exception('User token seems to have expired')
+            raise Exception(data['message'])
 
 class Twitch_exception(Exception):
     pass
