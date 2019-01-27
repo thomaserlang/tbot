@@ -303,7 +303,8 @@ async def discord_request(ahttp, url, params=None, headers={}):
         elif r.status in (401, 403):
             data = await r.json()
             if data['code'] == 50001:
-                raise Exception('User token seems to have expired')
+                logging.error('User "{}" is not on the same server as the user_token'.format(url))
+                return
             raise Exception(data['message'])
 
 class Twitch_exception(Exception):
