@@ -239,7 +239,7 @@ class Twitch_sync_channel:
         url = 'https://id.twitch.tv/oauth2/token'
         params = {
             'grant_type': 'refresh_token',
-            'refresh_token': self.info['twitch_refresh_token'],
+            'refresh_token': self.info['twitch_refresh_token'] or '',
             'client_id': config['twitch']['client_id'],
             'client_secret': config['twitch']['client_secret'],
         }
@@ -275,8 +275,6 @@ class Twitch_sync_channel:
                         'https://discordapp.com/api/v6/users/{}/profile'.format(
                         member.id
                     ))
-                    logging.info(member.id)
-                    logging.info(data)
                     if not data:
                         continue
                     for con in data['connected_accounts']:
