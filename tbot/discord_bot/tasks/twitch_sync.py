@@ -137,7 +137,7 @@ class Twitch_sync_channel:
                 returninfo['removed_users'] += 1
 
     async def get_subscribers(self):
-        
+        '''
         return [
             {
                 "_id": "e5e2ddc37e74aa9636625e8d2cc2e54648a30418",
@@ -156,7 +156,7 @@ class Twitch_sync_channel:
                 }
             },
         ]
-        
+        '''
         headers = {
             'Authorization': 'OAuth {}'.format(self.info['twitch_token']),
             'Client-ID': config['twitch']['client_id'],
