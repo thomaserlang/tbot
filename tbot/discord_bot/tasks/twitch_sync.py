@@ -296,8 +296,7 @@ class Twitch_sync_channel:
 
 async def discord_request(ahttp, url, params=None, headers={}):    
     headers.update({
-        'Authorization': config['discord']['user_token'] or \
-            config['discord']['token']
+        'Authorization': config['discord']['user_token'],
     })
     async with ahttp.get(url, params=params, headers=headers) as r:
         data = await r.json()
