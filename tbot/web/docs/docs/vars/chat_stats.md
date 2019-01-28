@@ -101,7 +101,7 @@ How many times a user has been timed out in the chat.
 
 `{user.chat_stats.timeouts_num}` e.g. `2`
 
-### Bans
+### Purges
 
 How many times a user has been purged in the chat. A purge is a timeout of 1 second.
 
