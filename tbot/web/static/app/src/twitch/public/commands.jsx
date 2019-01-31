@@ -55,7 +55,7 @@ class Commands extends React.Component {
             return <Loading />
         let userLevels = []
         for (let cmd of this.state.commands) {
-            if (!(cmd.user_level in userLevels))
+            if (!userLevels.includes(cmd.user_level))
                 userLevels.push(cmd.user_level)
         }
         return  <div> 
