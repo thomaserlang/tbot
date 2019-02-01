@@ -24,9 +24,10 @@ async def fill_message(message, **kwargs):
     for f in grouped:
         var_args = {p['var']: p['args'] for p in grouped[f]}
         r = await f(var_args=var_args, **kwargs)
-        for p in grouped[f]:
-            if p['var'] in r:
-                p['value'] = r[p['var']]
+        if r:
+            for p in grouped[f]:
+                if p['var'] in r:
+                    p['value'] = r[p['var']]
     return format_response(message, parsed)
 
 def parse(s):
@@ -51,7 +52,10 @@ def format_response(s, values):
     return s
 
 class Send_error(Exception):
-    pass
+
+    def __init__(self, message, user=None):
+        self.user = user
+        super().__init__(message)
 
 class Send_break(Exception):
     pass

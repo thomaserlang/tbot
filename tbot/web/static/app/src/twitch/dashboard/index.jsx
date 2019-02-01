@@ -12,6 +12,9 @@ import Command from './command'
 import Spotify from './spotify'
 import Discord from './discord'
 import Admins from './admins'
+import Filters from './filters'
+import Filter_link from './filter_link'
+
 
 class Main extends React.Component {
 
@@ -39,6 +42,8 @@ class Main extends React.Component {
                     <Route exact path='/twitch/:channel/spotify' component={Spotify}/>
                     <Route exact path='/twitch/:channel/discord' component={Discord}/>
                     <Route exact path='/twitch/:channel/admins' component={Admins}/>
+                    <Route exact path='/twitch/:channel/filters' component={Filters}/>
+                    <Route exact path='/twitch/:channel/filters/link' component={Filter_link}/>
                 </div>
             </div>
         </div>

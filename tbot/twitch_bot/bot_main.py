@@ -2,7 +2,7 @@ import logging, asyncio
 from datetime import datetime
 from tbot import config, db
 from tbot.twitch_bot.bot_base import bot
-from tbot.twitch_bot import commands, tasks, functions
+from tbot.twitch_bot import commands, tasks, functions, filters
 
 bot.channels = {}
 

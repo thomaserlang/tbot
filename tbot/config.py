@@ -24,7 +24,8 @@ config = {
                         'channel_editor',
                         'bits:read',
                         'clips:edit',
-                        'user:edit:broadcast',],
+                        'user:edit:broadcast',
+                        'channel:read:subscriptions',],
     },
     'discord': {
         'client_id': None,

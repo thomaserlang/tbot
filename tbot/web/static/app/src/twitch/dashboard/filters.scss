@@ -1,0 +1,20 @@
+#filters {
+    .filter {
+        cursor: pointer;
+        width: 250px;
+        background-color: #313337;
+        padding: 0.5rem;
+
+        margin-right: 1rem;
+        margin-bottom: 1rem;
+
+        .title {
+            font-size: 24px;
+            line-height: 24px;
+        }
+    }
+    a {
+        color: #fff;
+        text-decoration: none;
+    }
+}

@@ -10,4 +10,5 @@ from . import (
     connect_discord,
     admin_of,
     check_extra_auth,
+    filters,
 )
