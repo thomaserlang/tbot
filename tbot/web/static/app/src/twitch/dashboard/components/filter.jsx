@@ -13,9 +13,9 @@ class Filter extends React.Component {
                 enabled: false,
                 exclude_user_level: 1,
                 warning_enabled: true,
-                warning_message: 'You are not permitted to post links [warning]',
+                warning_message: '',
                 warning_expire: 3600,
-                timeout_message: 'You are not permitted to post links',
+                timeout_message: '',
                 timeout_duration: 60,
             },
         }
@@ -28,22 +28,7 @@ class Filter extends React.Component {
     }
 
     renderBase() {
-        return <>             
-            <div className="form-group">
-                <div className="custom-control custom-checkbox">
-                    <input 
-                        name="enabled"
-                        type="checkbox" 
-                        className="custom-control-input" 
-                        id="enabled"
-                        checked={this.state.filter.enabled}
-                        onChange={this.handleEvent} 
-                        autoFocus
-                    />
-                    <label className="custom-control-label" htmlFor="enabled">Enable link filter</label>
-                </div>
-            </div>
-
+        return <>
             <div className="form-group mb-4" style={{width: '200px'}}>
                 <label htmlFor="exclude_user_level">Exclude user level</label>
                 <select 
@@ -54,11 +39,9 @@ class Filter extends React.Component {
                     value={this.state.filter.exclude_user_level}
                     onChange={this.handleEvent}
                 >
-                    <option value="0">{userLevelName(0)}</option>
                     <option value="1">{userLevelName(1)}</option>
                     <option value="2">{userLevelName(2)}</option>
                     <option value="7">{userLevelName(7)}</option>
-                    <option value="9">{userLevelName(9)}</option>
                 </select>
             </div>
 
@@ -77,19 +60,17 @@ class Filter extends React.Component {
                 </div>
             </div>
             <div className="form-group mb-2">
-                <label htmlFor="warning_message">Message</label>
+                <label htmlFor="warning_message">Warning message</label>
                 <input 
                     className="form-control" 
                     id="warning_message" 
                     name="warning_message" 
                     value={this.state.filter.warning_message}
                     onChange={this.handleEvent}
-                    autoFocus
-                    required
                 />
             </div>
             <div className="form-group mb-4">
-                <label htmlFor="warning_expire">Expires after</label>
+                <label htmlFor="warning_expire">Warning expires after</label>
                 <div className="input-group" style={{width: '200px'}}>
                     <input 
                         id="warning_expire" 
@@ -98,6 +79,7 @@ class Filter extends React.Component {
                         name="warning_expire" 
                         value={this.state.filter.warning_expire}
                         onChange={this.handleEvent}
+                        required
                     />
                     <div className="input-group-append">
                         <div className="input-group-text">seconds</div>
@@ -107,19 +89,17 @@ class Filter extends React.Component {
 
             <h5>Timeout</h5>
             <div className="form-group mb-2">
-                <label htmlFor="timeout_message">Message</label>
+                <label htmlFor="timeout_message">Timeout message</label>
                 <input 
                     className="form-control" 
                     id="timeout_message" 
                     name="timeout_message" 
                     value={this.state.filter.timeout_message}
                     onChange={this.handleEvent}
-                    autoFocus
-                    required
                 />
             </div>
             <div className="form-group">
-                <label htmlFor="timeout_duration">Duration</label>
+                <label htmlFor="timeout_duration">Timeout duration</label>
                 <div className="input-group" style={{width: '200px'}}>
                     <input 
                         id="timeout_duration" 
@@ -128,6 +108,7 @@ class Filter extends React.Component {
                         name="timeout_duration" 
                         value={this.state.filter.timeout_duration}
                         onChange={this.handleEvent}
+                        required
                     />
                     <div className="input-group-append">
                         <div className="input-group-text">seconds</div>

@@ -14,6 +14,8 @@ import Discord from './discord'
 import Admins from './admins'
 import Filters from './filters'
 import Filter_link from './filter_link'
+import Filter_paragraph from './filter_paragraph'
+import Filter_symbol from './filter_symbol'
 
 
 class Main extends React.Component {
@@ -44,6 +46,8 @@ class Main extends React.Component {
                     <Route exact path='/twitch/:channel/admins' component={Admins}/>
                     <Route exact path='/twitch/:channel/filters' component={Filters}/>
                     <Route exact path='/twitch/:channel/filters/link' component={Filter_link}/>
+                    <Route exact path='/twitch/:channel/filters/paragraph' component={Filter_paragraph}/>
+                    <Route exact path='/twitch/:channel/filters/symbol' component={Filter_symbol}/>
                 </div>
             </div>
         </div>

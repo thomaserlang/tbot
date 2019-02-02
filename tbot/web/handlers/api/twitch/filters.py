@@ -65,7 +65,7 @@ class Filter_link(Api_handler):
     
     __schema__ = good.Schema({
         'whitelist': [str],
-    }, extra_keys=good.Remove)
+    })
 
     async def get(self, channel_id):
         whitelist = self.db.fetchone(
@@ -107,5 +107,98 @@ class Filter_link(Api_handler):
         r = await self.redis.publish_json(
             'tbot:server:commands', 
             ['reload_filter_link', channel_id]
+        )
+        self.set_status(204)
+
+
+class Filter_paragraph(Api_handler):
+    
+    __schema__ = good.Schema({
+        'max_length': good.Coerce(int),
+    })
+
+    async def get(self, channel_id):
+        paragraph = self.db.fetchone(
+            'SELECT max_length FROM twitch_filter_paragraph WHERE channel_id=%s',
+            (channel_id,)
+        )
+        r = await asyncio.gather(
+            get_filter(self, channel_id, 'paragraph'),
+            paragraph, 
+        )
+        f = r[0]
+        if not f:
+            self.set_status(204)
+            return
+        self.write_object({**f, **r[1]})
+
+    async def put(self, channel_id):
+        extra = {
+            'max_length': self.request.body.pop('max_length'),
+        }
+        data = self.validate(__base_schema__)
+        extra = self._validate(extra, self.__schema__)
+        await asyncio.gather(
+            save_filter(self, channel_id, 'paragraph', data),
+            self.db.execute('''
+                INSERT INTO twitch_filter_paragraph
+                    (channel_id, max_length) 
+                VALUES 
+                    (%s, %s) 
+                ON DUPLICATE KEY UPDATE 
+                    max_length=VALUES(max_length)
+                ''',
+                (channel_id, utils.json_dumps(extra['max_length']),)
+            )
+        )        
+        r = await self.redis.publish_json(
+            'tbot:server:commands', 
+            ['reload_filter_paragraph', channel_id]
+        )
+        self.set_status(204)
+
+class Filter_symbol(Api_handler):
+    
+    __schema__ = good.Schema({
+        'max_symbols': good.Coerce(int),
+    })
+
+    async def get(self, channel_id):
+        symbol = self.db.fetchone(
+            'SELECT max_symbols FROM twitch_filter_symbol WHERE channel_id=%s',
+            (channel_id,)
+        )
+        r = await asyncio.gather(
+            get_filter(self, channel_id, 'symbol'),
+            symbol, 
+        )
+        f = r[0]
+        if not f:
+            self.set_status(204)
+            return
+        self.write_object({**f, **r[1]})
+
+    async def put(self, channel_id):
+        extra = {
+            'max_symbols': self.request.body.pop('max_symbols'),
+        }
+        data = self.validate(__base_schema__)
+        extra = self._validate(extra, self.__schema__)
+        await asyncio.gather(
+            save_filter(self, channel_id, 'symbol', data),
+            self.db.execute('''
+                INSERT INTO twitch_filter_symbol
+                    (channel_id, max_symbols) 
+                VALUES 
+                    (%s, %s) 
+                ON DUPLICATE KEY UPDATE 
+                    max_symbols=VALUES(max_symbols)
+                ''',
+                (channel_id, utils.json_dumps(extra['max_symbols']),)
+            )
+        )        
+        r = await self.redis.publish_json(
+            'tbot:server:commands', 
+            ['reload_filter_symbol', channel_id]
         )
         self.set_status(204)

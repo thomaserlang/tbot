@@ -6,22 +6,22 @@ import Loading from 'tbot/components/loading'
 import SaveButton from 'tbot/components/save_button'
 import Filter from './components/filter'
 
-class Filter_link extends Filter {
+class Filter_symbol extends Filter {
 
     constructor(props) {
         super(props)
-        this.state.filter.warning_message = 'You are not permitted to post links [warning]'
-        this.state.filter.timeout_message = 'You are not permitted to post links'
-        this.state.filter.whitelist = []
+        this.state.filter.warning_message = 'Your message was too long [warning]'
+        this.state.filter.timeout_message = 'Your message was too long'
+        this.state.filter.max_length = 350
     }
 
     componentDidMount() {
-        setHeader('Link filter')
+        setHeader('Paragraph filter')
         this.getFilters()
     }
 
     getFilters() {
-        api.get(`/api/twitch/channels/${managedUser.id}/filters/link`).then(r => {
+        api.get(`/api/twitch/channels/${managedUser.id}/filters/paragraph`).then(r => {
             if (!r.data) {
                 this.setState({loading: false})
                 return
@@ -30,7 +30,6 @@ class Filter_link extends Filter {
                 if (!(key in this.state.filter))
                     delete r.data[key]
             }
-            r.data.whitelist = r.data.whitelist.join('\n')
             this.setState({
                 loading: false,
                 filter: r.data,
@@ -40,9 +39,7 @@ class Filter_link extends Filter {
 
     submit = (e) => {
         e.preventDefault()
-        if (!Array.isArray(this.state.filter.whitelist))
-            this.state.filter.whitelist = this.state.filter.whitelist.split('\n')
-        api.put(`/api/twitch/channels/${managedUser.id}/filters/link`, this.state.filter).then(r => {
+        api.put(`/api/twitch/channels/${managedUser.id}/filters/paragraph`, this.state.filter).then(r => {
             this.setState({saved: true})
         }).catch(e => {
             this.setState({error: e.response.data, saving: false})
@@ -65,21 +62,21 @@ class Filter_link extends Filter {
                         checked={this.state.filter.enabled}
                         onChange={this.handleEvent} 
                     />
-                    <label className="custom-control-label" htmlFor="enabled">Enable link filter</label>
+                    <label className="custom-control-label" htmlFor="enabled">Enable paragraph filter</label>
                 </div>
             </div>
 
-            <div className="form-group">
-                <label htmlFor="timeout_duration">Whitelist (1 domain per line, e.g. youtube.com)</label>
-                <div className="input-group" style={{width: '200px'}}>
-                    <textarea 
-                        className="form-control" 
-                        name="whitelist" 
-                        value={this.state.filter.whitelist}
-                        onChange={this.handleEvent}
-                        rows="2"
-                    />
-                </div>
+            <div className="form-group mb-2">
+                <label htmlFor="max_length">Max length</label>
+                <input 
+                    className="form-control" 
+                    id="max_length" 
+                    name="max_length"
+                    type="number"
+                    value={this.state.filter.max_length}
+                    onChange={this.handleEvent}
+                    style={{width: '200px'}}
+                />
             </div>
 
             {this.renderBase()}
@@ -91,4 +88,4 @@ class Filter_link extends Filter {
 
 }
 
-export default Filter_link
+export default Filter_symbol

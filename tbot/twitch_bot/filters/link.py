@@ -1,59 +1,33 @@
 import logging, re
 from tbot.twitch_bot.bot_base import bot
-from tbot.twitch_bot.tasks.command import get_user_level
-from tbot import config, utils
+from tbot import utils
+
+from . import base
 
 filters = {}
 
-@bot.on('PRIVMSG')
-async def message(nick, target, message, **kwargs):
+async def check(target, message, kwargs):
     if kwargs['room-id'] not in filters:
         return
     f = filters[kwargs['room-id']]
-    if f['enabled'] != 'Y':
-        return
-    ul = await get_user_level(kwargs['badges'], kwargs['user-id'], kwargs['room-id'], f['exclude_user_level'])
-    if ul >= f['exclude_user_level']:
-        return
 
+    excluded = await base.is_excluded(bot, f, kwargs)
+    if excluded:
+        return
+    
     matches = URL.findall(message)
     if matches: # check if the user is permitted to post links
-        key = 'tbot:filter:permit:{}:{}'.format(
-            kwargs['room-id'], kwargs['user-id']
-        )
-        permit = await bot.redis.get(key)
-        if permit:
+        has_permit = await base.has_permit(bot, kwargs)
+        if has_permit:
             return
+    else:
+        return
 
     for m in matches:
         if m[2] in f['whitelist']:
             continue
-
-        if f['warning_enabled'] == 'Y':
-            key = 'tbot:filter-link:warning:{}:{}'.format(
-                kwargs['room-id'], kwargs['user-id']
-            )
-            warned = await bot.redis.get(key)
-            if not warned:
-                bot.loop.create_task(bot.redis.setex(key, f['warning_expire'], '1'))
-                bot.send("PRIVMSG", target=target, message='.delete {}'.format(kwargs['id']))
-                if f['warning_message']:                    
-                    bot.send("PRIVMSG", target=target, message='@{}, {}'.format(
-                        kwargs['display-name'] or kwargs['user'],
-                        f['warning_message'],
-                    ))
-                return
-
-        bot.send("PRIVMSG", target=target, message='.timeout {} {} {}'.format(
-            kwargs['user'], 
-            f['timeout_duration'], 
-            '[{}] Link filter'.format(bot.user['display_name']),
-        ))
-        if f['timeout_message']:                    
-            bot.send("PRIVMSG", target=target, message='@{}, {}'.format(
-                kwargs['display-name'] or kwargs['user'],
-                f['timeout_message'],
-            ))
+        await base.warn_or_timeout(bot, 'link', target, f, kwargs)
+        return True
 
 @bot.on('AFTER_CONNECTED')
 async def connected(**kwargs):

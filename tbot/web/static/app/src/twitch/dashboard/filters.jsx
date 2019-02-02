@@ -20,6 +20,16 @@ class Filters extends React.Component {
                 'type': 'link',
                 'desc': 'Remove links in chat.',
             },
+            {
+                'title': 'Paragraph filter',
+                'type': 'paragraph',
+                'desc': 'Remove long messages.',
+            },
+            {
+                'title': 'Symbol filter',
+                'type': 'symbol',
+                'desc': 'Remove extensive use of symbols.',
+            },
         ]
     }
 
