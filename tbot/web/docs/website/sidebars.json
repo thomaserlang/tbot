@@ -5,6 +5,7 @@
         "vars/uptime",
         "vars/alias",
         "vars/cmd_manager",
+        "vars/permit_manager",
         "vars/accountage",
         "vars/followage",
         "vars/game",
