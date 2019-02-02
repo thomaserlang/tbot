@@ -38,6 +38,9 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/filters/link', handlers.api.twitch.filters.Filter_link),
             (r'/api/twitch/channels/([0-9]+)/filters/paragraph', handlers.api.twitch.filters.Filter_paragraph),
             (r'/api/twitch/channels/([0-9]+)/filters/symbol', handlers.api.twitch.filters.Filter_symbol),
+            (r'/api/twitch/channels/([0-9]+)/filters/caps', handlers.api.twitch.filters.Filter_caps),
+            (r'/api/twitch/channels/([0-9]+)/filters/emote', handlers.api.twitch.filters.Filter_emote),
+            (r'/api/twitch/channels/([0-9]+)/filters/non-latin', handlers.api.twitch.filters.Filter_non_latin),
 
             (r'/api/twitch/channels/([0-9]+)/spotify', handlers.api.twitch.connect_spotify.Handler),
             (r'/api/twitch/channels/([0-9]+)/discord', handlers.api.twitch.connect_discord.Handler),

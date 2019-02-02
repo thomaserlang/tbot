@@ -62,7 +62,7 @@ class Filter_symbol extends Filter {
                         checked={this.state.filter.enabled}
                         onChange={this.handleEvent} 
                     />
-                    <label className="custom-control-label" htmlFor="enabled">Enable symbol filter</label>
+                    <label className="custom-control-label" htmlFor="enabled">Enable Symbol filter</label>
                 </div>
             </div>
 

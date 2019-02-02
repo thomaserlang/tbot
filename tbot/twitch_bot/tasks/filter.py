@@ -11,3 +11,9 @@ async def message(nick, target, message, **kwargs):
         return
     if await filters.paragraph.check(target, message, kwargs):
         return
+    if await filters.caps.check(target, message, kwargs):
+        return
+    if await filters.emote.check(target, message, kwargs):
+        return
+    if await filters.non_latin.check(target, message, kwargs):
+        return

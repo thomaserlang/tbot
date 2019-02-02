@@ -82,3 +82,9 @@ body {
     top: .125em;
     position: relative;
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

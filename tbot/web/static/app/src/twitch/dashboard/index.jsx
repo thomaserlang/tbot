@@ -16,7 +16,9 @@ import Filters from './filters'
 import Filter_link from './filter_link'
 import Filter_paragraph from './filter_paragraph'
 import Filter_symbol from './filter_symbol'
-
+import Filter_caps from './filter_caps'
+import Filter_emote from './filter_emote'
+import Filter_non_latin from './filter_non_latin'
 
 class Main extends React.Component {
 
@@ -48,6 +50,9 @@ class Main extends React.Component {
                     <Route exact path='/twitch/:channel/filters/link' component={Filter_link}/>
                     <Route exact path='/twitch/:channel/filters/paragraph' component={Filter_paragraph}/>
                     <Route exact path='/twitch/:channel/filters/symbol' component={Filter_symbol}/>
+                    <Route exact path='/twitch/:channel/filters/caps' component={Filter_caps}/>
+                    <Route exact path='/twitch/:channel/filters/emote' component={Filter_emote}/>
+                    <Route exact path='/twitch/:channel/filters/non-latin' component={Filter_non_latin}/>
                 </div>
             </div>
         </div>

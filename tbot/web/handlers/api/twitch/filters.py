@@ -148,7 +148,7 @@ class Filter_paragraph(Api_handler):
                 ON DUPLICATE KEY UPDATE 
                     max_length=VALUES(max_length)
                 ''',
-                (channel_id, utils.json_dumps(extra['max_length']),)
+                (channel_id, extra['max_length'],)
             )
         )        
         r = await self.redis.publish_json(
@@ -194,11 +194,155 @@ class Filter_symbol(Api_handler):
                 ON DUPLICATE KEY UPDATE 
                     max_symbols=VALUES(max_symbols)
                 ''',
-                (channel_id, utils.json_dumps(extra['max_symbols']),)
+                (channel_id, extra['max_symbols'],)
             )
         )        
         r = await self.redis.publish_json(
             'tbot:server:commands', 
             ['reload_filter_symbol', channel_id]
+        )
+        self.set_status(204)
+
+class Filter_caps(Api_handler):
+    
+    __schema__ = good.Schema({
+        'min_length': good.Coerce(int),
+        'max_percent': good.Coerce(int),
+    })
+
+    async def get(self, channel_id):
+        caps = self.db.fetchone(
+            'SELECT min_length, max_percent FROM twitch_filter_caps WHERE channel_id=%s',
+            (channel_id,)
+        )
+        r = await asyncio.gather(
+            get_filter(self, channel_id, 'caps'),
+            caps, 
+        )
+        f = r[0]
+        if not f:
+            self.set_status(204)
+            return
+        self.write_object({**f, **r[1]})
+
+    async def put(self, channel_id):
+        extra = {
+            'min_length': self.request.body.pop('min_length'),
+            'max_percent': self.request.body.pop('max_percent'),
+        }
+        data = self.validate(__base_schema__)
+        extra = self._validate(extra, self.__schema__)
+        await asyncio.gather(
+            save_filter(self, channel_id, 'caps', data),
+            self.db.execute('''
+                INSERT INTO twitch_filter_caps
+                    (channel_id, min_length, max_percent) 
+                VALUES 
+                    (%s, %s, %s) 
+                ON DUPLICATE KEY UPDATE 
+                    min_length=VALUES(min_length),
+                    max_percent=VALUES(max_percent)
+                ''',
+                (channel_id, extra['min_length'], extra['max_percent'],)
+            )
+        )        
+        r = await self.redis.publish_json(
+            'tbot:server:commands', 
+            ['reload_filter_caps', channel_id]
+        )
+        self.set_status(204)
+
+class Filter_emote(Api_handler):
+    
+    __schema__ = good.Schema({
+        'max_emotes': good.Coerce(int),
+    })
+
+    async def get(self, channel_id):
+        emote = self.db.fetchone(
+            'SELECT max_emotes FROM twitch_filter_emote WHERE channel_id=%s',
+            (channel_id,)
+        )
+        r = await asyncio.gather(
+            get_filter(self, channel_id, 'emote'),
+            emote, 
+        )
+        f = r[0]
+        if not f:
+            self.set_status(204)
+            return
+        self.write_object({**f, **r[1]})
+
+    async def put(self, channel_id):
+        extra = {
+            'max_emotes': self.request.body.pop('max_emotes'),
+        }
+        data = self.validate(__base_schema__)
+        extra = self._validate(extra, self.__schema__)
+        await asyncio.gather(
+            save_filter(self, channel_id, 'emote', data),
+            self.db.execute('''
+                INSERT INTO twitch_filter_emote
+                    (channel_id, max_emotes) 
+                VALUES 
+                    (%s, %s) 
+                ON DUPLICATE KEY UPDATE 
+                    max_emotes=VALUES(max_emotes)
+                ''',
+                (channel_id, extra['max_emotes'],)
+            )
+        )        
+        r = await self.redis.publish_json(
+            'tbot:server:commands', 
+            ['reload_filter_emote', channel_id]
+        )
+        self.set_status(204)
+
+class Filter_non_latin(Api_handler):
+    
+    __schema__ = good.Schema({
+        'min_length': good.Coerce(int),
+        'max_percent': good.Coerce(int),
+    })
+
+    async def get(self, channel_id):
+        non_latin = self.db.fetchone(
+            'SELECT min_length, max_percent FROM twitch_filter_non_latin WHERE channel_id=%s',
+            (channel_id,)
+        )
+        r = await asyncio.gather(
+            get_filter(self, channel_id, 'non-latin'),
+            non_latin, 
+        )
+        f = r[0]
+        if not f:
+            self.set_status(204)
+            return
+        self.write_object({**f, **r[1]})
+
+    async def put(self, channel_id):
+        extra = {
+            'min_length': self.request.body.pop('min_length'),
+            'max_percent': self.request.body.pop('max_percent'),
+        }
+        data = self.validate(__base_schema__)
+        extra = self._validate(extra, self.__schema__)
+        await asyncio.gather(
+            save_filter(self, channel_id, 'non-latin', data),
+            self.db.execute('''
+                INSERT INTO twitch_filter_non_latin
+                    (channel_id, min_length, max_percent) 
+                VALUES 
+                    (%s, %s, %s) 
+                ON DUPLICATE KEY UPDATE 
+                    min_length=VALUES(min_length),
+                    max_percent=VALUES(max_percent)
+                ''',
+                (channel_id, extra['min_length'], extra['max_percent'],)
+            )
+        )        
+        r = await self.redis.publish_json(
+            'tbot:server:commands', 
+            ['reload_filter_non_latin', channel_id]
         )
         self.set_status(204)

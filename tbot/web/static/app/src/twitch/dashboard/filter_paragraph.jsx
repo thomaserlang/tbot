@@ -62,7 +62,7 @@ class Filter_symbol extends Filter {
                         checked={this.state.filter.enabled}
                         onChange={this.handleEvent} 
                     />
-                    <label className="custom-control-label" htmlFor="enabled">Enable paragraph filter</label>
+                    <label className="custom-control-label" htmlFor="enabled">Enable Paragraph filter</label>
                 </div>
             </div>
 

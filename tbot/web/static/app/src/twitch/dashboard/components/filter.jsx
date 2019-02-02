@@ -71,11 +71,11 @@ class Filter extends React.Component {
             </div>
             <div className="form-group mb-4">
                 <label htmlFor="warning_expire">Warning expires after</label>
-                <div className="input-group" style={{width: '200px'}}>
+                <div className="input-group" style={{width: '160px'}}>
                     <input 
                         id="warning_expire" 
                         type="number" 
-                        className="form-control" 
+                        className="form-control text-right" 
                         name="warning_expire" 
                         value={this.state.filter.warning_expire}
                         onChange={this.handleEvent}
@@ -100,11 +100,11 @@ class Filter extends React.Component {
             </div>
             <div className="form-group">
                 <label htmlFor="timeout_duration">Timeout duration</label>
-                <div className="input-group" style={{width: '200px'}}>
+                <div className="input-group" style={{width: '160px'}}>
                     <input 
                         id="timeout_duration" 
                         type="number" 
-                        className="form-control" 
+                        className="form-control text-right" 
                         name="timeout_duration" 
                         value={this.state.filter.timeout_duration}
                         onChange={this.handleEvent}

@@ -22,7 +22,6 @@ async def message(nick, target, message, **kwargs):
             bot.send("PRIVMSG", target=target, message='Affirmative, {}'.format(nick))
 
 async def save(type_, channel, channel_id, user, user_id, message, msg_id):
-    logging.info(user)
     try:
         bot.loop.create_task(bot.db.execute('''
             INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message, word_count, msg_id) VALUES
