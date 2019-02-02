@@ -28,6 +28,8 @@ class Pubsub():
             return
         c = topic.split('.')
         try:
+            if data['moderation_action'] == 'delete':
+                data['args'] = [data['args'][0], data['args'][-1]]
             self.loop.create_task(self.db.execute('''
                 INSERT INTO twitch_modlog (created_at, channel_id, user, user_id, command, args, target_user, target_user_id) VALUES
                     (%s, %s, %s, %s, %s, %s, %s, %s)
