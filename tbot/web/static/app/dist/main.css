@@ -134,6 +134,21 @@
     #sidebar #items a.active {
       color: #007bff; }
 
+#filters .filter {
+  cursor: pointer;
+  width: 350px;
+  background-color: #313337;
+  padding: 0.5rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem; }
+  #filters .filter .title {
+    font-size: 24px;
+    line-height: 24px; }
+
+#filters a {
+  color: #fff;
+  text-decoration: none; }
+
 .form-control {
   outline: none !important;
   box-shadow: none !important; }
