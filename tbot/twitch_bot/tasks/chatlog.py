@@ -9,7 +9,7 @@ async def message(nick, target, message, **kwargs):
         return
 
     bot.loop.create_task(
-        save(1, target, kwargs['room-id'], nick, kwargs['user-id'], message)
+        save(1, target, kwargs['room-id'], kwargs['user'], kwargs['user-id'], message, kwargs['id'])
     )
 
     if not message.startswith('!'):
@@ -21,11 +21,12 @@ async def message(nick, target, message, **kwargs):
         if not bot.channels[kwargs['room-id']]['muted']:
             bot.send("PRIVMSG", target=target, message='Affirmative, {}'.format(nick))
 
-async def save(type_, channel, channel_id, user, user_id, message):
+async def save(type_, channel, channel_id, user, user_id, message, msg_id):
+    logging.info(user)
     try:
         bot.loop.create_task(bot.db.execute('''
-            INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message, word_count) VALUES
-                (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message, word_count, msg_id) VALUES
+                (%s, %s, %s, %s, %s, %s, %s, %s)
         ''', (
             type_,
             datetime.utcnow(),
@@ -34,6 +35,7 @@ async def save(type_, channel, channel_id, user, user_id, message):
             user_id,
             message,
             len(message.split(' ')),
+            msg_id,
         )))
         
         c = await bot.db.execute('''
