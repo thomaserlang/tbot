@@ -28,17 +28,17 @@ class Filters extends React.Component {
             {
                 'title': 'Symbol filter',
                 'type': 'symbol',
-                'desc': 'Remove extensive use of symbols.',
+                'desc': 'Remove excessive use of symbols.',
             },
             {
                 'title': 'Caps filter',
                 'type': 'caps',
-                'desc': 'Remove extensive use of caps.',
+                'desc': 'Remove excessive use of caps.',
             },
             {
                 'title': 'Emote filter',
                 'type': 'emote',
-                'desc': 'Remove extensive use of emotes.',
+                'desc': 'Remove excessive use of emotes.',
             },
             {
                 'title': 'Non-latin filter',
