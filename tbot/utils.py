@@ -17,7 +17,7 @@ def find_int(l: List[str]) -> Optional[int]:
 def seconds_to_pretty(seconds):
     seconds = round(seconds)
     if seconds < 60:
-        return pluralize(seconds, 'sec')
+        return pluralize(seconds, 'second')
 
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
@@ -35,14 +35,19 @@ def seconds_to_pretty(seconds):
     if hours:
         ts.append(pluralize(hours, 'hour'))
     if minutes:        
-        ts.append(pluralize(minutes, 'min'))
+        ts.append(pluralize(minutes, 'minute'))
     if seconds:        
-        ts.append(pluralize(seconds, 'sec'))
+        ts.append(pluralize(seconds, 'second'))
     if len(ts) > 2 and seconds:
         ts.pop(len(ts)-1)
-    if len(ts) > 4 and minutes:
-        ts.pop(len(ts)-1)
-    return ' '.join(ts)
+    ts = ts[:3]
+    logging.info(ts)
+    if len(ts) >= 2:
+        last = ts.pop(len(ts)-1)
+        s = ', '.join(ts)
+        s += ' and {}'.format(last)
+        return s
+    return ts[0]
 
 class Twitch_request_error(Exception):
 

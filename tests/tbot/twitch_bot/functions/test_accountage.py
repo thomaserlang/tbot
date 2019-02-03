@@ -34,7 +34,7 @@ class Test(unittest.TestCase):
             )
         ))
         self.assertEqual(s, {
-            'accountage': '5 years 8 months 13 days 2 hours',
+            'accountage': '5 years, 8 months and 13 days',
             'accountage_date': '2013-06-03',
             'accountage_datetime': '2013-06-03 19:12:02 UTC',
         })
