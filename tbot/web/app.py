@@ -1,6 +1,6 @@
 import logging, os
-import aioredis
-from tornado import web, ioloop
+import asyncio, aioredis
+from tornado import web
 from tbot import config, db
 from tbot.web import handlers
 
@@ -59,11 +59,12 @@ def App():
     )
 
 def main():
+    loop = asyncio.get_event_loop()
     app = App()
+    app.loop = loop
     app.listen(config['web']['port'])
-    loop = ioloop.IOLoop.current()
-    loop.add_callback(db_connect, app)
-    loop.start()
+    loop.create_task(db_connect(app))
+    loop.run_forever()
 
 async def db_connect(app):
     app.db = await db.Db().connect(None)
