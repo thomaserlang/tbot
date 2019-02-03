@@ -1,5 +1,6 @@
 import logging, re
 from tbot.twitch_bot.bot_base import bot
+from tbot import utils
 
 from . import base
 
@@ -17,6 +18,7 @@ async def check(target, message, kwargs):
     if len(message) < f['min_length']:
         return
 
+    message = utils.twitch_remove_emotes(message, kwargs['emotes'])
     caps = CAPS.findall(message)
     if ((len(caps)/len(message))*100) > f['max_percent']:
         has_permit = await base.has_permit(bot, kwargs)

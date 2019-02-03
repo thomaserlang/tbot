@@ -21,5 +21,21 @@ class Test_utils(unittest.TestCase):
         self.assertEqual('1 year 1 hour 15 mins', utils.seconds_to_pretty(12*(30*(3600*24))+3600+900))
         self.assertEqual('1 year 1 month 13 days 1 hour', utils.seconds_to_pretty(13*(31*(3600*24))+3600+900))
 
+    def test_twitch_remove_emotes(self):
+        message = 'test bahIdk 123 Kappa :) SeriousSloth asd bahIdk'
+        emotes = '321674:5-10,42-47/25:16-20/1:22-23/81249:25-36'
+        m = utils.twitch_remove_emotes(message, emotes)
+        self.assertEqual(m, 'test 123 asd')
+
+        message = 'bahIdk'
+        emotes = '321674:0-5'
+        m = utils.twitch_remove_emotes(message, emotes)
+        self.assertEqual(m, '')
+
+        message = 'bahIdk this is a test'
+        emotes = '321674:0-5'
+        m = utils.twitch_remove_emotes(message, emotes)
+        self.assertEqual(m, 'this is a test')
+
 if __name__ == '__main__':
     nose.run(defaultTest=__name__)

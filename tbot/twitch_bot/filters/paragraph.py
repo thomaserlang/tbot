@@ -1,5 +1,6 @@
 import logging
 from tbot.twitch_bot.bot_base import bot
+from tbot import utils
 
 from . import base
 
@@ -13,7 +14,7 @@ async def check(target, message, kwargs):
     excluded = await base.is_excluded(bot, f, kwargs)
     if excluded:
         return
-    
+    message = utils.twitch_remove_emotes(message, kwargs['emotes'])
     if len(message) > f['max_length']:
         has_permit = await base.has_permit(bot, kwargs)
         if has_permit:

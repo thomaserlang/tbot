@@ -196,6 +196,22 @@ async def twitch_current_user(ahttp):
     data = await twitch_request(ahttp, 'https://api.twitch.tv/helix/users')
     return data['data'][0]
 
+def twitch_remove_emotes(message, emotes):
+    if not emotes:
+        return message
+    l = []
+    for emote in emotes.split('/'):
+        for pos in emote.split(':')[1].split(','):
+            p = pos.split('-')
+            l.append((int(p[0]), int(p[1])+1))
+    i = 0
+    l = sorted(l, key=lambda x: x[0])
+    for e in l:
+        o = len(message)
+        message = message[:e[0]-i] + message[e[1]-i:].strip()
+        i += o - len(message)
+    return message.strip()
+
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
     for i in range(0, len(l), n):
@@ -205,7 +221,6 @@ def pluralize(num, word):
     if num != 1:
         word += 's'
     return '{} {}'.format(num, word)
-
 
 def isoformat(dt):
     r = dt.isoformat()
