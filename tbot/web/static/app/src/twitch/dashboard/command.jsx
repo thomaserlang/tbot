@@ -154,7 +154,7 @@ class Command extends React.Component {
         if (this.state.success)
             return <Redirect to={`/twitch/${this.props.match.params.channel}/commands`} />
 
-        return <div style={{maxWidth:'960px'}}>
+        return <div style={{maxWidth:'700px'}}>
             {this.renderTemplates()}
             <form onSubmit={this.handleSubmit}>
             <div className="form-group">
