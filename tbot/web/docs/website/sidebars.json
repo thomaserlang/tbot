@@ -3,17 +3,17 @@
     "Variables": [
     	"vars/general",
         "vars/uptime",
+        "vars/user_streams", 
+        "vars/chat_stats", 
+        "vars/spotify",
         "vars/alias",
-        "vars/cmd_manager",
-        "vars/permit_manager",
         "vars/accountage",
         "vars/followage",
         "vars/game",
         "vars/title",
-        "vars/user_streams", 
-        "vars/chat_stats", 
-        "vars/spotify",
-        "vars/time"
+        "vars/time",
+        "vars/cmd_manager",
+        "vars/permit_manager"
     ]
   }
 }
