@@ -33,7 +33,7 @@ async def handle_timer(t):
         t['id']
     ))
     if t['enabled_status'] > 0 and \
-        t['enabled_status'] != get_enabled_status(data['channel_id']):
+        t['enabled_status'] != get_enabled_status(t['channel_id']):
         return
     messages = utils.json_loads(t['messages'])
 
