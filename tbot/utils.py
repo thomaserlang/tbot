@@ -80,7 +80,7 @@ async def twitch_request(ahttp, url, params=None, headers={},
             error = await r.text()
             raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
         if 'Content-Type' in r.headers:
-            if r.headers['Content-Type'] == 'application/json':
+            if 'application/json' in r.headers['Content-Type']:
                 return await r.json()
         return await r.text()
 
