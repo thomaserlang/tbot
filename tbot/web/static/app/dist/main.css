@@ -134,20 +134,21 @@
     #sidebar #items a.active {
       color: #007bff; }
 
-#filters .filter {
-  cursor: pointer;
-  width: 350px;
-  background-color: #313337;
-  padding: 0.5rem;
-  margin-right: 1rem;
-  margin-bottom: 1rem; }
-  #filters .filter .title {
-    font-size: 24px;
-    line-height: 24px; }
-
-#filters a {
-  color: #fff;
-  text-decoration: none; }
+#filters {
+  max-width: 700px; }
+  #filters .filter {
+    cursor: pointer;
+    width: 300px;
+    background-color: #313337;
+    padding: 0.5rem;
+    margin-right: 1rem;
+    margin-bottom: 1rem; }
+    #filters .filter .title {
+      font-size: 24px;
+      line-height: 24px; }
+  #filters a {
+    color: #fff;
+    text-decoration: none; }
 
 .form-control {
   outline: none !important;
@@ -217,6 +218,12 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0; }
+
+a:focus {
+  outline: none; }
+
+textarea.form-control {
+  white-space: nowrap; }
 
 
 /*# sourceMappingURL=main.css.map*/
