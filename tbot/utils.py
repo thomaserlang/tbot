@@ -71,9 +71,6 @@ async def twitch_request(ahttp, url, params=None, headers={},
         })
     async with ahttp.request(method, url, params=params, 
         headers=headers, data=data, json=json) as r:
-        if r.status == 200:
-            data = await r.json()
-            return data
         if r.status == 415:
             w = int(time.time())-int(r.headers['Ratelimit-Reset'])
             if w > 0:
@@ -82,6 +79,10 @@ async def twitch_request(ahttp, url, params=None, headers={},
         if r.status >= 400:
             error = await r.text()
             raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
+        if 'Content-Type' in r.headers:
+            if r.headers['Content-Type'] == 'application/json':
+                return await r.json()
+        return await r.text()
 
 async def twitch_channel_token_request(bot, channel_id, url, method='GET', 
     params=None, headers={}, data=None, json=None):
