@@ -1,5 +1,5 @@
 import logging, os
-import asyncio, aioredis
+import asyncio, aioredis, aiohttp
 from tornado import web
 from tbot import config, db
 from tbot.web import handlers
@@ -73,6 +73,7 @@ async def db_connect(app):
         minsize=config['redis']['pool_min_size'], 
         maxsize=config['redis']['pool_max_size'],
     )
+    app.ahttp = aiohttp.ClientSession() 
 
 if __name__ == '__main__':
     from tbot import config_load, logger
