@@ -11,7 +11,6 @@ class Command extends React.Component {
         super(props)
         this.state = {
             cmd: {
-
                 cmd: '',
                 response: '',
                 user_level: 0,

@@ -112,8 +112,8 @@ class Admins extends React.Component {
                         <th width="1px"> </th>
                     </tr>
                 </thead>
-                <tbody>
-                    {this.state.admins.map(admin =>
+                <tbody>                    
+                    {this.state.admins.length>0?this.state.admins.map(admin =>
                         <tr key={admin.id}>
                             <td className="align-middle">{admin.name}</td>
                             <td>
@@ -138,7 +138,7 @@ class Admins extends React.Component {
                                 </i>
                             </td>
                         </tr>
-                    )}
+                    ): <tr><td colSpan="3" className="text-center">No admins</td></tr>}
                 </tbody>
             </table>
         </div>

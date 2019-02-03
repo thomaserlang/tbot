@@ -88,3 +88,11 @@ input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
+a:focus {
+    outline: none;
+}
+
+textarea.form-control {
+    white-space: nowrap;
+}

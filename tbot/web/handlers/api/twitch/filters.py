@@ -1,4 +1,4 @@
-import logging, good, copy, asyncio
+import logging, good, asyncio
 from ..base import Api_handler, Level, Api_exception
 from tbot import config, utils
 
@@ -64,7 +64,7 @@ async def save_filter(self, channel_id, type_, data):
 class Filter_link(Api_handler):
     
     __schema__ = good.Schema({
-        'whitelist': [str],
+        'whitelist': good.All([good.All(str, good.Length(min=1, max=50))], good.Length(min=1, max=100)),
     })
 
     async def get(self, channel_id):

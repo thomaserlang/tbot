@@ -54,8 +54,8 @@ class Commands extends React.Component {
                         <th width="5px"></th>
                     </tr>
                 </thead>
-                <tbody>
-                    {this.state.commands.map(cmd =>
+                <tbody>                    
+                    {this.state.commands.length>0?this.state.commands.map(cmd =>
                         <tr key={cmd.id}>
                             <td>!{cmd.cmd}</td>
                             <td className="td-ellipsis">{cmd.response}</td>
@@ -66,7 +66,7 @@ class Commands extends React.Component {
                             <td>{cmd.enabled==1?'Yes':'No'}</td>
                             <td className="text-right"><Link to={`commands/edit/${cmd.id}`}>Edit</Link></td>
                         </tr>
-                    )}
+                    ): <tr><td colSpan="8" className="text-center">No commands, <Link to="commands/new">create one.</Link></td></tr>}
                 </tbody>
             </table>
         </div>

@@ -22,7 +22,6 @@ class ExtraAuth extends React.Component {
     }
 
     render() {
-        console.log(this.state.loading)
         if (this.state.loading)
             return null
         if (this.state.data.has_extra_auth)

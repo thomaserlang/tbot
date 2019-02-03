@@ -40,11 +40,11 @@ class Filter_link extends Filter {
 
     submit = (e) => {
         e.preventDefault()
-        if (!Array.isArray(this.state.filter.whitelist))
-            this.state.filter.whitelist = this.state.filter.whitelist.split('\n')
+        this.state.filter.whitelist = this.state.filter.whitelist.split('\n')
         api.put(`/api/twitch/channels/${managedUser.id}/filters/link`, this.state.filter).then(r => {
             this.setState({saved: true})
-        }).catch(e => {
+        }).catch(e => {            
+            this.state.filter.whitelist = this.state.filter.whitelist.join('\n')
             this.setState({error: e.response.data, saving: false})
         })
     }

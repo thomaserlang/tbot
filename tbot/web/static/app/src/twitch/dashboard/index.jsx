@@ -19,6 +19,8 @@ import Filter_symbol from './filter_symbol'
 import Filter_caps from './filter_caps'
 import Filter_emote from './filter_emote'
 import Filter_non_latin from './filter_non_latin'
+import Timers from './timers'
+import Timer from './timer'
 
 class Main extends React.Component {
 
@@ -53,6 +55,9 @@ class Main extends React.Component {
                     <Route exact path='/twitch/:channel/filters/caps' component={Filter_caps}/>
                     <Route exact path='/twitch/:channel/filters/emote' component={Filter_emote}/>
                     <Route exact path='/twitch/:channel/filters/non-latin' component={Filter_non_latin}/>
+                    <Route exact path='/twitch/:channel/timers' component={Timers}/>
+                    <Route exact path='/twitch/:channel/timers/edit/:id' component={Timer}/>
+                    <Route exact path='/twitch/:channel/timers/new' component={Timer}/>
                 </div>
             </div>
         </div>

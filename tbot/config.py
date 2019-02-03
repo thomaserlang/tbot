@@ -16,7 +16,8 @@ config = {
         'irc_port': 6697,
         'irc_use_ssl': True,
         'irc_rate_limit': 80, # messages every 30 second
-        'check_channels_every': 60, # seconds
+        'check_channels_every': 60, # seconds,
+        'check_timers_every': 30, # seconds
         'delay_offline': 0, # seconds
         'pubsub_url': 'wss://pubsub-edge.twitch.tv',
         'request_scope':['channel_subscriptions',

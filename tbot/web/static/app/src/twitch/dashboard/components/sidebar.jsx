@@ -51,6 +51,7 @@ class Sidebar extends React.Component {
                     : null }
                     
                     <NavLink to={`/twitch/${managedUser.name}/commands`} activeClassName="active">Commands</NavLink>
+                    <NavLink to={`/twitch/${managedUser.name}/timers`} activeClassName="active">Timers</NavLink>
                     <NavLink to={`/twitch/${managedUser.name}/filters`} activeClassName="active">Filters</NavLink>
                     
                     {managedUser.level >= 3 ?

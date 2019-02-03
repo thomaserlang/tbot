@@ -53,8 +53,8 @@ class Collection_handler(Api_handler):
         data['channel_id'] = channel_id
         data['created_at'] = datetime.utcnow()
         data['updated_at'] = datetime.utcnow()
-        fields = ', '.join(['{}'.format(k) for k in data])
-        vfields = ', '.join(['%s' for k in data])
+        fields = ','.join([f for f in data])
+        vfields = ','.join(['%s' for f in data])
         values = list(data.values())
         c = await self.db.execute(
             'INSERT INTO twitch_commands ({}) VALUES ({})'.format(fields, vfields),
@@ -81,7 +81,7 @@ class Handler(Api_handler):
     async def put(self, channel_id, id_):
         data = self.validate()
         data['updated_at'] = datetime.utcnow()
-        fields = ', '.join(['{}=%s'.format(k) for k in data])
+        fields = ','.join(['{}=%s'.format(k) for k in data])
         values = list(data.values())
         values.append(channel_id)
         values.append(id_)
