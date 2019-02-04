@@ -60,39 +60,12 @@ async def load(channel_id=None):
         filters_[r['channel_id']] = r
     filters = filters_
 
-# https://github.com/PhantomBot/PhantomBot/blob/9d8d1faa4394723052db64b53cb0efadc36cae3c/javascript-source/core/patternDetector.js#L26
 URL = re.compile(
     '((?:(http|https|rtsp):\\/\\/(?:(?:[a-z0-9\\$\\-\\_\\.\\+\\!\\*\\\'\\(\\)'\
     '\\,\\;\\?\\&\\=]|(?:\\%[a-fA-F0-9]{2})){1,64}(?:\\:(?:[a-z0-9\\$\\-\\_'\
     '\\.\\+\\!\\*\\\'\\(\\)\\,\\;\\?\\&\\=]|(?:\\%[a-fA-F0-9]{2})){1,25})?\\@)?)?'\
     '((?:(?:[a-z0-9][a-z0-9\\-]{0,64}\\.)+'\
-    '(?:'\
-    '(?:aero|a[cdefgilmnoqrstuwxz])'\
-    '|(?:biz|b[abdefghijmnorstvwyz])'\
-    '|(?:com|c[acdfghiklmnoruvxyz])'\
-    '|d[ejkmoz]'\
-    '|(?:edu|e[cegrstu])'\
-    '|(?:fyi|f[ijkmor])'\
-    '|(?:gov|g[abdefghilmnpqrstuwy])'\
-    '|(?:how|h[kmnrtu])'\
-    '|(?:info|i[delmnoqrst])'\
-    '|(?:jobs|j[emop])'\
-    '|k[eghimnrwyz]'\
-    '|l[abcikrstuvy]'\
-    '|(?:mil|mobi|moe|m[acdeghklmnopqrstuvwxyz])'\
-    '|(?:name|net|n[acefgilopruz])'\
-    '|(?:org|om)'\
-    '|(?:pro|p[aefghklmnrstwy])'\
-    '|qa'\
-    '|(?:r[eouw])'\
-    '|(?:s[abcdeghijklmnortuvyz])'\
-    '|(?:t[cdfghjklmnoprtvwz])'\
-    '|u[agkmsyz]'\
-    '|(?:vote|v[ceginu])'\
-    '|(?:xxx)'\
-    '|(?:watch|w[fs])'\
-    '|y[etu]'\
-    '|z[amw]))'\
+    '(?:[a-z][\w]{1,61}))'\
     '|(?:(?:25[0-5]|2[0-4]'\
     '[0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(?:25[0-5]|2[0-4][0-9]'\
     '|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(?:25[0-5]|2[0-4][0-9]|[0-1]'\
