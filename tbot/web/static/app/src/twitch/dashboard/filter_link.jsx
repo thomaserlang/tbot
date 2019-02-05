@@ -45,7 +45,6 @@ class Filter_link extends Filter {
         this.state.filter.whitelist = this.state.filter.whitelist.filter(e => (
             e != ''
         ))
-        console.log(this.state.filter.whitelist)
         api.put(`/api/twitch/channels/${managedUser.id}/filters/link`, this.state.filter).then(r => {
             this.setState({saved: true})
         }).catch(e => {            

@@ -27,7 +27,6 @@ async def badge_log(nick, target, message, **kwargs):
 
         sub = None
         bits = None
-        logging.info(kwargs['badges'])
         for b in kwargs['badges'].split(','):
             b2 = b.split('/')
             if b2[0] == 'subscriber':
