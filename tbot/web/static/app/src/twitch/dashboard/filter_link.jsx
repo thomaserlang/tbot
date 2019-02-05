@@ -10,8 +10,8 @@ class Filter_link extends Filter {
 
     constructor(props) {
         super(props)
-        this.state.filter.warning_message = 'You are not permitted to post links [warning]'
-        this.state.filter.timeout_message = 'You are not permitted to post links'
+        this.state.filter.warning_message = '@{sender}, You are not permitted to post links [warning]'
+        this.state.filter.timeout_message = '@{sender}, You are not permitted to post links'
         this.state.filter.whitelist = []
     }
 

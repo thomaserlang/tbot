@@ -10,8 +10,8 @@ class Filter_non_latin extends Filter {
 
     constructor(props) {
         super(props)
-        this.state.filter.warning_message = 'English in chat, thanks [warning]'
-        this.state.filter.timeout_message = 'English in chat, thanks'
+        this.state.filter.warning_message = '@{sender}, English in chat, thanks [warning]'
+        this.state.filter.timeout_message = '@{sender}, English in chat, thanks'
         this.state.filter.min_length = 20
         this.state.filter.max_percent = 60
     }

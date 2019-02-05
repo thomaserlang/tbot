@@ -9,7 +9,7 @@ async def check(target, message, kwargs):
     if kwargs['room-id'] not in filters:
         return
     f = filters[kwargs['room-id']]
-    logging.info(message)
+    
     excluded = await base.is_excluded(bot, f, kwargs)
     if excluded:
         return

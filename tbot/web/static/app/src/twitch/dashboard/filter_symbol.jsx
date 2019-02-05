@@ -10,8 +10,8 @@ class Filter_symbol extends Filter {
 
     constructor(props) {
         super(props)
-        this.state.filter.warning_message = 'Your message contained too many symbols [warning]'
-        this.state.filter.timeout_message = 'Your message contained too many symbols'
+        this.state.filter.warning_message = '@{sender}, Your message contained too many symbols [warning]'
+        this.state.filter.timeout_message = '@{sender}, Your message contained too many symbols'
         this.state.filter.max_symbols = 15
     }
 

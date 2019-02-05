@@ -10,8 +10,8 @@ class Filter_emote extends Filter {
 
     constructor(props) {
         super(props)
-        this.state.filter.warning_message = 'Chill with the emotes [warning]'
-        this.state.filter.timeout_message = 'Chill with the emotes'
+        this.state.filter.warning_message = '@{sender}, Chill with the emotes [warning]'
+        this.state.filter.timeout_message = '@{sender}, Chill with the emotes'
         this.state.filter.max_emotes = 20
     }
 

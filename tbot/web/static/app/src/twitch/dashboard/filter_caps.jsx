@@ -10,8 +10,8 @@ class Filter_caps extends Filter {
 
     constructor(props) {
         super(props)
-        this.state.filter.warning_message = 'Chill with the caps [warning]'
-        this.state.filter.timeout_message = 'Chill with the caps'
+        this.state.filter.warning_message = '@{sender}, Chill with the caps [warning]'
+        this.state.filter.timeout_message = '@{sender}, Chill with the caps'
         this.state.filter.min_length = 20
         this.state.filter.max_percent = 60
     }

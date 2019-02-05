@@ -60,7 +60,7 @@ class Filter extends React.Component {
                 </div>
             </div>
             <div className="form-group mb-2">
-                <label htmlFor="warning_message">Warning message</label>
+                <label htmlFor="warning_message">Warning message (<a href="https://docs.botashell.com" target="_blank">Variables documentation</a>)</label>
                 <input 
                     className="form-control" 
                     id="warning_message" 
@@ -89,7 +89,7 @@ class Filter extends React.Component {
 
             <h5>Timeout</h5>
             <div className="form-group mb-2">
-                <label htmlFor="timeout_message">Timeout message</label>
+                <label htmlFor="timeout_message">Timeout message  (<a href="https://docs.botashell.com" target="_blank">Variables documentation</a>)</label>
                 <input 
                     className="form-control" 
                     id="timeout_message" 
