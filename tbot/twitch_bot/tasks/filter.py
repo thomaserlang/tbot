@@ -17,3 +17,5 @@ async def message(nick, target, message, **kwargs):
         return
     if await filters.non_latin.check(target, message, kwargs):
         return
+    if await filters.action.check(target, message, kwargs):
+        return

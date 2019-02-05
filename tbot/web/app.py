@@ -41,6 +41,7 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/filters/caps', handlers.api.twitch.filters.Filter_caps),
             (r'/api/twitch/channels/([0-9]+)/filters/emote', handlers.api.twitch.filters.Filter_emote),
             (r'/api/twitch/channels/([0-9]+)/filters/non-latin', handlers.api.twitch.filters.Filter_non_latin),
+            (r'/api/twitch/channels/([0-9]+)/filters/action', handlers.api.twitch.filters.Filter_action),
             (r'/api/twitch/channels/([0-9]+)/timers', handlers.api.twitch.timers.Collection_handler),
             (r'/api/twitch/channels/([0-9]+)/timers/([0-9]+)', handlers.api.twitch.timers.Handler),
 

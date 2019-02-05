@@ -68,6 +68,7 @@ class Filter_link(Api_handler):
             [good.All(str, good.Length(min=1, max=50))], good.Length(min=0, max=100)),
     })
 
+    @Level(1)
     async def get(self, channel_id):
         whitelist = self.db.fetchone(
             'SELECT whitelist FROM twitch_filter_link WHERE channel_id=%s',
@@ -86,6 +87,7 @@ class Filter_link(Api_handler):
                 else []
         self.write_object(f)
 
+    @Level(1)
     async def put(self, channel_id):
         extra = {
             'whitelist': self.request.body.pop('whitelist'),
@@ -118,6 +120,7 @@ class Filter_paragraph(Api_handler):
         'max_length': good.Coerce(int),
     })
 
+    @Level(1)
     async def get(self, channel_id):
         paragraph = self.db.fetchone(
             'SELECT max_length FROM twitch_filter_paragraph WHERE channel_id=%s',
@@ -133,6 +136,7 @@ class Filter_paragraph(Api_handler):
             return
         self.write_object({**f, **r[1]})
 
+    @Level(1)
     async def put(self, channel_id):
         extra = {
             'max_length': self.request.body.pop('max_length'),
@@ -164,6 +168,7 @@ class Filter_symbol(Api_handler):
         'max_symbols': good.Coerce(int),
     })
 
+    @Level(1)
     async def get(self, channel_id):
         symbol = self.db.fetchone(
             'SELECT max_symbols FROM twitch_filter_symbol WHERE channel_id=%s',
@@ -179,6 +184,7 @@ class Filter_symbol(Api_handler):
             return
         self.write_object({**f, **r[1]})
 
+    @Level(1)
     async def put(self, channel_id):
         extra = {
             'max_symbols': self.request.body.pop('max_symbols'),
@@ -211,6 +217,7 @@ class Filter_caps(Api_handler):
         'max_percent': good.Coerce(int),
     })
 
+    @Level(1)
     async def get(self, channel_id):
         caps = self.db.fetchone(
             'SELECT min_length, max_percent FROM twitch_filter_caps WHERE channel_id=%s',
@@ -226,6 +233,7 @@ class Filter_caps(Api_handler):
             return
         self.write_object({**f, **r[1]})
 
+    @Level(1)
     async def put(self, channel_id):
         extra = {
             'min_length': self.request.body.pop('min_length'),
@@ -259,6 +267,7 @@ class Filter_emote(Api_handler):
         'max_emotes': good.Coerce(int),
     })
 
+    @Level(1)
     async def get(self, channel_id):
         emote = self.db.fetchone(
             'SELECT max_emotes FROM twitch_filter_emote WHERE channel_id=%s',
@@ -274,6 +283,7 @@ class Filter_emote(Api_handler):
             return
         self.write_object({**f, **r[1]})
 
+    @Level(1)
     async def put(self, channel_id):
         extra = {
             'max_emotes': self.request.body.pop('max_emotes'),
@@ -306,6 +316,7 @@ class Filter_non_latin(Api_handler):
         'max_percent': good.Coerce(int),
     })
 
+    @Level(1)
     async def get(self, channel_id):
         non_latin = self.db.fetchone(
             'SELECT min_length, max_percent FROM twitch_filter_non_latin WHERE channel_id=%s',
@@ -321,6 +332,7 @@ class Filter_non_latin(Api_handler):
             return
         self.write_object({**f, **r[1]})
 
+    @Level(1)
     async def put(self, channel_id):
         extra = {
             'min_length': self.request.body.pop('min_length'),
@@ -345,5 +357,26 @@ class Filter_non_latin(Api_handler):
         r = await self.redis.publish_json(
             'tbot:server:commands', 
             ['reload_filter_non_latin', channel_id]
+        )
+        self.set_status(204)
+
+
+class Filter_action(Api_handler):
+    
+    @Level(1)
+    async def get(self, channel_id):
+        f = await get_filter(self, channel_id, 'action')
+        if not f:
+            self.set_status(204)
+            return
+        self.write_object(f)
+
+    @Level(1)
+    async def put(self, channel_id):
+        data = self.validate(__base_schema__)
+        await save_filter(self, channel_id, 'action', data)   
+        r = await self.redis.publish_json(
+            'tbot:server:commands', 
+            ['reload_filter_action', channel_id]
         )
         self.set_status(204)

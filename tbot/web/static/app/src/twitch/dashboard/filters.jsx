@@ -45,6 +45,11 @@ class Filters extends React.Component {
                 'type': 'non-latin',
                 'desc': 'Remove non-latin text',
             },
+            {
+                'title': 'Action filter',
+                'type': 'action',
+                'desc': 'Remove colored /me text',
+            },
         ]
     }
 
