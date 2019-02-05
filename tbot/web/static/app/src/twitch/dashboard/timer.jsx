@@ -60,7 +60,11 @@ class Timer extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault()
         this.setState({saving: true, error: null})
-        this.state.timer.messages = this.state.timer.messages.split('\n')
+        if (!Array.isArray(this.state.timer.messages))
+            this.state.timer.messages = this.state.timer.messages.split('\n')
+        this.state.timer.messages = this.state.timer.messages.filter(e => (
+            e != ''
+        ))
         let id = this.props.match.params.id
         if (id)
             api.put(`/api/twitch/channels/${managedUser.id}/timers/${id}`, this.state.timer).then(r => {

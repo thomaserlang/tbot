@@ -64,7 +64,8 @@ async def save_filter(self, channel_id, type_, data):
 class Filter_link(Api_handler):
     
     __schema__ = good.Schema({
-        'whitelist': good.All([good.All(str, good.Length(min=1, max=50))], good.Length(min=1, max=100)),
+        'whitelist': good.All(
+            [good.All(str, good.Length(min=1, max=50))], good.Length(min=0, max=100)),
     })
 
     async def get(self, channel_id):
