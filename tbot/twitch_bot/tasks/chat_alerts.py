@@ -12,7 +12,7 @@ async def usernotice(**kwargs):
     if kwargs['msg-id'] in ('submysterygift', 'anonsubmysterygift',):
         gift_users = sub_mystery_gift.setdefault(kwargs['room-id'], {})
         gift_users[kwargs['user-id']] = int(kwargs['msg-param-mass-gift-count'])
-    if kwargs['msg-id'] in ('subgift', 'subgift'):
+    if kwargs['msg-id'] in ('subgift', 'anonsubgift'):
         if kwargs['room-id'] in sub_mystery_gift:
             if kwargs['user-id'] in sub_mystery_gift[kwargs['room-id']]:
                 sub_mystery_gift[kwargs['room-id']][kwargs['user-id']] -= 1
