@@ -166,6 +166,7 @@ async def load_channels_cache():
 async def set_chatters(channel_id):
     try:
         if channel_id not in bot.channels:
+            logging.error('{} not in `bot.channels`'.format(channel_id))
             return
         channel = bot.channels[channel_id]['name']
         async with bot.ahttp.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(channel)) as r:
