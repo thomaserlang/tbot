@@ -158,10 +158,13 @@ async def twitch_refresh_token(bot, channel_id, refresh_token):
             ), r.status)
 
 async def twitch_lookup_usernames(ahttp, db, usernames):
+    '''
+    :returns: List[Dict[{'user': str, 'id': str}]]
+    '''
     users = []
     now = datetime.datetime.utcnow()
     m1 = now + datetime.timedelta(days=30)
-    usernames = [s.lower() for s in usernames]
+    usernames = [s.lower() for s in set(usernames)]
     for unames in chunks(list(usernames), 5000):
         rs = await db.fetchall(
             'SELECT user_id as id, user FROM twitch_usernames WHERE expires > %s AND user IN ({})'.format(
