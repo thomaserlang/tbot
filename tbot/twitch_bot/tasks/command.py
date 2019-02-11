@@ -123,30 +123,36 @@ async def has_cooldown(cmd, channel_id, user_id, user_level, user_cooldown, mod_
         if mod_cooldown == 0:
             return False
 
-    r = bot.redis.multi_exec()
     keys = []
+    
+    global_cooldown_key = 'tbot:cooldown:{}:{}:global'.format(channel_id, cmd)
+    keys.append({'key': global_cooldown_key, 'expire': global_cooldown})    
+    
+    user_cooldown_key = 'tbot:cooldown:{}:{}:user:{}'.format(channel_id, cmd, user_id)
+    keys.append({'key': user_cooldown_key, 'expire': user_cooldown})
+    
+    mod_key = 'tbot:cooldown:{}:{}:mod:{}'.format(channel_id, cmd, user_id)
+    keys.append({'key': mod_key, 'expire': mod_cooldown})
+
+    r = bot.redis.multi_exec()            
     if user_level < 7:
         if global_cooldown:
-            k = 'tbot:cooldown:{}:{}:global'.format(channel_id, cmd)
-            r.get(k)
-            keys.append({'key': k, 'expire': global_cooldown})
+            r.get(global_cooldown_key)
         if user_cooldown:
-            k = 'tbot:cooldown:{}:{}:user:{}'.format(channel_id, cmd, user_id)
-            r.get(k)
-            keys.append({'key': k, 'expire': user_cooldown})
+            r.get(user_cooldown_key)
     else:
-        if mod_cooldown:
-            k = 'tbot:cooldown:{}:{}:mod:{}'.format(channel_id, cmd, user_id)
-            keys.append({'key': k, 'expire': mod_cooldown})
-            r.get(k)
+        r.get(mod_key)
+    
     result = await r.execute()
     if result and any(result):
         return True
 
     r = bot.redis.multi_exec()
     for k in keys:
-        r.setex(k['key'], k['expire'], '1')
+        if k['expire']:
+            r.setex(k['key'], k['expire'], '1')
     await r.execute()
+
     return False
 
 def get_enabled_status(channel_id):
