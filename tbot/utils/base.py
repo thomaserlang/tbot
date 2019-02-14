@@ -41,7 +41,6 @@ def seconds_to_pretty(seconds):
     if len(ts) > 2 and seconds:
         ts.pop(len(ts)-1)
     ts = ts[:3]
-    logging.info(ts)
     if len(ts) >= 2:
         last = ts.pop(len(ts)-1)
         s = ', '.join(ts)
