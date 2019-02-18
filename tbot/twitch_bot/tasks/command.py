@@ -116,13 +116,6 @@ async def get_user_level(badges, user_id, channel_id, required_level):
     return 0
 
 async def has_cooldown(cmd, channel_id, user_id, user_level, user_cooldown, mod_cooldown, global_cooldown):
-    if user_level < 7:
-        if user_cooldown == 0 and global_cooldown == 0:
-            return False
-    else:
-        if mod_cooldown == 0:
-            return False
-
     keys = []
     
     global_cooldown_key = 'tbot:cooldown:{}:{}:global'.format(channel_id, cmd)
