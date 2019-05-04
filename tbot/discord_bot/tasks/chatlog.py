@@ -26,7 +26,7 @@ async def on_message(msg):
     except:
         logging.exception('on_message')
 
-@bot.event
+@bot.listen()
 async def on_message_edit(before, msg):
     try:
         await bot.db.execute('''
@@ -52,7 +52,7 @@ async def on_message_edit(before, msg):
     except:
         logging.exception('on_message_edit')
 
-@bot.event
+@bot.listen()
 async def on_message_delete(msg):
     try:
         await bot.db.execute('''
@@ -65,7 +65,22 @@ async def on_message_delete(msg):
     except:
         logging.exception('on_message_delete')
 
-@bot.event
+@bot.listen()
+async def on_bulk_message_delete(msgs):
+    try:
+        f = ','.join(['%s']*len(msgs))
+        await bot.db.execute('''
+            UPDATE discord_chatlog SET 
+                deleted="Y",
+                deleted_at=%s
+            WHERE
+                id IN ({});
+        '''.format(f), 
+            (datetime.utcnow(), *[str(m.id) for m in msgs]))
+    except:
+        logging.exception('on_message_delete')
+
+@bot.listen()
 async def on_member_join(member):
     try:
         await bot.db.execute('''
@@ -85,7 +100,7 @@ async def on_member_join(member):
     except:
         logging.exception('on_member_join')
 
-@bot.event
+@bot.listen()
 async def on_member_remove(member):
     try:
         await bot.db.execute('''
@@ -105,7 +120,7 @@ async def on_member_remove(member):
     except:
         logging.exception('on_member_remove')
 
-@bot.event
+@bot.listen()
 async def on_voice_state_update(member, before, after):
     try:
         # Join
