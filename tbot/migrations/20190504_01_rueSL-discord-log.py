@@ -36,7 +36,7 @@ steps = [
     ) DEFAULT CHARSET=utf8mb4;
     '''),
     step('''
-    CREATE TABLE `discord_server_join_log` (
+    CREATE TABLE IF NOT EXISTS `discord_server_join_log` (
         `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
         `server_id` VARCHAR(30) NOT NULL,
         `action` TINYINT UNSIGNED NOT NULL COMMENT '0 is leave 1 is joined',
@@ -49,7 +49,7 @@ steps = [
     ) COLLATE='utf8mb4_unicode_ci';
     '''),
     step('''
-    CREATE TABLE `discord_voice_join_log` (
+    CREATE TABLE IF NOT EXISTS `discord_voice_join_log` (
         `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
         `server_id` VARCHAR(30) NOT NULL,
         `user` VARCHAR(32) NOT NULL,
@@ -59,7 +59,7 @@ steps = [
         `action` TINYINT NOT NULL COMMENT '0 is leave 1 is joined',
         `channel_id` VARCHAR(30) NOT NULL,
         `channel_name` VARCHAR(32) NOT NULL,
-        `created_at` DATETIME NOT NULL
+        `created_at` DATETIME NOT NULL,
         PRIMARY KEY (`id`)
     ) COLLATE='utf8mb4_unicode_ci';
     ''')
