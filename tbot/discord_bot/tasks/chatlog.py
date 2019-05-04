@@ -16,7 +16,7 @@ async def on_message(msg):
             msg.guild.id,
             msg.channel.id,
             msg.created_at,
-            msg.content,
+            msg.clean_content,
             json.dumps(msg.attachments),
             msg.author.name,
             msg.author.id,
@@ -45,7 +45,7 @@ async def on_message_edit(before, msg):
                 id=%s;
         ''', (
             msg.edited_at,
-            msg.content,
+            msg.clean_content,
             json.dumps(msg.attachments),
             msg.id,
         ))
