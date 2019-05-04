@@ -11,7 +11,9 @@ async def on_connect():
         bot.db = await db.Db().connect(bot.loop)
 
 def main():
-    bot.loop.create_task(tbot.discord_bot.tasks.twitch_sync.twitch_sync())
+    bot.loop.create_task(
+        tbot.discord_bot.tasks.twitch_sync.twitch_sync()
+    )
     bot.run(config['discord']['token'], bot=config['discord']['bot'])
 
 if __name__ == '__main__':
