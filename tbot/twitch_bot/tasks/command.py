@@ -27,7 +27,7 @@ def command(cmd, alias=None, arg_desc=None):
 
 @bot.on('PRIVMSG')
 def handle_command(nick, target, message, **kwargs):
-    if not message.startswith(('!')):
+    if not message.startswith('!'):
         return
     if nick == bot.user['login']:
         return

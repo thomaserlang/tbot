@@ -3,6 +3,7 @@ from tbot import config, db
 from tbot.discord_bot import bot
 import tbot.discord_bot.commands
 import tbot.discord_bot.tasks
+import tbot.discord_bot.functions
 
 @bot.event
 async def on_connect():
