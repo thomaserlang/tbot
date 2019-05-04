@@ -44,7 +44,8 @@ steps = [
         `user` VARCHAR(32) NOT NULL,
         `user_discriminator` VARCHAR(10) NOT NULL,
         `member_nick` VARCHAR(32),
-        `created_at` DATETIME NOT NULL
+        `created_at` DATETIME NOT NULL,
+        PRIMARY KEY (`id`)
     ) COLLATE='utf8mb4_unicode_ci';
     '''),
     step('''
