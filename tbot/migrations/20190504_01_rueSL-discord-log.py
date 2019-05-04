@@ -43,7 +43,7 @@ steps = [
         `user_id` VARCHAR(30) NOT NULL,
         `user` VARCHAR(32) NOT NULL,
         `user_discriminator` VARCHAR(10) NOT NULL,
-        `member_nick` VARCHAR(32),
+        `member_nick` VARCHAR(32) DEFAULT NULL,
         `created_at` DATETIME NOT NULL,
         PRIMARY KEY (`id`)
     ) COLLATE='utf8mb4_unicode_ci';
@@ -55,7 +55,7 @@ steps = [
         `user` VARCHAR(32) NOT NULL,
         `user_id` VARCHAR(30) NOT NULL,
         `user_discriminator` VARCHAR(10) NOT NULL,
-        `member_nick` VARCHAR(32) NOT NULL,
+        `member_nick` VARCHAR(32) DEFAULT NULL,
         `action` TINYINT NOT NULL COMMENT '0 is leave 1 is joined',
         `channel_id` VARCHAR(30) NOT NULL,
         `channel_name` VARCHAR(32) NOT NULL,
