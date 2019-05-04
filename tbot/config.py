@@ -31,7 +31,7 @@ config = {
     'discord': {
         'client_id': None,
         'client_secret': None,
-        'permissions': 268486656,
+        'permissions': 470019158,
         'token': None,
         'bot': True,
         'user_token': None,
