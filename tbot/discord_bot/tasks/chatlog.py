@@ -21,7 +21,7 @@ async def on_message(msg):
             msg.author.name,
             msg.author.id,
             msg.author.discriminator,
-            msg.author.nick,
+            msg.author.nick if hasattr(msg.author, 'nick') else None,
         ))
     except:
         logging.exception('on_message')

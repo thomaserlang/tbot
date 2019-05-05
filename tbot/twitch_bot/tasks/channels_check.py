@@ -93,6 +93,7 @@ async def channel_check(channel_id, prev_channel_check):
                     bot.channels[channel_id]['name'], 
                     inc_time,
                 ))
+                bot.loop.create_task(send_discord_live_notification(channel_id))
             await save_stream_created(channel_id)
         await inc_watchtime(channel_id, inc_time)
     else:
@@ -267,3 +268,48 @@ async def save_stream_ended(stream_id, uptime):
         uptime,
         stream_id,
     ))
+
+async def send_discord_live_notification(channel_id):
+    webhooks = await bot.db.fetchall('''
+        SELECT id, webhook_url, message FROM twitch_discord_live_notification
+        WHERE channel_id=%s;
+    ''', (channel_id))
+    if not webhooks:
+        return
+    d = {
+        'name': bot.channels[channel_id]['name'],
+        'url': 'https://twitch.tv/{}'.format(bot.channels[channel_id]['name']),
+    }
+    for w in webhooks:
+        if not w['message']:
+            continue
+        m = w['message']
+        for k in d:
+            m = m.replace('{'+k+'}', d[k])
+        data = {
+            'content': m,
+            'embeds': [{
+                'url': d['url'],
+                'image': {
+                    'url': 'https://static-cdn.jtvnw.net/previews-ttv/live_user_{}-1280x720.jpg'.format(
+                        bot.channels[channel_id]['name'].lower()
+                    ),
+                },
+                'color': 3447003, #blue
+            }],
+        }
+        try:
+            async with bot.ahttp.request('POST', w['webhook_url'], json=data) as r:
+                if r.status >= 400:
+                    error = await r.text()
+                    logging.warning(
+                        'Failed to send live notification to id: {} - Error: ({}) {}'.format(
+                            w['id'],
+                            r.status,
+                            error,
+                        )
+                    )
+        except:
+            logging.exception('twitch discord webhook-id: {} '.format(
+                w['id'],
+            ))
