@@ -17,7 +17,7 @@ async def on_message(msg):
             msg.channel.id,
             msg.created_at,
             msg.clean_content,
-            json.dumps(msg.attachments),
+            json.dumps(dump_attachments(msg.attachments)),
             msg.author.name,
             msg.author.id,
             msg.author.discriminator,
@@ -46,7 +46,7 @@ async def on_message_edit(before, msg):
         ''', (
             msg.edited_at,
             msg.clean_content,
-            json.dumps(msg.attachments),
+            json.dumps(dump_attachments(msg.attachments)),
             msg.id,
         ))
     except:
@@ -164,3 +164,14 @@ async def on_voice_state_update(member, before, after):
             ))
     except:
         logging.exception('on_voice_state_update')
+
+def dump_attachments(attachments):
+    r = []
+    for a in attachments:
+        r.append({
+            'id': a.id,
+            'filename': a.filename,
+            'url': a.url,
+            'proxy_url': a.proxy_url,
+        })
+    return r
