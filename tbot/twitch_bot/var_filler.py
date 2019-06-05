@@ -57,5 +57,10 @@ class Send_error(Exception):
         self.user = user
         super().__init__(message)
 
+class Send(Exception):
+    def __init__(self, message, user=None):
+        self.user = user
+        super().__init__(message)
+
 class Send_break(Exception):
     pass

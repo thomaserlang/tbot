@@ -92,6 +92,8 @@ async def db_command(cmd, target, data):
             bot.send("PRIVMSG", target=target, message=msg)
         except var_filler.Send_error as e:
             bot.send("PRIVMSG", target=target, message='@{}, {}'.format(data['display_name'], e))
+        except var_filler.Send as e:
+            bot.send("PRIVMSG", target=target, message='@{}, {}'.format(data['display_name'], e))
         except var_filler.Send_break:
             pass
         except:

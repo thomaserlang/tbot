@@ -154,6 +154,42 @@ async def twitch_lookup_user_id(ahttp, db, username):
         return
     return users[0]['id']
 
+
+async def twitch_lookup_from_user_id(ahttp, db, userids):
+    '''
+    :returns: List[Dict[{'user': str, 'id': str}]]
+    '''
+    users = []
+    now = datetime.datetime.utcnow()
+    m1 = now + datetime.timedelta(days=30)
+    userids = [s for s in set(userids)]
+    for uids in chunks(list(userids), 5000):
+        rs = await db.fetchall(
+            'SELECT user_id as id, user FROM twitch_usernames WHERE expires > %s AND user_id IN ({})'.format(
+                ','.join(['%s'] * len(uids))),
+            (now, *uids)
+        )
+        for r in rs:
+            userids.remove(r['id'])
+            users.append(r)
+
+    url = 'https://api.twitch.tv/helix/users'
+    if userids:
+        users_to_save = []
+        for uids in chunks(userids, 100):
+            params = [('id', id_) for id_ in uids]
+            params.append(('first', '100'))
+            data = await twitch_request(ahttp, url, params)
+            if data:
+                for d in data['data']:
+                    users.append({'id': d['id'], 'user': d['login']})
+                    users_to_save.append((d['id'], d['login'], m1))
+        await db.executemany('''
+            INSERT INTO twitch_usernames (user_id, user, expires) 
+            VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE user=VALUES(user), expires=VALUES(expires)
+        ''', users_to_save)
+    return users
+
 async def twitch_current_user(ahttp):
     data = await twitch_request(ahttp, 'https://api.twitch.tv/helix/users')
     return data['data'][0]
