@@ -59,7 +59,8 @@ config = {
         'port': 6379,
         'pool_min_size': 5,
         'pool_max_size': 20,
-    }
+    },
+    'openweathermap_apikey': None,
 }
 
 def load(path=None):

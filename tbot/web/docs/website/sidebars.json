@@ -14,7 +14,8 @@
         "vars/time",
         "vars/cmd_manager",
         "vars/permit_manager",
-        "vars/user_queue"
+        "vars/user_queue",
+        "vars/weather"
     ]
   }
 }
