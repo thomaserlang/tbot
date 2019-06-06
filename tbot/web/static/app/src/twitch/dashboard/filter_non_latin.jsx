@@ -68,7 +68,7 @@ class Filter_non_latin extends Filter {
             </div>
 
             <div className="form-group mb-2">
-                <label htmlFor="min_length">Min length</label>
+                <label htmlFor="min_length">Min number of Non-latin chars</label>
                 <input 
                     className="form-control" 
                     id="min_length" 

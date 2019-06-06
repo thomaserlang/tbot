@@ -14,14 +14,15 @@ async def check(target, message, kwargs):
     if excluded:
         return
 
-    if len(message) < f['min_length']:
-        return
-
     chars = NON_CHARS.sub('', message)
     if not chars:
         return 
 
     non_latin = NON_LATIN.findall(chars)
+
+    if len(non_latin) < f['min_length']:
+        return
+    
     if ((len(non_latin)/len(chars))*100) > f['max_percent']:
         has_permit = await base.has_permit(bot, kwargs)
         if has_permit:
