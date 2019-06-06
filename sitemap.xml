@@ -14,4 +14,5 @@
 <url> <loc>https://docs.botashell.com/vars/uptime</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/uptime" /> </url>
 <url> <loc>https://docs.botashell.com/vars/user_queue</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/user_queue" /> </url>
 <url> <loc>https://docs.botashell.com/vars/user_streams</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/user_streams" /> </url>
+<url> <loc>https://docs.botashell.com/vars/weather</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/weather" /> </url>
 </urlset>
