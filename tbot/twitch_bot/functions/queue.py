@@ -35,7 +35,7 @@ async def user_queue_unjoin(bot, channel_id, var_args, user_id, display_name, **
         'user_queue.unjoin_count_text': utils.pluralize(c, 'user'),
     }
 
-@fills_vars('user_queue.count')
+@fills_vars('user_queue.count', 'user_queue.count_text')
 async def user_queue_count(bot, channel_id, var_args, user_id, **kwargs):
     key = get_queue_key(var_args, 'user_queue.count', channel_id)
     c = await bot.redis.zcount(key)
