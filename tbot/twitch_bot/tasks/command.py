@@ -66,9 +66,10 @@ def handle_command(nick, target, message, **kwargs):
 
 async def db_command(cmd, target, data):
     cmds = await bot.db.fetchall('''
-        SELECT cmd, response, user_level, global_cooldown, user_cooldown, mod_cooldown, enabled_status
+        SELECT cmd, response, user_level, global_cooldown, 
+                    user_cooldown, mod_cooldown, enabled_status
         FROM twitch_commands
-        WHERE channel_id=%s AND cmd=%s
+        WHERE channel_id=%s AND cmd=%s AND enabled=1
         ORDER BY user_level DESC, enabled_status DESC, id ASC
     ''', (data['channel_id'], cmd))
     if not cmds:
