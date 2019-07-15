@@ -19,16 +19,16 @@ async def faceit_elo(bot, channel, args, var_args, **kwargs):
     }
 
     elos = (
-        (1, 'level 1'),
-        (801, 'level 2'),
-        (951, 'level 3'),
-        (1101, 'level 4'),
-        (1251, 'level 5'),
-        (1401, 'level 6'),
-        (1551, 'level 7'),
-        (1701, 'level 8'),
-        (1851, 'level 9'),
-        (2001, 'level 10'),
+        (1, '1'),
+        (801, '2'),
+        (951, '3'),
+        (1101, '4'),
+        (1251, '5'),
+        (1401, '6'),
+        (1551, '7'),
+        (1701, '8'),
+        (1851, '9'),
+        (2001, '10'),
     )
 
     async with bot.ahttp.get('https://open.faceit.com/data/v4/players', params=params, headers=headers) as r:
