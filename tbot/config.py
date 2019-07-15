@@ -61,6 +61,7 @@ config = {
         'pool_max_size': 20,
     },
     'openweathermap_apikey': None,
+    'faceit_apikey': None,
 }
 
 def load(path=None):
