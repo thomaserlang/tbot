@@ -28,7 +28,6 @@ async def usernotice(**kwargs):
 
 
     if kwargs['msg-id'] in ('sub', 'resub'):
-        logging.info(kwargs)
         data['user'] = kwargs['display-name']
         data['months'] = kwargs['msg-param-cumulative-months']
         data['months_streak'] = kwargs['msg-param-streak-months'] if 'msg-param-streak-months' in kwargs else '0'
@@ -96,7 +95,7 @@ async def usernotice(**kwargs):
         if not bot.channels[kwargs['room-id']]['muted']:
             bot.send("PRIVMSG", target=kwargs['channel'], 
                 message=fill_from_dict(alert['message'], data))
-            
+
        
     await badge_log( 
         nick=kwargs['login'],
