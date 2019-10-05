@@ -51,6 +51,11 @@ def format_response(s, values):
             s = s.replace('{'+v['matched']+'}', str(v['value']))
     return s
 
+def fill_from_dict(s, d):
+    for k in d:
+        s = s.replace('{'+k+'}', str(d[k]))
+    return s
+
 class Send_error(Exception):
 
     def __init__(self, message, user=None):
