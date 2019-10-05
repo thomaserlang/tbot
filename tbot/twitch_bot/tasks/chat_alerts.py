@@ -28,9 +28,10 @@ async def usernotice(**kwargs):
 
 
     if kwargs['msg-id'] in ('sub', 'resub'):
+        logging.info(kwargs)
         data['user'] = kwargs['display-name']
         data['months'] = kwargs['msg-param-cumulative-months']
-        data['months_streak'] = kwargs['msg-param-streak-months']
+        data['months_streak'] = kwargs['msg-param-streak-months'] if 'msg-param-streak-months' in kwargs else '0'
         data['plan'] = sub_plan_names.get(kwargs['msg-param-sub-plan'], 'Unknown')
 
         alert = await bot.db.fetchone('''
@@ -92,9 +93,10 @@ async def usernotice(**kwargs):
 
 
     if alert:
-        bot.send("PRIVMSG", target=kwargs['channel'], 
-            message=fill_from_dict(alert['message'], data))
-
+        if not bot.channels[kwargs['room-id']]['muted']:
+            bot.send("PRIVMSG", target=kwargs['channel'], 
+                message=fill_from_dict(alert['message'], data))
+            
        
     await badge_log( 
         nick=kwargs['login'],
