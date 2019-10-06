@@ -15,7 +15,7 @@ sub_plan_names = {
 
 @bot.on('USERNOTICE')
 async def usernotice(**kwargs):
-    
+    alert = None
     if kwargs['msg-id'] not in ('sub', 'resub', 'subgift', 
         'anonsubgift', 'giftpaidupgrade', 'submysterygift',
         'anonsubmysterygift'):
@@ -66,6 +66,7 @@ async def usernotice(**kwargs):
 
 
     if kwargs['msg-id'] in ('subgift', 'anonsubgift',):
+        is_mystery = False
         # Prevent spamming the chat when mystery subs are gifted
         if kwargs['room-id'] in sub_mystery_gift:
             if kwargs['user-id'] in sub_mystery_gift[kwargs['room-id']]:
@@ -77,17 +78,19 @@ async def usernotice(**kwargs):
                     data['plan'] = sub_plan_names.get(mg['data']['msg-param-sub-plan'], 'Unknown')
                     alert = await bot.db.fetchone('SELECT message FROM twitch_chat_alerts WHERE channel_id=%s and type="submysterygift"', (
                         kwargs['room-id'],
-                    ))                    
+                    ))
+                    is_mystery = True
                     del sub_mystery_gift[kwargs['room-id']][kwargs['user-id']]
                 else:
                     return
-        data['user'] = kwargs['display-name']
-        data['to_user'] = kwargs['msg-param-recipient-display-name']
-        data['plan'] = sub_plan_names.get(kwargs['msg-param-sub-plan'], 'Unknown')
-        data['months'] = kwargs['msg-param-months']
-        alert = await bot.db.fetchone('SELECT message FROM twitch_chat_alerts WHERE channel_id=%s and type="subgift"', (
-            kwargs['room-id'],
-        ))
+        if not is_mystery:
+            data['user'] = kwargs['display-name']
+            data['to_user'] = kwargs['msg-param-recipient-display-name']
+            data['plan'] = sub_plan_names.get(kwargs['msg-param-sub-plan'], 'Unknown')
+            data['months'] = kwargs['msg-param-months']
+            alert = await bot.db.fetchone('SELECT message FROM twitch_chat_alerts WHERE channel_id=%s and type="subgift"', (
+                kwargs['room-id'],
+            ))
 
 
 
