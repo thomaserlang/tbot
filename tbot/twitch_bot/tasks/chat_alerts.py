@@ -1,4 +1,5 @@
 import logging
+from dateutil import parser
 from tbot import config, utils
 from tbot.twitch_bot.bot_main import bot
 from tbot.twitch_bot.var_filler import fill_from_dict
@@ -44,7 +45,7 @@ async def usernotice(**kwargs):
 
 
 
-    if kwargs['msg-id'] == 'giftpaidupgrade':
+    elif kwargs['msg-id'] == 'giftpaidupgrade':
         data['user'] = kwargs['display-name']
         data['from_user'] = kwargs['msg-param-sender-name']
         alert = await bot.db.fetchone('''
@@ -56,7 +57,7 @@ async def usernotice(**kwargs):
 
 
     
-    if kwargs['msg-id'] in ('submysterygift', 'anonsubmysterygift',):
+    elif kwargs['msg-id'] in ('submysterygift', 'anonsubmysterygift',):
         gift_users = sub_mystery_gift.setdefault(kwargs['room-id'], {})
         gift_users[kwargs['user-id']] = {
             'count': int(kwargs['msg-param-mass-gift-count']),
@@ -65,7 +66,7 @@ async def usernotice(**kwargs):
 
 
 
-    if kwargs['msg-id'] in ('subgift', 'anonsubgift',):
+    elif kwargs['msg-id'] in ('subgift', 'anonsubgift',):
         is_mystery = False
         # Prevent spamming the chat when mystery subs are gifted
         if kwargs['room-id'] in sub_mystery_gift:
@@ -91,6 +92,15 @@ async def usernotice(**kwargs):
             alert = await bot.db.fetchone('SELECT message FROM twitch_chat_alerts WHERE channel_id=%s and type="subgift"', (
                 kwargs['room-id'],
             ))
+
+
+
+    elif kwargs['msg-id'] == 'extendsub':
+        data['user'] = kwargs['display-name']
+        data['months'] = kwargs['msg-param-cumulative-months']
+        data['plan'] = sub_plan_names.get(kwargs['msg-param-sub-plan'], 'Unknown')
+        data['end_month'] = kwargs['msg-param-sub-benefit-end-month']
+        data['end_month_name'] = parser.parserinfo.MONTHS[int(kwargs['msg-param-sub-benefit-end-month'])-1][1]
 
 
 
