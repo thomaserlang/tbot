@@ -101,7 +101,8 @@ async def channel_check(channel_id, prev_channel_check):
             if channel_id in bot.channels:
                 logging.info('{} went offline'.format(bot.channels[channel_id]['name']))
             await save_stream_ended(prev_channel_check['stream_id'], prev_channel_check['uptime'])
-            await reset_streams_in_a_row(channel_id, prev_channel_check['stream_id'])
+            if bot.channels_check[channel_id]['uptime'] >= int(config['twitch']['stream_min_length']): 
+                await reset_streams_in_a_row(channel_id, prev_channel_check['stream_id'])
         # Detect if the bot was parted.
         # Incase the bot is parted doing a live stream we will keep checking
         # until the stream ends.

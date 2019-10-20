@@ -19,6 +19,8 @@ config = {
         'check_channels_every': 60, # seconds,
         'check_timers_every': 30, # seconds
         'delay_offline': 0, # seconds
+        # Only reset streams in a row if the stream was longer than `stream_min_length`.
+        'stream_min_length': 1800,# seconds
         'pubsub_url': 'wss://pubsub-edge.twitch.tv',
         'request_scope':['channel_subscriptions',
                         'channel_check_subscription',
