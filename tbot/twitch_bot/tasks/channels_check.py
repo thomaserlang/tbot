@@ -238,18 +238,16 @@ async def update_channels_check():
 
 async def reset_streams_in_a_row(channel_id, stream_id):
     await bot.db.execute('''
-        UPDATE twitch_user_stats us
-            LEFT JOIN
-                twitch_stream_watchtime uw ON (uw.stream_id = %s
-                    AND uw.user_id = us.user_id) 
+        UPDATE twitch_user_stats
         SET 
             streams_row = 0
         WHERE
-            us.channel_id = %s AND 
-            ISNULL(uw.user_id);
+            channel_id = %s AND 
+            streams_row>0 AND
+            last_viewed_stream_id != %s;
     ''', (
-        stream_id,
         channel_id,
+        stream_id,
     ))
 
 async def save_stream_created(channel_id):
