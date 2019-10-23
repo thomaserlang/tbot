@@ -22,6 +22,7 @@ import Filter_non_latin from './filter_non_latin'
 import Filter_action from './filter_action'
 import Timers from './timers'
 import Timer from './timer'
+import ChatAlerts from './chat_alerts'
 
 class Main extends React.Component {
 
@@ -60,6 +61,7 @@ class Main extends React.Component {
                     <Route exact path='/twitch/:channel/timers' component={Timers}/>
                     <Route exact path='/twitch/:channel/timers/edit/:id' component={Timer}/>
                     <Route exact path='/twitch/:channel/timers/new' component={Timer}/>
+                    <Route exact path='/twitch/:channel/chat-alerts' component={ChatAlerts}/>
                 </div>
             </div>
         </div>

@@ -44,7 +44,8 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/filters/action', handlers.api.twitch.filters.Filter_action),
             (r'/api/twitch/channels/([0-9]+)/timers', handlers.api.twitch.timers.Collection_handler),
             (r'/api/twitch/channels/([0-9]+)/timers/([0-9]+)', handlers.api.twitch.timers.Handler),
-
+            (r'/api/twitch/channels/([0-9]+)/chat-alerts', handlers.api.twitch.chat_alerts.Handler),
+            
             (r'/api/twitch/channels/([0-9]+)/spotify', handlers.api.twitch.connect_spotify.Handler),
             (r'/api/twitch/channels/([0-9]+)/discord', handlers.api.twitch.connect_discord.Handler),
             
