@@ -1,4 +1,5 @@
-import unittest, nose, asyncio
+import unittest, asyncio
+import tbot.testbase
 from unittest.mock import MagicMock
 from tbot.twitch_bot.var_filler import parse, format_response, fill_message, var_fillers
 from tbot.twitch_bot import functions
@@ -31,4 +32,4 @@ async def mock_result(*args, **kwargs):
     return {'msgs': 3, 'words': 5}
 
 if __name__ == '__main__':
-    nose.run(defaultTest=__name__)
+    tbot.testbase.run_file(__file__)

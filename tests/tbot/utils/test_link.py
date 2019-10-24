@@ -1,4 +1,5 @@
-import unittest, nose, re, logging
+import unittest, re, logging
+import tbot.testbase
 from tbot.utils import link
 
 class Test(unittest.TestCase):
@@ -829,6 +830,6 @@ class Test(unittest.TestCase):
                 link.find_links(t[0])[0],
                 t[1],
             )
-
+            
 if __name__ == '__main__':
-    nose.run(defaultTest=__name__)
+    tbot.testbase.run_file(__file__)

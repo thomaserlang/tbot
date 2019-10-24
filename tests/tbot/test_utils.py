@@ -1,4 +1,5 @@
-import unittest, nose
+import unittest
+import tbot.testbase
 from tbot import utils
 
 class test_utils(unittest.TestCase):
@@ -38,4 +39,4 @@ class test_utils(unittest.TestCase):
         self.assertEqual(m, 'this is a test')
 
 if __name__ == '__main__':
-    nose.run(defaultTest=__name__)
+    tbot.testbase.run_file(__file__)

@@ -1,4 +1,5 @@
-import unittest, nose, asyncio
+import unittest, asyncio
+import tbot.testbase
 from functools import partial
 from unittest import mock
 from tbot.twitch_bot import functions
@@ -46,4 +47,4 @@ class Test(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    nose.run(defaultTest=__name__)
+    tbot.testbase.run_file(__file__)
