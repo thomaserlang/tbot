@@ -117,7 +117,7 @@ async def receive_redis_server_commands():
         try:
             msg = await sub.get_json()
             logging.debug('Received server command: {}'.format(msg))
-            if len(msg) != 2:
+            if len(msg) < 2:
                 return
             cmd = msg.pop(0)
 

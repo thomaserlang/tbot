@@ -42,6 +42,12 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/filters/emote', handlers.api.twitch.filters.Filter_emote),
             (r'/api/twitch/channels/([0-9]+)/filters/non-latin', handlers.api.twitch.filters.Filter_non_latin),
             (r'/api/twitch/channels/([0-9]+)/filters/action', handlers.api.twitch.filters.Filter_action),
+            (r'/api/twitch/channels/([0-9]+)/filters/banned-words-groups', handlers.api.twitch.filter_banned_words.Groups_handler),
+            (r'/api/twitch/channels/([0-9]+)/filters/banned-words-groups/([0-9]+)', handlers.api.twitch.filter_banned_words.Group_handler),
+            (r'/api/twitch/channels/([0-9]+)/filters/banned-words-groups/([0-9]+)/banned-words', handlers.api.twitch.filter_banned_words.Banned_words_handler),
+            (r'/api/twitch/channels/([0-9]+)/filters/banned-words-groups/([0-9]+)/banned-words/([0-9]+)', handlers.api.twitch.filter_banned_words.Banned_words_handler),
+            (r'/api/twitch/channels/([0-9]+)/filters/banned-words-groups/([0-9]+)/test', handlers.api.twitch.filter_banned_words.Banned_words_test_handler),
+            
             (r'/api/twitch/channels/([0-9]+)/timers', handlers.api.twitch.timers.Collection_handler),
             (r'/api/twitch/channels/([0-9]+)/timers/([0-9]+)', handlers.api.twitch.timers.Handler),
             (r'/api/twitch/channels/([0-9]+)/chat-alerts', handlers.api.twitch.chat_alerts.Handler),

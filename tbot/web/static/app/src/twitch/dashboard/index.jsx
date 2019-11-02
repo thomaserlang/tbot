@@ -20,6 +20,8 @@ import Filter_caps from './filter_caps'
 import Filter_emote from './filter_emote'
 import Filter_non_latin from './filter_non_latin'
 import Filter_action from './filter_action'
+import Filter_banned_words_groups from './filter_banned_words_groups'
+import Filter_banned_words from './filter_banned_words'
 import Timers from './timers'
 import Timer from './timer'
 import ChatAlerts from './chat_alerts'
@@ -58,6 +60,9 @@ class Main extends React.Component {
                     <Route exact path='/twitch/:channel/filters/emote' component={Filter_emote}/>
                     <Route exact path='/twitch/:channel/filters/non-latin' component={Filter_non_latin}/>
                     <Route exact path='/twitch/:channel/filters/action' component={Filter_action}/>
+                    <Route exact path='/twitch/:channel/banned-words' component={Filter_banned_words_groups}/>
+                    <Route exact path='/twitch/:channel/banned-words/edit/:id' component={Filter_banned_words}/>
+                    <Route exact path='/twitch/:channel/banned-words/new' component={Filter_banned_words}/>
                     <Route exact path='/twitch/:channel/timers' component={Timers}/>
                     <Route exact path='/twitch/:channel/timers/edit/:id' component={Timer}/>
                     <Route exact path='/twitch/:channel/timers/new' component={Timer}/>

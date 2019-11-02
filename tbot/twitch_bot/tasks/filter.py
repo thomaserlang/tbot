@@ -1,21 +1,21 @@
 import logging, re
-from tbot.twitch_bot.bot_base import bot
-from tbot.twitch_bot import filters
+from ..bot_base import bot
+from .. import filters
 
 @bot.on('PRIVMSG')
 async def message(nick, target, message, **kwargs):
-
-    if await filters.link.check(target, message, kwargs):
-        return
-    if await filters.symbol.check(target, message, kwargs):
-        return
-    if await filters.paragraph.check(target, message, kwargs):
-        return
-    if await filters.caps.check(target, message, kwargs):
-        return
-    if await filters.emote.check(target, message, kwargs):
-        return
-    if await filters.non_latin.check(target, message, kwargs):
-        return
-    if await filters.action.check(target, message, kwargs):
-        return
+    filters_ = (
+        filters.link.check,
+        filters.non_latin.check,
+        filters.symbol.check,
+        filters.paragraph.check,
+        filters.banned_words.check,
+        filters.caps.check,
+        filters.emote.check,
+        filters.action.check,
+    )
+    for f in filters_:
+        try:
+            await f(target, message, kwargs)
+        except:
+            logging.exception('filter')

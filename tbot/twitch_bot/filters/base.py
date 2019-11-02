@@ -15,8 +15,8 @@ async def warn_or_timeout(bot, type_, target, filter_, kwargs):
         'cmd': '',
     }
     if filter_['warning_enabled'] == 'Y':
-        key = 'tbot:filter-{}:warning:{}:{}:{}'.format(
-            type_, kwargs['room-id'], kwargs['user-id'], filter_['warning_expire'],
+        key = 'tbot:filter-{}:warning:{}:{}'.format(
+            filter_['id'], kwargs['user-id'], filter_['warning_expire'],
         )
         warned = await bot.redis.get(key)
         if not warned:

@@ -11,5 +11,10 @@ export default(props) => {
         return <button type="submit" className="btn btn-success">
             {props.savedText?props.savedText:props.children}
         </button>
+    if (props.hasError)
+        return <button type="submit" className="btn btn-danger">
+            {props.errorText?props.errorText:props.children}
+        </button>
+
     return <button type="submit" className="btn btn-primary">{props.children}</button>
 }

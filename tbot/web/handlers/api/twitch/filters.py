@@ -2,7 +2,82 @@ import logging, good, asyncio
 from ..base import Api_handler, Level, Api_exception
 from tbot import config, utils
 
-class Filters(Api_handler):
+class Filter_base(Api_handler):
+
+    __schema__ = good.Schema({
+        'enabled': good.Boolean(),    
+        good.Optional('name'): good.All(str, good.Length(min=1, max=100)),
+        'exclude_user_level': good.Coerce(int),
+        'warning_enabled': good.Boolean(),
+        'warning_message': good.All(str, good.Length(min=0, max=200)),
+        'warning_expire': good.Coerce(int),
+        'timeout_message': good.All(str, good.Length(min=0, max=200)),
+        'timeout_duration': good.Coerce(int),
+    })
+
+    async def get_filter(self, channel_id, type_, filter_id=None):
+        if filter_id:
+            f = await self.db.fetchone(
+                'SELECT * FROM twitch_filters WHERE channel_id=%s and type=%s and id=%s',
+                (channel_id, type_, filter_id,)
+            )
+        else:
+            f = await self.db.fetchone(
+                'SELECT * FROM twitch_filters WHERE channel_id=%s and type=%s',
+                (channel_id, type_,)
+            )
+        if not f:
+            return
+        self._filter_public(f)
+        return f
+
+    async def get_filters(self, channel_id, type_):
+        fs = await self.db.fetchall(
+            'SELECT * FROM twitch_filters WHERE channel_id=%s and type=%s',
+            (channel_id, type_,)
+        )
+        if not fs:
+            return []
+        for f in fs:
+            self._filter_public(f)
+        return fs
+
+    def _filter_public(self, f):
+        f['enabled'] = f['enabled'] == 'Y'
+        f['warning_enabled'] = f['warning_enabled'] == 'Y'
+        f['grouped'] = f['unique'] != 1
+        del f['unique']
+
+    async def save_filter(self, channel_id, type_, unique, data):
+        if not data: 
+            return
+        fields = ','.join([f for f in data])
+        values = ','.join(['%s' for f in data])
+        dup = ','.join(['{0}=VALUES({0})'.format(f) for f in data])
+
+        if 'enabled' in data:
+            data['enabled'] = 'Y' if data['enabled'] else 'N'
+        if 'warning_enabled' in data:
+            data['warning_enabled'] = 'Y' if data['warning_enabled'] else 'N'
+
+        c = await self.db.execute('''
+            INSERT INTO twitch_filters 
+                (channel_id, type, `unique`, {})
+            VALUES
+                (%s, %s, %s, {})
+            ON DUPLICATE KEY UPDATE 
+                {}
+        '''.format(fields, values, dup), 
+            (
+                channel_id, 
+                type_, 
+                None if not unique else 1, 
+                *data.values()
+            )
+        )
+        return c.lastrowid
+
+class Filters(Filter_base):
 
     @Level(1)
     async def get(self, channel_id):
@@ -12,58 +87,24 @@ class Filters(Api_handler):
         )
         fs = {}
         for f in filters:
-            f['enabled'] = f['enabled'] == 'Y'
-            f['warning_enabled'] = f['warning_enabled'] == 'Y'
-            fs[f['type']] = f
+            self._filter_public(f)
+            if not f['grouped']:
+                fs[f['type']] = f
+            else:
+                a = fs.setdefault(f['type'], {
+                    'grouped': True,
+                    'enabled': False,
+                    'items': [],
+                })
+                a['items'].append(f)
+                if not a['enabled']:
+                    a['enabled'] = f['enabled']
         self.write_object(fs)
 
-__base_schema__ = good.Schema({
-    'enabled': good.Boolean(),
-    'exclude_user_level': good.Coerce(int),
-    'warning_enabled': good.Boolean(),
-    'warning_message': good.All(str, good.Length(min=0, max=200)),
-    'warning_expire': good.Coerce(int),
-    'timeout_message': good.All(str, good.Length(min=0, max=200)),
-    'timeout_duration': good.Coerce(int),
-})
 
-async def get_filter(self, channel_id, type_):
-    f = await self.db.fetchone(
-        'SELECT * FROM twitch_filters WHERE channel_id=%s and type=%s',
-        (channel_id, type_,)
-    )
-    if not f:
-        return
-    f['enabled'] = f['enabled'] == 'Y'
-    f['warning_enabled'] = f['warning_enabled'] == 'Y'
-    return f
-
-async def save_filter(self, channel_id, type_, data):
-    if not data: 
-        return
-    fields = ','.join([f for f in data])
-    values = ','.join(['%s' for f in data])
-    dup = ','.join(['{0}=VALUES({0})'.format(f) for f in data])
-
-    if 'enabled' in data:
-        data['enabled'] = 'Y' if data['enabled'] else 'N'
-    if 'warning_enabled' in data:
-        data['warning_enabled'] = 'Y' if data['warning_enabled'] else 'N'
-
-    await self.db.execute('''
-        INSERT INTO twitch_filters 
-            (channel_id, type, {})
-        VALUES
-            (%s, %s, {})
-        ON DUPLICATE KEY UPDATE 
-            {}
-    '''.format(fields, values, dup), 
-        (channel_id, type_, *data.values())
-    )
-
-class Filter_link(Api_handler):
+class Filter_link(Filter_base):
     
-    __schema__ = good.Schema({
+    __extra_schema__ = good.Schema({
         'whitelist': good.All(
             [good.All(str, good.Length(min=1, max=50))], good.Length(min=0, max=100)),
     })
@@ -75,7 +116,7 @@ class Filter_link(Api_handler):
             (channel_id,)
         )
         r = await asyncio.gather(
-            get_filter(self, channel_id, 'link'),
+            self.get_filter(channel_id, 'link'),
             whitelist, 
         )
         f = r[0]
@@ -92,10 +133,10 @@ class Filter_link(Api_handler):
         extra = {
             'whitelist': self.request.body.pop('whitelist'),
         }
-        data = self.validate(__base_schema__)
-        extra = self._validate(extra, self.__schema__)
+        data = self.validate()
+        extra = self._validate(extra, self.__extra_schema__)
         await asyncio.gather(
-            save_filter(self, channel_id, 'link', data),
+            self.save_filter(channel_id, 'link', True, data),
             self.db.execute('''
                 INSERT INTO twitch_filter_link 
                     (channel_id, whitelist) 
@@ -114,9 +155,9 @@ class Filter_link(Api_handler):
         self.set_status(204)
 
 
-class Filter_paragraph(Api_handler):
+class Filter_paragraph(Filter_base):
     
-    __schema__ = good.Schema({
+    __extra_schema__ = good.Schema({
         'max_length': good.Coerce(int),
     })
 
@@ -127,7 +168,7 @@ class Filter_paragraph(Api_handler):
             (channel_id,)
         )
         r = await asyncio.gather(
-            get_filter(self, channel_id, 'paragraph'),
+            self.get_filter(channel_id, 'paragraph'),
             paragraph, 
         )
         f = r[0]
@@ -141,10 +182,10 @@ class Filter_paragraph(Api_handler):
         extra = {
             'max_length': self.request.body.pop('max_length'),
         }
-        data = self.validate(__base_schema__)
-        extra = self._validate(extra, self.__schema__)
+        data = self.validate()
+        extra = self._validate(extra, self.__extra_schema__)
         await asyncio.gather(
-            save_filter(self, channel_id, 'paragraph', data),
+            self.save_filter(channel_id, 'paragraph', True, data),
             self.db.execute('''
                 INSERT INTO twitch_filter_paragraph
                     (channel_id, max_length) 
@@ -162,9 +203,9 @@ class Filter_paragraph(Api_handler):
         )
         self.set_status(204)
 
-class Filter_symbol(Api_handler):
+class Filter_symbol(Filter_base):
     
-    __schema__ = good.Schema({
+    __extra_schema__ = good.Schema({
         'max_symbols': good.Coerce(int),
     })
 
@@ -175,7 +216,7 @@ class Filter_symbol(Api_handler):
             (channel_id,)
         )
         r = await asyncio.gather(
-            get_filter(self, channel_id, 'symbol'),
+            self.get_filter(channel_id, 'symbol'),
             symbol, 
         )
         f = r[0]
@@ -189,10 +230,10 @@ class Filter_symbol(Api_handler):
         extra = {
             'max_symbols': self.request.body.pop('max_symbols'),
         }
-        data = self.validate(__base_schema__)
-        extra = self._validate(extra, self.__schema__)
+        data = self.validate()
+        extra = self._validate(extra, self.__extra_schema__)
         await asyncio.gather(
-            save_filter(self, channel_id, 'symbol', data),
+            self.save_filter(channel_id, 'symbol', True, data),
             self.db.execute('''
                 INSERT INTO twitch_filter_symbol
                     (channel_id, max_symbols) 
@@ -210,9 +251,9 @@ class Filter_symbol(Api_handler):
         )
         self.set_status(204)
 
-class Filter_caps(Api_handler):
+class Filter_caps(Filter_base):
     
-    __schema__ = good.Schema({
+    __extra_schema__ = good.Schema({
         'min_length': good.Coerce(int),
         'max_percent': good.Coerce(int),
     })
@@ -224,7 +265,7 @@ class Filter_caps(Api_handler):
             (channel_id,)
         )
         r = await asyncio.gather(
-            get_filter(self, channel_id, 'caps'),
+            self.get_filter(channel_id, 'caps'),
             caps, 
         )
         f = r[0]
@@ -239,10 +280,10 @@ class Filter_caps(Api_handler):
             'min_length': self.request.body.pop('min_length'),
             'max_percent': self.request.body.pop('max_percent'),
         }
-        data = self.validate(__base_schema__)
-        extra = self._validate(extra, self.__schema__)
+        data = self.validate()
+        extra = self._validate(extra, self.__extra_schema__)
         await asyncio.gather(
-            save_filter(self, channel_id, 'caps', data),
+            self.save_filter(channel_id, 'caps', True, data),
             self.db.execute('''
                 INSERT INTO twitch_filter_caps
                     (channel_id, min_length, max_percent) 
@@ -261,9 +302,9 @@ class Filter_caps(Api_handler):
         )
         self.set_status(204)
 
-class Filter_emote(Api_handler):
+class Filter_emote(Filter_base):
     
-    __schema__ = good.Schema({
+    __extra_schema__ = good.Schema({
         'max_emotes': good.Coerce(int),
     })
 
@@ -274,7 +315,7 @@ class Filter_emote(Api_handler):
             (channel_id,)
         )
         r = await asyncio.gather(
-            get_filter(self, channel_id, 'emote'),
+            self.get_filter(channel_id, 'emote'),
             emote, 
         )
         f = r[0]
@@ -288,10 +329,10 @@ class Filter_emote(Api_handler):
         extra = {
             'max_emotes': self.request.body.pop('max_emotes'),
         }
-        data = self.validate(__base_schema__)
-        extra = self._validate(extra, self.__schema__)
+        data = self.validate()
+        extra = self._validate(extra, self.__extra_schema__)
         await asyncio.gather(
-            save_filter(self, channel_id, 'emote', data),
+            self.save_filter(channel_id, 'emote', True, data),
             self.db.execute('''
                 INSERT INTO twitch_filter_emote
                     (channel_id, max_emotes) 
@@ -309,9 +350,9 @@ class Filter_emote(Api_handler):
         )
         self.set_status(204)
 
-class Filter_non_latin(Api_handler):
+class Filter_non_latin(Filter_base):
     
-    __schema__ = good.Schema({
+    __extra_schema__ = good.Schema({
         'min_length': good.Coerce(int),
         'max_percent': good.Coerce(int),
     })
@@ -323,7 +364,7 @@ class Filter_non_latin(Api_handler):
             (channel_id,)
         )
         r = await asyncio.gather(
-            get_filter(self, channel_id, 'non-latin'),
+            self.get_filter(channel_id, 'non-latin'),
             non_latin, 
         )
         f = r[0]
@@ -338,10 +379,10 @@ class Filter_non_latin(Api_handler):
             'min_length': self.request.body.pop('min_length'),
             'max_percent': self.request.body.pop('max_percent'),
         }
-        data = self.validate(__base_schema__)
-        extra = self._validate(extra, self.__schema__)
+        data = self.validate()
+        extra = self._validate(extra, self.__extra_schema__)
         await asyncio.gather(
-            save_filter(self, channel_id, 'non-latin', data),
+            self.save_filter(channel_id, 'non-latin', True, data),
             self.db.execute('''
                 INSERT INTO twitch_filter_non_latin
                     (channel_id, min_length, max_percent) 
@@ -361,11 +402,11 @@ class Filter_non_latin(Api_handler):
         self.set_status(204)
 
 
-class Filter_action(Api_handler):
+class Filter_action(Filter_base):
     
     @Level(1)
     async def get(self, channel_id):
-        f = await get_filter(self, channel_id, 'action')
+        f = await self.get_filter(channel_id, 'action')
         if not f:
             self.set_status(204)
             return
@@ -373,8 +414,8 @@ class Filter_action(Api_handler):
 
     @Level(1)
     async def put(self, channel_id):
-        data = self.validate(__base_schema__)
-        await save_filter(self, channel_id, 'action', data)   
+        data = self.validate()
+        await self.save_filter(self, channel_id, 'action', data)   
         r = await self.redis.publish_json(
             'tbot:server:commands', 
             ['reload_filter_action', channel_id]
