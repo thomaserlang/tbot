@@ -158,6 +158,9 @@ body {
   background-color: #26282e;
   color: #fff; }
 
+label {
+  margin-bottom: 0.2rem; }
+
 #main-wrapper {
   display: flex;
   width: 100%;
