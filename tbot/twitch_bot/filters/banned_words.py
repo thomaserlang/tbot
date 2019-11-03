@@ -10,8 +10,13 @@ rules = {}
 async def check(target, message, kwargs):
     if kwargs['room-id'] not in rules:
         return
+
     f = rules[kwargs['room-id']]
+
     for fid in f:
+        excluded = await base.is_excluded(bot, f[fid], kwargs)
+        if excluded:
+            continue
         if check_message(message, f[fid]['banned_words']):
             await base.warn_or_timeout(bot, 'banned_words', target, f[fid], kwargs)
             return True
