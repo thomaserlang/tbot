@@ -28,11 +28,14 @@ async def badge_log(nick, target, message, **kwargs):
         sub = None
         bits = None
         for b in kwargs['badges'].split(','):
+            if b2[0] == 'bits':
+                bits = int(b2[1])
+        for b in kwargs['badges-info'].split(','):
             b2 = b.split('/')
             if b2[0] == 'subscriber':
                 sub = int(b2[1])
-            elif b2[0] == 'bits':
-                bits = int(b2[1])
+            elif b2[0] == 'founder':
+                sub = int(b2[1])
         update = False
         if user_id in badges[channel_id]:
             if badges[channel_id][user_id]['sub'] != sub:
