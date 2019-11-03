@@ -31,7 +31,7 @@ async def badge_log(nick, target, message, **kwargs):
             b2 = b.split('/')
             if b2[0] == 'bits':
                 bits = int(b2[1])
-        for b in kwargs['badges-info'].split(','):
+        for b in kwargs['badge-info'].split(','):
             b2 = b.split('/')
             if b2[0] == 'subscriber':
                 sub = int(b2[1])
