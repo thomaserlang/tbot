@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='tbot',
-    version='0.63',
+    version='0.64',
     author='Thomas Erlang',
     author_email='thomas@erlang.dk',
     url='',
