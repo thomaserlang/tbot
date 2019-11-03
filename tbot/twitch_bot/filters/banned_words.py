@@ -62,7 +62,7 @@ async def load(channel_id=None):
         args.append(channel_id)
     rows = await bot.db.fetchall(sql, args)
     rules_ = rules if channel_id else {}
-    if channel_id:
+    if channel_id and channel_id in rules_:
         del rules_[channel_id]
     for r in rows:
         f = rules_.setdefault(r['channel_id'], {})
