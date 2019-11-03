@@ -26,7 +26,7 @@ class Db():
                 r = await c.fetchone()
                 await c.connection.commit()
                 return r 
-            except pymysql.err.InternalError as e:
+            except (pymysql.err.InternalError, pymysql.err.OperationalError):
                 logging.exception('fetchone')
                 await c.connection.ping()        
                 await c.execute(*args, **kwargs)
@@ -41,7 +41,7 @@ class Db():
                 r = await c.fetchall()
                 await c.connection.commit()
                 return r
-            except pymysql.err.InternalError as e:
+            except (pymysql.err.InternalError, pymysql.err.OperationalError):
                 logging.exception('fetchall')
                 await c.connection.ping()            
                 await c.execute(*args, **kwargs)
@@ -55,7 +55,7 @@ class Db():
                 await c.execute(*args, **kwargs)
                 await c.connection.commit()
                 return c
-            except pymysql.err.InternalError as e:
+            except (pymysql.err.InternalError, pymysql.err.OperationalError):
                 logging.exception('execute')
                 await c.connection.ping()
                 await c.execute(*args, **kwargs)
@@ -68,7 +68,7 @@ class Db():
                 await c.executemany(*args, **kwargs)
                 await c.connection.commit()
                 return c
-            except pymysql.err.InternalError as e:
+            except (pymysql.err.InternalError, pymysql.err.OperationalError):
                 logging.exception('executemany')
                 await c.connection.ping()
                 await c.executemany(*args, **kwargs)
