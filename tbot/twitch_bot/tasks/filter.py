@@ -16,6 +16,7 @@ async def message(nick, target, message, **kwargs):
     )
     for f in filters_:
         try:
-            await f(target, message, kwargs)
+            if await f(target, message, kwargs):
+                return True
         except:
             logging.exception('filter')
