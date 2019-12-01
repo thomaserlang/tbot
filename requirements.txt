@@ -14,4 +14,4 @@ aioredis==1.2.0
 pytest==5.2.1
 good==0.0.8
 yoyo-migrations==6.0.0
-discord==1.0.1
+discord.py==1.2.5
