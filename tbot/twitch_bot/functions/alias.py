@@ -3,7 +3,7 @@ from tbot.twitch_bot.tasks.command import db_command
 import logging
 
 @fills_vars('alias')
-async def alias(var_args, channel, **kwargs):
+async def alias(var_args, **kwargs):
     for cmd in var_args['alias']:
-        await db_command(cmd, '#'+channel, data=kwargs)
+        await db_command(cmd, '#'+kwargs['channel'], data=kwargs)
     raise Send_break()
