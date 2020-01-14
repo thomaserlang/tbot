@@ -4,8 +4,7 @@ from tbot import config
 
 @fills_vars('faceit.username', 'faceit.elo', 'faceit.level', 
     'faceit.next_level_points', 'faceit.next_level')
-async def faceit_elo(bot, channel, args, var_args, **kwargs):
-    logging.info(var_args)
+async def faceit_elo(bot, channel, args, var_args, **kwargs):   
     if not var_args or \
         not 'faceit.username' in var_args or \
         not var_args['faceit.username']:
