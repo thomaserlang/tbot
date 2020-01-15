@@ -64,6 +64,7 @@ config = {
     },
     'openweathermap_apikey': None,
     'faceit_apikey': None,
+    'riot_apikey': None,
 }
 
 def load(path=None):

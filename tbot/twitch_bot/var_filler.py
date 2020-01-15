@@ -1,7 +1,7 @@
 import logging
 import asyncio
 import re
-from tbot import config
+from tbot import config, utils
 
 var_fillers = {}
 
@@ -36,7 +36,7 @@ def parse(s):
     for m in matched:
         b = m.split(' ', 1)
         var = b[0]
-        args = b[1].split(' ') if len(b) > 1 else []
+        args = utils.split(b[1]) if len(b) > 1 else []
         l.append({
             'matched': m,
             'var': var,
