@@ -8,6 +8,7 @@
 <url> <loc>https://docs.botashell.com/vars/followage</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/followage" /> </url>
 <url> <loc>https://docs.botashell.com/vars/game</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/game" /> </url>
 <url> <loc>https://docs.botashell.com/vars/general</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/general" /> </url>
+<url> <loc>https://docs.botashell.com/vars/lol</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/lol" /> </url>
 <url> <loc>https://docs.botashell.com/vars/permit_manager</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/permit_manager" /> </url>
 <url> <loc>https://docs.botashell.com/vars/spotify</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/spotify" /> </url>
 <url> <loc>https://docs.botashell.com/vars/time</loc> <changefreq>hourly</changefreq> <priority>1.0</priority> <xhtml:link rel="alternate" hreflang="en" href="https://docs.botashell.com/vars/time" /> </url>
