@@ -1,5 +1,7 @@
 This website was created with [Docusaurus](https://docusaurus.io/).
 
+USE_SSH=true yarn run publish-gh-pages
+
 # What's In This Document
 
 * [Get Started in 5 Minutes](#get-started-in-5-minutes)
