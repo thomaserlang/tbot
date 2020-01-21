@@ -7,6 +7,7 @@ Example usage:
 
 `@{user}, Rank: {lol.tier} {lol.rank} (LP: {lol.lp}) {lol.summoner "ErlePerle" "euw1"}`
 
+Reponse: `Rank: IRON 4 (LP: 0)`
 
 ## lol.summoner
 
@@ -58,6 +59,7 @@ Number of losses.
 
 Example response: `10`
 
+## Riot notice
 
 BotAsHell isn’t endorsed by Riot Games and doesn’t reflect the views or opinions of Riot Games
 or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are
