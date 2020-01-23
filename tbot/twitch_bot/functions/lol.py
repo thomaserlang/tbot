@@ -70,6 +70,7 @@ async def get_rank(bot, headers, region, encrypted_id, result):
             break
 
 async def get_live(channel_id, bot, headers, region, account_id, result):
+    bot.channels_check[channel_id]['went_live_at'] = datetime.now() - timedelta(hours=12)
     if not bot.channels_check[channel_id]['went_live_at']:
         return
 
@@ -101,6 +102,8 @@ async def count_match(bot, game_id, region, headers, account_id):
             raise Send_error(f'Riot error: {error}')
         match = await r.json()
         team_id = 0
+        if match['gameDuration'] < 60*10:
+            return
         # http://static.developer.riotgames.com/docs/lol/queues.json
         #if match['queueId'] not in [400, 420]:
         #    return
