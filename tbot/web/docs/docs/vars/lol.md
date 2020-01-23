@@ -7,7 +7,7 @@ Example usage:
 
 `@{user}, Rank: {lol.tier} {lol.rank} (LP: {lol.lp}) {lol.summoner "ErlePerle" "euw1"}`
 
-Reponse: `Rank: IRON 4 (LP: 0)`
+Response: `@user, Rank: IRON 4 (LP: 0)`
 
 ## lol.summoner
 
@@ -58,6 +58,20 @@ Number of losses.
 `{lol.losses}`
 
 Example response: `10`
+
+## lol.live_wins
+The number of wins since the stream went live.
+
+`{lol.live_wins}`
+
+Example response: `1`
+
+## lol.live_losses
+The number of losses since the stream went live.
+
+`{lol.live_losses}`
+
+Example response: `5`
 
 ## Riot notice
 
