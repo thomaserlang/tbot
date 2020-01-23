@@ -70,7 +70,6 @@ async def get_rank(bot, headers, region, encrypted_id, result):
             break
 
 async def get_live(channel_id, bot, headers, region, account_id, result):
-    logging.info(bot.channels_check[channel_id]['went_live_at'])
     if not bot.channels_check[channel_id]['went_live_at']:
         return
 
