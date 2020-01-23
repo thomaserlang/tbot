@@ -62,11 +62,11 @@ async def get_rank(bot, headers, region, encrypted_id, result):
 
     for a in d:
         if a['queueType'] == 'RANKED_SOLO_5x5':
-            r['lol.wins'] = a['wins']
-            r['lol.losses'] = a['losses']
-            r['lol.rank'] = a['rank']
-            r['lol.tier'] = a['tier']            
-            r['lol.lp'] = a['leaguePoints']
+            result['lol.wins'] = a['wins']
+            result['lol.losses'] = a['losses']
+            result['lol.rank'] = a['rank']
+            result['lol.tier'] = a['tier']            
+            result['lol.lp'] = a['leaguePoints']
             break
 
 async def get_live(channel_id, bot, headers, region, account_id, result):
