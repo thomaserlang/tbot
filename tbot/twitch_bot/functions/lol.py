@@ -70,7 +70,6 @@ async def get_rank(bot, headers, region, encrypted_id, result):
             break
 
 async def get_live(channel_id, bot, headers, region, account_id, result):
-    bot.channels_check[channel_id]['went_live_at'] = datetime.now() - timedelta(hours=12)
     if not bot.channels_check[channel_id]['went_live_at']:
         return
 
