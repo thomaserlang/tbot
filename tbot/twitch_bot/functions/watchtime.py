@@ -30,5 +30,27 @@ async def stream_watchtime(bot, channel_id, user_id, args, **kwargs):
 
     return {
         'user.stream_watchtime': utils.seconds_to_pretty(usertime),
-        'user.stream_watchtime_percent': '{:.0%}'.format(p)
+        'user.stream_watchtime_percent': '{:.0%}'.format(p),
+    }
+
+
+@fills_vars('user.channel_watchtime', 'user.channel_watchtime_since')
+async def channel_watchtime(bot, channel_id, user_id, args, **kwargs):
+    if len(args) > 0:
+        user_id = await utils.twitch_lookup_user_id(bot.ahttp, bot.db, utils.safe_username(args[0]))
+
+    r = await bot.db.fetchone('''
+        SELECT sum(tw.time) as time, min(ts.started_at) as date FROM 
+        twitch_stream_watchtime tw, twitch_streams ts 
+        WHERE tw.channel_id=%s AND tw.user_id=%s AND tw.stream_id=ts.stream_id
+        ''',
+        (
+            channel_id,
+            user_id,
+        )
+    )
+
+    return {
+        'user.channel_watchtime': utils.seconds_to_pretty(r['time'] if r else 0),
+        'user.channel_watchtime_since': r['date'].strftime('%Y-%m-%d') if r else 'Unknown',
     }
