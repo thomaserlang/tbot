@@ -2,6 +2,7 @@ import os, yaml
 
 config = {
     'debug': False,
+    'sentry_dsn': None,
     'web': {
         'port': 8001,
         'cookie_secret': '',

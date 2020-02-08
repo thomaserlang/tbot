@@ -14,7 +14,7 @@ def cli(config, log_path, log_level):
 
 @cli.command()
 def twitch_bot():
-    logger.set_logger('twitch_bot.log')
+    logger.set_logger('twitch_bot.log', sentry_dsn=config['sentry_dsn'])
     from tbot.twitch_bot import bot_main, modlog
 
     loop = asyncio.get_event_loop()
@@ -25,19 +25,19 @@ def twitch_bot():
 
 @cli.command()
 def web():
-    logger.set_logger('web.log')
+    logger.set_logger('web.log', sentry_dsn=config['sentry_dsn'])
     import tbot.web.app
     tbot.web.app.main() 
 
 @cli.command()
 def discord():
-    logger.set_logger('discord.log')
+    logger.set_logger('discord.log', sentry_dsn=config['sentry_dsn'])
     import tbot.discord_bot.bot_main
     tbot.discord_bot.bot_main.main() 
 
 @cli.command()
 def upgrade():
-    logger.set_logger('', fmt='%(message)s')
+    logger.set_logger('', fmt='%(message)s', sentry_dsn=config['sentry_dsn'])
     from yoyo import read_migrations
     from yoyo import get_backend
 

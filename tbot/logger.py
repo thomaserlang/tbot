@@ -1,12 +1,11 @@
-import logging
-import logging.handlers
-import os
+import logging, logging.handlers, os
+import sentry_sdk
 from tbot import config
 
 class logger(object):
 
     @classmethod
-    def set_logger(cls, filename, to_sentry=False, fmt='[%(levelname)s %(asctime)s.%(msecs)d %(module)s:%(lineno)d]: %(message)s'):
+    def set_logger(cls, filename, sentry_dsn=None, fmt='[%(levelname)s %(asctime)s.%(msecs)d %(module)s:%(lineno)d]: %(message)s'):
         logger = logging.getLogger()
         logger.setLevel(getattr(logging, config['logging']['level'].upper()))
         #logger.handlers = []
@@ -26,3 +25,6 @@ class logger(object):
             channel = logging.StreamHandler()
             channel.setFormatter(format_)
             logger.addHandler(channel)
+
+        if sentry_dsn:
+            sentry_sdk.init(sentry_dsn)
