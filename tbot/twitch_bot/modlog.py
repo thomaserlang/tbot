@@ -96,9 +96,9 @@ class Pubsub():
                     try:
                         message = await self.ws.recv()
                         await self.parse_message(json.loads(message))
-                    except websockets.exceptions.ConnectionClosed:
-                        logging.info('PubSub connection closed')
+                    except websockets.exceptions.ConnectionClosed as e:
                         self.ping_callback.cancel()
+                        logging.error(f'PubSub connection closed: {e.response}')
                         break
                     except KeyboardInterrupt:
                         raise KeyboardInterrupt()
