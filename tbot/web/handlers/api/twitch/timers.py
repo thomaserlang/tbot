@@ -66,7 +66,6 @@ class Collection_handler(Api_handler):
         fields = ','.join(['`'+f+'`' for f in data])
         values = ','.join(['%s' for f in data])
         interval = data.get('interval', 5)
-        logging.info('INSERT INTO twitch_timers ({}) VALUES ({})'.format(fields, values))
         r = await self.db.execute(
             'INSERT INTO twitch_timers ({}) VALUES ({})'.format(fields, values), 
             list(data.values())

@@ -280,7 +280,7 @@ async def send_discord_live_notification(channel_id):
         'url': 'https://twitch.tv/{}'.format(bot.channels[channel_id]['name']),
     }
     for w in webhooks:
-        if not w['message']:
+        if not w['message'] or not w['webhook_url']:
             continue
         m = w['message']
         for k in d:

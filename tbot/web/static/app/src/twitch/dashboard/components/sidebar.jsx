@@ -21,7 +21,7 @@ class Sidebar extends React.Component {
     }
 
     renderConnect() {
-        if (managedUser.level < 4)
+        if (managedUser.level < 3)
             return null
         return <span> 
             <div className="title">CONNECT</div>

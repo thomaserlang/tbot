@@ -54,6 +54,7 @@ def App():
             
             (r'/api/twitch/channels/([0-9]+)/spotify', handlers.api.twitch.connect_spotify.Handler),
             (r'/api/twitch/channels/([0-9]+)/discord', handlers.api.twitch.connect_discord.Handler),
+            (r'/api/twitch/channels/([0-9]+)/discord-live-notification', handlers.api.twitch.discord_live_notification.Handler),
             
             (r'/api/twitch/channels/([0-9]+)/check-extra-auth', handlers.api.twitch.check_extra_auth.Handler),
 
