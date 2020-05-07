@@ -1,5 +1,5 @@
 ---
-id: lol
+id: tft
 title: Teamfight Tactics
 ---
 
