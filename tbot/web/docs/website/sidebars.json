@@ -17,7 +17,8 @@
         "vars/user_queue",
         "vars/weather",
         "vars/faceit",
-        "vars/lol"
+        "vars/lol",
+        "vars/tft"
     ]
   }
 }

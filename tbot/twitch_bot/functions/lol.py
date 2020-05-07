@@ -13,7 +13,7 @@ async def lol(bot, channel, channel_id, args, var_args, **kwargs):
 
 
     headers = {
-        'X-Riot-Token': config['riot_apikey'],
+        'X-Riot-Token': config['lol_apikey'],
     }
 
     summoner = var_args['lol.summoner'][0]
@@ -65,7 +65,7 @@ async def get_rank(bot, headers, region, encrypted_id, result):
             result['lol.wins'] = a['wins']
             result['lol.losses'] = a['losses']
             result['lol.rank'] = a['rank']
-            result['lol.tier'] = a['tier']            
+            result['lol.tier'] = a['tier'].title()
             result['lol.lp'] = a['leaguePoints']
             break
 
