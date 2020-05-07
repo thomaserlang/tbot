@@ -85,8 +85,8 @@ async def connect(**kwargs):
         config['twitch']['irc_port'],
         bot.user['login'],
     ))
-    if config['twitch']['token']:
-        bot.send('PASS', password='oauth:{}'.format(config['twitch']['token']))
+    if config['twitch']['chat_token']:
+        bot.send('PASS', password='oauth:{}'.format(config['twitch']['chat_token']))
     bot.send('NICK', nick=bot.user['login'])
     bot.send('USER', user=bot.user['login'], realname=bot.user['login'])
 

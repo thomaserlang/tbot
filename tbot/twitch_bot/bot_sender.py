@@ -20,8 +20,8 @@ def setup(bot):
 
     @bot_sender.on('CLIENT_CONNECT')
     async def connect(**kwargs):
-        if config['twitch']['token']:
-            bot_sender.send('PASS', password='oauth:{}'.format(config['twitch']['token']))
+        if config['twitch']['chat_token']:
+            bot_sender.send('PASS', password='oauth:{}'.format(config['twitch']['chat_token']))
         bot_sender.send('NICK', nick=bot.user['login'])
         bot_sender.send('USER', user=bot.user['login'], realname=bot.user['login'])
 

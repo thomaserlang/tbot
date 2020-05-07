@@ -6,7 +6,7 @@ class Pubsub():
 
     def __init__(self):
         self.url = config['twitch']['pubsub_url']
-        self.token = config['twitch']['token']
+        self.token = config['twitch']['chat_token']
         self.ping_callback = None
         self.pong_check_callback = None
         self.ws = None

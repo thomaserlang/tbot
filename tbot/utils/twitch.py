@@ -3,6 +3,8 @@ import datetime, time, asyncio, re
 from tbot import config
 from .base import chunks
 
+twitch_app_token = None
+
 class Twitch_request_error(Exception):
 
     def __init__(self, message, status_code):
@@ -10,10 +12,11 @@ class Twitch_request_error(Exception):
         self.message = message
         super().__init__(message)
 
+
 async def twitch_request(ahttp, url, params=None, headers={}, 
     method='GET', data=None, json=None, token=None):
     if not token:
-        token = config['twitch']['token']
+        token = await twitch_get_app_token(ahttp)
     if '/kraken/' in url:
         headers.update({
             'Client-ID': config['twitch']['client_id'],
@@ -26,6 +29,7 @@ async def twitch_request(ahttp, url, params=None, headers={},
             })
     else:
         headers.update({
+            'Client-ID': config['twitch']['client_id'],
             'Authorization': 'Bearer {}'.format(token)
         })
     async with ahttp.request(method, url, params=params, 
@@ -38,10 +42,34 @@ async def twitch_request(ahttp, url, params=None, headers={},
         if r.status >= 400:
             error = await r.text()
             raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
+        if r.status == 401:
+            reset_app_token()
+            return await twitch_request(ahttp, url, params, headers, method, data, json)
         if 'Content-Type' in r.headers:
             if 'application/json' in r.headers['Content-Type']:
                 return await r.json()
         return await r.text()
+
+async def twitch_get_app_token(ahttp):
+    global twitch_app_token
+    if twitch_app_token:
+        return twitch_app_token
+    params = {
+        'client_id': config['twitch']['client_id'],
+        'client_secret': config['twitch']['client_secret'],
+        'grant_type': 'client_credentials',
+    }
+    async with ahttp.request('POST', 'https://id.twitch.tv/oauth2/token', params=params) as r:
+        if r.status >= 400:
+            error = await r.text()
+            raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
+        d = await r.json()
+        twitch_app_token = d['access_token']
+        return d['access_token']
+
+async def reset_app_token(ahttp):
+    global twitch_app_token
+    twitch_app_token = None
 
 async def twitch_channel_token_request(bot, channel_id, url, method='GET', 
     params=None, headers={}, data=None, json=None):
@@ -190,8 +218,12 @@ async def twitch_lookup_from_user_id(ahttp, db, userids):
         ''', users_to_save)
     return users
 
-async def twitch_current_user(ahttp):
-    data = await twitch_request(ahttp, 'https://api.twitch.tv/helix/users')
+async def twitch_current_user(ahttp, token=None):
+    data = await twitch_request(
+        ahttp, 
+        f'https://api.twitch.tv/helix/users?login={config["twitch"]["username"]}', 
+        token=token,
+    )
     return data['data'][0]
 
 def twitch_remove_emotes(message, emotes):

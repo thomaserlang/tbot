@@ -10,7 +10,8 @@ config = {
         'base_url': 'https://botashell.com'
     },
     'twitch': {
-        'token': '',
+        'username': '',
+        'chat_token': '',
         'client_id': '',
         'client_secret': '',
         'irc_host': 'irc.chat.twitch.tv',
@@ -66,6 +67,7 @@ config = {
     'openweathermap_apikey': None,
     'faceit_apikey': None,
     'riot_apikey': None,
+    'tft_apikey': None,
 }
 
 def load(path=None):
@@ -96,5 +98,3 @@ def load(path=None):
                 config[key].update(data[key])
             else:
                 config[key] = data[key]
-    if config['twitch']['token']:
-        config['twitch']['token'] = config['twitch']['token'].replace('oauth:', '')
