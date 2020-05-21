@@ -25,11 +25,15 @@ steps = [
     '''),
 
     step('''
+      DROP TRIGGER IF EXISTS `twitch_quotes_BEFORE_INSERT`;
+    '''),
+
+    step('''
         CREATE DEFINER = CURRENT_USER TRIGGER `twitch_quotes_BEFORE_INSERT` BEFORE INSERT ON `twitch_quotes` FOR EACH ROW
         BEGIN
             declare n int;
             set n = (select ifnull(max(number), 0)+1 from twitch_quotes where channel_id=new.channel_id);
             set new.number = n;
         END
-    ''')
+    '''),
 ]

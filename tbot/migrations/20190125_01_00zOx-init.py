@@ -241,6 +241,7 @@ steps = [
         ENGINE = InnoDB
         DEFAULT CHARACTER SET = utf8mb4;
     '''),
+    step('DROP TRIGGER IF EXISTS `twitch_chatlog_AFTER_INSERT`;'),
     step('''
         CREATE
         TRIGGER `twitch_chatlog_AFTER_INSERT`
@@ -260,6 +261,7 @@ steps = [
             END CASE;
         END
     '''),
+    step('DROP TRIGGER IF EXISTS `twitch_stream_watchtime_AFTER_INSERT`;'),
     step('''
         CREATE
         TRIGGER `twitch_stream_watchtime_AFTER_INSERT`
@@ -280,6 +282,7 @@ steps = [
                 last_viewed_stream_date=date(now());
         END
     '''),
+    step('DROP TRIGGER IF EXISTS `twitch_user_stats_BEFORE_UPDATE`;'),
     step('''
         CREATE
         TRIGGER `twitch_user_stats_BEFORE_UPDATE`
@@ -291,5 +294,5 @@ steps = [
                 set new.streams_row_peak_date = date(now());
             end if;
         END
-    ''')
+    '''),
 ]
