@@ -1,4 +1,6 @@
 """
+yoyo new ./migrations -m "message" -b
+
 Init
 """
 
