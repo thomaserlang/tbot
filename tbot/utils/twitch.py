@@ -39,12 +39,12 @@ async def twitch_request(ahttp, url, params=None, headers={},
             if w > 0:
                 await asyncio.sleep(w)
             return await twitch_request(ahttp, url, params, headers, method, data, json)
-        if r.status >= 400:
-            error = await r.text()
-            raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
         if r.status == 401:
             reset_app_token()
             return await twitch_request(ahttp, url, params, headers, method, data, json)
+        if r.status >= 400:
+            error = await r.text()
+            raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
         if 'Content-Type' in r.headers:
             if 'application/json' in r.headers['Content-Type']:
                 return await r.json()
@@ -67,7 +67,7 @@ async def twitch_get_app_token(ahttp):
         twitch_app_token = d['access_token']
         return d['access_token']
 
-async def reset_app_token(ahttp):
+async def reset_app_token():
     global twitch_app_token
     twitch_app_token = None
 
