@@ -17,7 +17,7 @@ async def ban_manager(bot, message, args, **kwargs):
         raise Send('Done.')
     except Forbidden:
         raise Send_error(
-            'I\'m missing permission `ban_members`'
+            'I do not have permission to do that',
         )
 
 @fills_vars('unban_manager')
@@ -34,14 +34,14 @@ async def unban_manager(bot, message, args, **kwargs):
         raise Send('Done.')
     except Forbidden:
         raise Send_error(
-            'I\'m missing permission `ban_members`'
+            'I do not have permission to do that',
         )
 
 def get_user_ids(args):
     ids = []
     for a in args:
         if a.startswith('<@') and a.endswith('>'):
-            ids.append(a.strip('<@>'))
+            ids.append(a.strip('<!@>'))
     return ids
 
 def get_reason(args):
