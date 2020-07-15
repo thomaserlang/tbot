@@ -67,10 +67,7 @@ async def quote_delete(bot, channel_id, cmd, args, **kwargs):
 
 @fills_vars('quote.message', 'quote.number', 'quote.user', 'quote.date')
 async def quote_get(bot, args, channel_id, cmd, **kwargs):
-    if len(args) == 0:
-        raise Send_error(f'Syntax error, use !{cmd} <number> or !{cmd} random')
-
-    if args[0].lower() == 'random':
+    if (args[0].lower() == 'random') or (len(args) == 0):
         r = await bot.db.fetchone('SELECT * FROM twitch_quotes WHERE channel_id=%s and enabled=1 ORDER BY RAND()',
             (channel_id,))
     else:
