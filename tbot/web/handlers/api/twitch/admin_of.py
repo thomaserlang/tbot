@@ -2,6 +2,7 @@ import logging, good, json
 from tornado import httpclient, escape
 from ..base import Api_handler, Level, Api_exception
 from tbot import config
+from tbot.utils.twitch import twitch_request
 
 class Handler(Api_handler):
 
@@ -71,16 +72,10 @@ class Channel_admins(Api_handler):
     async def post(self, channel_id):
         data = self.validate()
 
-        http = httpclient.AsyncHTTPClient()
-        response = await http.fetch('https://api.twitch.tv/helix/users?login={}'.format(data['user']), headers={
-            'Client-ID': config['twitch']['client_id'],
+        url = 'https://api.twitch.tv/helix/users'
+        users = await twitch_request(self.ahttp, url, {
+            'login': data['user'],
         })
-
-        if response.code != 200:
-            logging.error(escape.native_str(response.body))
-            raise Api_exception(500, 'Failed to retrieve the user from Twitch')
-
-        users = json.loads(escape.native_str(response.body))
         if not users['data']:
             raise Api_exception(400, 'User does not exist on Twitch')
         user = users['data'][0]
