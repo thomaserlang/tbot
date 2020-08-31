@@ -1,8 +1,8 @@
 import logging
 from dateutil import parser
 from tbot import config, utils
-from tbot.twitch_bot.bot_main import bot
-from tbot.twitch_bot.var_filler import fill_from_dict
+from ..bot_main import bot
+from ..var_filler import fill_from_dict
 from .badge_log import badge_log
 
 sub_mystery_gift = {}
@@ -19,7 +19,7 @@ async def usernotice(**kwargs):
     alert = None
     if kwargs['msg-id'] not in ('sub', 'resub', 'subgift', 
         'anonsubgift', 'giftpaidupgrade', 'submysterygift',
-        'anonsubmysterygift'):
+        'anonsubmysterygift', 'extendsub'):
         return
 
 

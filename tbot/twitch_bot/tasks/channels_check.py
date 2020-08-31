@@ -15,7 +15,7 @@ bot.channels_check[channel_id] = {
     'stream_id': id of the stream id when first detected as live,
     'went_live_at': datetime,
     'went_offline_at_delay': datetime, used by the delay offline
-    'users': list({'id': int, 'user': str}) chatters,
+    'users': list({'id': str, 'user': str}) chatters,
     'last_check': datetime,
     'uptime': int of seconds, 
 }
@@ -78,8 +78,8 @@ async def channel_check(channel_id, prev_channel_check):
         return
     if bot.channels_check[channel_id]['went_offline_at_delay']:
         return
+    await set_chatters(channel_id)
     if is_live:
-        await set_chatters(channel_id)
         inc_time = time_since_last_check = int(
             (now - (
                 prev_channel_check['last_check'] or 
