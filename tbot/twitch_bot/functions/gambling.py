@@ -37,12 +37,15 @@ async def roulette(bot, channel_id, cmd, user, user_id, display_name, args, **kw
             msg = fill_from_dict(data['allin_win_message'], d)
         else:
             msg = fill_from_dict(data['win_message'], d)
+        await update_stats(channel_id, user_id, 'roulette_wins', 1)
+
     else:        
         d['points'] = await add_user_points(channel_id, user_id, user, -bet)
         if bet == data['points']:
             msg = fill_from_dict(data['allin_lose_message'], d)
         else:
             msg = fill_from_dict(data['lose_message'], d)
+        await update_stats(channel_id, user_id, 'roulette_loses', 1)
 
     return {
         'gamble_roulette': msg,
@@ -98,12 +101,14 @@ async def slots(bot, channel_id, cmd, user, user_id, display_name, args, **kwarg
             msg = fill_from_dict(data['allin_win_message'], d)
         else:
             msg = fill_from_dict(data['win_message'], d)
+        await update_stats(channel_id, user_id, 'slots_wins', 1)
     else:        
         d['points'] = await add_user_points(channel_id, user_id, user, -bet)
         if bet == data['points']:
             msg = fill_from_dict(data['allin_lose_message'], d)
         else:
             msg = fill_from_dict(data['lose_message'], d)
+        await update_stats(channel_id, user_id, 'slots_loses', 1)
 
     return {
         'gamble_slots': msg,
@@ -252,6 +257,63 @@ async def cmd_ranking(bot, channel_id, **kwargs):
         )
     }
 
+
+@fills_vars(
+    'gambling_stats.slots_wins',
+    'gambling_stats.slots_loses',
+    'gambling_stats.slots_total_games',
+    'gambling_stats.slots_win_percent',
+    'gambling_stats.roulette_wins',
+    'gambling_stats.roulette_loses',
+    'gambling_stats.roulette_total_games',
+    'gambling_stats.roulette_win_percent',
+)
+async def gambling_stats(bot, channel_id, cmd, user, user_id, display_name, args, **kwargs):
+    user = display_name
+    if len(args) > 0:
+        user = utils.safe_username(args[0])
+        uid = await utils.twitch_lookup_user_id(bot.ahttp, bot.db, user)
+        if not uid:
+            user = display_name
+        else:
+            user_id = uid 
+    data = await bot.db.fetchone('''
+        SELECT * FROM twitch_gambling_stats
+        WHERE channel_id=%s and user_id=%s
+    ''', (channel_id, user_id,))
+
+    r = {
+        'gambling_stats.slots_wins': 0,
+        'gambling_stats.slots_loses': 0,
+        'gambling_stats.slots_total_games': 0,
+        'gambling_stats.slots_win_percent': '0%',
+        'gambling_stats.roulette_wins': 0,
+        'gambling_stats.roulette_loses': 0,
+        'gambling_stats.roulette_total_games': 0,
+        'gambling_stats.roulette_win_percent': '0%',
+    }
+
+    if not data:
+        return r
+
+    slots_total = data['slots_wins']+data['slots_loses']
+    slots_win_percent = '{:.1%}'.format((slots_total/data['slots_wins'])*100) \
+        if data['slots_wins'] > 0 else '0%'
+    r['gambling_stats.slots_wins'] = data['slots_wins']
+    r['gambling_stats.slots_loses'] = data['slots_loses']
+    r['gambling_stats.slots_total_games'] = slots_total
+    r['gambling_stats.slots_win_percent'] = slots_win_percent
+
+    roulette_total = data['roulette_wins']+data['roulette_loses']
+    roulette_win_percent = '{:.1%}'.format((roulette_total/data['roulette_wins'])*100) \
+        if data['roulette_wins'] > 0 else '0%'
+    r['gambling_stats.roulette_wins'] = data['roulette_wins']
+    r['gambling_stats.roulette_loses'] = data['roulette_loses']
+    r['gambling_stats.roulette_total_games'] = roulette_total
+    r['gambling_stats.roulette_win_percent'] = roulette_win_percent
+
+    return r
+
 def get_bet(args, data):
     if not args:
         bet = data['min_bet']
@@ -282,3 +344,17 @@ def str_bet_to_int(str_bet, points):
         p = int(str_bet.strip('%'))
         return int((points / 100) * p)
     return int(str_bet)
+
+async def update_stats(channel_id, user_id, field, value):
+    r = await bot.db.execute(f'''
+        UPDATE twitch_gambling_stats SET {field}={field}+%s
+        WHERE channel_id=%s AND user_id=%s
+    ''',
+        (value, channel_id, user_id,)
+    )
+
+    if r.rowcount == 0:
+        await bot.db.execute(f'''
+            INSERT INTO twitch_gambling_stats (channel_id, user_id, {field})
+            VALUES (%s, %s, %s)
+        ''', (channel_id, user_id, value,))
