@@ -25,6 +25,9 @@ import Filter_banned_words from './filter_banned_words'
 import Timers from './timers'
 import Timer from './timer'
 import ChatAlerts from './chat_alerts'
+import PointsSettings from './points_settings'
+import GamblingSlotsSettings from './gambling_slots_settings'
+import GamblingRouletteSettings from './gambling_roulette_settings'
 
 class Main extends React.Component {
 
@@ -67,6 +70,9 @@ class Main extends React.Component {
                     <Route exact path='/twitch/:channel/timers/edit/:id' component={Timer}/>
                     <Route exact path='/twitch/:channel/timers/new' component={Timer}/>
                     <Route exact path='/twitch/:channel/chat-alerts' component={ChatAlerts}/>
+                    <Route exact path='/twitch/:channel/points-settings' component={PointsSettings} />
+                    <Route exact path='/twitch/:channel/gambling-slots-settings' component={GamblingSlotsSettings} />
+                    <Route exact path='/twitch/:channel/gambling-roulette-settings' component={GamblingRouletteSettings} />
                 </div>
             </div>
         </div>

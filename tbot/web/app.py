@@ -52,6 +52,10 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/timers/([0-9]+)', handlers.api.twitch.timers.Handler),
             (r'/api/twitch/channels/([0-9]+)/chat-alerts', handlers.api.twitch.chat_alerts.Handler),
             
+            (r'/api/twitch/channels/([0-9]+)/points-settings', handlers.api.twitch.gambling.Points_settings_handler),
+            (r'/api/twitch/channels/([0-9]+)/gambling-slots-settings', handlers.api.twitch.gambling.Slots_handler),
+            (r'/api/twitch/channels/([0-9]+)/gambling-roulette-settings', handlers.api.twitch.gambling.Roulette_handler),
+            
             (r'/api/twitch/channels/([0-9]+)/spotify', handlers.api.twitch.connect_spotify.Handler),
             (r'/api/twitch/channels/([0-9]+)/discord', handlers.api.twitch.connect_discord.Handler),
             (r'/api/twitch/channels/([0-9]+)/discord-live-notification', handlers.api.twitch.discord_live_notification.Handler),

@@ -28,7 +28,19 @@ class Sidebar extends React.Component {
             <NavLink to={`/twitch/${managedUser.name}/spotify`} activeClassName="active">Spotify</NavLink> 
             <NavLink to={`/twitch/${managedUser.name}/discord`} activeClassName="active">Discord</NavLink> 
         </span>
+    }    
+
+    renderPoints() {
+        if (managedUser.level < 3)
+            return null
+        return <span> 
+            <div className="title">GAMBLING</div>
+            <NavLink to={`/twitch/${managedUser.name}/points-settings`} activeClassName="active">Points Settings</NavLink> 
+            <NavLink to={`/twitch/${managedUser.name}/gambling-slots-settings`} activeClassName="active">Slots Settings</NavLink> 
+            <NavLink to={`/twitch/${managedUser.name}/gambling-roulette-settings`} activeClassName="active">Roulette Settings</NavLink> 
+        </span>
     }
+
 
     render() {
         return (
@@ -59,6 +71,8 @@ class Sidebar extends React.Component {
                     {managedUser.level >= 3 ?
                         <NavLink to={`/twitch/${managedUser.name}/admins`} activeClassName="active">Admins</NavLink>
                     : null }
+
+                    {this.renderPoints()}
 
                     {this.renderConnect()}
 
