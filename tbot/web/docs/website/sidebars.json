@@ -18,7 +18,9 @@
         "vars/weather",
         "vars/faceit",
         "vars/lol",
-        "vars/tft"
+        "vars/tft",
+        "vars/points",
+        "vars/gambling"
     ]
   }
 }
