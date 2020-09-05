@@ -88,7 +88,6 @@ class ChatAlerts extends React.Component {
 
     getAlerts() {
         api.get(`/api/twitch/channels/${managedUser.id}/chat-alerts`).then(r => {
-            console.log(r.data)
             this.setState({alerts: r.data, loading: false})
         })
     }
