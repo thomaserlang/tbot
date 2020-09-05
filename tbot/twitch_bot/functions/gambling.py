@@ -70,8 +70,17 @@ async def slots(bot, channel_id, cmd, user, user_id, display_name, args, **kwarg
     bet = get_bet(args, data)
 
     emotes = json.loads(data['emotes'])
-    if data['emote_pool_size'] < len(data['emotes']):
-        emotes = [random.choice(emotes) for i in range(data['emote_pool_size'])]
+
+    if data['emote_pool_size'] > len(emotes):
+        raise Send_error('Too few emotes has been added')
+
+    if data['emote_pool_size'] < len(emotes):
+        t = []
+        for i in range(data['emote_pool_size']):
+            e = random.choice(emotes)
+            emotes.remove(e)
+            t.append(e)
+        emotes = t
 
     got = [random.choice(emotes) for i in range(3)]
     d = {
