@@ -20,6 +20,7 @@ class Command extends React.Component {
                 mod_cooldown: 0,
                 enabled: 1,
                 public: 1,
+                group_name: '',
             },
             templates: [],
             loading: true,
@@ -137,12 +138,28 @@ class Command extends React.Component {
     renderTemplates() {
         if (this.state.templates.length === 0)
             return null
+        let groups = []
+        for (let cmd of this.state.templates) {
+            if (!groups.includes(cmd.group_name))
+                groups.push(cmd.group_name)
+        }
+        let i = 0
         return <div className="mb-4">
             <label>Templates</label>
             <select className="form-control" onChange={this.handleTemplate}>
                 <option value=""></option>
-                {this.state.templates.map(temp =>
-                    <option key={temp.cmd} value={temp.cmd}>{temp.title}</option>
+                {groups.map(group => {
+                    i++;
+                    return <optgroup key={'group'+i} label={group}>
+                        {this.state.templates.map(temp => {                            
+                            if (temp.group_name != group)
+                                return null
+                            return <option key={temp.cmd} value={temp.cmd}>
+                                {temp.title}
+                            </option>
+                        })}                        
+                    </optgroup>
+                    }
                 )}
             </select>
         </div>
@@ -220,6 +237,17 @@ class Command extends React.Component {
                         <option value="1">{enabledWhenName(1)}</option>
                         <option value="2">{enabledWhenName(2)}</option>
                     </select>
+                </div>
+                <div className="form-group col-md-4">
+                    <label htmlFor="group_name" title="Used to group the commands on the public commands page">Group</label>
+                    <input 
+                        id="group_name" 
+                        type="text" 
+                        className="form-control" 
+                        name="group_name" 
+                        value={this.state.cmd.group_name}
+                        onChange={this.handleEvent}
+                    />
                 </div>
             </div>
 

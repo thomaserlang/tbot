@@ -33,7 +33,7 @@ class Commands extends React.Component {
                 return ''
                 break;
             case 1:
-                return 'Subscribers'
+                return 'Subs'
                 break;
             case 2:
                 return 'VIPs'
@@ -53,33 +53,35 @@ class Commands extends React.Component {
     render() {
         if (this.state.loading)
             return <Loading />
-        let userLevels = []
+        let groups = []
         for (let cmd of this.state.commands) {
-            if (!userLevels.includes(cmd.user_level))
-                userLevels.push(cmd.user_level)
+            if (!groups.includes(cmd.group_name))
+                groups.push(cmd.group_name)
         }
+        let i = 0
         return  <div> 
             <div className="header mt-4">
                 <h1 style={{fontSize:'26px'}}>{managedUser.name} - Commands</h1>
             </div>
-
-            {userLevels.map(level => 
-                <div key={'level'+level} className="mt-4">
-                    <h4>{this.userLevelName(level)}</h4>
+            {groups.map(group => {
+                i++
+                return <div key={'group'+i} className="mt-4">
+                    <h4>{group}</h4>
                     <table className="table table-dark">
                         <tbody>
                             {this.state.commands.map(cmd => {
-                                if (cmd.user_level != level)
+                                if (cmd.group_name != group)
                                     return null
                                 return <tr key={cmd.id}>
                                     <td width="200px">!{cmd.cmd}</td>
                                     <td>{cmd.response}</td>
+                                    <td style={{'textAlign': 'right'}}>{this.userLevelName(cmd.user_level)}</td>
                                 </tr>
                             })}
                         </tbody>
                     </table>
                 </div>
-            )}
+            })}
         </div>
     }
 }

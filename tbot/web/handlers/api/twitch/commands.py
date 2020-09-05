@@ -31,6 +31,7 @@ _schema = {
     good.Optional('mod_cooldown'): good.All(good.Coerce(int), good.Range(min=0, max=86400)),
     good.Optional('enabled'): good.All(good.Coerce(int), good.Range(min=0, max=1)),
     good.Optional('public'): good.All(good.Coerce(int), good.Range(min=0, max=1)),
+    good.Optional('group_name'): good.All(good.Coerce(str), good.Length(min=0, max=50)),
 }
 
 class Collection_handler(Api_handler):
@@ -114,7 +115,7 @@ class Public_collection(Api_handler):
             SELECT *
             FROM twitch_commands
             WHERE channel_id=%s AND public=1
-            ORDER BY user_level ASC, cmd ASC
+            ORDER BY user_level, group_name, cmd
         ''', (channel_id,))
         self.write_object(cmds)
 
@@ -125,6 +126,6 @@ class Template_collection(Api_handler):
             SELECT * 
             FROM twitch_commands 
             WHERE channel_id=0 
-            ORDER BY title ASC
+            ORDER BY group_name, title
         ''')
         self.write_object(cmds)
