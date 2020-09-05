@@ -7,7 +7,7 @@ title: Gambling
 
 Used to activate the slots game.
 
-`{gambling_slots}`
+`{gamble_slots}`
 
 Returns the defined win/lose message.
 
@@ -15,6 +15,6 @@ Returns the defined win/lose message.
 
 Used to activate the roulette game.
 
-`{gambling_roulette}`
+`{gamble_roulette}`
 
 Returns the defined win/lose message.
