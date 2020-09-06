@@ -296,16 +296,16 @@ async def gambling_stats(bot, channel_id, cmd, user, user_id, display_name, args
         return r
 
     slots_total = data['slots_wins']+data['slots_loses']
-    slots_win_percent = '{:.1%}'.format((data['slots_wins']/slots_total)*100) \
-        if data['slots_wins'] > 0 else '0%'
+    slots_win_percent = '{:.1%}'.format(data['slots_wins']/slots_total) \
+        if slots_total > 0 else '0%'
     r['gambling_stats.slots_wins'] = data['slots_wins']
     r['gambling_stats.slots_loses'] = data['slots_loses']
     r['gambling_stats.slots_total_games'] = slots_total
     r['gambling_stats.slots_win_percent'] = slots_win_percent
 
     roulette_total = data['roulette_wins']+data['roulette_loses']
-    roulette_win_percent = '{:.1%}'.format((data['roulette_wins']/roulette_total)*100) \
-        if data['roulette_wins'] > 0 else '0%'
+    roulette_win_percent = '{:.1%}'.format(data['roulette_wins']/roulette_total) \
+        if roulette_total > 0 else '0%'
     r['gambling_stats.roulette_wins'] = data['roulette_wins']
     r['gambling_stats.roulette_loses'] = data['roulette_loses']
     r['gambling_stats.roulette_total_games'] = roulette_total
