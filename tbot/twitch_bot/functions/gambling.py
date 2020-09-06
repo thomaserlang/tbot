@@ -257,7 +257,6 @@ async def cmd_ranking(bot, channel_id, **kwargs):
         )
     }
 
-
 @fills_vars(
     'gambling_stats.slots_wins',
     'gambling_stats.slots_loses',
@@ -297,7 +296,7 @@ async def gambling_stats(bot, channel_id, cmd, user, user_id, display_name, args
         return r
 
     slots_total = data['slots_wins']+data['slots_loses']
-    slots_win_percent = '{:.1%}'.format((slots_total/data['slots_wins'])*100) \
+    slots_win_percent = '{:.1%}'.format((data['slots_wins']/slots_total)*100) \
         if data['slots_wins'] > 0 else '0%'
     r['gambling_stats.slots_wins'] = data['slots_wins']
     r['gambling_stats.slots_loses'] = data['slots_loses']
@@ -305,7 +304,7 @@ async def gambling_stats(bot, channel_id, cmd, user, user_id, display_name, args
     r['gambling_stats.slots_win_percent'] = slots_win_percent
 
     roulette_total = data['roulette_wins']+data['roulette_loses']
-    roulette_win_percent = '{:.1%}'.format((roulette_total/data['roulette_wins'])*100) \
+    roulette_win_percent = '{:.1%}'.format((data['roulette_wins']/roulette_total)*100) \
         if data['roulette_wins'] > 0 else '0%'
     r['gambling_stats.roulette_wins'] = data['roulette_wins']
     r['gambling_stats.roulette_loses'] = data['roulette_loses']
