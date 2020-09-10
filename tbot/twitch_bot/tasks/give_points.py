@@ -45,6 +45,7 @@ async def give_points_for_sub(**kwargs):
     await add_user_points(
         kwargs['room-id'], 
         kwargs['user-id'],
+        kwargs['user'],
         data['points_per_sub']*sub_plan_multiplier.get(kwargs['msg-param-sub-plan'], 1),
     )
 
@@ -70,6 +71,7 @@ async def give_points_for_cheer(**kwargs):
     await add_user_points(
         kwargs['room-id'], 
         kwargs['user-id'],
+        kwargs['user'],
         int(kwargs['cheer'])*data['points_per_cheer'],
     )
 
