@@ -30,7 +30,8 @@ config = {
                         'bits:read',
                         'clips:edit',
                         'user:edit:broadcast',
-                        'channel:read:subscriptions',],
+                        'channel:read:subscriptions',
+                        'moderation:read',],
     },
     'discord': {
         'client_id': None,
