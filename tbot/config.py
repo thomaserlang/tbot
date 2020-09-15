@@ -31,7 +31,9 @@ config = {
                         'clips:edit',
                         'user:edit:broadcast',
                         'channel:read:subscriptions',
-                        'moderation:read',],
+                        'moderation:read',
+                        'channel:edit:commercial',
+                        'user:read:broadcast',],
     },
     'discord': {
         'client_id': None,
@@ -92,7 +94,7 @@ def load(path=None):
     if not os.path.isfile(path):
         raise Exception('Config: "{}" could not be found.'.format(path))
     with open(path) as f:
-        data = yaml.load(f)
+        data = yaml.load(f, Loader=yaml.SafeLoader)
     for key in data:
         if key in config:
             if isinstance(config[key], dict):
