@@ -19,10 +19,10 @@ class GamblingSlots extends React.Component {
                 payout_percent: 95,
                 min_bet: 5,
                 max_bet: 0,
-                win_message: '@{user} {emotes} you won {bet} {points_name} and now have {points} {points_name}',
-                allin_win_message: '@{user} {emotes} you WON {bet} {points_name} and now have {points} {points_name} EZ',
-                lose_message: '@{user} {emotes} you lost {bet} {points_name}',
-                allin_lose_message: '@{user} {emotes} you lost {bet} {points_name} PepeLaugh',
+                win_message: 'xXx_ {user} _xXx {emotes} you won {bet} {points_name} and now have {points} {points_name}',
+                allin_win_message: 'xXx_ {user} _xXx {emotes} you WON {bet} {points_name} and now have {points} {points_name} EZ',
+                lose_message: 'xXx_ {user} _xXx  {emotes} you lost {bet} {points_name}',
+                allin_lose_message: 'xXx_ {user} _xXx  {emotes} you lost {bet} {points_name} PepeLaugh',
             }
         }
     }
