@@ -17,10 +17,10 @@ class GamblingRoulette extends React.Component {
                 win_chance: 45,
                 min_bet: 5,
                 max_bet: 0,
-                win_message: '@{user}, You won {bet} {points_name} and now have {points} {points_name}',
-                allin_win_message: '@{user}, You WON {bet} {points_name} and now have {points} {points_name} EZ',
-                lose_message: '@{user}, You lost {bet} {points_name} and now have {points} {points_name}',
-                allin_lose_message: '@{user}, You lost {bet} {points_name} PepeLaugh',
+                win_message: 'xXx_ {user} _xXx, You won {bet} {points_name} and now have {points} {points_name}',
+                allin_win_message: 'xXx_ {user} _xXx, You WON {bet} {points_name} and now have {points} {points_name} EZ',
+                lose_message: 'xXx_ {user} _xXx, You lost {bet} {points_name} and now have {points} {points_name}',
+                allin_lose_message: 'xXx_ {user} _xXx, You lost {bet} {points_name} PepeLaugh',
             }
         }
     }
