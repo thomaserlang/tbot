@@ -25,7 +25,7 @@ async def countdown(bot, var_args, args, **kwargs):
     except ValueError:
         pass
 
-    if from_ <= to:
+    if to <= from_:
         raise Send_error('First argument must be lower than the second')
     
     return {
