@@ -15,7 +15,7 @@ class GamblingSlots extends React.Component {
             saved: false,
             settings: {
                 emote_pool_size: 4,
-                emotes: ['MrDestructoid', 'SeriousSloth', 'OSFrog', 'OhMyDog'],
+                emotes: 'MrDestructoid SeriousSloth OSFrog OhMyDog',
                 payout_percent: 95,
                 min_bet: 5,
                 max_bet: 0,
