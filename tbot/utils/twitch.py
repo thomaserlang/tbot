@@ -34,7 +34,6 @@ async def twitch_request(ahttp, url, params=None, headers={},
         })
     async with ahttp.request(method, url, params=params, 
         headers=headers, data=data, json=json) as r:
-        logging.info(await r.text())
         if r.status == 415:
             w = int(time.time())-int(r.headers['Ratelimit-Reset'])
             if w > 0:
