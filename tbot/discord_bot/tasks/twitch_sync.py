@@ -4,7 +4,7 @@ from dateutil.parser import parse
 from datetime import datetime
 from tbot import config
 from tbot.discord_bot import bot
-from tbot.utils.twitch import twitch_request
+from tbot.utils.twitch import twitch_channel_token_request
 
 async def twitch_sync():
     await bot.wait_until_ready()
@@ -64,7 +64,7 @@ class Twitch_sync_channel:
         subs = await self.get_subscribers()
         subs = {d['user_id']: d for d in subs}
         cached_badges = await self.get_cached_badges_months()
-        async for member in self.server.members:
+        for member in self.server.members:
             try:
                 twitch_id = self.twitch_ids.get(member.id)
                 if twitch_id not in subs:
@@ -152,7 +152,7 @@ class Twitch_sync_channel:
         url = 'https://api.twitch.tv/helix/subscriptions'
         after = ''
         while True:
-            s = await twitch_request(bot.ahttp, url, {
+            s = await twitch_channel_token_request(bot, self.info['channel_id'], url, params={
                 'broadcaster_id': self.info['channel_id'],
                 'after': after,
             })
