@@ -4,6 +4,7 @@ from dateutil.parser import parse
 from datetime import datetime
 from tbot import config
 from tbot.discord_bot import bot
+from tbot.utils.twitch import twitch_request
 
 async def twitch_sync():
     await bot.wait_until_ready()
@@ -61,21 +62,17 @@ class Twitch_sync_channel:
 
     async def set_sub_roles(self, returninfo):
         subs = await self.get_subscribers()
-        subs = {d['user']['_id']: d for d in subs}
+        subs = {d['user_id']: d for d in subs}
         cached_badges = await self.get_cached_badges_months()
-
-        for member in self.server.members:
+        async for member in self.server.members:
             try:
                 twitch_id = self.twitch_ids.get(member.id)
                 if twitch_id not in subs:
                     continue
                 subinfo = subs[twitch_id]
-                subbed_at = parse(subinfo['created_at']).replace(tzinfo=None)
-                seconds = (datetime.utcnow() - subbed_at).total_seconds()
-                months = math.ceil(seconds / 60 / 60 / 24 / 30)
-                if twitch_id in cached_badges and cached_badges[twitch_id]['sub'] != None:
-                    if months < cached_badges[twitch_id]['sub']:
-                        months = cached_badges[twitch_id]['sub']
+                months = 1
+                if twitch_id in cached_badges:
+                    months = cached_badges[twitch_id]['sub']
                 sub_streak_role = None
                 for role in self.roles:
                     if role['type'] == 'sub_tier' and role['value'] == subinfo['sub_plan']:
@@ -140,58 +137,32 @@ class Twitch_sync_channel:
         '''
         return [
             {
-                "_id": "e5e2ddc37e74aa9636625e8d2cc2e54648a30418",
-                "created_at": "2018-05-21T00:14:13Z",
-                "sub_plan": "3000",
-                "sub_plan_name": "Channel Subscription (erleperle)",
-                "user": {
-                    "_id": "36981191",
-                    "bio": "",
-                    "created_at": "2018-05-21T00:14:13Z",
-                    "display_name": "ErlePerle",
-                    "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/mr_woodchuck-profile_image-a8b10154f47942bc-300x300.jpeg",
-                    "name": "erleperle",
-                    "type": "asd",
-                    "updated_at": "2018-07-21T00:14:13Z"
-                }
-            },
+                "broadcaster_id": "123",
+                "broadcaster_name": "test_user",
+                "is_gift": True,
+                "tier": "1000",
+                "plan_name": "Channel Subscription (erleperle)",
+                "user_id": "36981191",
+                "user_name": "erleperle",
+            }
         ]
         '''
-        headers = {
-            'Authorization': 'OAuth {}'.format(self.info['twitch_token']),
-            'Client-ID': config['twitch']['client_id'],
-            'Accept': 'application/vnd.twitchtv.v5+json',
-        }
-        url = 'https://api.twitch.tv/kraken/channels/{}/subscriptions'.format(
-            self.info['channel_id']
-        )
-        params = {
-            'offset': 0,
-            'limit': 100,
-        }
+
         subs = []
-        total = None
-        while not total or (params['offset'] <= total):
-            async with bot.ahttp.get(url, params=params, headers=headers) as r:
-                if r.status == 200:
-                    data = await r.json()
-                    subs.extend(data['subscriptions'])
-                    params['offset'] += params['limit']
-                    total = data['_total']
-                elif r.status == 401:
-                    await self.refresh_twitch_token()
-                    d = await self.get_subscribers()
-                    return d
-                else:              
-                    error = await r.text()
-                    e = Exception
-                    if r.status == 400:
-                        e = Twitch_exception
-                    raise e('Error getting subscribers for: {} - Error: {}: {}'.format(
-                        self.info['name'],
-                        r.status,
-                        error,
-                    ))
+        url = 'https://api.twitch.tv/helix/subscriptions'
+        after = ''
+        while True:
+            s = await twitch_request(bot.ahttp, url, {
+                'broadcaster_id': self.info['channel_id'],
+                'after': after,
+            })
+            if s['data']:
+                subs.extend(s['data'])
+            else:
+                break
+            if not 'pagination' in d:
+                break
+            after = d['pagination']['cursor']
         return subs
 
     async def get_cached_badges_months(self):
@@ -235,59 +206,33 @@ class Twitch_sync_channel:
             roles.append(role)
         return roles
 
-    async def refresh_twitch_token(self):
-        url = 'https://id.twitch.tv/oauth2/token'
-        params = {
-            'grant_type': 'refresh_token',
-            'refresh_token': self.info['twitch_refresh_token'] or '',
-            'client_id': config['twitch']['client_id'],
-            'client_secret': config['twitch']['client_secret'],
-        }
-        logging.debug('Refresh token for channel: {}'.format(self.info['name']))
-        async with bot.ahttp.post(url, params=params) as r:
-            if r.status == 200:
-                data = await r.json()
-                await bot.db.execute(
-                    'UPDATE twitch_channels SET twitch_token=%s, twitch_refresh_token=%s WHERE channel_id=%s;',
-                    (data['access_token'], data['refresh_token'], self.info['channel_id'])
-                )
-                self.info['twitch_token'] = data['access_token']
-                self.info['twitch_refresh_token'] = data['refresh_token']
-            else:
-                error = await r.text()
-                raise Exception('Failed to refresh token for channel: {} - Error: {}: {}'.format(
-                    self.info['name'],
-                    r.status,
-                    error,
-                ))
-
     async def get_twitch_ids(self):
         rows = await bot.db.fetchall('SELECT discord_id, twitch_id FROM twitch_discord_users;')
         twitch_ids = {int(r['discord_id']): r['twitch_id'] for r in rows}
         try:
             for member in self.server.members:
-                    if twitch_ids.get(member.id):
+                if twitch_ids.get(member.id):
+                    continue
+                if str(member.status) == 'offline':
+                    continue
+                data = await discord_request(
+                    bot.ahttp,
+                    'https://discordapp.com/api/v6/users/{}/profile'.format(
+                    member.id
+                ))
+                if not data:
+                    continue
+                for con in data['connected_accounts']:
+                    if not con['verified']:
                         continue
-                    if str(member.status) == 'offline':
+                    if con['type'] != 'twitch':
                         continue
-                    data = await discord_request(
-                        bot.ahttp,
-                        'https://discordapp.com/api/v6/users/{}/profile'.format(
-                        member.id
-                    ))
-                    if not data:
-                        continue
-                    for con in data['connected_accounts']:
-                        if not con['verified']:
-                            continue
-                        if con['type'] != 'twitch':
-                            continue
-                        twitch_ids[member.id] = con['id']
-                        await bot.db.execute(
-                            'INSERT IGNORE INTO twitch_discord_users (discord_id, twitch_id) VALUES (%s, %s)', 
-                            (member.id, con['id'])
-                        )
-                        break
+                    twitch_ids[member.id] = con['id']
+                    await bot.db.execute(
+                        'INSERT IGNORE INTO twitch_discord_users (discord_id, twitch_id) VALUES (%s, %s)', 
+                        (member.id, con['id'])
+                    )
+                    break
         except:
             logging.exception('get_twitch_ids')
         return twitch_ids
