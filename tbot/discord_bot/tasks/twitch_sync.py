@@ -152,12 +152,12 @@ class Twitch_sync_channel:
         url = 'https://api.twitch.tv/helix/subscriptions'
         after = ''
         while True:
-            s = await twitch_channel_token_request(bot, self.info['channel_id'], url, params={
+            d = await twitch_channel_token_request(bot, self.info['channel_id'], url, params={
                 'broadcaster_id': self.info['channel_id'],
                 'after': after,
             })
-            if s['data']:
-                subs.extend(s['data'])
+            if d['data']:
+                subs.extend(d['data'])
             else:
                 break
             if not 'pagination' in d:
