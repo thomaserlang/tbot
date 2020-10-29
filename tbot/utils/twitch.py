@@ -34,14 +34,19 @@ async def twitch_request(ahttp, url, params=None, headers={},
         })
     async with ahttp.request(method, url, params=params, 
         headers=headers, data=data, json=json) as r:
+        logging.info(await r.text())
         if r.status == 415:
             w = int(time.time())-int(r.headers['Ratelimit-Reset'])
             if w > 0:
                 await asyncio.sleep(w)
             return await twitch_request(ahttp, url, params, headers, method, data, json)
         if r.status == 401:
-            reset_app_token()
-            return await twitch_request(ahttp, url, params, headers, method, data, json)
+            if 'WWW-Authenticate' in r.headers:
+                if 'invalid_token' in r.headers['WWW-Authenticate']:
+                    reset_app_token()
+                    return await twitch_request(ahttp, url, params, headers, method, data, json)
+            d = await r.json()            
+            raise Twitch_request_error('{}: {}'.format(r.status, d['message']), r.status)
         if r.status >= 400:
             error = await r.text()
             raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
