@@ -184,8 +184,8 @@ class Logviewer extends React.Component {
             <span><b>Timeouts:</b> {this.state.userChatStats.timeouts||0}</span>
             <span><b>Bans:</b> {this.state.userChatStats.bans||0}</span>
             <span title="Number of watched streams"><b>Streams:</b> {this.state.userChatStats.streams||0}</span>
-            <span title="Peak streams in a row"><b>Streams peak:</b> {this.state.userChatStats.streams_row_peak||0}</span>
-            <span title="Date of the latest stream watched"><b>Last stream:</b> {this.state.userChatStats.streams_row_peak_date||'No data'}</span>
+            <span title="Peak streams in a row"><b>Streams peak:</b> {this.state.userChatStats.streams_row_peak||0} ({this.state.userChatStats.streams_row_peak_date||'No data'})</span>
+            <span title="Date of the latest stream watched"><b>Last stream:</b> {this.state.userChatStats.last_viewed_stream_date||'No data'}</span>
         </div>
 
     }
