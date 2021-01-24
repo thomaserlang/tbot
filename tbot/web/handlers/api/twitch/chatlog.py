@@ -68,16 +68,17 @@ class User_stats_handler(Api_handler):
         user = self.get_argument('user')
         sql = '''
             SELECT 
-                bans, timeouts, purges, chat_messages
+                bans, timeouts, purges, chat_messages, 
+                last_viewed_stream_date, streams, streams_row,
+                streams_row_peak, streams_row_peak_date
             FROM
-                twitch_user_chat_stats us,
                 twitch_usernames u
-            WHERE
-                us.channel_id = %s
-            AND u.user = %s
-            AND us.user_id = u.user_id
+                LEFT JOIN twitch_user_chat_stats us ON (us.user_id = u.user_id AND us.channel_id=%s)
+                LEFT JOIN twitch_user_stats s ON (s.user_id = u.user_id AND s.channel_id=%s)
+            WHERE                
+                u.user = %s 
         '''
-        stats = await self.db.fetchone(sql, [channel_id, user])
+        stats = await self.db.fetchone(sql, [channel_id, channel_id, user])
         if stats:
             self.write_object(stats)
         else:
