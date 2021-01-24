@@ -42,9 +42,9 @@ class Handler(Base_handler):
         userinfo = json.loads(escape.native_str(response.body))
         if userinfo['scopes']:
             await self.db.execute('''
-                INSERT INTO twitch_channels (channel_id, name, active, created_at, updated_at, twitch_token, twitch_refresh_token, twitch_scope)
-                VALUES (%s, %s, "Y", now(), null, %s, %s, %s) ON DUPLICATE KEY UPDATE 
-                name=VALUES(name), updated_at=now(), active=VALUES(active), twitch_token=VALUES(twitch_token), 
+                INSERT INTO twitch_channels (channel_id, name, created_at, updated_at, twitch_token, twitch_refresh_token, twitch_scope)
+                VALUES (%s, %s, now(), null, %s, %s, %s) ON DUPLICATE KEY UPDATE 
+                name=VALUES(name), updated_at=now(), twitch_token=VALUES(twitch_token), 
                 twitch_refresh_token=VALUES(twitch_refresh_token), twitch_scope=VALUES(twitch_scope);
             ''', (
                 userinfo['user_id'],
