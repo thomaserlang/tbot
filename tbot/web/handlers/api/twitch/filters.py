@@ -415,7 +415,7 @@ class Filter_action(Filter_base):
     @Level(1)
     async def put(self, channel_id):
         data = self.validate()
-        await self.save_filter(self, channel_id, 'action', data)   
+        await self.save_filter(channel_id, 'action', True, data)   
         r = await self.redis.publish_json(
             'tbot:server:commands', 
             ['reload_filter_action', channel_id]
