@@ -31,7 +31,7 @@ _schema = {
     good.Optional('mod_cooldown'): good.All(good.Coerce(int), good.Range(min=0, max=86400)),
     good.Optional('enabled'): good.All(good.Coerce(int), good.Range(min=0, max=1)),
     good.Optional('public'): good.All(good.Coerce(int), good.Range(min=0, max=1)),
-    good.Optional('group_name'): good.All(good.Coerce(str), good.Length(min=0, max=50)),
+    good.Optional('group_name'): good.Maybe(good.All(str, good.Length(min=0, max=50))),
 }
 
 class Collection_handler(Api_handler):
