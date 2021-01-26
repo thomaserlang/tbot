@@ -11,9 +11,8 @@ async def countdown(bot, var_args, **kwargs):
         dt = parse(d).astimezone(tz.UTC).replace(tzinfo=None)
     except ValueError:
         raise Send_error(f'Invalid date format: "{d}". Use ISO 8601 format.')
-    secs = (dt - datetime.utcnow()).total_seconds()
     
     return {
-        'countdown': utils.seconds_to_pretty(secs),
+        'countdown': utils.seconds_to_pretty(dt1=datetime.utcnow(), dt2=dt),
     }
   

@@ -25,10 +25,9 @@ async def followage(bot, user_id, display_name, channel_id, channel, args, **kwa
             user, channel
         ))
     followed_at = parse(data['data'][0]['followed_at']).replace(tzinfo=None)
-    seconds = (datetime.utcnow() - followed_at).total_seconds()
 
     return {
-        'followage': utils.seconds_to_pretty(seconds),
+        'followage': utils.seconds_to_pretty(dt1=datetime.utcnow(), dt2=followed_at),
         'followage_date': followed_at.strftime('%Y-%m-%d'),
         'followage_datetime': followed_at.strftime('%Y-%m-%d %H:%M:%S UTC'),
     }

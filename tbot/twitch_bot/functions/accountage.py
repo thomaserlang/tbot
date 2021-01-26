@@ -21,10 +21,8 @@ async def accountage(bot, user_id, display_name, args, **kwargs):
             user,
         ))
     created_at = parse(data['created_at']).replace(tzinfo=None)
-    seconds = (datetime.utcnow() - created_at).total_seconds()
-
     return {
-        'accountage': utils.seconds_to_pretty(seconds),
+        'accountage': utils.seconds_to_pretty(dt1=datetime.utcnow(), dt2=created_at),
         'accountage_date': created_at.strftime('%Y-%m-%d'),
         'accountage_datetime': created_at.strftime('%Y-%m-%d %H:%M:%S UTC'),
     }

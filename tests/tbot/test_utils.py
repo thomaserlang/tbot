@@ -1,6 +1,8 @@
 import unittest
 import tbot.testbase
 from tbot import utils
+from datetime import datetime
+from dateutil.parser import parse
 
 class test_utils(unittest.TestCase):
 
@@ -16,11 +18,12 @@ class test_utils(unittest.TestCase):
         self.assertEqual('1 hour and 2 minutes', utils.seconds_to_pretty(3720))
         self.assertEqual('1 day', utils.seconds_to_pretty(3600*24))
         self.assertEqual('1 day and 2 seconds', utils.seconds_to_pretty((3600*24)+2))
-        self.assertEqual('1 day, 1 hour and 15 minutes', utils.seconds_to_pretty((3600*24)+3600+900))
-        self.assertEqual('1 day, 1 hour and 15 minutes', utils.seconds_to_pretty((3600*24)+3600+900))
-        self.assertEqual('1 month, 1 hour and 15 minutes', utils.seconds_to_pretty((30*(3600*24))+3600+900))
-        self.assertEqual('1 year, 1 hour and 15 minutes', utils.seconds_to_pretty(12*(30*(3600*24))+3600+900))
-        self.assertEqual('1 year, 1 month and 13 days', utils.seconds_to_pretty(13*(31*(3600*24))+3600+900))
+        self.assertEqual('403 days and 1 hour', utils.seconds_to_pretty(13*(31*(3600*24))+3600+900))
+
+        dt = parse('2017-01-28T21:22:11Z').replace(tzinfo=None)
+        now = datetime(2021, 1, 25, 17, 37, 0)
+        self.assertEqual('3 years, 11 months and 27 days', utils.seconds_to_pretty(dt1=now, dt2=dt))
+
 
     def test_twitch_remove_emotes(self):
         message = 'test bahIdk 123 Kappa :) SeriousSloth asd bahIdk'

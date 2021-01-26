@@ -2,6 +2,7 @@ import logging
 import re, json, datetime, time
 from typing import List, Optional
 from tbot import config
+from dateutil.relativedelta import relativedelta
 
 def safe_username(user):
     return re.sub('[^a-zA-Z0-9_]', '', user)[:25]
@@ -14,30 +15,28 @@ def find_int(l: List[str]) -> Optional[int]:
             pass
     return None
 
-def seconds_to_pretty(seconds):
-    seconds = round(seconds)
-    if seconds < 60:
-        return pluralize(seconds, 'second')
-
-    minutes, seconds = divmod(seconds, 60)
-    hours, minutes = divmod(minutes, 60)
-    days, hours = divmod(hours, 24)
-    months, days = divmod(days, 30)
-    years, months = divmod(months, 12)
+def seconds_to_pretty(seconds=None, dt1=None, dt2=None):
+    if seconds != None:
+        seconds = round(seconds)
+        if seconds < 60:
+            return pluralize(seconds, 'second')
+        d = relativedelta(seconds=seconds)
+    else:
+        d = relativedelta(dt1, dt2)
 
     ts = []
-    if years:
-        ts.append(pluralize(years, 'year'))
-    if months:
-        ts.append(pluralize(months, 'month'))
-    if days:
-        ts.append(pluralize(days, 'day'))
-    if hours:
-        ts.append(pluralize(hours, 'hour'))
-    if minutes:        
-        ts.append(pluralize(minutes, 'minute'))
-    if seconds:        
-        ts.append(pluralize(seconds, 'second'))
+    if d.years:
+        ts.append(pluralize(d.years, 'year'))
+    if d.months:
+        ts.append(pluralize(d.months, 'month'))
+    if d.days:
+        ts.append(pluralize(d.days, 'day'))
+    if d.hours:
+        ts.append(pluralize(d.hours, 'hour'))
+    if d.minutes:        
+        ts.append(pluralize(d.minutes, 'minute'))
+    if d.seconds:        
+        ts.append(pluralize(d.seconds, 'second'))
     if len(ts) > 2 and seconds:
         ts.pop(len(ts)-1)
     ts = ts[:3]
