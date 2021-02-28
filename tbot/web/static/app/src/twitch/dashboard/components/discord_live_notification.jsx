@@ -26,7 +26,11 @@ class DiscordConnect extends React.Component {
     getStatus() {
         this.setState({loading: true})
         api.get(`/api/twitch/channels/${managedUser.id}/discord-live-notification`).then(r => {
-            this.setState({data: r.data, loading: false})
+            if (r.data) {
+                this.setState({data: r.data, loading: false})
+            } else {
+                this.setState({loading: false})
+            }
         })
     }
 
