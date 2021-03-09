@@ -72,7 +72,7 @@ class Twitch_sync_channel:
                 subinfo = subs[twitch_id]
                 months = 1
                 if twitch_id in cached_badges:
-                    months = cached_badges[twitch_id]['sub']
+                    months = cached_badges[twitch_id]['sub'] or 0                    
                 sub_streak_role = None
                 for role in self.roles:
                     if role['type'] == 'sub_tier' and role['value'] == subinfo['sub_plan']:
