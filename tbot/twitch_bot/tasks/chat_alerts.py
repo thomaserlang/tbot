@@ -62,6 +62,7 @@ async def usernotice(**kwargs):
         gift_users[kwargs['user-id']] = {
             'count': int(kwargs['msg-param-mass-gift-count']),
             'data': kwargs,
+            'twitch_message': kwargs['system-msg'],
         }
 
 
@@ -77,6 +78,7 @@ async def usernotice(**kwargs):
                     data['user'] = mg['data']['display-name']
                     data['amount'] = mg['data']['msg-param-mass-gift-count']
                     data['plan'] = sub_plan_names.get(mg['data']['msg-param-sub-plan'], 'Unknown')
+                    data['twitch_message'] = mg['twitch_message']
                     alert = await bot.db.fetchone('SELECT message FROM twitch_chat_alerts WHERE channel_id=%s and type="submysterygift"', (
                         kwargs['room-id'],
                     ))
