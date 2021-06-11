@@ -36,8 +36,8 @@ class Pubsub():
             ''', (
                 datetime.utcnow(),
                 c[2],
-                data['created_by'] or 'twitch',
-                data['created_by_user_id'] or 0,
+                data['created_by'] if 'created_by' in data and data['created_by'] else 'twitch',
+                data['created_by_user_id'] if 'created_by_user_id' in data and data['created_by_user_id'] else 0,
                 data['moderation_action'],
                 ' '.join(data['args']).strip()[:200] if data['args'] else '',
                 data['args'][0] if data['target_user_id'] else None,
