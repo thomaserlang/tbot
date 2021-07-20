@@ -1,0 +1,1 @@
+(self.webpackChunkbotashell=self.webpackChunkbotashell||[]).push([[195],{2841:function(n,e,t){"use strict";t.r(e),t.d(e,{default:function(){return l}});var u=t(7294);function l(){return u.useEffect((function(){window.location="/docs/general"}),[]),null}}}]);
