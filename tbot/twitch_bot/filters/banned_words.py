@@ -29,7 +29,7 @@ def check_message(message: str, banned_words: List[str]):
             continue
 
         s = utils.split(bw)
-        if all([a.lower() in message.lower() for a in s]):
+        if all([re.search(rf'\b{a}\b', message, flags=re.IGNORECASE) for a in s]):
             return True
             
     return False
