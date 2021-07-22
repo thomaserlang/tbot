@@ -10,8 +10,8 @@ module.exports = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'TESoft', // Usually your GitHub org/user name.
-  projectName: 'BotAsHell', // Usually your repo name.
+  organizationName: 'thomaserlang', // Usually your GitHub org/user name.
+  projectName: 'tbot', // Usually your repo name.
   themeConfig: {
     colorMode: {
       defaultMode: 'dark',
