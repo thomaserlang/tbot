@@ -71,6 +71,7 @@ config = {
     'faceit_apikey': None,
     'lol_apikey': None,
     'tft_apikey': None,
+    'rtmp_keys': [],
 }
 
 def load(path=None):
