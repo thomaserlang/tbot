@@ -8,12 +8,11 @@ async def subs(bot, channel_id, **kwargs):
         data = await utils.twitch_channel_token_request(
             bot, 
             channel_id,
-            'https://api.twitch.tv/kraken/channels/{}/subscriptions?limit=1'.format(
-                channel_id
-            ),
+            'https://api.twitch.tv/subscriptions',
+            params={'broadcaster_id': channel_id}
         )
         return {
-            'subs': data['_total'],
+            'subs': data['total'],
         }
     except utils.Twitch_request_error as e:
-        raise Send_error('Unable to subs. Error: {}'.format(str(e)))
+        raise Send_error('Unable to get sub count. Error: {}'.format(str(e)))

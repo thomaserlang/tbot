@@ -14,13 +14,13 @@ async def accountage(bot, user_id, display_name, args, **kwargs):
             uid = user_id
             user = display_name
     data = await utils.twitch_request(bot.ahttp, 
-        'https://api.twitch.tv/kraken/users/{}'.format(uid),
+        'https://api.twitch.tv/helix/users', params={'id': uid},
     )
-    if not data:
+    if not data or not data['data']:
         raise Send_error('Found no data on {}'.format(
             user,
         ))
-    created_at = parse(data['created_at']).replace(tzinfo=None)
+    created_at = parse(data['data'][0]['created_at']).replace(tzinfo=None)
     return {
         'accountage': utils.seconds_to_pretty(dt1=datetime.utcnow(), dt2=created_at),
         'accountage_date': created_at.strftime('%Y-%m-%d'),
