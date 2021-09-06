@@ -3,11 +3,22 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
 
 module.exports = {
-  entry: path.resolve('./src/index.jsx'),
-  devtool: "source-map",
-  output: {
-    filename: '[name].js',
+  entry: {
+    main: {
+      import: './src/index.jsx',
+      dependOn: 'vendor',
+    },
+    vendor: [
+      'axios', 
+      'react', 
+      'react-router-dom',
+      'react-router-config',
+      'query-string',
+      'moment',
+      'downshift',
+    ],
   },
+  devtool: "source-map",
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
@@ -32,18 +43,19 @@ module.exports = {
         ],
       }
     ]
-  },  
-  optimization: {
-    splitChunks: {
-      chunks: 'all'
-    }
   },
   plugins: [
     new webpack.ProvidePlugin({
-        "React": "react",
+      "React": "react",
     }),
     new MiniCssExtractPlugin({
       filename: "[name].css",
+      chunkFilename: "[id].css",
     }),
   ],
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist'),
+    clean: true,
+  },
 };
