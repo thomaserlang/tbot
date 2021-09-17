@@ -10,6 +10,7 @@ class Api_handler(Base_handler):
         self.access_token = None
         if self.request.body:
             try:
+                self.request.original_body = self.request.body
                 self.request.body = utils.json_loads(self.request.body)
             except ValueError:
                 self.request.body = {}

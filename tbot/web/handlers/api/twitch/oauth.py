@@ -1,8 +1,9 @@
-import logging, json, os
-from tornado import web, httpclient, escape
+import logging, asyncio
+from tornado import httpclient
 from urllib import parse
 from tbot import config, utils
 from ..base import Base_handler
+from .eventsubs.eventsub import create_eventsubs
 
 class Handler(Base_handler):
 
@@ -28,18 +29,17 @@ class Handler(Base_handler):
             logging.error(response.body)
             self.write('Unable to verify you at Twitch, please try again.')
             return
-        token = json.loads(escape.native_str(response.body))
+        token = utils.json_loads(response.body)
         
         response = await http.fetch('https://id.twitch.tv/oauth2/validate', headers={
             'Authorization': 'OAuth {}'.format(token['access_token'])
         })
         if response.code != 200:
-            logging.error(response.body)
             self.clear_cookie('twitch_user')
             self.clear_cookie('auto_login')
             self.write('Unable to verify you at Twitch, please try again')
             return
-        userinfo = json.loads(escape.native_str(response.body))
+        userinfo = utils.json_loads(response.body)
         if userinfo['scopes']:
             await self.db.execute('''
                 INSERT INTO twitch_channels (channel_id, name, created_at, updated_at, twitch_token, twitch_refresh_token, twitch_scope)
@@ -53,6 +53,8 @@ class Handler(Base_handler):
                 token['refresh_token'],
                 utils.json_dumps(userinfo['scopes']),
             ))
+            if userinfo['scopes']:
+                asyncio.create_task(create_eventsubs(self.ahttp, userinfo['user_id']))
         else:
             await self.db.execute('''
                 INSERT INTO twitch_channels (channel_id, name, created_at, active)
@@ -63,7 +65,7 @@ class Handler(Base_handler):
                 userinfo['login'],
             ))
 
-        self.set_secure_cookie('twitch_user', json.dumps({
+        self.set_secure_cookie('twitch_user', utils.json_dumps({
             'user_id': userinfo['user_id'],
             'user': userinfo['login'],
         }), expires_days=1)

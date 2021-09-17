@@ -30,7 +30,7 @@ class ExtraAuth extends React.Component {
             <div className="title">Extra authorization</div>
             <div className="content">
                 For the bot to be able to change title, game category and 
-                read subscribers, extra authorization is needed.
+                read subscribers, etc, extra authorization is needed.
 
                 <div className="d-flex mt-3 mb-3">
                     <div className="ml-auto mr-auto">

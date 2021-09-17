@@ -53,6 +53,12 @@ def upgrade():
         backend.apply_migrations(backend.to_apply(migrations))
     logging.info('Upgrade done')
 
+@cli.command()
+def twitch_eventsub_check():
+    logger.set_logger('twitch_eventsub_check.log', sentry_dsn=config['sentry_dsn'])
+    from tbot.web.handlers.api.twitch.eventsubs.eventsub import task_check_channels
+    asyncio.run(task_check_channels())
+
 def main():
     cli()
 

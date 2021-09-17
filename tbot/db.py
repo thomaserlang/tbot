@@ -3,7 +3,7 @@ from . import config
 
 class Db():
 
-    async def connect(self, loop):
+    async def connect(self, loop=None):
         self.pool = await aiomysql.create_pool(
             host=config['mysql']['host'], 
             port=config['mysql']['port'],

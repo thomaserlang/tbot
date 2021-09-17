@@ -160,7 +160,7 @@ class Twitch_sync_channel:
                 subs.extend(d['data'])
             else:
                 break
-            if not 'pagination' in d:
+            if not 'pagination' in d or not d['pagination']:
                 break
             after = d['pagination']['cursor']
         return subs

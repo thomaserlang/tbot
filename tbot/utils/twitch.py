@@ -14,7 +14,7 @@ class Twitch_request_error(Exception):
 
 
 async def twitch_request(ahttp, url, params=None, headers={}, 
-    method='GET', data=None, json=None, token=None):
+    method='GET', data=None, json=None, token=None, raise_exception=True):
     if not token:
         token = await twitch_get_app_token(ahttp)
     if '/kraken/' in url:
@@ -44,11 +44,17 @@ async def twitch_request(ahttp, url, params=None, headers={},
                 if 'invalid_token' in r.headers['WWW-Authenticate']:
                     reset_app_token()
                     return await twitch_request(ahttp, url, params, headers, method, data, json)
-            d = await r.json()            
-            raise Twitch_request_error('{}: {}'.format(r.status, d['message']), r.status)
+            d = await r.json()
+            if raise_exception:
+                raise Twitch_request_error('{}: {}'.format(r.status, d['message']), r.status)
+            else:
+                logging.error('{}: {}'.format(r.status, d['message']))
         if r.status >= 400:
             error = await r.text()
-            raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
+            if raise_exception:
+                raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
+            else:
+                logging.error('{}: {}'.format(r.status, error))
         if 'Content-Type' in r.headers:
             if 'application/json' in r.headers['Content-Type']:
                 return await r.json()
