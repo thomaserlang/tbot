@@ -1,6 +1,29 @@
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require("path");
+
+pages = [
+  'twitch/widgets/goal',
+]
+
+let entries = {}
+pages.forEach(name => {
+    entries[name.replace(/\//gi, '_')] = {
+        import: './src/'+name+'/index.jsx',
+        dependOn: 'vendor',
+    }
+})
+
+plugins = pages.map(name => {
+    return new HtmlWebpackPlugin({
+        'filename': '../../../templates/'+name+'.html',
+        'template': './src/'+name+'/index.html',
+        'chunks': [name.replace(/\//gi, '_'), 'vendor'],
+        'publicPath': '/static',        
+        'minify': false
+    })
+})
 
 module.exports = {
   entry: {
@@ -17,6 +40,7 @@ module.exports = {
       'moment',
       'downshift',
     ],
+    ...entries
   },
   devtool: "source-map",
   resolve: {
@@ -49,12 +73,20 @@ module.exports = {
       "React": "react",
     }),
     new MiniCssExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[id].css",
+      filename: "[name].[contenthash].css",
+      chunkFilename: "[id].[contenthash].css",
     }),
+    new HtmlWebpackPlugin({
+      'filename': '../../../templates/react.html',
+      'template': './src/index.html',
+      'chunks': ['main', 'vendor'],
+      'publicPath': '/static',
+      'minify': false
+    }),
+    ...plugins
   ],
   output: {
-    filename: '[name].js',
+    filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },

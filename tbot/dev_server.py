@@ -9,7 +9,7 @@ def main():
         ('twitch_bot', ['python', 'runner.py', 'twitch_bot'], path),
         ('discord', ['python', 'runner.py', 'discord'], path),
         ('web', ['python', 'runner.py', 'web'], path),
-        ('npm', ['npm', 'run', 'start'], os.path.join(path, 'web/static/app')),
+        ('npm', ['npm', 'run', 'watch'], os.path.join(path, 'web/static/app')),
     ]
 
     manager = Manager()
