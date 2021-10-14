@@ -28,7 +28,7 @@ async def lol(bot, channel, channel_id, args, var_args, **kwargs):
             raise Send_error(f'Riot error: {error}')
         d = await r.json()
         encrypted_id = d['id']
-        account_id = d['accountId']
+        puuid = d['puuid']
 
     r = {
         'lol.summoner': '',
@@ -47,7 +47,7 @@ async def lol(bot, channel, channel_id, args, var_args, **kwargs):
 
     live_vars = ['lol.live_wins', 'lol.live_losses']
     if any(a in var_args for a in live_vars):
-        await get_live(channel_id, bot, headers, region, account_id, r)
+        await get_live(channel_id, bot, headers, region, puuid, r)
 
     return r
 
@@ -69,11 +69,11 @@ async def get_rank(bot, headers, region, encrypted_id, result):
             result['lol.lp'] = a['leaguePoints']
             break
 
-async def get_live(channel_id, bot, headers, region, account_id, result):
+async def get_live(channel_id, bot, headers, region, puuid, result):
     if not bot.channels_check[channel_id]['went_live_at']:
         return
-
-    url = f'https://{region}.api.riotgames.com/lol/match/v4/matchlists/by-account/{account_id}'
+    new_region = new_regions[region]    
+    url = f'https://{new_region}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count=100&startTime={int(bot.channels_check[channel_id]["went_live_at"].timestamp())}'
     async with bot.ahttp.get(url, headers=headers) as r:
         if r.status >= 400:
             error = await r.text()
@@ -81,11 +81,8 @@ async def get_live(channel_id, bot, headers, region, account_id, result):
         matches = await r.json()
 
     w = []
-    for m in matches['matches']:
-        dt = datetime.fromtimestamp(m['timestamp']/1000)
-        if dt < bot.channels_check[channel_id]['went_live_at']:
-            break
-        w.append(count_match(bot, m["gameId"], region, headers, account_id))
+    for m in matches:
+        w.append(count_match(bot, m, new_region, headers, puuid))
     r = await asyncio.gather(*w)
     for t in r:
         if t:
@@ -93,26 +90,18 @@ async def get_live(channel_id, bot, headers, region, account_id, result):
         else:
             result['lol.live_losses'] += 1
 
-async def count_match(bot, game_id, region, headers, account_id):
-    url = f'https://{region}.api.riotgames.com/lol/match/v4/matches/{game_id}'
+async def count_match(bot, game_id, region, headers, puuid):
+    url = f'https://{region}.api.riotgames.com/lol/match/v5/matches/{game_id}'
     async with bot.ahttp.get(url, headers=headers) as r:
         if r.status >= 400:
             error = await r.text()
             raise Send_error(f'Riot error: {error}')
         match = await r.json()
-        team_id = 0
-        if match['gameDuration'] < 60*10:
+        if match['info']['gameDuration'] < 60*10:
             return
-        # http://static.developer.riotgames.com/docs/lol/queues.json
-        #if match['queueId'] not in [400, 420]:
-        #    return
-        for p in match['participantIdentities']:
-            if p['player']['currentAccountId'] == account_id:
-                team_id = 0 if p['participantId'] <= 5 else 1
-        if match['teams'][team_id]['win'] == 'Win':
-            return True
-        else:
-            return False
+        for p in match['info']['participants']:
+            if p['puuid'] == puuid:
+                return p['win']
 
 regions = [
     'euw1',
@@ -127,3 +116,17 @@ regions = [
     'la1',
     'la2',
 ]
+
+new_regions = {
+    'euw1': 'europe',
+    'ru': 'europe',
+    'kr': 'asia',
+    'br1': 'americas',
+    'oc1': 'americas',
+    'jp1': 'asia',
+    'na1': 'americas',
+    'eun1': 'europe',
+    'tr1': 'europe',
+    'la1': 'americas',
+    'la2': 'americas',
+}
