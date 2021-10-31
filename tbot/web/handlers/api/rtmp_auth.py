@@ -4,7 +4,10 @@ import logging
 
 class Handler(Api_handler):
 
-    async def post(self):
+    def get(self):
+        self.post() 
+
+    def post(self):
         if self.get_argument('name') in config['rtmp_keys']:
             self.set_status(200)
         else:
