@@ -66,8 +66,9 @@ def handle_command(nick, target, message, **kwargs):
 
 async def db_command(cmd, target, data):
     cmds = await bot.db.fetchall('''
-        SELECT cmd, response, user_level, global_cooldown, 
-                    user_cooldown, mod_cooldown, enabled_status
+        SELECT 
+            cmd, response, user_level, global_cooldown, 
+            user_cooldown, mod_cooldown, enabled_status
         FROM twitch_commands
         WHERE channel_id=%s AND cmd=%s AND enabled=1
         ORDER BY user_level DESC, enabled_status DESC, id ASC
@@ -88,12 +89,10 @@ async def db_command(cmd, target, data):
                 global_cooldown=cmd['global_cooldown'])
             if cd:
                 continue
-
+            data.setdefault('cmd_history', []).append(cmd['cmd'])
             msg = await var_filler.fill_message(cmd['response'], **data)
             bot.send("PRIVMSG", target=target, message=msg)
-        except var_filler.Send_error as e:
-            bot.send("PRIVMSG", target=target, message='@{}, {}'.format(data['display_name'], e))
-        except var_filler.Send as e:
+        except (var_filler.Send_error, var_filler.Send) as e:
             bot.send("PRIVMSG", target=target, message='@{}, {}'.format(data['display_name'], e))
         except var_filler.Send_break:
             pass
