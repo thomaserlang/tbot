@@ -39,11 +39,11 @@ class Pubsub():
                 data['created_by'] if 'created_by' in data and data['created_by'] else 'twitch',
                 data['created_by_user_id'] if 'created_by_user_id' in data and data['created_by_user_id'] else 0,
                 data['moderation_action'],
-                ' '.join(data['args']).strip()[:200] if data['args'] else '',
-                data['args'][0] if data['target_user_id'] else None,
-                data['target_user_id'] if data['target_user_id'] else None,
+                ' '.join(data['args']).strip()[:200] if data.get('args') else '',
+                data['args'][0] if data.get('target_user_id') else None,
+                data['target_user_id'] if data.get('target_user_id') else None,
             )))
-            if data['target_user_id']:
+            if data.get('target_user_id'):
                 self.loop.create_task(self.db.execute('''
                     INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message) VALUES
                         (%s, %s, %s, %s, %s, %s)
