@@ -1,6 +1,5 @@
-from .base import Api_handler, Api_exception
+from .base import Api_handler
 from tbot import config
-import logging
 
 class Handler(Api_handler):
 
