@@ -63,6 +63,7 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/check-extra-auth', handlers.api.twitch.check_extra_auth.Handler),
             
             (r'/api/rtmp-auth', handlers.api.rtmp_auth.Handler),
+            (r'/api/srt-auth', handlers.api.srt_auth.Handler),
             
             (r'/api/twitch/webhooks/channel.goal.begin', handlers.api.twitch.eventsubs.channel_goal.Handler),
             (r'/api/twitch/webhooks/channel.goal.progress', handlers.api.twitch.eventsubs.channel_goal.Handler),
