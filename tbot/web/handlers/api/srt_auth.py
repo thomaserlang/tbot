@@ -9,4 +9,5 @@ class Handler(Api_handler):
             if len(s) == 2:
                 if s[1] in config['rtmp_keys']:
                     self.set_status(200)
+                    return
         self.set_status(401)
