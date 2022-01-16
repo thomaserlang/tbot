@@ -23,10 +23,9 @@ class Handler(Api_handler):
                     'length': data['length'],
                 }
             )
-            if data['data'][0]['message']:                
-                raise Api_exception(400, data['data'][0]['message'])
             self.write({
-                'retry_after': data['data'][0]['retry_after']
+                'retry_after': data['data'][0]['retry_after'],
+                'message': data['data'][0]['message'],
             })
         except Twitch_request_error as e:
             raise Api_exception(e.status_code, e.message)
