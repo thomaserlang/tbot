@@ -46,7 +46,7 @@ async def give_points_for_sub(**kwargs):
         kwargs['room-id'], 
         kwargs['user-id'],
         kwargs['login'],
-        data['points_per_sub']*sub_plan_multiplier.get(kwargs['msg-param-sub-plan'], 1),
+        data['points_per_sub']*sub_plan_multiplier.get(kwargs.get('msg-param-sub-plan', 1), 1),
     )
 
 @bot.on('PRIVMSG')
