@@ -1,5 +1,4 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
 import api from 'tbot/twitch/api'
 import Loading from 'tbot/components/loading'
 import {setHeader} from 'tbot/utils'

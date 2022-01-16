@@ -47,20 +47,17 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/filters/banned-words-groups/([0-9]+)/banned-words', handlers.api.twitch.filter_banned_words.Banned_words_handler),
             (r'/api/twitch/channels/([0-9]+)/filters/banned-words-groups/([0-9]+)/banned-words/([0-9]+)', handlers.api.twitch.filter_banned_words.Banned_words_handler),
             (r'/api/twitch/channels/([0-9]+)/filters/banned-words-groups/([0-9]+)/test', handlers.api.twitch.filter_banned_words.Banned_words_test_handler),
-            
             (r'/api/twitch/channels/([0-9]+)/timers', handlers.api.twitch.timers.Collection_handler),
             (r'/api/twitch/channels/([0-9]+)/timers/([0-9]+)', handlers.api.twitch.timers.Handler),
-            (r'/api/twitch/channels/([0-9]+)/chat-alerts', handlers.api.twitch.chat_alerts.Handler),
-            
+            (r'/api/twitch/channels/([0-9]+)/chat-alerts', handlers.api.twitch.chat_alerts.Handler),            
             (r'/api/twitch/channels/([0-9]+)/points-settings', handlers.api.twitch.gambling.Points_settings_handler),
             (r'/api/twitch/channels/([0-9]+)/gambling-slots-settings', handlers.api.twitch.gambling.Slots_handler),
-            (r'/api/twitch/channels/([0-9]+)/gambling-roulette-settings', handlers.api.twitch.gambling.Roulette_handler),
-            
+            (r'/api/twitch/channels/([0-9]+)/gambling-roulette-settings', handlers.api.twitch.gambling.Roulette_handler),            
             (r'/api/twitch/channels/([0-9]+)/spotify', handlers.api.twitch.connect_spotify.Handler),
             (r'/api/twitch/channels/([0-9]+)/discord', handlers.api.twitch.connect_discord.Handler),
-            (r'/api/twitch/channels/([0-9]+)/discord-live-notification', handlers.api.twitch.discord_live_notification.Handler),
-            
+            (r'/api/twitch/channels/([0-9]+)/discord-live-notification', handlers.api.twitch.discord_live_notification.Handler),            
             (r'/api/twitch/channels/([0-9]+)/check-extra-auth', handlers.api.twitch.check_extra_auth.Handler),
+            (r'/api/twitch/channels/([0-9]+)/commercial', handlers.api.twitch.commercial.Handler),
 
             (r'/api/rtmp-auth', handlers.api.rtmp_auth.Handler),
             (r'/api/srt-auth', handlers.api.srt_auth.Handler),

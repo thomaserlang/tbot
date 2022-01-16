@@ -34,15 +34,15 @@ async def twitch_request(ahttp, url, params=None, headers={},
                     return await twitch_request(ahttp, url, params, headers, method, data, json)
             d = await r.json()
             if raise_exception:
-                raise Twitch_request_error('{}: {}'.format(r.status, d['message']), r.status)
+                raise Twitch_request_error(d['message'], r.status)
             else:
-                logging.error('{}: {}'.format(r.status, d['message']))
+                logging.error(d)
         if r.status >= 400:
-            error = await r.text()
+            error = await r.json()
             if raise_exception:
-                raise Twitch_request_error('{}: {}'.format(r.status, error), r.status)
+                raise Twitch_request_error(error['message'], r.status)
             else:
-                logging.error('{}: {}'.format(r.status, error))
+                logging.error(error)
         if 'Content-Type' in r.headers:
             if 'application/json' in r.headers['Content-Type']:
                 return await r.json()

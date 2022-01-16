@@ -1,7 +1,7 @@
 import React from 'react'
 import {Redirect} from 'react-router'
-import api from 'tbot/twitch/api'
 import BotControls from './components/bot_controls'
+import Commercial from './components/commercial'
 import ExtraAuth from './components/extra_auth'
 import {setHeader} from 'tbot/utils'
 
@@ -18,6 +18,7 @@ class Dashboard extends React.Component {
             <ExtraAuth />
             <div style={{width: '200px'}}>
                 <BotControls />
+                <Commercial />
             </div>
         </div>
     }
