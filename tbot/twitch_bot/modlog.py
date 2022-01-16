@@ -40,7 +40,7 @@ class Pubsub():
                 data['created_by_user_id'] if 'created_by_user_id' in data and data['created_by_user_id'] else 0,
                 data['moderation_action'],
                 ' '.join(data['args']).strip()[:200] if data.get('args') else '',
-                data['args'][0] if data.get('target_user_id') else None,
+                data['args'][0] if data.get('target_user_id') and data.get('args') else None,
                 data['target_user_id'] if data.get('target_user_id') else None,
             )))
             if data.get('target_user_id'):
