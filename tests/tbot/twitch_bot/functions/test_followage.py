@@ -7,17 +7,28 @@ from datetime import datetime
 
 async def mock_result(*args, **kwargs):
     return {
-        "total": 1,
+        "total": 12345,
         "data": [
             {
-                "from_id": "1",
-                "from_name": "Test1",
-                "to_id": "2",
-                "to_name": "Test2",
-                "followed_at": "2018-02-15T13:44:37Z"
-            }
+                "from_id": "171003792",
+                "from_login": "iiisutha067iii",
+                "from_name": "IIIsutha067III",
+                "to_id": "23161357",
+                "to_name": "LIRIK",
+                "followed_at": "2017-08-22T22:55:24Z"
+            },
+            {
+                "from_id": "113627897",
+                "from_login": "birdman616",
+                "from_name": "Birdman616",
+                "to_id": "23161357",
+                "to_name": "LIRIK",
+                "followed_at": "2017-08-22T22:55:04Z"
+            },
         ],
-        "pagination": {}
+        "pagination":{
+            "cursor": "eyJiIjpudWxsLCJhIjoiMTUwMzQ0MTc3NjQyNDQyMjAwMCJ9"
+        }
     }
 
 class Test(unittest.TestCase):
@@ -40,9 +51,9 @@ class Test(unittest.TestCase):
             )
         ))
         self.assertEqual(s, {
-            'followage': '11 months, 5 days and 7 hours',
-            'followage_date': '2018-02-15',
-            'followage_datetime': '2018-02-15 13:44:37 UTC',
+            'followage': '1 year, 4 months and 24 days',
+            'followage_date': '2017-08-22',
+            'followage_datetime': '2017-08-22 22:55:24 UTC',
         })
 
 

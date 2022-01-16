@@ -61,7 +61,7 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/discord-live-notification', handlers.api.twitch.discord_live_notification.Handler),
             
             (r'/api/twitch/channels/([0-9]+)/check-extra-auth', handlers.api.twitch.check_extra_auth.Handler),
-            
+
             (r'/api/rtmp-auth', handlers.api.rtmp_auth.Handler),
             (r'/api/srt-auth', handlers.api.srt_auth.Handler),
             
