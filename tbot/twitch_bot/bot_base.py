@@ -59,6 +59,10 @@ bot = Client('a', 0)
 
 @bot.on('CLIENT_CONNECT')
 async def connect(**kwargs):
+    if bot.ping_callback:
+        bot.ping_callback.cancel()
+    bot.ping_callback = asyncio.ensure_future(send_ping())
+
     if not bot.is_running:  
         bot.ahttp = aiohttp.ClientSession()        
         bot.db = await db.Db().connect(bot.loop)
@@ -85,10 +89,15 @@ async def connect(**kwargs):
         config['twitch']['irc_port'],
         bot.user['login'],
     ))
-    if config['twitch']['chat_token']:
-        bot.send('PASS', password='oauth:{}'.format(config['twitch']['chat_token']))
-    bot.send('NICK', nick=bot.user['login'])
-    bot.send('USER', user=bot.user['login'], realname=bot.user['login'])
+    try:
+        if config['twitch']['chat_token']:
+            bot.send('PASS', password='oauth:{}'.format(config['twitch']['chat_token']))
+        bot.send('NICK', nick=bot.user['login'])
+        bot.send('USER', user=bot.user['login'], realname=bot.user['login'])
+    except RuntimeError:
+        # Didn't connect for some reason, try again
+        asyncio.ensure_future(bot.connect())
+        return
 
     # Don't try to join channels until the server has
     # sent the MOTD, or signaled that there's no MOTD.
@@ -105,10 +114,6 @@ async def connect(**kwargs):
 
     for future in pending:
         future.cancel()
-
-    if bot.ping_callback:
-        bot.ping_callback.cancel()
-    bot.ping_callback = asyncio.ensure_future(send_ping())
     bot.trigger('AFTER_CONNECTED')
 
 async def receive_redis_server_commands():
@@ -128,6 +133,7 @@ async def receive_redis_server_commands():
 
 @bot.on('CLIENT_DISCONNECT')
 async def disconnect(**kwargs):
+    logging.info(kwargs)
     logging.info('Disconnected')
 
 @bot.on('PING')
