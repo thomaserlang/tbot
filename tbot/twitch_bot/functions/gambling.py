@@ -320,7 +320,7 @@ def get_bet(args, data):
         try:
             bet = str_bet_to_int(args[0].lower(), data['points'])        
         except ValueError:
-            bet = min_bet
+            bet = data['min_bet']
 
     if bet < 0:
         raise Send_error('Your bet must be a positive number')
