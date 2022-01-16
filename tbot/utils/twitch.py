@@ -12,26 +12,14 @@ class Twitch_request_error(Exception):
         self.message = message
         super().__init__(message)
 
-
 async def twitch_request(ahttp, url, params=None, headers={}, 
     method='GET', data=None, json=None, token=None, raise_exception=True):
     if not token:
         token = await twitch_get_app_token(ahttp)
-    if '/kraken/' in url:
-        headers.update({
-            'Client-ID': config['twitch']['client_id'],
-            'Accept': 'application/vnd.twitchtv.v5+json',
-            'Authorization': 'OAuth {}'.format(token)
-        })
-        if data:
-            headers.update({
-                'Content-Type': 'application/x-www-form-urlencoded',
-            })
-    else:
-        headers.update({
-            'Client-ID': config['twitch']['client_id'],
-            'Authorization': 'Bearer {}'.format(token)
-        })
+    headers.update({
+        'Client-ID': config['twitch']['client_id'],
+        'Authorization': 'Bearer {}'.format(token)
+    })
     async with ahttp.request(method, url, params=params, 
         headers=headers, data=data, json=json) as r:
         if r.status == 415:
@@ -88,7 +76,7 @@ async def twitch_channel_token_request(bot, channel_id, url, method='GET',
         (channel_id,)
     )
     if not channel:
-        raise Exception('Unknown channel {}'.format(channel_id))
+        raise Exception(f'Unknown channel {channel_id}')
     if not channel['twitch_token'] or not channel['twitch_refresh_token']:
         raise Twitch_request_error(
             'Extra authorization is needed, please sign in to the dashboard and '
