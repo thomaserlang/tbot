@@ -133,7 +133,6 @@ async def receive_redis_server_commands():
 
 @bot.on('CLIENT_DISCONNECT')
 async def disconnect(**kwargs):
-    logging.info(kwargs)
     logging.info('Disconnected')
 
 @bot.on('PING')
