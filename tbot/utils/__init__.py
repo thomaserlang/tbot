@@ -3,4 +3,4 @@ from .twitch import *
 from . import (
     link
 )
-from .split import *
+from .text import *

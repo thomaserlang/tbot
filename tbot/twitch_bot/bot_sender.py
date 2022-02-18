@@ -20,16 +20,15 @@ def setup(bot):
 
     @bot_sender.on('CLIENT_CONNECT')
     async def connect(**kwargs):
-        if config['twitch']['chat_token']:
-            bot_sender.send('PASS', password='oauth:{}'.format(config['twitch']['chat_token']))
-        bot_sender.send('NICK', nick=bot.user['login'])
-        bot_sender.send('USER', user=bot.user['login'], realname=bot.user['login'])
-
         if bot_sender.pong_check_callback:
             bot_sender.pong_check_callback.cancel()
         if bot_sender.ping_callback:
             bot_sender.ping_callback.cancel()
-        bot_sender.ping_callback = asyncio.ensure_future(send_ping())
+        bot_sender.ping_callback = asyncio.ensure_future(send_ping(10))
+        if config['twitch']['chat_token']:
+            bot_sender.send('PASS', password='oauth:{}'.format(config['twitch']['chat_token']))
+        bot_sender.send('NICK', nick=bot.user['login'])
+        bot_sender.send('USER', user=bot.user['login'], realname=bot.user['login'])
 
         bot.bot_sender = bot_sender
 
@@ -47,8 +46,8 @@ def setup(bot):
             bot_sender.ping_callback.cancel()
         bot_sender.ping_callback = asyncio.ensure_future(send_ping())
 
-    async def send_ping():
-        await asyncio.sleep(random.randint(120, 240))
+    async def send_ping(time=None):
+        await asyncio.sleep(random.randint(120, 240) if not time else time)
         logging.debug('Sending ping')
         bot_sender.pong_check_callback = asyncio.ensure_future(wait_for_pong())
         bot_sender.send('PING')
@@ -61,3 +60,9 @@ def setup(bot):
             bot_sender.ping_callback.cancel()
         bot_sender.ping_callback = asyncio.ensure_future(send_ping())
         await bot_sender.connect()
+    
+    if bot_sender.pong_check_callback:
+        bot_sender.pong_check_callback.cancel()
+    if bot_sender.ping_callback:
+        bot_sender.ping_callback.cancel()
+    bot_sender.ping_callback = asyncio.ensure_future(send_ping(5))

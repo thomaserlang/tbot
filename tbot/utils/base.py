@@ -63,6 +63,8 @@ def isoformat(dt):
         r += 'Z'
     return r
 
+
+
 class JsonEncoder(json.JSONEncoder):
     def default(self, value):
         """Convert more Python data types to ES-understandable JSON."""

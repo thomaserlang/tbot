@@ -2,7 +2,6 @@ import logging, good, asyncio
 from ..base import Api_handler, Level, Api_exception
 from . import filters
 from tbot import config, utils, twitch_bot
-from tbot.twitch_bot.filters.banned_words import check_message
 
 class Group_handler(filters.Filter_base):
     
@@ -145,5 +144,5 @@ class Banned_words_test_handler(Api_handler):
             WHERE channel_id=%s AND filter_id=%s
         ''', (channel_id, filter_id,))
         self.write_object({
-            'match': check_message(d['message'], [bw['banned_words'] for bw in banned_words])
+            'match': utils.check_message(d['message'], [bw['banned_words'] for bw in banned_words])
         })

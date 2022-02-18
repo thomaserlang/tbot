@@ -17,22 +17,9 @@ async def check(target, message, kwargs):
         excluded = await base.is_excluded(bot, f[fid], kwargs)
         if excluded:
             continue
-        if check_message(message, f[fid]['banned_words']):
+        if utils.check_message(message, f[fid]['banned_words']):
             await base.warn_or_timeout(bot, 'banned_words', target, f[fid], kwargs)
             return True
-
-def check_message(message: str, banned_words: List[str]):
-    for bw in banned_words:
-        if bw.startswith('re:'):
-            if re.search(bw[3:], message, flags=re.IGNORECASE):
-                return True
-            continue
-
-        s = utils.split(bw)
-        if all([re.search(rf'\b{a}\b', message, flags=re.IGNORECASE) for a in s]):
-            return True
-            
-    return False
 
 @bot.on('AFTER_CONNECTED')
 async def connected(**kwargs):

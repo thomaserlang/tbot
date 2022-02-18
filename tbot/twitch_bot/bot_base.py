@@ -1,5 +1,5 @@
 import logging, random, bottom
-import asyncio, aiohttp, aiomysql, aioredis
+import asyncio, aiohttp, aioredis
 from datetime import datetime
 from tbot.twitch_bot.unpack import rfc2812_handler
 from tbot.twitch_bot import bot_sender
@@ -19,7 +19,7 @@ class Client(bottom.Client):
         self.redis = None
         self.redis_sub = None
         self.pong_check_callback = None
-        self.ping_callback = None
+        self.ping_callback = asyncio.ensure_future(self.send_ping(10))
         self.starttime = datetime.utcnow()
         self.user = None
         self.bot_sender = None
@@ -55,14 +55,25 @@ class Client(bottom.Client):
         for b in bucket:
             self.send(b['command'], **b['kwargs'])
 
+    async def send_ping(self, time=None):
+        await asyncio.sleep(random.randint(120, 240) if not time else time)
+        logging.debug('Sending ping')
+        bot.pong_check_callback = asyncio.ensure_future(self.wait_for_pong())
+        bot.send('PING')
+
+    async def wait_for_pong(self):
+        await asyncio.sleep(10)
+
+        logging.error('Didn\'t receive a PONG in time, reconnecting')
+        if bot.ping_callback:
+            bot.ping_callback.cancel()
+        bot.ping_callback = asyncio.ensure_future(self.send_ping())
+        await self.connect()
+
 bot = Client('a', 0)
 
 @bot.on('CLIENT_CONNECT')
 async def connect(**kwargs):
-    if bot.ping_callback:
-        bot.ping_callback.cancel()
-    bot.ping_callback = asyncio.ensure_future(send_ping())
-
     if not bot.is_running:  
         bot.ahttp = aiohttp.ClientSession()        
         bot.db = await db.Db().connect(bot.loop)
@@ -80,9 +91,6 @@ async def connect(**kwargs):
 
         bot_sender.setup(bot)
         bot.loop.create_task(bot_sender.bot_sender.connect())
-
-    if bot.pong_check_callback:
-        bot.pong_check_callback.cancel()
 
     logging.info('IRC Connecting to {}:{} as {}'.format(
         config['twitch']['irc_host'], 
@@ -116,6 +124,11 @@ async def connect(**kwargs):
         future.cancel()
     bot.trigger('AFTER_CONNECTED')
 
+    if bot.pong_check_callback:
+        bot.pong_check_callback.cancel()
+    if bot.ping_callback:
+        bot.ping_callback.cancel()
+
 async def receive_redis_server_commands():
     sub = bot.redis_sub[0]
     while (await sub.wait_message()):
@@ -147,19 +160,4 @@ async def pong(message, **kwargs):
         bot.pong_check_callback.cancel()
     if bot.ping_callback:
         bot.ping_callback.cancel()
-    bot.ping_callback = asyncio.ensure_future(send_ping())
-
-async def send_ping():
-    await asyncio.sleep(random.randint(120, 240))
-    logging.debug('Sending ping')
-    bot.pong_check_callback = asyncio.ensure_future(wait_for_pong())
-    bot.send('PING')
-
-async def wait_for_pong():
-    await asyncio.sleep(10)
-
-    logging.error('Didn\'t receive a PONG in time, reconnecting')
-    if bot.ping_callback:
-        bot.ping_callback.cancel()
-    bot.ping_callback = asyncio.ensure_future(send_ping())
-    await bot.connect()
+    bot.ping_callback = asyncio.ensure_future(bot.send_ping())
