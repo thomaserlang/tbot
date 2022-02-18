@@ -31,7 +31,7 @@ class Pubsub():
             if data['moderation_action'] == 'delete':
                 data['args'] = [data['args'][0], data['args'][-1]]
             self.loop.create_task(self.db.execute('''
-                INSERT INTO twitch_modlog (created_at, channel_id, user, user_id, command, args, target_user, target_user_id) VALUES
+                INSERT INTO twitch_modlog (created_at, channel_id, user, user_id, command, args, target_user_id) VALUES
                     (%s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
                 datetime.utcnow(),
@@ -40,18 +40,16 @@ class Pubsub():
                 data['created_by_user_id'] if 'created_by_user_id' in data and data['created_by_user_id'] else 0,
                 data['moderation_action'],
                 ' '.join(data['args']).strip()[:200] if data.get('args') else '',
-                data['args'][0] if data.get('target_user_id') and data.get('args') else None,
                 data['target_user_id'] if data.get('target_user_id') else None,
             )))
             if data.get('target_user_id'):
                 self.loop.create_task(self.db.execute('''
-                    INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message) VALUES
+                    INSERT INTO twitch_chatlog (type, created_at, channel_id, user_id, message) VALUES
                         (%s, %s, %s, %s, %s, %s)
                 ''', (
                     100,
                     datetime.utcnow(),
                     c[2],
-                    data['args'][0],
                     data['target_user_id'],
                     '<{}{} (by {})>'.format(
                         data['moderation_action'],
