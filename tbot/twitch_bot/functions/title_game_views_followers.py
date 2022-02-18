@@ -1,4 +1,3 @@
-import logging, urllib.parse
 from tbot.twitch_bot.var_filler import fills_vars, Send_error
 from tbot import utils
 
@@ -10,8 +9,8 @@ async def title_game_views_followers(bot, channel_id, **kwargs):
     if not data['data']:
         raise Send_error('No data')
     return {
-        'title': data[0]['title'] or '<No title>',
-        'game': data[0]['game_name'] or '<Not in any game category>',
+        'title': data['data'][0]['title'] or '<No title>',
+        'game': data['data'][0]['game_name'] or '<Not in any game category>',
     }
 
 @fills_vars('followers')
