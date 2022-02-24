@@ -67,7 +67,7 @@ class Client(bottom.Client):
         logging.error('Didn\'t receive a PONG in time, reconnecting')
         if bot.ping_callback:
             bot.ping_callback.cancel()
-        bot.ping_callback = asyncio.ensure_future(self.send_ping())
+        bot.ping_callback = asyncio.ensure_future(self.send_ping(10))
         await self.connect()
 
 bot = Client('a', 0)
@@ -123,11 +123,6 @@ async def connect(**kwargs):
     for future in pending:
         future.cancel()
     bot.trigger('AFTER_CONNECTED')
-
-    if bot.pong_check_callback:
-        bot.pong_check_callback.cancel()
-    if bot.ping_callback:
-        bot.ping_callback.cancel()
 
 async def receive_redis_server_commands():
     sub = bot.redis_sub[0]
