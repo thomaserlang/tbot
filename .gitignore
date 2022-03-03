@@ -45,7 +45,6 @@ coverage.xml
 *.sublime-workspace
 *.db
 node_modules/
-package-lock.json
 *.yaml
 
 # Rope
