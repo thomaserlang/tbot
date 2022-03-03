@@ -61,3 +61,6 @@ docs/_build/
 *.orig
 .vscode/settings.json
 .vscode/launch.json
+
+tbot/web/static/ui
+tbot/web/templates/ui

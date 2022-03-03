@@ -3,50 +3,17 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require("path");
 
-pages = [
-  'twitch/widgets/goal',
-]
-
-let entries = {}
-pages.forEach(name => {
-    entries[name.replace(/\//gi, '_')] = {
-        import: './tbot/web/static/app/src/'+name+'/index.jsx',
-        dependOn: 'vendor',
-    }
-})
-
-plugins = pages.map(name => {
-    return new HtmlWebpackPlugin({
-        'filename': path.resolve(__dirname, 'tbot/web/templates/'+name+'.html'),
-        'template': './tbot/web/static/app/src/'+name+'/index.html',
-        'chunks': [name.replace(/\//gi, '_'), 'vendor'],
-        'publicPath': '/static',        
-        'minify': false
-    })
-})
-
 module.exports = {
   entry: {
     main: {
-      import: './tbot/web/static/app/src/index.jsx',
-      dependOn: 'vendor',
+      import: './tbot/web/ui/index.jsx',
     },
-    vendor: [
-      'axios', 
-      'react', 
-      'react-router-dom',
-      'react-router-config',
-      'query-string',
-      'moment',
-      'downshift',
-    ],
-    ...entries
   },
   devtool: "source-map",
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
-      tbot: path.resolve(__dirname, 'tbot/web/static/app/src/'),
+      tbot: path.resolve(__dirname, 'tbot/web/ui/'),
     }
   },    
   module: {
@@ -77,17 +44,15 @@ module.exports = {
       chunkFilename: "[id].[contenthash].css",
     }),
     new HtmlWebpackPlugin({
-      'filename': path.resolve(__dirname, 'tbot/web/templates/react.html'),
-      'template': './tbot/web/static/app/src/index.html',
-      'chunks': ['main', 'vendor'],
-      'publicPath': '/static',
-      'minify': false
+      'filename': path.resolve(__dirname, 'tbot/web/templates/ui/react.html'),
+      'template': './tbot/web/ui/index.html',
+      'chunks': ['main'],
+      'publicPath': '/static/ui',
     }),
-    ...plugins
   ],
   output: {
     filename: '[name].[contenthash].js',
-    path: path.resolve(__dirname, 'tbot/web/static/app/dist'),
+    path: path.resolve(__dirname, 'tbot/web/static/ui'),
     clean: true,
   },
 };

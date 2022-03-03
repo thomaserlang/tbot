@@ -11,7 +11,7 @@ def App():
     return web.Application(
         [            
             (r'/static/(.*)', web.StaticFileHandler, 
-                {'path': os.path.join(os.path.dirname(__file__), 'static/app/dist')}),
+                {'path': os.path.join(os.path.dirname(__file__), 'static')}),
             (r'/(favicon.ico)', web.StaticFileHandler, 
                 {"path": os.path.join(os.path.dirname(__file__), 'static')}),
 
