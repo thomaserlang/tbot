@@ -102,7 +102,7 @@ def load(path=None):
                     path = p
                     break
     if not path:
-        raise Exception('No config file specified.')
+        return
     if not os.path.isfile(path):
         raise Exception('Config: "{}" could not be found.'.format(path))
     with open(path) as f:

@@ -25,10 +25,13 @@ def sig_handler(server, application, sig, frame):
             io_loop.add_timeout(now + 1, stop_loop, server, deadline)
         else:
             logging.debug(f'Shutting down. {pending_connection} connections left')
-            application.db.close()
-            application.redis.close()
-            asyncio.run(application.db.wait_closed())
-            asyncio.run(application.redis.wait_closed())
+            try:
+                application.db.close()
+                application.redis.close()
+                asyncio.run(application.db.wait_closed())
+                asyncio.run(application.redis.wait_closed())
+            except:
+                pass
             io_loop.stop()
 
     def shutdown():

@@ -1,0 +1,8 @@
+*
+
+!/tbot
+!/requirements.txt
+!/package-lock.json
+!/package.json
+!/webpack.config.js
+!/.babelrc
