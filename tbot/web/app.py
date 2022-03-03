@@ -15,6 +15,7 @@ def App():
             (r'/(favicon.ico)', web.StaticFileHandler, 
                 {"path": os.path.join(os.path.dirname(__file__), 'static')}),
 
+            (r'/health', handlers.health.Handler),
             (r'/twitch/login', handlers.api.twitch.oauth.Login_handler),
             (r'/twitch/logout', handlers.api.twitch.oauth.Logout_handler),
             (r'/connect/twitch', handlers.api.twitch.oauth.Handler),
