@@ -90,6 +90,8 @@ def load(path=None):
         '../tbot.yaml',
         '/etc/tbot/tbot.yaml',
         '/etc/tbot.yaml',
+        '/etc/tbot/tbot.yml',
+        '/etc/tbot.yml',
     ]
     if not path:
         path = os.environ.get('TBOT_CONFIG', None)

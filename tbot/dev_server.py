@@ -21,7 +21,6 @@ def main():
         )
 
     manager.loop()
-    sys.exit(manager.returncode)
 
 if __name__ == '__main__':
     main()

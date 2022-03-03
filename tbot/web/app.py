@@ -1,8 +1,11 @@
+from functools import partial
 import logging, os
 import asyncio, aioredis, aiohttp
+import signal
 from tornado import web
 from tbot import config, db
 from tbot.web import handlers
+from tbot.web.io_sighandler import sig_handler
 
 def App():
     return web.Application(
@@ -82,8 +85,11 @@ def main():
     loop = asyncio.get_event_loop()
     app = App()
     app.loop = loop
-    app.listen(config['web']['port'])
+    server = app.listen(config['web']['port'])
+    signal.signal(signal.SIGTERM, partial(sig_handler, server, app))
+    signal.signal(signal.SIGINT, partial(sig_handler, server, app))  
     loop.create_task(db_connect(app))
+    logging.info(f'Web started on port: {config["web"]["port"]}')
     loop.run_forever()
 
 async def db_connect(app):
