@@ -23,5 +23,5 @@ RUN addgroup --gid $GID --system tbot; adduser --uid $UID --system --gid $GID tb
 USER $UID:$GID
 ENTRYPOINT ["python", "tbot/runner.py"]
 
-# sudo docker build -t thomaserlang/tbot --rm . 
-# sudo docker push thomaserlang/tbot:latest 
+# docker build -t thomaserlang/tbot --rm . 
+# docker push thomaserlang/tbot:latest 
