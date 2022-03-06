@@ -12,10 +12,14 @@ async def on_connect():
         bot.db = await db.Db().connect(bot.loop)
 
 def main():
+    log = logging.getLogger('main')
+    log.setLevel('INFO')
     bot.loop.create_task(
         tbot.discord_bot.tasks.twitch_sync.twitch_sync()
     )
+    log.info('Discord bot started')
     bot.run(config['discord']['token'], bot=config['discord']['bot'])
+    log.info('Discord bot stopped')
 
 if __name__ == '__main__':
     from tbot import config_load, logger

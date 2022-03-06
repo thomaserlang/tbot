@@ -87,11 +87,15 @@ def main():
     app = App()
     app.loop = loop
     server = app.listen(config['web']['port'])
+
     signal.signal(signal.SIGTERM, partial(sig_handler, server, app))
-    signal.signal(signal.SIGINT, partial(sig_handler, server, app))  
-    loop.create_task(db_connect(app))
-    logging.info(f'Web started on port: {config["web"]["port"]}')
+    signal.signal(signal.SIGINT, partial(sig_handler, server, app))
+
+    log = logging.getLogger('main')
+    log.setLevel('INFO')
+    log.info(f'Web server started on port: {config["web"]["port"]}')
     loop.run_forever()
+    log.info('Web server stopped')
 
 async def db_connect(app):
     app.db = await db.Db().connect(None)

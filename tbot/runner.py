@@ -16,12 +16,14 @@ def cli(config, log_path, log_level):
 def twitch_bot():
     logger.set_logger('twitch_bot.log', sentry_dsn=config['sentry_dsn'])
     from tbot.twitch_bot import bot_main, modlog
-
+    log = logging.getLogger('main')
+    log.setLevel('INFO')
+    log.info('Twitch bot started')
     loop = asyncio.get_event_loop()
     loop.create_task(bot_main.bot.connect())
     loop.create_task(modlog.Pubsub().run())
-
     loop.run_forever()
+    log.info('Twitch bot stopped')
 
 @cli.command()
 def web():
