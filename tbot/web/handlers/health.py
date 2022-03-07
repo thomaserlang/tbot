@@ -1,4 +1,6 @@
 import asyncio
+import json
+import logging
 from tornado.web import RequestHandler
 
 from tbot import utils
@@ -19,6 +21,7 @@ class Handler(RequestHandler):
         self.write(utils.json_dumps(result))
         if any([r['error'] for r in result]):
             self.set_status(500)
+            logging.error(json.dumps(result, indent=4, sort_keys=True))
         else:
             self.set_status(200)
         self.finish()
