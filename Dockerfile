@@ -1,9 +1,15 @@
-FROM node:16-alpine as builder
+FROM node:16-alpine as jsbuilder
 COPY . .
 RUN npm ci; npm run build
 
 
-FROM python:3.9-bullseye
+FROM python:3.9-bullseye as pybuilder
+COPY . .
+RUN pip wheel -r requirements.txt --wheel-dir=/wheels
+RUN pip wheel mysqlclient==2.1.0 --wheel-dir=/wheels
+
+
+FROM python:3.9-slim-bullseye
 RUN apt-get update; apt-get upgrade -y; apt-get install curl -y
 ENV \
     PIP_NO_CACHE_DIR=1 \
@@ -14,10 +20,11 @@ ENV \
 
 COPY . .
 
-RUN pip install -r requirements.txt
+COPY --from=pybuilder /wheels /wheels
+RUN pip install --no-index --find-links=/wheels -r requirements.txt
 
-COPY --from=builder tbot/web/static/ui tbot/web/static/ui
-COPY --from=builder tbot/web/templates/ui tbot/web/templates/ui
+COPY --from=jsbuilder tbot/web/static/ui tbot/web/static/ui
+COPY --from=jsbuilder tbot/web/templates/ui tbot/web/templates/ui
 
 RUN addgroup --gid $GID --system tbot; adduser --uid $UID --system --gid $GID tbot
 USER $UID:$GID
