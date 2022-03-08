@@ -87,7 +87,7 @@ def main():
     app = App()
     app.loop = loop
     server = app.listen(config['web']['port'])
-
+    loop.create_task(db_connect(app))
     signal.signal(signal.SIGTERM, partial(sig_handler, server, app))
     signal.signal(signal.SIGINT, partial(sig_handler, server, app))
 
