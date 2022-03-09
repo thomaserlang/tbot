@@ -32,6 +32,19 @@ class Pubsub():
                 return data['target_user_login']
             if data.get('args'):
                 return data['args'][0]
+        def get_created_by():
+            if data.get('created_by'):
+                return data['created_by']
+            if data.get('created_by_login'):
+                return data['created_by_login']
+            return 'twitch'
+        def created_by_user_id():
+            if data.get('created_by_user_id'):
+                return data['created_by_user_id']
+            if data.get('created_by_id'):
+                return data['created_by_id']
+            return 0
+
         try:
             if data['moderation_action'] == 'delete':
                 data['args'] = [data['args'][0], data['args'][-1]]
@@ -41,8 +54,8 @@ class Pubsub():
             ''', (
                 datetime.utcnow(),
                 c[2],
-                data['created_by'] if 'created_by' in data and data['created_by'] else 'twitch',
-                data['created_by_user_id'] if 'created_by_user_id' in data and data['created_by_user_id'] else 0,
+                get_created_by(),
+                created_by_user_id(),
                 data['moderation_action'],
                 ' '.join(data['args']).strip()[:200] if data.get('args') else '',
                 get_target_user(),
@@ -60,8 +73,9 @@ class Pubsub():
                     data['target_user_id'],
                     '<{}{} (by {})>'.format(
                         data['moderation_action'],
-                        ' '+' '.join(data['args']).strip() if data.get('args') else '',
-                        data['created_by'] or 'twitch',
+                        ' '+(' '.join(data['args']).strip() if data.get('args') else '')+
+                        ' '+data['moderator_message'] if data.get('moderator_message') else '',
+                        get_created_by(),
                     ),
                 )))
 
