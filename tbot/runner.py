@@ -39,7 +39,7 @@ def discord():
 
 @cli.command()
 def upgrade():
-    logger.set_logger('', fmt='%(message)s', sentry_dsn=config['sentry_dsn'])
+    logger.set_logger('migration.log', sentry_dsn=config['sentry_dsn'])
     from yoyo import read_migrations
     from yoyo import get_backend
 
@@ -49,11 +49,14 @@ def upgrade():
         config['mysql']['host'],
         config['mysql']['port'],
         config['mysql']['database'],
-    ))
+    ))    
+    log = logging.getLogger('main')
+    log.setLevel('INFO')
+    log.info('Upgrade started')
     migrations = read_migrations(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'migrations'))
     with backend.lock():
         backend.apply_migrations(backend.to_apply(migrations))
-    logging.info('Upgrade done')
+    log.info('Upgrade done')
 
 @cli.command()
 def twitch_eventsub_check():
