@@ -8,6 +8,8 @@ services:
       - MYSQL_DATABASE=tbot
     ports:
       - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
   redis:
     image: "redis:latest"    
     ports:
@@ -19,3 +21,6 @@ services:
     ports:
         - 80:80
         - 443:443
+
+volumes:
+  dbdata:
