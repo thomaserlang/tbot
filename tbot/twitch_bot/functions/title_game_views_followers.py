@@ -1,3 +1,4 @@
+import logging
 from tbot.twitch_bot.var_filler import fills_vars, Send_error
 from tbot import utils
 
@@ -90,11 +91,17 @@ async def set_game(bot, channel_id, args, var_args, **kwargs):
         data = await utils.twitch_channel_token_request(
             bot, channel_id,
             'https://api.twitch.tv/helix/search/categories',
-            params={'query': game},
+            params={'query': f'"{game}"'},
         )
         if 'data' in data and data['data']:
-            game_id = data['data'][0]['id']
-            game = data['data'][0]['name']
+            for g in data['data']:
+                if g['name'].lower() == game.lower():
+                    game_id = g['id']
+                    game = g['name']
+                    break
+            else:
+                game_id = data['data'][0]['id']
+                game = data['data'][0]['name']
         else:
             raise Send_error(f'No game or category found for {game}')
     try:
