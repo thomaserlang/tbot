@@ -106,51 +106,45 @@ class Pubsub():
         )
         self.redis_sub = await self.redis.subscribe('tbot:server:commands')
         asyncio.ensure_future(self.receive_server_commands())
-        while True:
-            if self.ws:
-                self.ws.close()
+
+        logging.info('PubSub Connecting to {}'.format(self.url))
+        
+        async for ws in websockets.connect(self.url):
+            self.ws = ws
             try:
-                await self.connect()
+                if self.ping_callback:
+                    self.ping_callback.cancel()
+                user = await utils.twitch_current_user(self.ahttp)
+                self.current_user_id = user['id']
+                channels = await self.get_channels() 
+                topics = []
+                for c in channels:
+                    topics.append('chat_moderator_actions.{}.{}'.format(
+                        self.current_user_id,
+                        c['channel_id'],
+                    ))
+                await self.ws.send(json.dumps({
+                    'type': 'LISTEN',
+                    'data': {
+                        'topics': topics,
+                        'auth_token': self.token,
+                    }
+                }))
+                self.ping_callback = asyncio.ensure_future(self.ping())
+
                 while True:
                     try:
                         message = await self.ws.recv()
                         await self.parse_message(json.loads(message))
-                    except websockets.exceptions.ConnectionClosed as e:
-                        self.ping_callback.cancel()
-                        logging.error(f'PubSub connection closed: {e.reason}')
-                        break
                     except KeyboardInterrupt:
                         raise KeyboardInterrupt()
-                    except:
-                        logging.exception('Loop 2')
-            except KeyboardInterrupt:
-                break
-            except:
-                logging.exception('Loop 1')
-                await asyncio.sleep(10)
 
-    async def connect(self):
-        if self.ping_callback:
-            self.ping_callback.cancel()
-        user = await utils.twitch_current_user(self.ahttp)
-        self.current_user_id = user['id']
-        channels = await self.get_channels() 
-        topics = []
-        for c in channels:
-            topics.append('chat_moderator_actions.{}.{}'.format(
-                self.current_user_id,
-                c['channel_id'],
-            ))
-        logging.info('PubSub Connecting to {}'.format(self.url))
-        self.ws = await websockets.connect(self.url)
-        await self.ws.send(json.dumps({
-            'type': 'LISTEN',
-            'data': {
-                'topics': topics,
-                'auth_token': self.token,
-            }
-        }))
-        self.ping_callback = asyncio.ensure_future(self.ping())
+            except websockets.ConnectionClosed:
+                self.ping_callback.cancel()
+                logging.info('Lost connection to {}, reconnecting'.format(self.url))
+                continue
+            except KeyboardInterrupt:
+                raise KeyboardInterrupt()
 
     async def ping(self):
         await asyncio.sleep(random.randint(120, 240))
