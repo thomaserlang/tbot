@@ -14,9 +14,10 @@ class Pubsub():
 
     async def parse_message(self, message):
         if message['type'] == 'PONG':
-            asyncio.ensure_future(self.ping())
+            logging.debug('Received pong')
             if self.pong_check_callback:
                 self.pong_check_callback.cancel()
+            self.ping_callback = asyncio.ensure_future(self.ping())
         elif message['type'] == 'RECONNECT':
             await self.ws.close()
         elif message['type'] == 'MESSAGE':
@@ -114,6 +115,7 @@ class Pubsub():
             try:
                 if self.ping_callback:
                     self.ping_callback.cancel()
+                self.ping_callback = asyncio.ensure_future(self.ping())
                 user = await utils.twitch_current_user(self.ahttp)
                 self.current_user_id = user['id']
                 channels = await self.get_channels() 
@@ -123,14 +125,14 @@ class Pubsub():
                         self.current_user_id,
                         c['channel_id'],
                     ))
-                await self.ws.send(json.dumps({
-                    'type': 'LISTEN',
-                    'data': {
-                        'topics': topics,
-                        'auth_token': self.token,
-                    }
-                }))
-                self.ping_callback = asyncio.ensure_future(self.ping())
+                if topics:
+                    await self.ws.send(json.dumps({
+                        'type': 'LISTEN',
+                        'data': {
+                            'topics': topics,
+                            'auth_token': self.token,
+                        }
+                    }))
 
                 while True:
                     try:
@@ -147,13 +149,14 @@ class Pubsub():
                 raise KeyboardInterrupt()
 
     async def ping(self):
-        await asyncio.sleep(random.randint(120, 240))
+        await asyncio.sleep(random.randint(5, 10))
+        logging.debug('Send PING')
         await self.ws.send('{"type": "PING"}')
         self.pong_check_callback = asyncio.ensure_future(self.close())
 
     async def close(self):
         await asyncio.sleep(10)
-        logging.info('closing')
+        logging.info('Closing')
         await self.ws.close()
 
     async def get_channels(self):
