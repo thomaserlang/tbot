@@ -8,13 +8,13 @@ from tbot import config, config_load, logger
 def cli(config, log_path, log_level):
     config_load(config)
     if log_path != None:
-        config['logging']['path'] = log_path
+        config.data.logging.path = log_path
     if log_level:
-        config['logging']['level'] = log_level
+        config.data.logging.level = log_level
 
 @cli.command()
 def twitch_bot():
-    logger.set_logger('twitch_bot.log', sentry_dsn=config['sentry_dsn'])
+    logger.set_logger('twitch_bot.log', sentry_dsn=config.data.sentry_dsn)
     from tbot.twitch_bot import bot_main, modlog
     log = logging.getLogger('main')
     log.setLevel('INFO')
@@ -27,28 +27,28 @@ def twitch_bot():
 
 @cli.command()
 def web():
-    logger.set_logger('web.log', sentry_dsn=config['sentry_dsn'])
+    logger.set_logger('web.log', sentry_dsn=config.data.sentry_dsn)
     import tbot.web.app
     tbot.web.app.main() 
 
 @cli.command()
 def discord():
-    logger.set_logger('discord.log', sentry_dsn=config['sentry_dsn'])
+    logger.set_logger('discord.log', sentry_dsn=config.data.sentry_dsn)
     import tbot.discord_bot.bot_main
     tbot.discord_bot.bot_main.main() 
 
 @cli.command()
 def upgrade():
-    logger.set_logger('migration.log', sentry_dsn=config['sentry_dsn'])
+    logger.set_logger('migration.log', sentry_dsn=config.data.sentry_dsn)
     from yoyo import read_migrations
     from yoyo import get_backend
 
     backend = get_backend('mysql://{}:{}@{}:{}/{}'.format(
-        config['mysql']['user'],
-        config['mysql']['password'],
-        config['mysql']['host'],
-        config['mysql']['port'],
-        config['mysql']['database'],
+        config.data.mysql.user,
+        config.data.mysql.password,
+        config.data.mysql.host,
+        config.data.mysql.port,
+        config.data.mysql.database,
     ))    
     log = logging.getLogger('main')
     log.setLevel('INFO')
@@ -60,7 +60,7 @@ def upgrade():
 
 @cli.command()
 def twitch_eventsub_check():
-    logger.set_logger('twitch_eventsub_check.log', sentry_dsn=config['sentry_dsn'])
+    logger.set_logger('twitch_eventsub_check.log', sentry_dsn=config.data.sentry_dsn)
     from tbot.web.handlers.api.twitch.eventsubs.eventsub import task_check_channels
     asyncio.run(task_check_channels())
 

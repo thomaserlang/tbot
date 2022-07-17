@@ -5,7 +5,7 @@ from tbot import config
             'weather.temp_min', 'weather.temp_max', 'weather.humidity', 
             'weather.city', 'weather.wind_speed',)
 async def weather(bot, var_args, args, cmd, **kwargs):
-    if not config['openweathermap_apikey']:
+    if not config.data.openweathermap_apikey:
         raise Send_error('`openweathermap_apikey` is missing in the config')
     url = 'https://api.openweathermap.org/data/2.5/weather'
     city = None
@@ -21,7 +21,7 @@ async def weather(bot, var_args, args, cmd, **kwargs):
 
     params = {
         'q': city,
-        'APPID': config['openweathermap_apikey'],
+        'APPID': config.data.openweathermap_apikey,
         'units': units,
     } 
     async with bot.ahttp.get(url, params=params) as r:

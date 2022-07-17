@@ -8,17 +8,17 @@ class logger(object):
     @classmethod
     def set_logger(cls, filename, sentry_dsn=None):
         logger = logging.getLogger()
-        logger.setLevel(config['logging']['level'].upper())
+        logger.setLevel(config.data.logging.level.upper())
 
         format_ = log.LogFormatter(
             '[%(color)s%(levelname)s%(end_color)s %(asctime)s %(module)s:%(lineno)d]: %(message)s', 
             datefmt='%Y-%m-%d %H:%M:%S'
         )
-        if config['logging']['path'] and filename:
+        if config.data.logging.path and filename:
             channel = logging.handlers.RotatingFileHandler(
-                filename=os.path.join(config['logging']['path'], filename),
-                maxBytes=config['logging']['max_size'],
-                backupCount=config['logging']['num_backups']
+                filename=os.path.join(config.data.logging.path, filename),
+                maxBytes=config.data.logging.max_size,
+                backupCount=config.data.logging.num_backups
             )
             channel.setFormatter(format_)
             logger.addHandler(channel)

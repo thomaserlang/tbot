@@ -34,9 +34,9 @@ class Handler(Api_handler):
         if not r:
             raise Exception('Unknown channel {}'.format(channel_id))
         self.redirect('https://discordapp.com/api/oauth2/authorize?'+parse.urlencode({
-            'client_id': config['discord']['client_id'],
-            'permissions': config['discord']['permissions'],
-            'redirect_uri': parse.urljoin(config['web']['base_url'], 'connect/discord'),
+            'client_id': config.data.discord.client_id,
+            'permissions': config.data.discord.permissions,
+            'redirect_uri': parse.urljoin(config.data.web.base_url, 'connect/discord'),
             'scope': 'bot',
             'response_type': 'code',
             'state': base64.b64encode(utils.json_dumps({
@@ -54,10 +54,10 @@ class Receive_handler(Base_handler):
 
         http = httpclient.AsyncHTTPClient()
         response = await http.fetch('https://discordapp.com/api/oauth2/token', body=parse.urlencode({
-            'client_id': config['discord']['client_id'],
-            'client_secret': config['discord']['client_secret'],
+            'client_id': config.data.discord.client_id,
+            'client_secret': config.data.discord.client_secret,
             'code': code,
-            'redirect_uri': parse.urljoin(config['web']['base_url'], 'connect/discord'),
+            'redirect_uri': parse.urljoin(config.data.web.base_url, 'connect/discord'),
             'grant_type': 'authorization_code',
         }), method='POST', headers={'Content-Type': 'application/x-www-form-urlencoded'}, raise_error=False)
         if response.code != 200:
@@ -67,7 +67,7 @@ class Receive_handler(Base_handler):
         data = json.loads(escape.native_str(response.body))
         if 'guild' not in data:
             e = 'oAuth2 grant is not enabled for the bot. Enable it here: https://discordapp.com/developers/applications/{}/bots'.format(\
-                config['discord']['client_id']
+                config.data.discord.client_id
             )
             logging.error(e)
             self.write(e)

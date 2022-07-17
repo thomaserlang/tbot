@@ -24,12 +24,12 @@ class Client(bottom.Client):
         self.user = None
         self.bot_sender = None
 
-        self.host = config['twitch']['irc_host'] 
-        self.port = config['twitch']['irc_port'] 
-        self.ssl = config['twitch']['irc_use_ssl']
+        self.host = config.data.twitch.irc_host 
+        self.port = config.data.twitch.irc_port 
+        self.ssl = config.data.twitch.irc_use_ssl
     
     def send(self, command: str, **kwargs) -> None:
-        if self.rate_limit_count < config['twitch']['irc_rate_limit']:
+        if self.rate_limit_count < config.data.twitch.irc_rate_limit:
             if command == 'PRIVMSG' and bot.bot_sender and kwargs['message'] != '/mods':
                 bot.bot_sender.send(command, **kwargs)
             else:
@@ -79,9 +79,9 @@ async def connect(**kwargs):
         bot.db = await db.Db().connect(bot.loop)
         bot.loop.create_task(bot.rate_limit_reset_runner())
         bot.redis = await aioredis.create_redis_pool(
-            'redis://{}:{}'.format(config['redis']['host'], config['redis']['port']),
-            minsize=config['redis']['pool_min_size'], 
-            maxsize=config['redis']['pool_max_size'],
+            'redis://{}:{}'.format(config.data.redis.host, config.data.redis.port),
+            minsize=config.data.redis.pool_min_size, 
+            maxsize=config.data.redis.pool_max_size,
             loop=bot.loop,
         )
         bot.user = await utils.twitch_current_user(bot.ahttp)
@@ -93,13 +93,13 @@ async def connect(**kwargs):
         bot.loop.create_task(bot_sender.bot_sender.connect())
 
     logging.info('IRC Connecting to {}:{} as {}'.format(
-        config['twitch']['irc_host'], 
-        config['twitch']['irc_port'],
+        config.data.twitch.irc_host, 
+        config.data.twitch.irc_port,
         bot.user['login'],
     ))
     try:
-        if config['twitch']['chat_token']:
-            bot.send('PASS', password='oauth:{}'.format(config['twitch']['chat_token']))
+        if config.data.twitch.chat_token:
+            bot.send('PASS', password='oauth:{}'.format(config.data.twitch.chat_token))
         bot.send('NICK', nick=bot.user['login'])
         bot.send('USER', user=bot.user['login'], realname=bot.user['login'])
     except RuntimeError:

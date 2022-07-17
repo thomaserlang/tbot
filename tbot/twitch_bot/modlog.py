@@ -5,8 +5,8 @@ from tbot import config, db, utils
 class Pubsub():
 
     def __init__(self):
-        self.url = config['twitch']['pubsub_url']
-        self.token = config['twitch']['chat_token']
+        self.url = config.data.twitch.pubsub_url
+        self.token = config.data.twitch.chat_token
         self.ping_callback = None
         self.pong_check_callback = None
         self.ws = None
@@ -100,9 +100,9 @@ class Pubsub():
         self.db = await db.Db().connect(self.loop)
         self.ahttp = aiohttp.ClientSession()     
         self.redis = await aioredis.create_redis_pool(
-            'redis://{}:{}'.format(config['redis']['host'], config['redis']['port']),
-            minsize=config['redis']['pool_min_size'], 
-            maxsize=config['redis']['pool_max_size'],
+            'redis://{}:{}'.format(config.data.redis.host, config.data.redis.port),
+            minsize=config.data.redis.pool_min_size, 
+            maxsize=config.data.redis.pool_max_size,
             loop=self.loop,
         )
         self.redis_sub = await self.redis.subscribe('tbot:server:commands')

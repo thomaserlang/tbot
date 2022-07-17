@@ -15,7 +15,7 @@ async def connected(**kwargs):
 
 async def runner():
     while True:
-        await asyncio.sleep(config['twitch']['check_timers_every'])
+        await asyncio.sleep(config.data.twitch.check_timers_every)
         bot.loop.create_task(check_timers())
 
 async def check_timers():

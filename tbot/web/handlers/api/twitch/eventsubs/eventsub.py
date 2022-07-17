@@ -22,8 +22,8 @@ def channel_events(channel_id):
             },
             'transport': {
                 'method': 'webhook',
-                'callback': urljoin(config['web']['base_url'], f'/api/twitch/webhooks/{e}'),
-                'secret': config['twitch']['eventsub_secret'],
+                'callback': urljoin(config.data.web.base_url, f'/api/twitch/webhooks/{e}'),
+                'secret': config.data.twitch.eventsub_secret,
             },
         })
     return r
@@ -49,7 +49,7 @@ class Handler(Api_handler):
                 self.request.headers['Twitch-Eventsub-Message-Timestamp'] + \
                 escape.to_unicode(self.request.original_body)
         signature = 'sha256='+hmac.new(
-            key=config['twitch']['eventsub_secret'].encode('utf-8'),
+            key=config.data.twitch.eventsub_secret.encode('utf-8'),
             msg=message.encode('utf-8'),
             digestmod=hashlib.sha256,
         ).hexdigest()
@@ -62,14 +62,14 @@ class Handler(Api_handler):
 async def create_eventsubs(ahttp, channel_id, events=None):
     if not events:
         events = channel_events(channel_id)
-    url = urljoin(config['twitch']['eventsub_host'], '/helix/eventsub/subscriptions')
+    url = urljoin(config.data.twitch.eventsub_host, '/helix/eventsub/subscriptions')
     tasks = []
     for e in events:
         tasks.append(utils.twitch_request(ahttp, url, method='POST', json=e, raise_exception=False))
     await asyncio.gather(*tasks)
 
 async def delete_eventsubs(ahttp, ids):
-    url = urljoin(config['twitch']['eventsub_host'], '/helix/eventsub/subscriptions')
+    url = urljoin(config.data.twitch.eventsub_host, '/helix/eventsub/subscriptions')
     tasks = []
     for i in ids:
         tasks.append(utils.twitch_request(ahttp, url, method='DELETE', params={'id': i}, raise_exception=False))
@@ -77,7 +77,7 @@ async def delete_eventsubs(ahttp, ids):
 
 async def get_all_eventsubs(ahttp):
     after = ''
-    url = urljoin(config['twitch']['eventsub_host'], '/helix/eventsub/subscriptions')
+    url = urljoin(config.data.twitch.eventsub_host, '/helix/eventsub/subscriptions')
     esubs = []
     while True:
         d = await utils.twitch_request(ahttp, url, params={

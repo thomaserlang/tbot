@@ -19,10 +19,10 @@ class Handler(Base_handler):
 
         http = httpclient.AsyncHTTPClient()
         response = await http.fetch('https://id.twitch.tv/oauth2/token?'+parse.urlencode({
-            'client_id': config['twitch']['client_id'],
-            'client_secret': config['twitch']['client_secret'],
+            'client_id': config.data.twitch.client_id,
+            'client_secret': config.data.twitch.client_secret,
             'code': code,            
-            'redirect_uri': parse.urljoin(config['web']['base_url'], 'connect/twitch'),
+            'redirect_uri': parse.urljoin(config.data.web.base_url, 'connect/twitch'),
             'grant_type': 'authorization_code',
         }), body='', method='POST', raise_error=False)
         if response.code != 200:
@@ -82,10 +82,10 @@ class Login_handler(Base_handler):
     def get(self):
         if self.get_argument('redirect', None):
             self.redirect('https://id.twitch.tv/oauth2/authorize?'+parse.urlencode({
-                    'client_id': config['twitch']['client_id'],
+                    'client_id': config.data.twitch.client_id,
                     'response_type': 'code',                    
-                    'redirect_uri': parse.urljoin(config['web']['base_url'], 'connect/twitch'),
-                    'scope': ' '.join(config['twitch']['request_scope']) \
+                    'redirect_uri': parse.urljoin(config.data.web.base_url, 'connect/twitch'),
+                    'scope': ' '.join(config.data.twitch.request_scope) \
                         if self.get_argument('request_extra_auth', None) else '',
                 })
             )

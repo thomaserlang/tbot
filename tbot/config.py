@@ -1,87 +1,116 @@
 import os, yaml
+from typing import List, Optional, Literal
+from pydantic import BaseSettings, DirectoryPath
 
-config = {
-    'debug': False,
-    'sentry_dsn': None,
-    'web': {
-        'port': 8001,
-        'cookie_secret': '',
-        'name': 'TBot',
-        'base_url': 'https://botashell.com'
-    },
-    'twitch': {
-        'username': '',
-        'chat_token': '',
-        'client_id': '',
-        'client_secret': '',
-        'eventsub_host': 'https://api.twitch.tv',
-        'eventsub_secret': 'CHANGE_SECRET',
-        'irc_host': 'irc.chat.twitch.tv',
-        'irc_port': 6697,
-        'irc_use_ssl': True,
-        'irc_rate_limit': 80, # messages every 30 second
-        'check_channels_every': 60, # seconds,
-        'check_timers_every': 30, # seconds
-        'delay_offline': 0, # seconds
-        # Only reset streams in a row if the stream was longer than `stream_min_length`.
-        'stream_min_length': 1800,# seconds
-        'pubsub_url': 'wss://pubsub-edge.twitch.tv',
-        'request_scope':['channel_editor',
-                        'bits:read',
-                        'clips:edit',
-                        'moderation:read',
-                        'channel:moderate',
-                        'channel:edit:commercial',
-                        'channel:manage:polls',
-                        'channel:manage:predictions',
-                        'channel:manage:redemptions',
-                        'channel:manage:videos',
-                        'channel:manage:broadcast',
-                        'channel:read:goals',
-                        'channel:read:hype_train',
-                        'channel:read:polls',
-                        'channel:read:predictions',
-                        'channel:read:redemptions',
-                        'channel:read:subscriptions',],
-    },
-    'discord': {
-        'client_id': None,
-        'client_secret': None,
-        'permissions': 470019158,
-        'token': None,
-        'bot': True,
-        'user_token': None,
-        'twitch_sync_every': 3600,
-    },
-    'spotify': {
-        'client_id': None,
-        'client_secret': None,
-    },
-    'logging': {
-        'level': 'warning',
-        'path': None,
-        'max_size': 100 * 1000 * 1000,# ~ 95 mb
-        'num_backups': 10,
-    },
-    'mysql': {
-        'host': '127.0.0.1',
-        'port': 3306,
-        'user': 'root',
-        'password': '',
-        'database': 'tbot',
-    },
-    'redis': {
-        'host': '127.0.0.1',
-        'port': 6379,
-        'pool_min_size': 5,
-        'pool_max_size': 20,
-    },
-    'openweathermap_apikey': None,
-    'faceit_apikey': None,
-    'lol_apikey': None,
-    'tft_apikey': None,
-    'rtmp_keys': [],
-}
+class ConfigWebModel(BaseSettings):
+    port = 8001
+    cookie_secret: Optional[str]
+    name = 'TBot'
+    base_url = 'https://botashell.com'
+
+    class Config:
+        env_prefix = 'tbot_web_'
+
+class ConfigTwitchModel(BaseSettings):
+    username: Optional[str]
+    chat_token: Optional[str]
+    client_id: Optional[str]
+    client_secret: Optional[str]
+    eventsub_host = 'https://api.twitch.tv'
+    eventsub_secret: Optional[str]
+    irc_host = 'irc.chat.twitch.tv'
+    irc_port = 6697
+    irc_use_ssl = True
+    irc_rate_limit = 80 # messages, every 30 second
+    check_channels_every = 60 # seconds
+    check_timers_every = 30 # seconds
+    delay_offline = 0 # seconds
+    # Only reset streams in a row if the stream was longer than `stream_min_length`.
+    stream_min_length = 1800 # seconds
+    pubsub_url = 'wss://pubsub-edge.twitch.tv'
+    request_scope = ['channel_editor', 'bits:read', 'clips:edit', 'moderation:read',
+                    'channel:moderate', 'channel:edit:commercial', 'channel:manage:polls',
+                    'channel:manage:predictions', 'channel:manage:redemptions',
+                    'channel:manage:videos', 'channel:manage:broadcast',
+                    'channel:read:goals', 'channel:read:hype_train', 'channel:read:polls',
+                    'channel:read:predictions', 'channel:read:redemptions', 'channel:read:subscriptions',]
+
+    class Config:
+        env_prefix = 'tbot_twitch_'
+
+class ConfigDiscordModel(BaseSettings):
+    client_id: Optional[str]
+    client_secret: Optional[str]
+    permissions = 470019158
+    token: Optional[str]
+    bot = True
+    user_token: Optional[str]
+    twitch_sync_every = 3600 # seconds
+
+    class Config:
+        env_prefix = 'tbot_discord_'
+
+class ConfigSpotifyConfig(BaseSettings):
+    client_id: Optional[str]
+    client_secret: Optional[str]    
+
+    class Config:
+        env_prefix = 'tbot_spotify_'
+
+class ConfigLoggingModel(BaseSettings):
+    level: Literal['notset', 'debug', 'info', 'warn', 'error', 'critical'] = 'warn'
+    path: Optional[DirectoryPath]
+    max_size: int = 100 * 1000 * 1000 # ~ 95 mb
+    num_backups = 10
+    
+    class Config:
+        env_prefix = 'tbot_logging_'
+
+class ConfigMySQLModel(BaseSettings):
+    host = '127.0.0.1'
+    port = 3306
+    user = 'root'
+    password: Optional[str]
+    database = 'tbot'
+
+    class Config:
+        env_prefix = 'tbot_mysql_'
+
+class ConfigRedisModel(BaseSettings):
+    host = '127.0.0.1'
+    port = 6379
+    pool_min_size = 5
+    pool_max_size = 20
+
+    class Config:
+        env_prefix = 'tbot_redis_'
+
+class ConfigModel(BaseSettings):
+    debug = False
+    sentry_dsn: Optional[str]
+    web = ConfigWebModel()
+    twitch = ConfigTwitchModel()
+    discord = ConfigDiscordModel()
+    spotify = ConfigSpotifyConfig()
+    logging = ConfigLoggingModel()
+    mysql = ConfigMySQLModel()
+    redis = ConfigRedisModel()
+    openweathermap_apikey: Optional[str]
+    faceit_apikey: Optional[str]
+    lol_apikey: Optional[str]
+    tft_apikey: Optional[str]
+    rtmp_keys: List[str] = []
+
+    class Config:
+        env_prefix = 'tbot_'
+        env_nested_delimiter = '_'
+        validate_assignment = True
+        case_sensitive = False
+
+class Config:
+    def __init__(self):
+        self.data = ConfigModel()
+config = Config()
 
 def load(path=None):
     default_paths = [
@@ -107,9 +136,4 @@ def load(path=None):
         raise Exception('Config: "{}" could not be found.'.format(path))
     with open(path) as f:
         data = yaml.load(f, Loader=yaml.SafeLoader)
-    for key in data:
-        if key in config:
-            if isinstance(config[key], dict):
-                config[key].update(data[key])
-            else:
-                config[key] = data[key]
+        config.data = ConfigModel(**data)

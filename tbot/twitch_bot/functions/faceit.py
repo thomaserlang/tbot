@@ -14,7 +14,7 @@ async def faceit_elo(bot, channel, args, var_args, **kwargs):
         'nickname': var_args['faceit.username'][0]
     }
     headers = {
-        'Authorization': f'Bearer {config["faceit_apikey"]}',
+        'Authorization': f'Bearer {config.data.faceit_apikey}',
     }
 
     elos = (

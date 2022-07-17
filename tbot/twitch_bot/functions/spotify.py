@@ -83,8 +83,8 @@ async def refresh_token(bot, channel_id, refresh_token):
     body = {
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,
-        'client_id': config['spotify']['client_id'],
-        'client_secret': config['spotify']['client_secret'],
+        'client_id': config.data.spotify.client_id,
+        'client_secret': config.data.spotify.client_secret,
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',

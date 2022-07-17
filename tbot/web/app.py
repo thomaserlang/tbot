@@ -76,8 +76,8 @@ def App():
             (r'/(.*)', handlers.react.Handler),
         ], 
         login_url='/twitch-login',
-        debug=config['debug'], 
-        cookie_secret=config['web']['cookie_secret'],
+        debug=config.data.debug, 
+        cookie_secret=config.data.web.cookie_secret,
         template_path=os.path.join(os.path.dirname(__file__), 'templates'),
         autoescape=None,
     )
@@ -86,23 +86,23 @@ def main():
     loop = asyncio.get_event_loop()
     app = App()
     app.loop = loop
-    server = app.listen(config['web']['port'])
+    server = app.listen(config.data.web.port)
     loop.create_task(db_connect(app))
     signal.signal(signal.SIGTERM, partial(sig_handler, server, app))
     signal.signal(signal.SIGINT, partial(sig_handler, server, app))
 
     log = logging.getLogger('main')
     log.setLevel('INFO')
-    log.info(f'Web server started on port: {config["web"]["port"]}')
+    log.info(f'Web server started on port: {config.data.web.port}')
     loop.run_forever()
     log.info('Web server stopped')
 
 async def db_connect(app):
     app.db = await db.Db().connect(None)
     app.redis = await aioredis.create_redis_pool(
-        'redis://{}:{}'.format(config['redis']['host'], config['redis']['port']),
-        minsize=config['redis']['pool_min_size'], 
-        maxsize=config['redis']['pool_max_size'],
+        'redis://{}:{}'.format(config.data.redis.host, config.data.redis.port),
+        minsize=config.data.redis.pool_min_size, 
+        maxsize=config.data.redis.pool_max_size,
     )
     app.ahttp = aiohttp.ClientSession() 
 

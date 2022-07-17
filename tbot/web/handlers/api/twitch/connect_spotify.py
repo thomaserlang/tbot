@@ -34,8 +34,8 @@ class Handler(Api_handler):
         if not r:
             raise Exception('Unknown channel {}'.format(channel_id))
         self.redirect('https://accounts.spotify.com/authorize?'+parse.urlencode({
-            'client_id': config['spotify']['client_id'],
-            'redirect_uri': parse.urljoin(config['web']['base_url'], 'connect/spotify'),
+            'client_id': config.data.spotify.client_id,
+            'redirect_uri': parse.urljoin(config.data.web.base_url, 'connect/spotify'),
             'scope': 'playlist-read-private '
                      'user-read-recently-played ' 
                      'user-read-currently-playing',
@@ -55,10 +55,10 @@ class Receive_handler(Base_handler):
 
         http = httpclient.AsyncHTTPClient()
         response = await http.fetch('https://accounts.spotify.com/api/token', body=parse.urlencode({
-            'client_id': config['spotify']['client_id'],
-            'client_secret': config['spotify']['client_secret'],
+            'client_id': config.data.spotify.client_id,
+            'client_secret': config.data.spotify.client_secret,
             'code': code,
-            'redirect_uri': parse.urljoin(config['web']['base_url'], 'connect/spotify'),
+            'redirect_uri': parse.urljoin(config.data.web.base_url, 'connect/spotify'),
             'grant_type': 'authorization_code',
         }), method='POST', headers={'Content-Type': 'application/x-www-form-urlencoded'}, raise_error=False)
         if response.code != 200:

@@ -17,7 +17,7 @@ async def twitch_request(ahttp, url, params=None, headers={},
     if not token:
         token = await twitch_get_app_token(ahttp)
     headers.update({
-        'Client-ID': config['twitch']['client_id'],
+        'Client-ID': config.data.twitch.client_id,
         'Authorization': 'Bearer {}'.format(token)
     })
     async with ahttp.request(method, url, params=params, 
@@ -53,8 +53,8 @@ async def twitch_get_app_token(ahttp):
     if twitch_app_token:
         return twitch_app_token
     params = {
-        'client_id': config['twitch']['client_id'],
-        'client_secret': config['twitch']['client_secret'],
+        'client_id': config.data.twitch.client_id,
+        'client_secret': config.data.twitch.client_secret,
         'grant_type': 'client_credentials',
     }
     async with ahttp.request('POST', 'https://id.twitch.tv/oauth2/token', params=params) as r:
@@ -109,8 +109,8 @@ async def twitch_refresh_token(bot, channel_id, refresh_token):
     params = {
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,
-        'client_id': config['twitch']['client_id'],
-        'client_secret': config['twitch']['client_secret'],
+        'client_id': config.data.twitch.client_id,
+        'client_secret': config.data.twitch.client_secret,
     }
     async with bot.ahttp.post(url, params=params) as r:
         if r.status == 200:
@@ -219,7 +219,7 @@ async def twitch_lookup_from_user_id(ahttp, db, userids):
 async def twitch_current_user(ahttp, token=None):
     data = await twitch_request(
         ahttp, 
-        f'https://api.twitch.tv/helix/users?login={config["twitch"]["username"]}', 
+        f'https://api.twitch.tv/helix/users?login={config.data.twitch.username}', 
         token=token,
     )
     return data['data'][0]

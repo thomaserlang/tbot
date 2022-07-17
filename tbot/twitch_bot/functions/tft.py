@@ -1,5 +1,3 @@
-import urllib.parse, asyncio, logging
-from datetime import datetime, timedelta
 from tbot.twitch_bot.var_filler import fills_vars, Send_error
 from tbot import config
 
@@ -10,9 +8,8 @@ async def lol(bot, channel, channel_id, args, var_args, **kwargs):
         len(var_args['tft.summoner']) != 2:
         raise Send_error('{tft.summoner "<name>" "<region>"} is missing')
 
-
     headers = {
-        'X-Riot-Token': config['tft_apikey'],
+        'X-Riot-Token': config.data.tft_apikey,
     }
     summoner = var_args['tft.summoner'][0]
     region = var_args['tft.summoner'][1].lower()
@@ -26,7 +23,6 @@ async def lol(bot, channel, channel_id, args, var_args, **kwargs):
             raise Send_error(f'Riot error: {error}')
         d = await r.json()
         encrypted_id = d['id']
-        account_id = d['accountId']
 
     result = {
         'tft.summoner': '',

@@ -19,7 +19,7 @@ async def connect(**kwargs):
 
 async def give_points_runner(): 
     while True:
-        await asyncio.sleep(config['twitch']['check_channels_every'])
+        await asyncio.sleep(config.data.twitch.check_channels_every)
         bot.loop.create_task(give_points())
 
 @bot.on('USERNOTICE')
@@ -92,7 +92,7 @@ async def give_points():
             continue
         bot.loop.create_task(give_points_channel(
             s['channel_id'], 
-            int(config['twitch']['check_channels_every'] / 60) * s['points_per_min'],
+            int(config.data.twitch.check_channels_every / 60) * s['points_per_min'],
             json.loads(s['ignore_users']),
         ))
 

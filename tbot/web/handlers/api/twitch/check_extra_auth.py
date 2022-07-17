@@ -16,7 +16,7 @@ class Handler(Api_handler):
         if channel['twitch_scope']:
             scope = utils.json_loads(channel['twitch_scope'])
         has_extra_auth = set(scope) == \
-            set(config['twitch']['request_scope'])
+            set(config.data.twitch.request_scope)
         if not channel['twitch_token']:
             has_extra_auth = False
         self.write_object({

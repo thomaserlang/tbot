@@ -50,7 +50,7 @@ async def connect(**kwargs):
 async def channels_check_runner(): 
     while True:
         bot.loop.create_task(channels_check())
-        await asyncio.sleep(config['twitch']['check_channels_every'])
+        await asyncio.sleep(config.data.twitch.check_channels_every)
 
 async def channels_check():
     logging.debug('Channels check')
@@ -101,7 +101,7 @@ async def channel_check(channel_id, prev_channel_check):
             if channel_id in bot.channels:
                 logging.info('{} went offline'.format(bot.channels[channel_id]['name']))
             await save_stream_ended(prev_channel_check['stream_id'], prev_channel_check['uptime'])
-            if prev_channel_check['uptime'] >= int(config['twitch']['stream_min_length']): 
+            if prev_channel_check['uptime'] >= int(config.data.twitch.stream_min_length): 
                 await reset_streams_in_a_row(channel_id, prev_channel_check['stream_id'])
         # Detect if the bot was parted.
         # Incase the bot is parted doing a live stream we will keep checking
@@ -216,17 +216,17 @@ async def update_channels_check():
                 bot.channels_check[channel_id]['is_streaming'] = False
                 if not bot.channels_check[channel_id]['is_live']:
                     continue
-                if config['twitch']['delay_offline'] and not bot.channels_check[channel_id]['went_offline_at_delay']:
+                if config.data.twitch.delay_offline and not bot.channels_check[channel_id]['went_offline_at_delay']:
                     if channel_id in bot.channels:
                         logging.info('{} was detected as offline but will be delayed with {} seconds'.format(
                             bot.channels[channel_id]['name'],
-                            config['twitch']['delay_offline'],
+                            config.data.twitch.delay_offline,
                         ))
                     bot.channels_check[channel_id]['went_offline_at_delay'] = datetime.utcnow()
                     continue
                 woa = bot.channels_check[channel_id]['went_offline_at_delay']
                 if woa and int((datetime.utcnow() - woa).total_seconds()) <= \
-                    config['twitch']['delay_offline']:
+                    config.data.twitch.delay_offline:
                     continue
                 bot.channels_check[channel_id]['is_live'] = False
                 bot.channels_check[channel_id]['went_live_at'] = None

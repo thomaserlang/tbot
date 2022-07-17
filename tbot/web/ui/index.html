@@ -5,11 +5,11 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <title>{{config['web']['name']}}</title>
+    <title>{{config.data.web.name}}</title>
     <script>
         {% set twitch_user = handler.get_secure_cookie('twitch_user') %}
         window.tbot = {
-            name: '{{config['web']['name']}}',
+            name: '{{config.data.web.name}}',
             {% if twitch_user %}
                 twitch_user: {{twitch_user}}
             {% else %}

@@ -13,7 +13,7 @@ async def lol(bot, channel, channel_id, args, var_args, **kwargs):
 
 
     headers = {
-        'X-Riot-Token': config['lol_apikey'],
+        'X-Riot-Token': config.data.lol_apikey,
     }
 
     summoner = var_args['lol.summoner'][0]

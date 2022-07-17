@@ -5,11 +5,11 @@ class Db():
 
     async def connect(self, loop=None):
         self.pool = await aiomysql.create_pool(
-            host=config['mysql']['host'], 
-            port=config['mysql']['port'],
-            user=config['mysql']['user'], 
-            password=config['mysql']['password'],
-            db=config['mysql']['database'],
+            host=config.data.mysql.host, 
+            port=config.data.mysql.port,
+            user=config.data.mysql.user, 
+            password=config.data.mysql.password,
+            db=config.data.mysql.database,
             pool_recycle=3599,
             loop=loop,
             charset='utf8mb4',

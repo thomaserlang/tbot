@@ -14,9 +14,9 @@ bot_sender.raw_handlers = [rfc2812_handler(bot_sender)]
 
 def setup(bot):
 
-    bot_sender.host = config['twitch']['irc_host'] 
-    bot_sender.port = config['twitch']['irc_port'] 
-    bot_sender.ssl = config['twitch']['irc_use_ssl']
+    bot_sender.host = config.data.twitch.irc_host 
+    bot_sender.port = config.data.twitch.irc_port 
+    bot_sender.ssl = config.data.twitch.irc_use_ssl
 
     @bot_sender.on('CLIENT_CONNECT')
     async def connect(**kwargs):
@@ -25,8 +25,8 @@ def setup(bot):
         if bot_sender.ping_callback:
             bot_sender.ping_callback.cancel()
         bot_sender.ping_callback = asyncio.ensure_future(send_ping(10))
-        if config['twitch']['chat_token']:
-            bot_sender.send('PASS', password='oauth:{}'.format(config['twitch']['chat_token']))
+        if config.data.twitch.chat_token:
+            bot_sender.send('PASS', password='oauth:{}'.format(config.data.twitch.chat_token))
         bot_sender.send('NICK', nick=bot.user['login'])
         bot_sender.send('USER', user=bot.user['login'], realname=bot.user['login'])
 

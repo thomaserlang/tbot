@@ -18,7 +18,7 @@ async def twitch_sync():
         except:
             logging.exception('twitch_sync')
         
-        await asyncio.sleep(config['discord']['twitch_sync_every'])
+        await asyncio.sleep(config.data.discord.twitch_sync_every)
     logging.info('Exit twitch_sync')
 
 class Twitch_sync_channel:
@@ -239,7 +239,7 @@ class Twitch_sync_channel:
 
 async def discord_request(ahttp, url, params=None, headers={}):    
     headers.update({
-        'Authorization': config['discord']['user_token'],
+        'Authorization': config.data.discord.user_token,
     })
     async with ahttp.get(url, params=params, headers=headers) as r:
         data = await r.json()
