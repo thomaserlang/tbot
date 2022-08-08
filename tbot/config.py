@@ -1,17 +1,15 @@
 import os, yaml
 from typing import List, Optional, Literal
-from pydantic import BaseSettings, DirectoryPath
+from pydantic import BaseModel, DirectoryPath
 
-class ConfigWebModel(BaseSettings):
+class ConfigWebModel(BaseModel):
     port = 8001
     cookie_secret: Optional[str]
     name = 'TBot'
     base_url = 'https://botashell.com'
 
-    class Config:
-        env_prefix = 'tbot_web_'
 
-class ConfigTwitchModel(BaseSettings):
+class ConfigTwitchModel(BaseModel):
     username: Optional[str]
     chat_token: Optional[str]
     client_id: Optional[str]
@@ -35,10 +33,8 @@ class ConfigTwitchModel(BaseSettings):
                     'channel:read:goals', 'channel:read:hype_train', 'channel:read:polls',
                     'channel:read:predictions', 'channel:read:redemptions', 'channel:read:subscriptions',]
 
-    class Config:
-        env_prefix = 'tbot_twitch_'
 
-class ConfigDiscordModel(BaseSettings):
+class ConfigDiscordModel(BaseModel):
     client_id: Optional[str]
     client_secret: Optional[str]
     permissions = 470019158
@@ -47,45 +43,37 @@ class ConfigDiscordModel(BaseSettings):
     user_token: Optional[str]
     twitch_sync_every = 3600 # seconds
 
-    class Config:
-        env_prefix = 'tbot_discord_'
 
-class ConfigSpotifyConfig(BaseSettings):
+class ConfigSpotifyConfig(BaseModel):
     client_id: Optional[str]
     client_secret: Optional[str]    
 
-    class Config:
-        env_prefix = 'tbot_spotify_'
 
-class ConfigLoggingModel(BaseSettings):
+class ConfigLoggingModel(BaseModel):
     level: Literal['notset', 'debug', 'info', 'warn', 'error', 'critical'] = 'warn'
     path: Optional[DirectoryPath]
     max_size: int = 100 * 1000 * 1000 # ~ 95 mb
     num_backups = 10
     
-    class Config:
-        env_prefix = 'tbot_logging_'
 
-class ConfigMySQLModel(BaseSettings):
+class ConfigMySQLModel(BaseModel):
     host = '127.0.0.1'
     port = 3306
     user = 'root'
     password: Optional[str]
     database = 'tbot'
 
-    class Config:
-        env_prefix = 'tbot_mysql_'
 
-class ConfigRedisModel(BaseSettings):
+
+class ConfigRedisModel(BaseModel):
     host = '127.0.0.1'
     port = 6379
     pool_min_size = 5
     pool_max_size = 20
 
-    class Config:
-        env_prefix = 'tbot_redis_'
 
-class ConfigModel(BaseSettings):
+
+class ConfigModel(BaseModel):
     debug = False
     sentry_dsn: Optional[str]
     web = ConfigWebModel()
@@ -101,11 +89,6 @@ class ConfigModel(BaseSettings):
     tft_apikey: Optional[str]
     rtmp_keys: List[str] = []
 
-    class Config:
-        env_prefix = 'tbot_'
-        env_nested_delimiter = '_'
-        validate_assignment = True
-        case_sensitive = False
 
 class Config:
     def __init__(self):
