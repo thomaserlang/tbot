@@ -2,7 +2,6 @@ import logging, random, math, asyncio, json
 from tbot import config, utils
 from ..var_filler import fills_vars, Send_error, fill_from_dict
 from ..tasks.give_points import give_points_channel, get_user_points, add_user_points
-from ..bot_main import bot
 
 @fills_vars('gamble_roulette')
 async def roulette(bot, channel_id, cmd, user, user_id, display_name, args, **kwargs):
@@ -37,7 +36,7 @@ async def roulette(bot, channel_id, cmd, user, user_id, display_name, args, **kw
             msg = fill_from_dict(data['allin_win_message'], d)
         else:
             msg = fill_from_dict(data['win_message'], d)
-        await update_stats(channel_id, user_id, 'roulette_wins', 1)
+        await update_stats(bot, channel_id, user_id, 'roulette_wins', 1)
 
     else:        
         d['points'] = await add_user_points(channel_id, user_id, user, -bet)
@@ -45,7 +44,7 @@ async def roulette(bot, channel_id, cmd, user, user_id, display_name, args, **kw
             msg = fill_from_dict(data['allin_lose_message'], d)
         else:
             msg = fill_from_dict(data['lose_message'], d)
-        await update_stats(channel_id, user_id, 'roulette_loses', 1)
+        await update_stats(bot, channel_id, user_id, 'roulette_loses', 1)
 
     return {
         'gamble_roulette': msg,
@@ -101,14 +100,14 @@ async def slots(bot, channel_id, cmd, user, user_id, display_name, args, **kwarg
             msg = fill_from_dict(data['allin_win_message'], d)
         else:
             msg = fill_from_dict(data['win_message'], d)
-        await update_stats(channel_id, user_id, 'slots_wins', 1)
+        await update_stats(bot, channel_id, user_id, 'slots_wins', 1)
     else:        
         d['points'] = await add_user_points(channel_id, user_id, user, -bet)
         if bet == data['points']:
             msg = fill_from_dict(data['allin_lose_message'], d)
         else:
             msg = fill_from_dict(data['lose_message'], d)
-        await update_stats(channel_id, user_id, 'slots_loses', 1)
+        await update_stats(bot, channel_id, user_id, 'slots_loses', 1)
 
     return {
         'gamble_slots': msg,
@@ -344,7 +343,7 @@ def str_bet_to_int(str_bet, points):
         return int((points / 100) * p)
     return int(str_bet)
 
-async def update_stats(channel_id, user_id, field, value):
+async def update_stats(bot, channel_id, user_id, field, value):
     r = await bot.db.execute(f'''
         UPDATE twitch_gambling_stats SET {field}={field}+%s
         WHERE channel_id=%s AND user_id=%s

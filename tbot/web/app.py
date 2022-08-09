@@ -82,32 +82,23 @@ def App():
         autoescape=None,
     )
 
-def main():
-    loop = asyncio.get_event_loop()
+async def main():
     app = App()
-    app.loop = loop
     server = app.listen(config.data.web.port)
-    loop.create_task(db_connect(app))
+
+    app.db = await db.Db().connect()
+    app.redis = await aioredis.create_redis_pool(
+        f'redis://{config.data.redis.host}:{config.data.redis.port}',
+        minsize=config.data.redis.pool_min_size, 
+        maxsize=config.data.redis.pool_max_size,
+    )
+    app.ahttp = aiohttp.ClientSession() 
+
     signal.signal(signal.SIGTERM, partial(sig_handler, server, app))
     signal.signal(signal.SIGINT, partial(sig_handler, server, app))
 
     log = logging.getLogger('main')
     log.setLevel('INFO')
     log.info(f'Web server started on port: {config.data.web.port}')
-    loop.run_forever()
+    await asyncio.Event().wait()
     log.info('Web server stopped')
-
-async def db_connect(app):
-    app.db = await db.Db().connect(None)
-    app.redis = await aioredis.create_redis_pool(
-        'redis://{}:{}'.format(config.data.redis.host, config.data.redis.port),
-        minsize=config.data.redis.pool_min_size, 
-        maxsize=config.data.redis.pool_max_size,
-    )
-    app.ahttp = aiohttp.ClientSession() 
-
-if __name__ == '__main__':
-    from tbot import config_load, logger
-    config_load('../../tbot.yaml')
-    logger.set_logger('web.log')
-    main()

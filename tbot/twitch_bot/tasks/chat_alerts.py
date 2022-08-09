@@ -1,7 +1,7 @@
 import logging
 from dateutil import parser
 from tbot import config, utils
-from ..bot_main import bot
+from ..bot_base import bot
 from ..var_filler import fill_from_dict
 from .badge_log import badge_log
 

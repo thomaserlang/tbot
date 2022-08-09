@@ -97,16 +97,9 @@ class Pubsub():
             logging.exception('log_mod_action')
 
     async def run(self):
-        self.db = await db.Db().connect(self.loop)
-        self.ahttp = aiohttp.ClientSession()     
-        self.redis = await aioredis.create_redis_pool(
-            'redis://{}:{}'.format(config.data.redis.host, config.data.redis.port),
-            minsize=config.data.redis.pool_min_size, 
-            maxsize=config.data.redis.pool_max_size,
-            loop=self.loop,
-        )
+        self.ahttp = aiohttp.ClientSession()        
         self.redis_sub = await self.redis.subscribe('tbot:server:commands')
-        asyncio.ensure_future(self.receive_server_commands())
+        asyncio.create_task(self.receive_server_commands())
 
         logging.info('PubSub Connecting to {}'.format(self.url))
         

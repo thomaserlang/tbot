@@ -1,29 +1,30 @@
-import logging, aiohttp, aiomysql
+import asyncio, aiohttp
+import logging
+import discord
+from discord.ext import commands
 from tbot import config, db
-from tbot.discord_bot import bot
-import tbot.discord_bot.commands
 import tbot.discord_bot.tasks
 import tbot.discord_bot.functions
+from tbot.discord_bot.tasks.chatlog import Chat_log
+from tbot.discord_bot.tasks.command import Command
 
-@bot.event
-async def on_connect():
-    if not hasattr(bot, 'ahttp'):
-        bot.ahttp = aiohttp.ClientSession()
-        bot.db = await db.Db().connect(bot.loop)
-
-def main():
+async def main():
     log = logging.getLogger('main')
     log.setLevel('INFO')
-    bot.loop.create_task(
-        tbot.discord_bot.tasks.twitch_sync.twitch_sync()
-    )
+    
+    intents = discord.Intents.default()
+    intents.presences = True
+    intents.members = True
+    intents.message_content = True
+
+    bot = commands.Bot(command_prefix='>', help=None, intents=intents)
+    bot.add_cog(Chat_log(bot))
+    bot.add_cog(Command(bot))
+    bot.db = await db.Db().connect()
+    bot.ahttp = aiohttp.ClientSession()
+    
+    bot.loop.create_task(tbot.discord_bot.tasks.twitch_sync.twitch_sync(bot))
+    bot.loop.create_task(bot.start(config.data.discord.token))
     log.info('Discord bot started')
-    bot.run(config.data.discord.token, bot=config.data.discord.bot)
+    await asyncio.Event().wait()
     log.info('Discord bot stopped')
-
-if __name__ == '__main__':
-    from tbot import config_load, logger
-    config_load('../../tbot.yaml')
-    logger.set_logger('discord.log')
-
-    main()

@@ -39,7 +39,6 @@ class ConfigDiscordModel(BaseModel):
     client_secret: Optional[str]
     permissions = 470019158
     token: Optional[str]
-    bot = True
     user_token: Optional[str]
     twitch_sync_every = 3600 # seconds
 

@@ -14,7 +14,7 @@ async def twitchsync(bot, message, **kwargs):
     if not info:
         raise Send_error('This discord server is not connected to a Twitch channel')
     message = await message.channel.send('Syncing, please wait...')
-    info = await Twitch_sync_channel(info).sync()
+    info = await Twitch_sync_channel(info, bot).sync()
 
     text = 'Sync complete.'
     if info['added_roles']:

@@ -1,15 +1,11 @@
-import logging, asyncio, math
-from urllib.parse import urlencode
-from dateutil.parser import parse
-from datetime import datetime
+import logging, asyncio
 from tbot import config
-from tbot.discord_bot import bot
 from tbot.utils.twitch import twitch_channel_token_request
 
-async def twitch_sync():
+async def twitch_sync(bot):
     await bot.wait_until_ready()
-    await asyncio.sleep(1)
     while not bot.is_closed():
+        await asyncio.sleep(config.data.discord.twitch_sync_every)
         try:
             logging.info('Twitch sync')
             channels = await bot.db.fetchall('SELECT * FROM twitch_channels WHERE not isnull(discord_server_id) and active="Y";')
@@ -17,21 +13,19 @@ async def twitch_sync():
                 bot.loop.create_task(Twitch_sync_channel(info).sync())
         except:
             logging.exception('twitch_sync')
-        
-        await asyncio.sleep(config.data.discord.twitch_sync_every)
-    logging.info('Exit twitch_sync')
 
 class Twitch_sync_channel:
     running = {}
 
-    def __init__(self, channel_info):
+    def __init__(self, channel_info, bot):
         ''' `channel_info` from the channels db table. '''
         self.info = channel_info
+        self.bot = bot
 
     async def sync(self):
-        self.server = bot.get_guild(int(self.info['discord_server_id']))
+        self.server = self.bot.get_guild(int(self.info['discord_server_id']))
         if not self.server:
-            logging.debug('Discord server id was not found: {}'.format(self.info['discord_server_id']))
+            logging.info('Discord server id was not found: {}'.format(self.info['discord_server_id']))
             return
         returninfo = {
             'errors': [],
@@ -166,14 +160,14 @@ class Twitch_sync_channel:
         return subs
 
     async def get_cached_badges_months(self):
-        rows = await bot.db.fetchall(
+        rows = await self.bot.db.fetchall(
             'SELECT * FROM twitch_badges WHERE channel_id=%s',
             (self.info['channel_id']),
         )
         return {r['user_id']: dict(r) for r in rows}
 
     async def get_twitch_roles(self):
-        db_roles = await bot.db.fetchall(
+        db_roles = await self.bot.db.fetchall(
             'SELECT * FROM twitch_discord_roles WHERE channel_id=%s',
             (self.info['channel_id'])
         )
@@ -184,7 +178,7 @@ class Twitch_sync_channel:
                 if r.name == role['role_name']:
                     found = True
                     if role['role_id'] != str(r.id):
-                        await bot.db.execute(
+                        await self.bot.db.execute(
                             'UPDATE twitch_discord_roles SET role_id=%s WHERE id=%s;', 
                             (r.id, role['id'])
                         )
@@ -196,7 +190,7 @@ class Twitch_sync_channel:
                     found = True
                     continue
             if not found and role['role_id']:
-                await bot.db.execute(
+                await self.bot.db.execute(
                     'UPDATE twitch_discord_roles SET role_id=%s WHERE id=%s;',
                     (None, role['id'])
                 )
@@ -207,7 +201,7 @@ class Twitch_sync_channel:
         return roles
 
     async def get_twitch_ids(self):
-        rows = await bot.db.fetchall('SELECT discord_id, twitch_id FROM twitch_discord_users;')
+        rows = await self.bot.db.fetchall('SELECT discord_id, twitch_id FROM twitch_discord_users;')
         twitch_ids = {int(r['discord_id']): r['twitch_id'] for r in rows}
         try:
             for member in self.server.members:
@@ -216,7 +210,7 @@ class Twitch_sync_channel:
                 if str(member.status) == 'offline':
                     continue
                 data = await discord_request(
-                    bot.ahttp,
+                    self.bot.ahttp,
                     'https://discordapp.com/api/v6/users/{}/profile'.format(
                     member.id
                 ))
@@ -228,7 +222,7 @@ class Twitch_sync_channel:
                     if con['type'] != 'twitch':
                         continue
                     twitch_ids[member.id] = con['id']
-                    await bot.db.execute(
+                    await self.bot.db.execute(
                         'INSERT IGNORE INTO twitch_discord_users (discord_id, twitch_id) VALUES (%s, %s)', 
                         (member.id, con['id'])
                     )

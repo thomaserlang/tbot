@@ -825,7 +825,6 @@ class Test(unittest.TestCase):
             ('test.zw', ('test.zw', '', 'test.zw', '', '')),
         ]
         for t in tests:
-            logging.info(t[0])
             self.assertEqual(
                 link.find_links(t[0])[0],
                 t[1],

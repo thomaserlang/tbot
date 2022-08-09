@@ -2,7 +2,7 @@ import logging, asyncio, json, copy
 from dateutil.parser import parse
 from datetime import datetime
 from tbot import config, utils
-from tbot.twitch_bot.bot_main import bot
+from tbot.twitch_bot.bot_base import bot
 
 """
 Responsible for monitoring a channel's live status

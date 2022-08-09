@@ -1,6 +1,6 @@
 import logging, asyncio, json
 from tbot import config, utils
-from tbot.twitch_bot.bot_main import bot
+from tbot.twitch_bot.bot_base import bot
 
 _started = False
 sub_plan_multiplier = {
