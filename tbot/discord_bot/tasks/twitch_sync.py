@@ -10,7 +10,7 @@ async def twitch_sync(bot):
             logging.info('Twitch sync')
             channels = await bot.db.fetchall('SELECT * FROM twitch_channels WHERE not isnull(discord_server_id) and active="Y";')
             for info in channels:
-                bot.loop.create_task(Twitch_sync_channel(info).sync())
+                bot.loop.create_task(Twitch_sync_channel(info, bot).sync())
         except:
             logging.exception('twitch_sync')
 
