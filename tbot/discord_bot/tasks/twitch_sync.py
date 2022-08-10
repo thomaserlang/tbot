@@ -146,7 +146,7 @@ class Twitch_sync_channel:
         url = 'https://api.twitch.tv/helix/subscriptions'
         after = ''
         while True:
-            d = await twitch_channel_token_request(bot, self.info['channel_id'], url, params={
+            d = await twitch_channel_token_request(self.bot, self.info['channel_id'], url, params={
                 'broadcaster_id': self.info['channel_id'],
                 'after': after,
             })
