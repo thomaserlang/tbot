@@ -1,7 +1,7 @@
 import logging
 from discord import Permissions, Forbidden
 from tbot.discord_bot import var_filler
-from tbot import utils
+from tbot import utils, logger
 from discord.ext import commands
 
 class Command(commands.Cog):
@@ -66,4 +66,4 @@ class Command(commands.Cog):
                     e.text
                 ))
             except:
-                logging.exception('command on_message')
+                logger.exception('command on_message')

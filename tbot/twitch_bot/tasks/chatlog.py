@@ -1,7 +1,6 @@
-import logging, asyncio
 from datetime import datetime, timedelta
 from tbot.twitch_bot.bot_base import bot
-from tbot import config, utils
+from tbot import utils, logger
 
 @bot.on('PRIVMSG')
 async def message(nick, target, message, **kwargs):
@@ -61,7 +60,7 @@ async def save(type_, channel, channel_id, user, user_id, message, msg_id):
             ''', (user_id, dt, user,)
             ))
     except:
-        logging.exception('sql')
+        logger.exception('sql')
 
 @bot.on('NOTICE')
 async def notice(target, message, **kwargs):

@@ -1,9 +1,9 @@
-import logging, random, bottom
+import random, bottom
 import asyncio, aiohttp
 from datetime import datetime
 from tbot.twitch_bot.unpack import rfc2812_handler
 from tbot.twitch_bot import bot_sender
-from tbot import config, utils
+from tbot import config, utils, logger
 
 class Client(bottom.Client):
 
@@ -40,7 +40,7 @@ class Client(bottom.Client):
                 'command': command,
                 'kwargs': kwargs,
             })
-            logging.warning('Rate limit reached. In queue: {}'.format(len(self.rate_limit_bucket)))
+            logger.warning('Rate limit reached. In queue: {}'.format(len(self.rate_limit_bucket)))
 
     async def rate_limit_reset_runner(self):
         while True:
@@ -57,14 +57,14 @@ class Client(bottom.Client):
 
     async def send_ping(self, time=None):
         await asyncio.sleep(random.randint(120, 240) if not time else time)
-        logging.debug('Sending ping')
+        logger.debug('Sending ping')
         bot.pong_check_callback = asyncio.create_task(self.wait_for_pong())
         bot.send('PING')
 
     async def wait_for_pong(self):
         await asyncio.sleep(10)
 
-        logging.error('Didn\'t receive a PONG in time, reconnecting')
+        logger.error('Didn\'t receive a PONG in time, reconnecting')
         if bot.ping_callback:
             bot.ping_callback.cancel()
         bot.ping_callback = asyncio.create_task(self.send_ping(10))
@@ -89,7 +89,7 @@ async def connect(**kwargs):
         bot_sender.setup(bot)
         bot.loop.create_task(bot_sender.bot_sender.connect())
 
-    logging.info('IRC Connecting to {}:{} as {}'.format(
+    logger.info('IRC Connecting to {}:{} as {}'.format(
         config.data.twitch.irc_host, 
         config.data.twitch.irc_port,
         bot.user['login'],
@@ -127,7 +127,7 @@ async def receive_redis_server_commands():
     while (await sub.wait_message()):
         try:
             msg = await sub.get_json()
-            logging.debug('Received server command: {}'.format(msg))
+            logger.debug('Received server command: {}'.format(msg))
             if len(msg) < 2:
                 return
             cmd = msg.pop(0)
@@ -135,20 +135,20 @@ async def receive_redis_server_commands():
             bot.trigger('REDIS_SERVER_COMMAND', cmd=cmd, cmd_args=msg)
 
         except:
-            logging.exception('receive_redis_server_commands')
+            logger.exception('receive_redis_server_commands')
 
 @bot.on('CLIENT_DISCONNECT')
 async def disconnect(**kwargs):
-    logging.info('Disconnected')
+    logger.info('Disconnected')
 
 @bot.on('PING')
 def keepalive(message, **kwargs):
-    logging.debug('Received ping, sending PONG back')
+    logger.debug('Received ping, sending PONG back')
     bot.send('PONG', message=message)
 
 @bot.on('PONG')
 async def pong(message, **kwargs):
-    logging.debug('Received pong')
+    logger.debug('Received pong')
     if bot.pong_check_callback:
         bot.pong_check_callback.cancel()
     if bot.ping_callback:
@@ -224,4 +224,4 @@ async def redis_server_command(cmd, cmd_args):
             if c['channel_id'] in bot.channels:
                 bot.channels[c['channel_id']]['chatlog_enabled'] = False
     except:
-        logging.exception('redis_server_command')
+        logger.exception('redis_server_command')

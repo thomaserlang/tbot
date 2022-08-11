@@ -1,5 +1,5 @@
-import logging, aiomysql, pymysql
-from . import config
+import aiomysql, pymysql
+from tbot import config, logger
 
 class Db():
 
@@ -27,7 +27,7 @@ class Db():
                 await c.connection.commit()
                 return r 
             except (pymysql.err.InternalError, pymysql.err.OperationalError):
-                logging.exception('fetchone')
+                logger.exception('fetchone')
                 await c.connection.ping()        
                 await c.execute(*args, **kwargs)
                 r = await c.fetchone()
@@ -42,7 +42,7 @@ class Db():
                 await c.connection.commit()
                 return r
             except (pymysql.err.InternalError, pymysql.err.OperationalError):
-                logging.exception('fetchall')
+                logger.exception('fetchall')
                 await c.connection.ping()            
                 await c.execute(*args, **kwargs)
                 r = await c.fetchall()
@@ -56,7 +56,7 @@ class Db():
                 await c.connection.commit()
                 return c
             except (pymysql.err.InternalError, pymysql.err.OperationalError):
-                logging.exception('execute')
+                logger.exception('execute')
                 await c.connection.ping()
                 await c.execute(*args, **kwargs)
                 await c.connection.commit()
@@ -69,7 +69,7 @@ class Db():
                 await c.connection.commit()
                 return c
             except (pymysql.err.InternalError, pymysql.err.OperationalError):
-                logging.exception('executemany')
+                logger.exception('executemany')
                 await c.connection.ping()
                 await c.executemany(*args, **kwargs)
                 await c.connection.commit()

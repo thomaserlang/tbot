@@ -1,6 +1,5 @@
-import logging
 import datetime, time, asyncio, re
-from tbot import config
+from tbot import config, logger
 from .base import chunks
 
 twitch_app_token = None
@@ -36,13 +35,13 @@ async def twitch_request(ahttp, url, params=None, headers={},
             if raise_exception:
                 raise Twitch_request_error(d['message'], r.status)
             else:
-                logging.error(d)
+                logger.error(d)
         if r.status >= 400:
             error = await r.json()
             if raise_exception:
                 raise Twitch_request_error(error['message'], r.status)
             else:
-                logging.error(error)
+                logger.error(error)
         if 'Content-Type' in r.headers:
             if 'application/json' in r.headers['Content-Type']:
                 return await r.json()

@@ -97,6 +97,7 @@ async def main():
     signal.signal(signal.SIGTERM, partial(sig_handler, server, app))
     signal.signal(signal.SIGINT, partial(sig_handler, server, app))
 
+    logging.getLogger('tornado.access').setLevel(config.data.logging.level.upper())
     log = logging.getLogger('main')
     log.setLevel('INFO')
     log.info(f'Web server started on port: {config.data.web.port}')

@@ -1,6 +1,7 @@
-import json, logging
+import json
 from datetime import datetime
 from discord.ext import commands
+from tbot import logger
 
 class Chat_log(commands.Cog):
 
@@ -28,7 +29,7 @@ class Chat_log(commands.Cog):
                 msg.author.nick if hasattr(msg.author, 'nick') else None,
             ))
         except:
-            logging.exception('on_message')
+            logger.exception('on_message')
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, msg):
@@ -54,7 +55,7 @@ class Chat_log(commands.Cog):
                 msg.id,
             ))
         except:
-            logging.exception('on_message_edit')
+            logger.exception('on_message_edit')
 
     @commands.Cog.listener()
     async def on_message_delete(self, msg):
@@ -67,7 +68,7 @@ class Chat_log(commands.Cog):
                     id=%s;
             ''', (datetime.utcnow(), msg.id,))
         except:
-            logging.exception('on_message_delete')
+            logger.exception('on_message_delete')
 
     @commands.Cog.listener()
     async def on_bulk_message_delete(self, msgs):
@@ -82,7 +83,7 @@ class Chat_log(commands.Cog):
             '''.format(f), 
                 (datetime.utcnow(), *[str(m.id) for m in msgs]))
         except:
-            logging.exception('on_message_delete')
+            logger.exception('on_message_delete')
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -102,7 +103,7 @@ class Chat_log(commands.Cog):
                 member.nick,
             ))
         except:
-            logging.exception('on_member_join')
+            logger.exception('on_member_join')
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
@@ -122,7 +123,7 @@ class Chat_log(commands.Cog):
                 member.nick,
             ))
         except:
-            logging.exception('on_member_remove')
+            logger.exception('on_member_remove')
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -167,7 +168,7 @@ class Chat_log(commands.Cog):
                     before.channel.name
                 ))
         except:
-            logging.exception('on_voice_state_update')
+            logger.exception('on_voice_state_update')
 
     def dump_attachments(self, attachments):
         r = []

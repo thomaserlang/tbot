@@ -1,5 +1,5 @@
-import logging
 from tbot.twitch_bot.bot_base import bot
+from tbot import logger
 
 badges = {}
 
@@ -58,4 +58,4 @@ async def badge_log(nick, target, message, **kwargs):
             badges[channel_id][user_id]['sub'] = sub
             badges[channel_id][user_id]['bits'] = bits
     except:
-        logging.exception('badge_log')
+        logger.exception('badge_log')

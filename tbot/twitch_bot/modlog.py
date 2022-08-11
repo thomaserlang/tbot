@@ -1,6 +1,6 @@
-import asyncio, websockets, logging, random, json, aioredis, aiohttp
+import asyncio, websockets, random, json, aiohttp
 from datetime import datetime
-from tbot import config, db, utils
+from tbot import config, utils, logger
 
 class Pubsub():
 
@@ -14,7 +14,7 @@ class Pubsub():
 
     async def parse_message(self, message):
         if message['type'] == 'PONG':
-            logging.debug('Received pong')
+            logger.debug('Received pong')
             if self.pong_check_callback:
                 self.pong_check_callback.cancel()
             self.ping_callback = asyncio.ensure_future(self.ping())
@@ -94,14 +94,14 @@ class Pubsub():
                         '''.format(field), (c[2], data['target_user_id'],)))
 
         except:
-            logging.exception('log_mod_action')
+            logger.exception('log_mod_action')
 
     async def run(self):
         self.ahttp = aiohttp.ClientSession()        
         self.redis_sub = await self.redis.subscribe('tbot:server:commands')
         asyncio.create_task(self.receive_server_commands())
 
-        logging.info('PubSub Connecting to {}'.format(self.url))
+        logger.info('PubSub Connecting to {}'.format(self.url))
         
         async for ws in websockets.connect(self.url):
             self.ws = ws
@@ -136,20 +136,20 @@ class Pubsub():
 
             except websockets.ConnectionClosed:
                 self.ping_callback.cancel()
-                logging.info('Lost connection to {}, reconnecting'.format(self.url))
+                logger.info('Lost connection to {}, reconnecting'.format(self.url))
                 continue
             except KeyboardInterrupt:
                 raise KeyboardInterrupt()
 
     async def ping(self):
         await asyncio.sleep(random.randint(5, 10))
-        logging.debug('Send PING')
+        logger.debug('Send PING')
         await self.ws.send('{"type": "PING"}')
         self.pong_check_callback = asyncio.ensure_future(self.close())
 
     async def close(self):
         await asyncio.sleep(10)
-        logging.info('Closing')
+        logger.info('Closing')
         await self.ws.close()
 
     async def get_channels(self):
@@ -174,7 +174,7 @@ class Pubsub():
         while (await sub.wait_message()):
             try:
                 msg = await sub.get_json()
-                logging.debug('Received server command: {}'.format(msg))
+                logger.debug('Received server command: {}'.format(msg))
                 if len(msg) != 2:
                     return
                 cmd = msg.pop(0)
@@ -197,12 +197,4 @@ class Pubsub():
                     }
                 }))
             except:
-                logging.exception('receive_server_commands')
-
-if __name__ == '__main__':
-    from tbot import config_load, logger
-    config_load('../../tbot.yaml')    
-    logger.set_logger('modlog.log')
-    loop = asyncio.get_event_loop()
-    loop.create_task(Pubsub().run())    
-    loop.run_forever()
+                logger.exception('receive_server_commands')

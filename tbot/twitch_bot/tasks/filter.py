@@ -1,6 +1,6 @@
-import logging, re
 from ..bot_base import bot
 from .. import filters
+from tbot import logger
 
 @bot.on('PRIVMSG')
 async def message(nick, target, message, **kwargs):
@@ -19,4 +19,4 @@ async def message(nick, target, message, **kwargs):
             if await f(target, message, kwargs):
                 return True
         except:
-            logging.exception('filter')
+            logger.exception('filter')

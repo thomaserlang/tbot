@@ -1,7 +1,5 @@
-import logging
 import asyncio
-import functools
-from tbot import config
+from tbot import logger
 from tbot.twitch_bot.bot_base import bot
 from tbot.twitch_bot import var_filler
 
@@ -97,7 +95,7 @@ async def db_command(cmd, target, data):
         except var_filler.Send_break:
             pass
         except:
-            logging.exception('db_command')
+            logger.exception('db_command')
 
 async def get_user_level(badges, user_id, channel_id, required_level):
     if 'broadcaster' in badges:

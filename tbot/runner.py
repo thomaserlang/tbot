@@ -1,5 +1,5 @@
 import click, asyncio, os, logging
-from tbot import config, config_load, logger
+from tbot import config, config_load, set_logger
 
 @click.group()
 @click.option('--config', default=None, help='path to the config file')
@@ -14,25 +14,25 @@ def cli(config, log_path, log_level):
 
 @cli.command()
 def twitch_bot():
-    logger.set_logger('twitch_bot.log', sentry_dsn=config.data.sentry_dsn)
+    set_logger('twitch_bot.log')
     from tbot.twitch_bot import bot_main
     asyncio.run(bot_main.main())
 
 @cli.command()
 def web():
-    logger.set_logger('web.log', sentry_dsn=config.data.sentry_dsn)
+    set_logger('web.log')
     import tbot.web.app
     asyncio.run(tbot.web.app.main()) 
 
 @cli.command()
 def discord():
-    logger.set_logger('discord.log', sentry_dsn=config.data.sentry_dsn)
+    set_logger('discord.log')
     import tbot.discord_bot.bot_main
     asyncio.run(tbot.discord_bot.bot_main.main())
 
 @cli.command()
 def upgrade():
-    logger.set_logger('migration.log', sentry_dsn=config.data.sentry_dsn)
+    set_logger('migration.log')
     from yoyo import read_migrations
     from yoyo import get_backend
 
@@ -53,7 +53,7 @@ def upgrade():
 
 @cli.command()
 def twitch_eventsub_check():
-    logger.set_logger('twitch_eventsub_check.log', sentry_dsn=config.data.sentry_dsn)
+    set_logger('twitch_eventsub_check.log')
     from tbot.web.handlers.api.twitch.eventsubs.eventsub import task_check_channels
     asyncio.run(task_check_channels())
 

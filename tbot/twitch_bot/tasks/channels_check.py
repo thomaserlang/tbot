@@ -1,7 +1,7 @@
-import logging, asyncio, json, copy
+import asyncio, json, copy
 from dateutil.parser import parse
 from datetime import datetime
-from tbot import config, utils
+from tbot import config, utils, logger
 from tbot.twitch_bot.bot_base import bot
 
 """
@@ -53,7 +53,7 @@ async def channels_check_runner():
         await asyncio.sleep(config.data.twitch.check_channels_every)
 
 async def channels_check():
-    logging.debug('Channels check')
+    logger.debug('Channels check')
     try:
         for channel_id in bot.channels:
             if channel_id not in bot.channels_check:
@@ -66,7 +66,7 @@ async def channels_check():
                 prev_channels_check[channel_id]
             ))
     except:
-        logging.exception('channels_check')
+        logger.exception('channels_check')
 
 async def channel_check(channel_id, prev_channel_check):
     now = datetime.utcnow().replace(microsecond=0)
@@ -89,7 +89,7 @@ async def channel_check(channel_id, prev_channel_check):
         if prev_channel_check['is_live'] != is_live:
             inc_time = int((now - bot.channels_check[channel_id]['went_live_at']).total_seconds())            
             if channel_id in bot.channels:
-                logging.info('{} is now live ({} seconds ago)'.format(
+                logger.info('{} is now live ({} seconds ago)'.format(
                     bot.channels[channel_id]['name'], 
                     inc_time,
                 ))
@@ -99,7 +99,7 @@ async def channel_check(channel_id, prev_channel_check):
     else:
         if prev_channel_check['is_live'] != is_live:
             if channel_id in bot.channels:
-                logging.info('{} went offline'.format(bot.channels[channel_id]['name']))
+                logger.info('{} went offline'.format(bot.channels[channel_id]['name']))
             await save_stream_ended(prev_channel_check['stream_id'], prev_channel_check['uptime'])
             if prev_channel_check['uptime'] >= int(config.data.twitch.stream_min_length): 
                 await reset_streams_in_a_row(channel_id, prev_channel_check['stream_id'])
@@ -112,7 +112,7 @@ async def channel_check(channel_id, prev_channel_check):
 async def inc_watchtime(channel_id, inc_time):
     data = []
     if channel_id in bot.channels:
-        logging.debug('Increment {} viewers with {} secs'.format(
+        logger.debug('Increment {} viewers with {} secs'.format(
             bot.channels[channel_id]['name'], 
             inc_time,
         ))
@@ -168,7 +168,7 @@ async def load_channels_cache():
 async def set_chatters(channel_id):
     try:
         if channel_id not in bot.channels:
-            logging.error('{} not in `bot.channels`'.format(channel_id))
+            logger.error('{} not in `bot.channels`'.format(channel_id))
             return
         channel = bot.channels[channel_id]['name']
         async with bot.ahttp.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(channel)) as r:
@@ -183,7 +183,7 @@ async def set_chatters(channel_id):
                     bot.channels_check[channel_id]['users'] = \
                         await utils.twitch_lookup_usernames(bot.ahttp, bot.db, usernames)
     except:
-        logging.exception('set_chatters')
+        logger.exception('set_chatters')
 
 async def update_channels_check():
     try:
@@ -202,7 +202,7 @@ async def update_channels_check():
                 if woa:
                     bot.channels_check[channel_id]['went_offline_at_delay'] = None
                     if channel_id in bot.channels:
-                        logging.info('{} was detected as online again after {} seconds'.format(
+                        logger.info('{} was detected as online again after {} seconds'.format(
                             bot.channels[channel_id]['name'],
                             int((datetime.utcnow() - woa).total_seconds()),
                         ))
@@ -218,7 +218,7 @@ async def update_channels_check():
                     continue
                 if config.data.twitch.delay_offline and not bot.channels_check[channel_id]['went_offline_at_delay']:
                     if channel_id in bot.channels:
-                        logging.info('{} was detected as offline but will be delayed with {} seconds'.format(
+                        logger.info('{} was detected as offline but will be delayed with {} seconds'.format(
                             bot.channels[channel_id]['name'],
                             config.data.twitch.delay_offline,
                         ))
@@ -234,7 +234,7 @@ async def update_channels_check():
                 bot.channels_check[channel_id]['went_offline_at_delay'] = None
                 bot.channels_check[channel_id]['uptime'] = 0
     except:
-        logging.exception('is_live')
+        logger.exception('is_live')
 
 async def reset_streams_in_a_row(channel_id, stream_id):
     await bot.db.execute('''
@@ -301,7 +301,7 @@ async def send_discord_live_notification(channel_id):
             async with bot.ahttp.request('POST', w['webhook_url'], json=data) as r:
                 if r.status >= 400:
                     error = await r.text()
-                    logging.warning(
+                    logger.warning(
                         'Failed to send live notification to id: {} - Error: ({}) {}'.format(
                             w['id'],
                             r.status,
@@ -309,6 +309,6 @@ async def send_discord_live_notification(channel_id):
                         )
                     )
         except:
-            logging.exception('twitch discord webhook-id: {} '.format(
+            logger.exception('twitch discord webhook-id: {} '.format(
                 w['id'],
             ))

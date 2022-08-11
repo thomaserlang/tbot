@@ -1,5 +1,5 @@
-import logging, asyncio
-from tbot import config
+import asyncio
+from tbot import config, logger
 from tbot.utils.twitch import twitch_channel_token_request
 
 async def twitch_sync(bot):
@@ -7,12 +7,12 @@ async def twitch_sync(bot):
     while not bot.is_closed():
         await asyncio.sleep(config.data.discord.twitch_sync_every)
         try:
-            logging.info('Twitch sync')
+            logger.info('Twitch sync')
             channels = await bot.db.fetchall('SELECT * FROM twitch_channels WHERE not isnull(discord_server_id) and active="Y";')
             for info in channels:
                 bot.loop.create_task(Twitch_sync_channel(info, bot).sync())
         except:
-            logging.exception('twitch_sync')
+            logger.exception('twitch_sync')
 
 class Twitch_sync_channel:
     running = {}
@@ -25,7 +25,7 @@ class Twitch_sync_channel:
     async def sync(self):
         self.server = self.bot.get_guild(int(self.info['discord_server_id']))
         if not self.server:
-            logging.info('Discord server id was not found: {}'.format(self.info['discord_server_id']))
+            logger.info('Discord server id was not found: {}'.format(self.info['discord_server_id']))
             return
         returninfo = {
             'errors': [],
@@ -35,7 +35,7 @@ class Twitch_sync_channel:
             'removed_users': 0,
         }
         if self.running.get(self.info['channel_id']):
-            logging.info('Already syncing {}'.format(self.info['name']))
+            logger.info('Already syncing {}'.format(self.info['name']))
             returninfo['errors'].append('Already syncing')
             return returninfo
         self.running[self.info['channel_id']] = True
@@ -49,7 +49,7 @@ class Twitch_sync_channel:
         except Twitch_exception as e:
             returninfo['errors'].append(str(e))
         except Exception as e:
-            logging.exception('sync {}'.format(self.info['name']))
+            logger.exception('sync {}'.format(self.info['name']))
             returninfo['errors'].append(str(e))
         self.running[self.info['channel_id']] = False
         return returninfo
@@ -81,7 +81,7 @@ class Twitch_sync_channel:
                 if sub_streak_role:
                     self.give_roles[member].append(sub_streak_role)
             except Exception as e:
-                logging.exception('set_sub_roles {}'.format(self.info['name']))
+                logger.exception('set_sub_roles {}'.format(self.info['name']))
                 returninfo['errors'].append(str(e))
 
     async def sync_roles(self, returninfo):
@@ -105,25 +105,25 @@ class Twitch_sync_channel:
                     give_roles.append(r)
 
             if give_roles:
-                logging.debug('Give roles to {}: {}'.format(member.name, give_roles))
+                logger.debug('Give roles to {}: {}'.format(member.name, give_roles))
                 for r in give_roles:
                     try:
                         await member.add_roles(r)
                         returninfo['added_roles'] += 1
                     except:
                         e = 'Failed to give role `{}` to `{}`'.format(r.name, member.name)
-                        logging.exception(e)
+                        logger.exception(e)
                         returninfo['errors'].append(e)
                 returninfo['added_users'] += 1
             if remove_roles:
-                logging.debug('Remove roles from {}: {}'.format(member.name, remove_roles))
+                logger.debug('Remove roles from {}: {}'.format(member.name, remove_roles))
                 for r in remove_roles:
                     try:
                         await member.remove_roles(r)
                         returninfo['removed_roles'] += 1
                     except:
                         e = 'Failed to remove role `{}` to `{}`'.format(r.name, member.name)
-                        logging.exception(e)
+                        logger.exception(e)
                         returninfo['errors'].append(e)
                 returninfo['removed_users'] += 1
 
@@ -228,7 +228,7 @@ class Twitch_sync_channel:
                     )
                     break
         except:
-            logging.exception('get_twitch_ids')
+            logger.exception('get_twitch_ids')
         return twitch_ids
 
 async def discord_request(ahttp, url, params=None, headers={}):    
@@ -242,7 +242,7 @@ async def discord_request(ahttp, url, params=None, headers={}):
         elif r.status in (401, 403):
             data = await r.json()
             if data['code'] == 50001:
-                logging.error('User "{}" is not on the same server as the user_token'.format(url))
+                logger.error('User "{}" is not on the same server as the user_token'.format(url))
                 return
             raise Exception(data['message'])
 

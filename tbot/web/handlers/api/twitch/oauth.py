@@ -1,7 +1,7 @@
 import logging, asyncio
 from tornado import httpclient
 from urllib import parse
-from tbot import config, utils
+from tbot import config, utils, logger
 from ..base import Base_handler
 from .eventsubs.eventsub import create_eventsubs
 
@@ -26,7 +26,7 @@ class Handler(Base_handler):
             'grant_type': 'authorization_code',
         }), body='', method='POST', raise_error=False)
         if response.code != 200:
-            logging.error(response.body)
+            logger.error(response.body)
             self.write('Unable to verify you at Twitch, please try again.')
             return
         token = utils.json_loads(response.body)

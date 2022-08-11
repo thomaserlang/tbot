@@ -1,5 +1,5 @@
-import logging
 from bottom import unpack
+from tbot import logger
 
 def unpack_command(msg):
     prefix, command, params = unpack.split_line(msg.strip())
@@ -139,6 +139,6 @@ def rfc2812_handler(client):
             kwargs.update(twitchextra)
             client.trigger(event, **kwargs)
         except ValueError:
-            logging.debug("Failed to parse line >>> {}".format(message))
+            logger.debug("Failed to parse line >>> {}".format(message))
         await next_handler(message)
     return handler

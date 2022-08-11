@@ -1,7 +1,7 @@
-import logging, json, base64
-from tornado import web, httpclient, escape
+import json, base64
+from tornado import httpclient, escape
 from urllib import parse
-from tbot import config, utils
+from tbot import config, utils, logger
 from ..base import Api_handler, Base_handler, Level
 
 class Handler(Api_handler):
@@ -62,7 +62,7 @@ class Receive_handler(Base_handler):
             'grant_type': 'authorization_code',
         }), method='POST', headers={'Content-Type': 'application/x-www-form-urlencoded'}, raise_error=False)
         if response.code != 200:
-            logging.error(escape.native_str(response.body))
+            logger.error(escape.native_str(response.body))
             self.write('Unable to verify you at Spotify, please try again.')
             return
         token = json.loads(escape.native_str(response.body))
@@ -71,7 +71,7 @@ class Receive_handler(Base_handler):
             'Authorization': 'Bearer {}'.format(token['access_token']),
         })
         if response.code != 200:
-            logging.error(escape.native_str(response.body))
+            logger.error(escape.native_str(response.body))
             self.write('Unable retrieve your Spotify profile, please try again.')
             return
         user = json.loads(escape.native_str(response.body))

@@ -1,7 +1,7 @@
-import logging, json, base64
-from tornado import web, httpclient, escape
+import  json, base64
+from tornado import httpclient, escape
 from urllib import parse
-from tbot import config, utils
+from tbot import config, utils, logger
 from ..base import Base_handler, Api_handler, Level
 
 class Handler(Api_handler):
@@ -61,7 +61,7 @@ class Receive_handler(Base_handler):
             'grant_type': 'authorization_code',
         }), method='POST', headers={'Content-Type': 'application/x-www-form-urlencoded'}, raise_error=False)
         if response.code != 200:
-            logging.error(escape.native_str(response.body))
+            logger.error(escape.native_str(response.body))
             self.write('Unable to verify you at Discord, please try again.')
             return
         data = json.loads(escape.native_str(response.body))
@@ -69,7 +69,7 @@ class Receive_handler(Base_handler):
             e = 'oAuth2 grant is not enabled for the bot. Enable it here: https://discordapp.com/developers/applications/{}/bots'.format(\
                 config.data.discord.client_id
             )
-            logging.error(e)
+            logger.error(e)
             self.write(e)
             return
         await self.db.execute('UPDATE twitch_channels SET discord_server_id=%s, discord_server_name=%s WHERE channel_id=%s',
