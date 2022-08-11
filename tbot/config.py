@@ -8,7 +8,6 @@ class ConfigWebModel(BaseModel):
     name = 'TBot'
     base_url = 'https://botashell.com'
 
-
 class ConfigTwitchModel(BaseModel):
     username: Optional[str]
     chat_token: Optional[str]
@@ -33,7 +32,6 @@ class ConfigTwitchModel(BaseModel):
                     'channel:read:goals', 'channel:read:hype_train', 'channel:read:polls',
                     'channel:read:predictions', 'channel:read:redemptions', 'channel:read:subscriptions',]
 
-
 class ConfigDiscordModel(BaseModel):
     client_id: Optional[str]
     client_secret: Optional[str]
@@ -42,11 +40,9 @@ class ConfigDiscordModel(BaseModel):
     user_token: Optional[str]
     twitch_sync_every = 3600 # seconds
 
-
 class ConfigSpotifyConfig(BaseModel):
     client_id: Optional[str]
     client_secret: Optional[str]    
-
 
 class ConfigLoggingModel(BaseModel):
     level: Literal['notset', 'debug', 'info', 'warn', 'error', 'critical'] = 'warn'
@@ -54,7 +50,6 @@ class ConfigLoggingModel(BaseModel):
     max_size: int = 100 * 1000 * 1000 # ~ 95 mb
     num_backups = 10
     
-
 class ConfigMySQLModel(BaseModel):
     host = '127.0.0.1'
     port = 3306
@@ -62,15 +57,11 @@ class ConfigMySQLModel(BaseModel):
     password: Optional[str]
     database = 'tbot'
 
-
-
 class ConfigRedisModel(BaseModel):
     host = '127.0.0.1'
     port = 6379
     pool_min_size = 5
     pool_max_size = 20
-
-
 
 class ConfigModel(BaseModel):
     debug = False
@@ -88,6 +79,11 @@ class ConfigModel(BaseModel):
     tft_apikey: Optional[str]
     rtmp_keys: List[str] = []
 
+    class Config:
+        env_prefix = 'tbot_'
+        env_nested_delimiter = '.'
+        validate_assignment = True
+        case_sensitive = False
 
 class Config:
     def __init__(self):
