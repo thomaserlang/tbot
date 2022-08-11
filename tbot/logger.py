@@ -1,7 +1,5 @@
-import datetime
-import logging, logging.handlers, os, sentry_sdk
+import logging, os, sentry_sdk
 from tbot import config
-from tornado import log as tornadolog
 
 logger = logging.getLogger('tbot')
 
@@ -12,9 +10,9 @@ def set_logger(filename, to_sentry=True):
     glogger = logging.getLogger()
     glogger.handlers = []
 
-    logging.Formatter.formatTime = (lambda self, record, datefmt=None: datetime.datetime.fromtimestamp(record.created, datetime.timezone.utc).astimezone().isoformat(sep="T",timespec="milliseconds"))
-    format_ = tornadolog.LogFormatter(
-        '[%(color)s%(levelname)s%(end_color)s %(asctime)s %(module)s:%(lineno)d]: %(message)s',
+    format_ = logging.Formatter(        
+        fmt='[%(asctime)s.%(msecs)-3d] %(levelname)-8s %(message)s (%(filename)s:%(lineno)d)',
+        datefmt='%Y-%m-%d:%H:%M:%S',
     )
     if config.data.logging.path:
         channel = logging.handlers.RotatingFileHandler(
