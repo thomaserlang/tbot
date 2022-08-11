@@ -17,7 +17,7 @@ class Pubsub():
             logger.debug('Received pong')
             if self.pong_check_callback:
                 self.pong_check_callback.cancel()
-            self.ping_callback = asyncio.ensure_future(self.ping())
+            self.ping_callback = asyncio.create_task(self.ping())
         elif message['type'] == 'RECONNECT':
             await self.ws.close()
         elif message['type'] == 'MESSAGE':
@@ -108,7 +108,7 @@ class Pubsub():
             try:
                 if self.ping_callback:
                     self.ping_callback.cancel()
-                self.ping_callback = asyncio.ensure_future(self.ping())
+                self.ping_callback = asyncio.create_task(self.ping())
                 user = await utils.twitch_current_user(self.ahttp)
                 self.current_user_id = user['id']
                 channels = await self.get_channels() 
@@ -134,18 +134,18 @@ class Pubsub():
                     except KeyboardInterrupt:
                         raise KeyboardInterrupt()
 
-            except websockets.ConnectionClosed:
+            except websockets.ConnectionClosed as e:
                 self.ping_callback.cancel()
-                logger.info('Lost connection to {}, reconnecting'.format(self.url))
+                logger.info(f'Lost connection to {self.url}, reconnecting. {e}')
                 continue
             except KeyboardInterrupt:
                 raise KeyboardInterrupt()
 
     async def ping(self):
-        await asyncio.sleep(random.randint(5, 10))
+        await asyncio.sleep(random.randint(200, 300))
         logger.debug('Send PING')
         await self.ws.send('{"type": "PING"}')
-        self.pong_check_callback = asyncio.ensure_future(self.close())
+        self.pong_check_callback = asyncio.create_task(self.close())
 
     async def close(self):
         await asyncio.sleep(10)
