@@ -12,7 +12,7 @@ def set_logger(filename, to_sentry=True):
 
     format_ = logging.Formatter(        
         fmt='[%(asctime)s.%(msecs)-3d] %(levelname)-8s %(message)s (%(filename)s:%(lineno)d)',
-        datefmt='%Y-%m-%d:%H:%M:%S',
+        datefmt='%Y-%m-%dT%H:%M:%S',
     )
     if config.data.logging.path:
         channel = logging.handlers.RotatingFileHandler(
