@@ -28,8 +28,8 @@ class Client(bottom.Client):
         self.port = config.data.twitch.irc_port 
         self.ssl = config.data.twitch.irc_use_ssl
     
-    def send(self, command: str, **kwargs) -> None:
-        if self.rate_limit_count < config.data.twitch.irc_rate_limit:
+    def send(self, command: str, skip_queue = False, **kwargs) -> None:
+        if self.rate_limit_count < config.data.twitch.irc_rate_limit or skip_queue:
             if command == 'PRIVMSG' and bot.bot_sender and kwargs['message'] != '/mods':
                 bot.bot_sender.send(command, **kwargs)
             else:
@@ -40,13 +40,14 @@ class Client(bottom.Client):
                 'command': command,
                 'kwargs': kwargs,
             })
-            logger.warning('Rate limit reached. In queue: {}'.format(len(self.rate_limit_bucket)))
+            logger.warning(f'Rate limit reached. In queue: {len(self.rate_limit_bucket)}')
 
     async def rate_limit_reset_runner(self):
         while True:
+            logger.info('rate_limit_count')
             self.rate_limit_count = 0
             if self.rate_limit_bucket:
-                self.loop.create_task(self.rate_limit_send_bucket())
+                asyncio.create_task(self.rate_limit_send_bucket())
             await asyncio.sleep(30)
 
     async def rate_limit_send_bucket(self):
@@ -59,7 +60,7 @@ class Client(bottom.Client):
         await asyncio.sleep(random.randint(120, 240) if not time else time)
         logger.debug('Sending ping')
         bot.pong_check_callback = asyncio.create_task(self.wait_for_pong())
-        bot.send('PING')
+        bot.send('PING', skip_queue=True)
 
     async def wait_for_pong(self):
         await asyncio.sleep(10)
@@ -80,14 +81,14 @@ bot = Client('a', 0)
 async def connect(**kwargs):
     if not bot.is_running:  
         bot.ahttp = aiohttp.ClientSession()        
-        bot.loop.create_task(bot.rate_limit_reset_runner())
+        asyncio.create_task(bot.rate_limit_reset_runner())
         bot.user = await utils.twitch_current_user(bot.ahttp)
         bot.redis_sub = await bot.redis.subscribe('tbot:server:commands')
-        bot.loop.create_task(receive_redis_server_commands())
+        asyncio.create_task(receive_redis_server_commands())
         bot.is_running = True
 
         bot_sender.setup(bot)
-        bot.loop.create_task(bot_sender.bot_sender.connect())
+        asyncio.create_task(bot_sender.bot_sender.connect())
 
     logger.info('IRC Connecting to {}:{} as {}'.format(
         config.data.twitch.irc_host, 
@@ -96,9 +97,9 @@ async def connect(**kwargs):
     ))
     try:
         if config.data.twitch.chat_token:
-            bot.send('PASS', password='oauth:{}'.format(config.data.twitch.chat_token))
-        bot.send('NICK', nick=bot.user['login'])
-        bot.send('USER', user=bot.user['login'], realname=bot.user['login'])
+            bot.send('PASS', password=f'oauth:{config.data.twitch.chat_token}', skip_queue=True)
+        bot.send('NICK', nick=bot.user['login'], skip_queue=True)
+        bot.send('USER', user=bot.user['login'], realname=bot.user['login'], skip_queue=True)
     except RuntimeError:
         # Didn't connect for some reason, try again
         await asyncio.sleep(5)
@@ -144,7 +145,7 @@ async def disconnect(**kwargs):
 @bot.on('PING')
 def keepalive(message, **kwargs):
     logger.debug('Received ping, sending PONG back')
-    bot.send('PONG', message=message)
+    bot.send('PONG', message=message, skip_queue=True)
 
 @bot.on('PONG')
 async def pong(message, **kwargs):
@@ -164,8 +165,8 @@ async def join(**kwargs):
     # From what I can find you are allowed to 
     # join 50 channels every 15 seconds
     for c in bot.channels.values():
-        bot.send('JOIN', channel='#'+c['name'])
-        bot.send("PRIVMSG", target='#'+c['name'], message='/mods')
+        bot.send('JOIN', channel='#'+c['name'], skip_queue=True)
+        bot.send("PRIVMSG", target='#'+c['name'], message='/mods', skip_queue=True)
         await asyncio.sleep(0.20)
     bot.trigger('AFTER_CHANNELS_JOINED')
 
