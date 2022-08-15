@@ -44,7 +44,6 @@ class Client(bottom.Client):
 
     async def rate_limit_reset_runner(self):
         while True:
-            logger.info('rate_limit_count')
             self.rate_limit_count = 0
             if self.rate_limit_bucket:
                 asyncio.create_task(self.rate_limit_send_bucket())
