@@ -18,8 +18,8 @@ class Client(bottom.Client):
         self.db = None
         self.redis = None
         self.redis_sub = None
-        self.pong_check_callback = None
-        self.ping_callback = None
+        self.pong_check_task = None
+        self.ping_task = None
         self.starttime = datetime.utcnow()
         self.user = None
         self.bot_sender = None
@@ -40,7 +40,7 @@ class Client(bottom.Client):
                 'command': command,
                 'kwargs': kwargs,
             })
-            logger.warning('Rate limit reached. In queue: {}'.format(len(self.rate_limit_bucket)))
+            logger.warning(f'Rate limit reached. In queue: {len(self.rate_limit_bucket)}')
 
     async def rate_limit_reset_runner(self):
         while True:
@@ -58,20 +58,20 @@ class Client(bottom.Client):
     async def send_ping(self, time=None):
         await asyncio.sleep(random.randint(120, 240) if not time else time)
         logger.debug('Sending ping')
-        bot.pong_check_callback = asyncio.create_task(self.wait_for_pong())
-        bot.send('PING')
+        if self.pong_check_task:
+            self.pong_check_task.cancel()
+        self.pong_check_task = asyncio.create_task(self.wait_for_pong())
+        self.send('PING')
 
     async def wait_for_pong(self):
         await asyncio.sleep(10)
-
         logger.error('Didn\'t receive a PONG in time, reconnecting')
-        if bot.ping_callback:
-            bot.ping_callback.cancel()
-        bot.ping_callback = asyncio.create_task(self.send_ping(10))
         await self.connect()
 
-    async def connect(self) -> None:        
-        self.ping_callback = asyncio.create_task(self.send_ping(10))
+    async def connect(self) -> None:
+        if self.ping_task:
+            self.ping_task.cancel()
+        self.ping_task = asyncio.create_task(self.send_ping(10))
         return await super().connect()
 
 bot = Client('a', 0)
@@ -149,11 +149,11 @@ def keepalive(message, **kwargs):
 @bot.on('PONG')
 async def pong(message, **kwargs):
     logger.debug('Received pong')
-    if bot.pong_check_callback:
-        bot.pong_check_callback.cancel()
-    if bot.ping_callback:
-        bot.ping_callback.cancel()
-    bot.ping_callback = asyncio.create_task(bot.send_ping())
+    if bot.pong_check_task:
+        bot.pong_check_task.cancel()
+    if bot.ping_task:
+        bot.ping_task.cancel()
+    bot.ping_task = asyncio.create_task(bot.send_ping())
 
 
 bot.channels = {}
