@@ -30,7 +30,10 @@ class ConfigTwitchModel(BaseModel):
                     'channel:manage:predictions', 'channel:manage:redemptions',
                     'channel:manage:videos', 'channel:manage:broadcast',
                     'channel:read:goals', 'channel:read:hype_train', 'channel:read:polls',
-                    'channel:read:predictions', 'channel:read:redemptions', 'channel:read:subscriptions',]
+                    'channel:read:predictions', 'channel:read:redemptions', 'channel:read:subscriptions',
+                    'moderator:manage:banned_users', 'moderator:read:chatters', 'channel:read:vips',
+                    'moderator:manage:chat_messages',
+                    ]
 
 class ConfigDiscordModel(BaseModel):
     client_id: Optional[str]
