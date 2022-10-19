@@ -32,7 +32,8 @@ class ConfigTwitchModel(BaseModel):
                     'channel:read:goals', 'channel:read:hype_train', 'channel:read:polls',
                     'channel:read:predictions', 'channel:read:redemptions', 'channel:read:subscriptions',
                     'moderator:manage:banned_users', 'moderator:read:chatters', 'channel:read:vips',
-                    'moderator:manage:chat_messages',
+                    'moderator:manage:chat_messages', 'moderator:manage:chat_settings',
+                    'moderator:manage:announcements', 'chat:edit', 'chat:read',
                     ]
 
 class ConfigDiscordModel(BaseModel):
