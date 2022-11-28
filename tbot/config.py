@@ -1,6 +1,6 @@
 import os, yaml
 from typing import List, Optional, Literal
-from pydantic import BaseModel, DirectoryPath
+from pydantic import BaseModel, BaseSettings, DirectoryPath
 
 class ConfigWebModel(BaseModel):
     port = 8001
@@ -67,7 +67,7 @@ class ConfigRedisModel(BaseModel):
     pool_min_size = 5
     pool_max_size = 20
 
-class ConfigModel(BaseModel):
+class ConfigModel(BaseSettings):
     debug = False
     sentry_dsn: Optional[str]
     web = ConfigWebModel()
