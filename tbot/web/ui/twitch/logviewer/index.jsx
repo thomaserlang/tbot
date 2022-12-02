@@ -2,10 +2,11 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import api from 'tbot/twitch/api'
 import qs from 'query-string'
-import moment from 'moment'
-import {setTitle} from 'tbot/utils'
+import {setTitle, iso8601toLocalTime} from 'tbot/utils'
 import Loading from 'tbot/components/loading'
 import UserInput from './userinput'
+import UserStats from './user_stats'
+import UserStreamsWatched from './user_streams_watched'
 import './logviewer.scss'
 import '../dashboard/components/topbar.scss'
 
@@ -16,7 +17,6 @@ class Logviewer extends React.Component {
         this.query = qs.parse(location.search)
         this.state = {
             channel: null,
-            loading: true,
             chatlog: [],
             loading: true,
             loadingChannel: true,
@@ -40,7 +40,6 @@ class Logviewer extends React.Component {
                 this.loadChatlog({
                     before_id: this.query.before_id,
                 })
-                this.loadUserChatStats()
             })
         })
     }
@@ -51,8 +50,8 @@ class Logviewer extends React.Component {
         params['message'] = this.query.message
         params['show_mod_actions_only'] = this.query.show_mod_actions_only
         api.get(`/api/twitch/channels/${this.state.channel.id}/chatlog`, {params: params}).then(r => {
-            let l = this.state.chatlog;
-            if ('after_id' in params)                
+            const l = [...this.state.chatlog];
+            if ('after_id' in params)
                 l.push(...r.data)
             else
                 l.unshift(...r.data);
@@ -65,7 +64,6 @@ class Logviewer extends React.Component {
                 }
             }
             this.setState({
-                loading: false,
                 chatlog: l,
             })
         }).catch(e => {
@@ -74,6 +72,8 @@ class Logviewer extends React.Component {
                     accessDenied: true,
                 })
             }
+        }).finally(() => {
+            this.setState({loading: false})
         })
     }
 
@@ -91,63 +91,49 @@ class Logviewer extends React.Component {
         })
     }
 
-    loadUserChatStats() {
-        this.setState({
-            userChatStats: null,
-            loading: true,
-        })
-        if (!this.query.user)
-            return
-        api.get(`/api/twitch/channels/${this.state.channel.id}/user-chatstats`, {params: {
-            user: this.query.user,
-        }}).then(r => {
-            this.setState({
-                userChatStats: r.data,
-                loading: false,
-            })
-        })   
-    }
-
     renderChatlog() {
-        if (this.state.chatlog.length == 0)
+        if (this.state.chatlog.length == 0) { 
             if (this.state.loading)
                 return <Loading text="LOADING" />
-            else
-                return <div className="m-2"><center>No results found</center></div>
-        return <table className="chatlog table table-dark table-striped table-sm table-hover">
-            <tbody>
-                {this.state.showLoadBefore?
-                    <tr><td colSpan="3" style={{textAlign: 'center'}}>
-                        {this.state.loading?
-                            <div class="spinner-grow text-primary" role="status"></div>:
-                            <a href="#" onClick={this.loadBefore}>Load more</a>}
-                        </td></tr>
-                : null}
-                {this.state.chatlog.map(l => (
-                    <tr key={l.id}>
-                        <td 
-                            width="10px"
-                            dateTime={l.created_at}
-                            style={{whiteSpace:'nowrap'}}
-                        >
-                            <a href={`?before_id=${l.id+1}`}>{this.iso8601toLocalTime(l.created_at)}</a>
-                        </td>
-                        <td width="10px"><a href={`?user=${l.user}`}>{l.user}</a></td>
-                        <td>
-                            {this.renderTypeSymbol(l)}
-                            {l.message} 
-                        </td>
-                    </tr>
-                ))}                
-                {this.state.showLoadAfter?
-                    <tr><td colSpan="3" style={{textAlign: 'center'}}>
-                        {this.state.loading?
-                            <div class="spinner-grow text-primary" role="status"></div>:
-                            <a href="#" onClick={this.loadAfter}>Load more</a>}
-                        </td></tr>
-                : null}
-            </tbody>
-        </table>
+            return <div className="m-2"><center>No logs found</center></div>
+        }
+        return <div className="chatlog">
+                <h3>Chat logs</h3>        
+                <table className="table table-dark table-striped table-sm table-hover">
+                <tbody>
+                    {this.state.showLoadBefore?
+                        <tr><td colSpan="3" style={{textAlign: 'center'}}>
+                            {this.state.loading?
+                                <div className="spinner-grow text-primary" role="status"></div>:
+                                <a href="#" onClick={this.loadBefore}>Load more chat logs</a>}
+                            </td></tr>
+                    : null}
+                    {this.state.chatlog.map(l => (
+                        <tr key={l.id}>
+                            <td 
+                                width="10px"
+                                dateTime={l.created_at}
+                                style={{whiteSpace:'nowrap'}}
+                            >
+                                <a href={`?before_id=${l.id+1}`}>{iso8601toLocalTime(l.created_at)}</a>
+                            </td>
+                            <td width="10px"><a href={`?user=${l.user}`}>{l.user}</a></td>
+                            <td>
+                                {this.renderTypeSymbol(l)}
+                                {l.message} 
+                            </td>
+                        </tr>
+                    ))}                
+                    {this.state.showLoadAfter?
+                        <tr><td colSpan="3" style={{textAlign: 'center'}}>
+                            {this.state.loading?
+                                <div className="spinner-grow text-primary" role="status"></div>:
+                                <a href="#" onClick={this.loadAfter}>Load more chat logs</a>}
+                            </td></tr>
+                    : null}
+                </tbody>
+            </table>
+        </div> 
     }
 
     renderTypeSymbol(l) {
@@ -170,24 +156,12 @@ class Logviewer extends React.Component {
         }
     }
 
-    iso8601toLocalTime(t) {
-        let date = moment(t);
-        return date.format('YYYY-MM-DD HH:mm:ss')
-    }
 
-    renderUserStats() {
-        if (this.state.userChatStats == null)
-            return null
 
-        return <div className="userChatStats">
-            <span><b>Total messages:</b> {this.state.userChatStats.chat_messages||0}</span>
-            <span><b>Timeouts:</b> {this.state.userChatStats.timeouts||0}</span>
-            <span><b>Bans:</b> {this.state.userChatStats.bans||0}</span>
-            <span title="Number of watched streams"><b>Streams:</b> {this.state.userChatStats.streams||0}</span>
-            <span title="Peak streams in a row"><b>Streams peak:</b> {this.state.userChatStats.streams_row_peak||0} ({this.state.userChatStats.streams_row_peak_date||'No data'})</span>
-            <span title="Date of the latest stream watched"><b>Last stream:</b> {this.state.userChatStats.last_viewed_stream_date||'No data'}</span>
-        </div>
 
+    viewMoreClick = (e) => {
+        e.preventDefault()
+        
     }
 
     renderAccessDenied() {
@@ -236,9 +210,13 @@ class Logviewer extends React.Component {
                         <label className="form-check-label" htmlFor="show_mod_actions_only">Show only mod actions</label>
                     </form>
                 </div>
-                {this.renderUserStats()}
+                {this.query.user?<UserStats channelId={this.state.channel.id} user={this.query.user} />: null}
             </div>
+            
             {this.renderChatlog()}
+
+            {this.query.user?<UserStreamsWatched channelId={this.state.channel.id} user={this.query.user} />: null}
+            
         </div>;
     }
 

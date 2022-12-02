@@ -1,0 +1,94 @@
+import { useEffect, useState } from "react"
+
+import api from 'tbot/twitch/api'
+import { secondsToText, iso8601toLocalTime } from "../../utils"
+
+
+export default function({ channelId, user }) {
+    const [data, setData] = useState('')
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [canLoadMore, setCanLoadMore] = useState(false)
+
+    useEffect(() => {
+        api.get(`/api/twitch/channels/${channelId}/user-streams-watched`, {params: {
+            user: user,
+        }}).then(r => {
+            setData(r.data)
+            if (r.data.length > 4)
+                setCanLoadMore(true)
+        }).catch((e) => {
+            console.log(e)
+            setData(null)
+        })
+    }, [channelId, user])
+
+    if (data === '') 
+        return <div style={{marginTop: '2rem'}}><h3>Streams watched</h3> <div className="spacing">Loading streams watched...</div></div>
+
+    if (!data || (data.length === 0))
+        return null
+
+    const loadMore = (e) => {
+        e.preventDefault()
+        setLoadingMore()
+        api.get(`/api/twitch/channels/${channelId}/user-streams-watched`, {params: {
+            user: user,
+            after_id: data.at(-1).started_at
+        }}).then(r => {
+            setData([...data, ...r.data])
+            if (r.data.length > 4)
+                setCanLoadMore(true)
+        }).catch((e) => {
+            console.log(e)
+        }).finally(() => (
+            setLoadingMore(false)
+        ))
+    }
+
+    return <div style={{marginTop: '2rem'}}>
+        <h3>Streams watched</h3>
+        <table className="table table-dark table-striped table-sm table-hover">
+            <thead>
+                <tr>
+                    <th className="fit-content">Stream date</th>
+                    <th>Watch time</th>
+                    <th>Stream uptime</th>
+                </tr>
+            </thead>
+            <tbody>
+                {data.map(s => (
+                    <tr key={s.stream_id}>
+                        <td 
+                            dateTime={s.started_at}
+                            className="fit-content"
+                        >
+                            {iso8601toLocalTime(s.started_at).substring(0, 10)}
+                        </td>
+                        <td
+                            className="fit-content"
+                        >
+                            {secondsToText(s.watchtime|0)} ({percentageWatched(s)}%)
+                        </td>
+                        <td>
+                            {secondsToText(s.uptime|0)} 
+                        </td>
+                    </tr>
+                ))}
+                {canLoadMore?
+                    <tr><td colSpan="3" style={{textAlign: 'center'}}>
+                        {loadingMore?
+                            <div className="spinner-grow text-primary" role="status"></div>:
+                            <a href="#" onClick={loadMore}>Load more streams</a>}
+                        </td>
+                    </tr>: null
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+function percentageWatched(stream) {
+    if (stream.watchtime > stream.uptime)
+        return 100
+    return ((100 * stream.watchtime) / stream.uptime).toFixed(0)
+}

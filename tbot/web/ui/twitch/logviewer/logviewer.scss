@@ -1,28 +1,52 @@
 #logviewer {
-    h2 {
-        margin: 0;
-        border-bottom: 1px solid #000;
-        font-size: 22px;
+    h3 {
+        font-size: 24px;
+        margin-left: 0.5rem;
+        margin-top: 1rem;
     }
 
     .filter {
         padding: 0.5rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
         background-color: #36c;
         input, button {
             margin-right: 0.5rem;
         }
     }
 
+    .spacing {        
+        padding: 0.5rem;
+    }
+
     .userChatStats {
         background-color: #26282e;
-        padding: 0.5rem;
-        span {
-            margin-right: 1rem;
+        padding-top: 0;    
+        
+        h3 {
+            text-transform: uppercase;
+            margin-left: 0;
+        }
+        .user {        
+            display: flex;
+            gap: 1.5rem;
         }
     }
 
+
+
     .badge {
-        margin-right: 0.5rem;
+        margin-right: 1rem;
+    }
+
+    .table-sm td, .table-sm th {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .fit-content {
+        width: 1%;
+        white-space: nowrap;
     }
 }
 

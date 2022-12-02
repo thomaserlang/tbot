@@ -27,6 +27,7 @@ def App():
             (r'/api/twitch/channels', handlers.api.twitch.channels.Handler),
             (r'/api/twitch/channels/([0-9]+)/chatlog', handlers.api.twitch.chatlog.Handler),
             (r'/api/twitch/channels/([0-9]+)/user-chatstats', handlers.api.twitch.chatlog.User_stats_handler),
+            (r'/api/twitch/channels/([0-9]+)/user-streams-watched', handlers.api.twitch.chatlog.User_streams_watched_handler),
             (r'/api/twitch/channels/([0-9]+)/users', handlers.api.twitch.channel_users.Handler),
             (r'/api/twitch/channels/([0-9]+)/bot-join', handlers.api.twitch.control_bot.Join_handler),
             (r'/api/twitch/channels/([0-9]+)/bot-mute', handlers.api.twitch.control_bot.Mute_handler),
