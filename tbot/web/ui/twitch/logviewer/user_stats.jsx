@@ -20,7 +20,7 @@ export default function UserStats({ channelId, user }) {
             setData(null)
             setError(true)
         }).finally(() => {
-            setLoading(true)
+            setLoading(false)
         })
     }, [channelId, user])
 
