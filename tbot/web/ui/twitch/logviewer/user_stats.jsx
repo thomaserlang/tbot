@@ -4,24 +4,56 @@ import api from 'tbot/twitch/api'
 import { secondsToText } from 'tbot/utils'
 
 export default function UserStats({ channelId, user }) {
-    const [data, setData] = useState('')
+    const [loading, setLoading] = useState(true)
+    const [data, setData] = useState(null)
+    const [error, setError] = useState(false)
     
     useEffect(() => {
+        setData(true)
         api.get(`/api/twitch/channels/${channelId}/user-chatstats`, {params: {
             user: user,
         }}).then(r => {
-            setData(r.data)
+            setLoading(r.data)
+            setError(false)
         }).catch((e) => {
             console.log(e)
             setData(null)
+            setError(true)
+        }).finally(() => {
+            setLoading(true)
         })
     }, [channelId, user])
 
-    if (data === '') 
-        return <div className="spacing">Loading user data...</div>
+    if (loading) 
+        return <div className="userChatStats">
+            <div className="spacing">
+                <h3>{user}</h3>
+                <div className="user">
+                    Loading user data...
+                </div>
+            </div>
+        </div>
+
+    if (error)
+        return <div className="userChatStats">
+            <div className="spacing">
+                <h3>{user}</h3>
+                <div className="user">
+                    Failed to load user data, try again.
+                </div>
+            </div>
+        </div>
 
     if (!data)
-        return null
+        return <div className="userChatStats">
+            <div className="spacing">
+                <h3>{user}</h3>
+                <div className="user">
+                    Didn't find any channel stats for user.
+                </div>
+            </div>
+        </div>
+
 
     return <div className="userChatStats">
         <div className="spacing">
