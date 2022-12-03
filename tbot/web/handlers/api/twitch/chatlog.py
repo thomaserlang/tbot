@@ -82,8 +82,8 @@ class User_stats_handler(Api_handler):
                 s.user_id = %s
         '''
         stats = await self.db.fetchone(sql, (channel_id, user_id, channel_id, user_id))
-        stats['watchtime'] = int(stats['watchtime']) if stats['watchtime'] != None else None
         if stats:
+            stats['watchtime'] = int(stats['watchtime']) if stats['watchtime'] != None else None
             self.write_object(stats)
         else:
             self.set_status(204)
