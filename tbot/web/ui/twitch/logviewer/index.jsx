@@ -96,12 +96,12 @@ class Logviewer extends React.Component {
             if (this.state.loading)
                 return <div className="chatlog">
                         <h3>Chat logs</h3>
-                        <div className="m-2">Loading chat logs...</div>
+                        <div className="spacing">Loading chat logs...</div>
                     </div>
                 
             return <div className="chatlog">
                 <h3>Chat logs</h3>
-                <div className="m-2">No chat logs found</div>
+                <div className="spacing">No chat logs found</div>
             </div>
         }
         
