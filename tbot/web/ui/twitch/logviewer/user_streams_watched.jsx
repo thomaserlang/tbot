@@ -6,40 +6,50 @@ import { secondsToText, iso8601toLocalTime } from "../../utils"
 
 export default function({ channelId, user }) {
     const [data, setData] = useState('')
+    const [loading, setLoading] = useState(true)
     const [loadingMore, setLoadingMore] = useState(false)
     const [canLoadMore, setCanLoadMore] = useState(false)
+    const [error, setError] = useState(false)
 
     useEffect(() => {
+        setLoading(false)
         api.get(`/api/twitch/channels/${channelId}/user-streams-watched`, {params: {
             user: user,
         }}).then(r => {
             setData(r.data)
-            if (r.data.length > 4)
-                setCanLoadMore(true)
+            setCanLoadMore(r.data.length > 4)
+            setError(false)
         }).catch((e) => {
             console.log(e)
             setData(null)
+            setError(true)
+        }).finally(() => {
+            setLoading(false)
         })
     }, [channelId, user])
 
-    if (data === '') 
+    if (loading) 
         return <div style={{marginTop: '2rem'}}><h3>Streams watched</h3> <div className="spacing">Loading streams watched...</div></div>
+    
+    if (error) 
+        return <div style={{marginTop: '2rem'}}><h3>Streams watched</h3> <div className="spacing">Failed to load streams watched, try again.</div></div>
 
-    if (!data || (data.length === 0))
-        return null
+    if (!data)
+        return <div style={{marginTop: '2rem'}}><h3>Streams watched</h3> <div className="spacing">Didn't find any streams watched for user.</div></div>
 
     const loadMore = (e) => {
         e.preventDefault()
-        setLoadingMore()
+        setLoadingMore(true)
         api.get(`/api/twitch/channels/${channelId}/user-streams-watched`, {params: {
             user: user,
             after_id: data.at(-1).started_at
         }}).then(r => {
             setData([...data, ...r.data])
-            if (r.data.length > 4)
-                setCanLoadMore(true)
+            setCanLoadMore(r.data.length > 4)
+            setError(false)
         }).catch((e) => {
             console.log(e)
+            setError(true)
         }).finally(() => (
             setLoadingMore(false)
         ))
