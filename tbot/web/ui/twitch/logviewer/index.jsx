@@ -96,7 +96,7 @@ class Logviewer extends React.Component {
             if (this.state.loading)
                 return <div className="chatlog">
                         <h3>Chat logs</h3>
-                        <Loading text="Loading chat logs" />
+                        <div className="m-2">Loading chat logs...</div>
                     </div>
                 
             return <div className="chatlog">
@@ -104,7 +104,7 @@ class Logviewer extends React.Component {
                 <div className="m-2">No chat logs found</div>
             </div>
         }
-
+        
         return <div className="chatlog">
                 <h3>Chat logs</h3>        
                 <table className="table table-dark table-striped table-sm table-hover">
@@ -156,7 +156,8 @@ class Logviewer extends React.Component {
                 return <span className="badge badge-info">P</span> 
                 break;
             case 100:
-                return <span className="badge badge-success">M</span>
+                return <span className="badge badge-success">M</span> 
+                break;
             default:
                 return null
                 break;
