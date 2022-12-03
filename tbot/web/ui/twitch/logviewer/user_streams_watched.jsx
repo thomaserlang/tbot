@@ -64,12 +64,10 @@ export default function({ channelId, user }) {
                         >
                             {iso8601toLocalTime(s.started_at).substring(0, 10)}
                         </td>
-                        <td>
+                        <td className="fit-content">
                             {secondsToText(s.uptime|0)} 
                         </td>
-                        <td
-                            className="fit-content"
-                        >
+                        <td>
                             {secondsToText(s.watchtime|0)} ({percentageWatched(s)}%)
                         </td>
                     </tr>
