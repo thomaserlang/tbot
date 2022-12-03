@@ -34,7 +34,7 @@ export default function({ channelId, user }) {
     if (error) 
         return <div style={{marginTop: '2rem'}}><h3>Streams watched</h3> <div className="spacing">Failed to load streams watched, try again.</div></div>
 
-    if (!data)
+    if (!data || (data.length === 0))
         return <div style={{marginTop: '2rem'}}><h3>Streams watched</h3> <div className="spacing">Didn't find any streams watched for user.</div></div>
 
     const loadMore = (e) => {
@@ -61,7 +61,7 @@ export default function({ channelId, user }) {
             <thead>
                 <tr>
                     <th className="fit-content">Stream date</th>
-                    <th>Stream uptime</th>
+                    <th className="fit-content">Stream uptime</th>
                     <th>Watch time</th>
                 </tr>
             </thead>
