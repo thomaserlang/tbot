@@ -51,8 +51,8 @@ export default function({ channelId, user }) {
             <thead>
                 <tr>
                     <th className="fit-content">Stream date</th>
-                    <th>Watch time</th>
                     <th>Stream uptime</th>
+                    <th>Watch time</th>
                 </tr>
             </thead>
             <tbody>
@@ -64,13 +64,13 @@ export default function({ channelId, user }) {
                         >
                             {iso8601toLocalTime(s.started_at).substring(0, 10)}
                         </td>
+                        <td>
+                            {secondsToText(s.uptime|0)} 
+                        </td>
                         <td
                             className="fit-content"
                         >
                             {secondsToText(s.watchtime|0)} ({percentageWatched(s)}%)
-                        </td>
-                        <td>
-                            {secondsToText(s.uptime|0)} 
                         </td>
                     </tr>
                 ))}
