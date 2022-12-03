@@ -9,11 +9,11 @@ export default function UserStats({ channelId, user }) {
     const [error, setError] = useState(false)
     
     useEffect(() => {
-        setData(true)
+        setLoading(true)
         api.get(`/api/twitch/channels/${channelId}/user-chatstats`, {params: {
             user: user,
         }}).then(r => {
-            setLoading(r.data)
+            setData(r.data)
             setError(false)
         }).catch((e) => {
             console.log(e)
