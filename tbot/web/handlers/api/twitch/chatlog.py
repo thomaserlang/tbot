@@ -72,11 +72,11 @@ class User_stats_handler(Api_handler):
             SELECT 
                 bans, timeouts, purges, chat_messages, 
                 last_viewed_stream_date, streams, streams_row,
-                streams_row_peak, streams_row_peak_date, sw.watchtime
+                streams_row_peak, streams_row_peak_date, sw.watchtime, sw.first_viewed_stream_date
             FROM
                 twitch_user_stats s
                 LEFT JOIN twitch_user_chat_stats us ON (us.user_id = s.user_id AND us.channel_id=s.channel_id)
-                LEFT JOIN (SELECT user_id, sum(time) as watchtime from twitch_stream_watchtime where channel_id=%s and user_id=%s) sw ON (sw.user_id=s.user_id)
+                LEFT JOIN (SELECT tw.user_id, sum(tw.time) as watchtime, min(ts.started_at) as first_viewed_stream_date FROM twitch_stream_watchtime tw, twitch_streams ts WHERE tw.channel_id=%s AND tw.user_id=%s AND tw.stream_id=ts.stream_id) sw ON (sw.user_id=s.user_id)
             WHERE              
                 s.channel_id = %s AND  
                 s.user_id = %s
