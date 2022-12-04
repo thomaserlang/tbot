@@ -78,7 +78,7 @@ export default function({ channelId, user }) {
                             {secondsToText(s.uptime|0)} 
                         </td>
                         <td>
-                            {secondsToText(s.watchtime|0)} ({percentageWatched(s)}%)
+                            {secondsToText(s.watchtime|0)} {percentageWatched(s)}
                         </td>
                     </tr>
                 ))}
@@ -96,7 +96,10 @@ export default function({ channelId, user }) {
 }
 
 function percentageWatched(stream) {
+    if (!stream.uptime)
+        return null
     if (stream.watchtime > stream.uptime)
         return 100
-    return ((100 * stream.watchtime) / stream.uptime).toFixed(0)
+    const p = ((100 * stream.watchtime) / stream.uptime).toFixed(0)
+    return `(${p}%)`
 }
