@@ -64,7 +64,7 @@ export default function UserStats({ channelId, user }) {
                 <div><div><b>Bans:</b></div> <div>{data.bans||0}</div></div>
                 <div title="Number of watched streams"><div><b>Streams:</b></div> <div>{data.streams||0}</div></div>
                 <div title="Streams watched in a row"><div><b>Stream streak:</b></div> <div>{renderStreak(data)}</div></div>
-                <div title="Date of the first stream watched"><div><b>First stream:</b></div> <div>{data.first_viewed_stream_date||'No data'}</div></div>
+                <div title="Date of the first stream watched"><div><b>First stream:</b></div> <div>{(data.first_viewed_stream_date||'No data').substring(0, 10)}</div></div>
                 <div title="Date of the latest stream watched"><div><b>Latest stream:</b></div> <div>{data.last_viewed_stream_date||'No data'}</div></div>
                 <div title="Hours watched"><div><b>Watch time:</b></div> <div>{secondsToText(data.watchtime||0)}</div></div>
             </div>
