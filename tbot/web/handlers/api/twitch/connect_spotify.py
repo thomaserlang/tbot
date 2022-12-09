@@ -38,7 +38,8 @@ class Handler(Api_handler):
             'redirect_uri': parse.urljoin(config.data.web.base_url, 'connect/spotify'),
             'scope': 'playlist-read-private '
                      'user-read-recently-played ' 
-                     'user-read-currently-playing',
+                     'user-read-currently-playing '
+                     'user-top-read',
             'response_type': 'code',
             'state': base64.b64encode(utils.json_dumps({
                 'channel_id': channel_id,
