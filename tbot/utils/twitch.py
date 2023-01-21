@@ -266,7 +266,7 @@ async def twitch_save_mods(bot, channel_id):
                 break
             after = r['pagination']['cursor']
     except Twitch_request_error as e:
-        if e.status_code != 400:
+        if e.status_code >= 500:
             logger.exception('save_mods')
         else:
             logger.debug(e.message)
