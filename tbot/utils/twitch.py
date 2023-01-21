@@ -242,7 +242,7 @@ def twitch_remove_emotes(message, emotes):
 
 async def twitch_save_mods(bot, channel_id):
     after = ''
-    user_ids = []
+    user_ids = [channel_id,]
     try:
         while True:
             r = await twitch_channel_token_request(

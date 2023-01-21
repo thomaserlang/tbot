@@ -120,10 +120,22 @@ class User_streams_watched_handler(Api_handler):
 
 async def has_mod(handler, channel_id):
     # TODO: Add setting to allow or disallow non mods to view the logs
-    # For the moment only mods are allowed to view them
+    # For the moment only mods or admins are allowed to view them
     if not handler.current_user:
         raise web.HTTPError(401, 'Authentication required')
-    mod = await handler.db.fetchone('SELECT user_id FROM twitch_channel_mods WHERE channel_id=%s AND user_id=%s',
-        [channel_id, handler.current_user['user_id']])
+    mod = await handler.db.fetchone('''
+        SELECT 
+            c.channel_id
+        FROM
+            twitch_channels c
+            LEFT JOIN twitch_channel_mods m ON (m.user_id = %s AND m.channel_id = c.channel_id)
+            LEFT JOIN twitch_channel_admins a ON (a.user_id = %s AND a.channel_id = c.channel_id)
+        WHERE
+            c.channel_id = %s AND 
+            c.active = 'Y' AND 
+            c.chatlog_enabled = 'Y' AND 
+            (not isnull(m.user_id) OR not isnull(a.user_id))
+    ''',
+        (channel_id, handler.current_user['user_id'], handler.current_user['user_id']))
     if not mod:
-        raise web.HTTPError(403, 'You are not a moderator of this channel')
+        raise web.HTTPError(403, 'You can not view chat logs for this channel')
