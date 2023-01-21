@@ -265,6 +265,20 @@ async def twitch_save_mods(bot, channel_id):
             if not r.get('pagination'):
                 break
             after = r['pagination']['cursor']
+
+        mods = await bot.db.fetchall('SELECT user_id FROM twitch_channel_mods WHERE channel_id=%s', (channel_id,))
+        for mod in mods:
+            if mod['user_id'] in user_ids:
+                user_ids.remove(mod['user_id'])
+            else:
+                await bot.db.execute('DELETE FROM twitch_channel_mods where channel_id=%s and user_id=%s ', 
+                    (channel_id, mod['user_id'],)
+                )
+        if user_ids:
+            await bot.db.executemany(
+                'INSERT IGNORE INTO twitch_channel_mods (channel_id, user_id) VALUES (%s, %s);', 
+                [(channel_id, user_id) for user_id in user_ids]
+            )
     except Twitch_request_error as e:
         if e.status_code >= 500:
             logger.exception('save_mods')
@@ -272,17 +286,3 @@ async def twitch_save_mods(bot, channel_id):
             logger.debug(e.message)
     except Exception:
         logger.exception('save_mods')
-
-    mods = await bot.db.fetchall('SELECT user_id FROM twitch_channel_mods WHERE channel_id=%s', (channel_id,))
-    for mod in mods:
-        if mod['user_id'] in user_ids:
-            user_ids.remove(mod['user_id'])
-        else:
-            await bot.db.execute('DELETE FROM twitch_channel_mods where channel_id=%s and user_id=%s ', 
-                (channel_id, mod['user_id'],)
-            )
-    if user_ids:
-        await bot.db.executemany(
-            'INSERT IGNORE INTO twitch_channel_mods (channel_id, user_id) VALUES (%s, %s);', 
-            [(channel_id, user_id) for user_id in user_ids]
-        )
