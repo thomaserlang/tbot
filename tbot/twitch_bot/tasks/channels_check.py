@@ -209,7 +209,7 @@ async def set_chatters(channel_id: str):
             ''', data)
 
     except utils.Twitch_request_error as e:
-        if e.status_code != 400:
+        if e.status_code >= 500:
             logger.exception('set_chatters')
         else:
             logger.debug(e.message)
