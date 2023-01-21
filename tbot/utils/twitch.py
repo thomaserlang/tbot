@@ -238,3 +238,51 @@ def twitch_remove_emotes(message, emotes):
         message = message[:e[0]-i] + message[e[1]-i:].strip()
         i += o - len(message)
     return message.strip()
+
+
+async def twitch_save_mods(bot, channel_id):
+    after = ''
+    user_ids = []
+    try:
+        while True:
+            r = await twitch_channel_token_request(
+                bot=bot,
+                channel_id=channel_id,
+                url='https://api.twitch.tv/helix/moderation/moderators',
+                params={
+                    'broadcaster_id': channel_id,
+                    'first': 100,
+                    'after': after,
+                }
+            )
+            if r.get('data'):
+                for user in r['data']:
+                    if user['user_id'] in user_ids:
+                        continue
+                    user_ids.append(user['user_id'])
+            else:
+                break
+            if not r.get('pagination'):
+                break
+            after = r['pagination']['cursor']
+    except Twitch_request_error as e:
+        if e.status_code != 400:
+            logger.exception('save_mods')
+        else:
+            logger.debug(e.message)
+    except Exception:
+        logger.exception('save_mods')
+
+    mods = await bot.db.fetchall('SELECT user_id FROM twitch_channel_mods WHERE channel_id=%s', (channel_id,))
+    for mod in mods:
+        if mod['user_id'] in user_ids:
+            user_ids.remove(mod['user_id'])
+        else:
+            await bot.db.execute('DELETE FROM twitch_channel_mods where channel_id=%s and user_id=%s ', 
+                (channel_id, mod['user_id'],)
+            )
+    if user_ids:
+        await bot.db.executemany(
+            'INSERT IGNORE INTO twitch_channel_mods (channel_id, user_id) VALUES (%s, %s);', 
+            [(channel_id, user_id) for user_id in user_ids]
+        )

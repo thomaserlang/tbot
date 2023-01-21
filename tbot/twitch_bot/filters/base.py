@@ -1,5 +1,6 @@
 from tbot.twitch_bot.tasks.command import get_user_level
 from tbot.twitch_bot import var_filler
+from tbot import utils
 
 async def warn_or_timeout(bot, type_, target, filter_, kwargs):
     respond_data =  {
@@ -21,20 +22,43 @@ async def warn_or_timeout(bot, type_, target, filter_, kwargs):
         warned = await bot.redis.get(key)
         if not warned:
             bot.loop.create_task(bot.redis.setex(key, filter_['warning_expire'], '1'))
-            bot.send("PRIVMSG", target=target, message='.delete {}'.format(kwargs['id']))
+            await utils.twitch_channel_token_request(
+                bot=bot, 
+                method='DELETE',
+                channel_id=bot.user['id'],
+                url='https://api.twitch.tv/helix/moderation/chat',
+                params={
+                    'broadcaster_id': kwargs['room-id'],
+                    'moderator_id': bot.user['id'],
+                    'message_id': kwargs['id'],
+                },
+            )
             if filter_['warning_message']:
                 msg = await var_filler.fill_message(filter_['warning_message'], **respond_data)
                 bot.send("PRIVMSG", target=target, message=msg)
             return
 
-    bot.send("PRIVMSG", target=target, message='.timeout {} {} {}'.format(
-        kwargs['user'], 
-        filter_['timeout_duration'], 
-        '[{}] {} filter'.format(bot.user['display_name'], type_),
-    ))
+    msg = f'{type_} filter'
     if filter_['timeout_message']:          
         msg = await var_filler.fill_message(filter_['timeout_message'], **respond_data)          
         bot.send("PRIVMSG", target=target, message=msg)
+    await utils.twitch_channel_token_request(
+        bot=bot, 
+        method='POST',
+        channel_id=bot.user['id'],
+        url='https://api.twitch.tv/helix/moderation/bans',
+        params={
+            'broadcaster_id': kwargs['room-id'],
+            'moderator_id': bot.user['id'],
+        },
+        json={
+            'data': {
+                'user_id': kwargs['user-id'],
+                'duration': filter_['timeout_duration'],
+                'reason': f'[{bot.user["display_name"]}] {msg}',
+            }
+        }
+    )
 
 async def has_permit(bot, kwargs):
     key = 'tbot:filter:permit:{}:{}'.format(

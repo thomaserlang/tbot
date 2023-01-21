@@ -30,7 +30,7 @@ class Client(bottom.Client):
     
     def send(self, command: str, **kwargs) -> None:
         if self.rate_limit_count < config.data.twitch.irc_rate_limit:
-            if command == 'PRIVMSG' and bot.bot_sender and kwargs['message'] != '/mods':
+            if command == 'PRIVMSG' and bot.bot_sender:
                 bot.bot_sender.send(command, **kwargs)
             else:
                 super().send(command, **kwargs)
@@ -165,9 +165,16 @@ async def join(**kwargs):
     # join 50 channels every 15 seconds
     for c in bot.channels.values():
         bot.send('JOIN', channel='#'+c['name'])
-        bot.send("PRIVMSG", target='#'+c['name'], message='/mods')
+        asyncio.create_task(utils.twitch_save_mods(bot, c['channel_id']))    
         await asyncio.sleep(0.20)
     bot.trigger('AFTER_CHANNELS_JOINED')
+    asyncio.create_task(timer_update_mods())    
+
+async def timer_update_mods():
+    await asyncio.sleep(1800)
+    asyncio.create_task(timer_update_mods())
+    for c in bot.channels.values():
+        await utils.twitch_save_mods(bot, c['channel_id'])
 
 async def get_channels():
     rows = await bot.db.fetchall('''

@@ -16,7 +16,7 @@ async def message(nick, target, message, **kwargs):
 
     is_mod = 'moderator' in kwargs['badges'] or 'broadcaster' in kwargs['badges']
     if is_mod and message == '!updatemods':
-        bot.send("PRIVMSG", target=target, message='/mods')
+        await utils.twitch_save_mods(bot, kwargs['room-id'])
         if not bot.channels[kwargs['room-id']]['muted']:
             bot.send("PRIVMSG", target=target, message='Affirmative, {}'.format(nick))
 
@@ -61,41 +61,3 @@ async def save(type_, channel, channel_id, user, user_id, message, msg_id):
             ))
     except:
         logger.exception('sql')
-
-@bot.on('NOTICE')
-async def notice(target, message, **kwargs):
-    if 'msg-id' not in kwargs:
-        return
-
-    if kwargs['msg-id'] == 'room_mods':
-        bot.loop.create_task(save_mods(target, message))
-
-async def save_mods(target, message):
-    a = message.split(':')
-    channel = target.strip('#')
-    if len(a) == 2:
-        mods = [b.strip() for b in a[1].split(',')]
-    else:
-        mods = []
-    mods.append(channel)
-    channel_id = None
-    for c in bot.channels.values():
-        if c['name'].lower() == channel:
-            channel_id = c['channel_id'] 
-
-    users = await utils.twitch_lookup_usernames(bot.ahttp, bot.db, mods)
-    if users == None:
-        return
-    data = []
-    for u in users:
-        data.append((
-            channel_id,
-            u['id'],
-        ))
-    await bot.db.execute('DELETE FROM twitch_channel_mods WHERE channel_id=%s;', 
-        (channel_id,)
-    )
-    await bot.db.executemany(
-        'INSERT INTO twitch_channel_mods (channel_id, user_id) VALUES (%s, %s);', 
-        data
-    )

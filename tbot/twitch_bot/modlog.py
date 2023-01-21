@@ -47,6 +47,9 @@ class Pubsub():
             return 0
 
         try:
+            if data['moderation_action'] in ('mod', 'unmod'):
+                asyncio.create_task(utils.twitch_save_mods(self, c[2]))
+
             if data['moderation_action'] == 'delete':
                 data['args'] = [data['args'][0], data['args'][-1]]
             self.loop.create_task(self.db.execute('''
