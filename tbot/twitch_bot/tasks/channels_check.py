@@ -80,7 +80,7 @@ async def channel_check(channel_id, prev_channel_check):
         return
     await set_chatters(channel_id)
     if is_live:
-        inc_time = time_since_last_check = int(
+        inc_time = int(
             (now - (
                 prev_channel_check['last_check'] or 
                 bot.channels_check[channel_id]['went_live_at']
@@ -165,24 +165,44 @@ async def load_channels_cache():
             parse(data['went_offline_at_delay']) if data.get('went_offline_at_delay') else None
         bot.channels_check[r['channel_id']]['uptime'] = data['uptime'] if data.get('uptime') else 0
 
-async def set_chatters(channel_id):
+async def set_chatters(channel_id: str):
     try:
         if channel_id not in bot.channels:
-            logger.error('{} not in `bot.channels`'.format(channel_id))
+            logger.error(f'{channel_id} not in `bot.channels`')
             return
-        channel = bot.channels[channel_id]['name']
-        async with bot.ahttp.get('https://tmi.twitch.tv/group/user/{}/chatters'.format(channel)) as r:
-            if r.status == 200:
-                data = await r.json()
-                if data['chatter_count'] == 0:
-                    return
-                usernames = []
-                for k in data['chatters']:
-                    usernames.extend(data['chatters'][k])
-                if usernames:
-                    bot.channels_check[channel_id]['users'] = \
-                        await utils.twitch_lookup_usernames(bot.ahttp, bot.db, usernames)
-    except:
+        user_ids = []
+        users = []
+        after = ''
+        while True:
+            r = await utils.twitch_channel_token_request(
+                bot=bot, 
+                channel_id=channel_id, 
+                url='https://api.twitch.tv/helix/chat/chatters',
+                params={
+                    'first': '1000',
+                    'broadcaster_id': channel_id,
+                    'moderator_id': channel_id,
+                    'after': after,
+                }
+            )
+            if r.get('data'):
+                for user in r['data']:
+                    if user['user_id'] in user_ids:
+                        continue
+                    user_ids.append(user['user_id'])
+                    users.append({'id': user['user_id'], 'user': user['user_login']})
+            else:
+                break
+            if not r.get('pagination'):
+                break
+            after = r['pagination']['cursor']
+        bot.channels_check[channel_id]['users'] = users
+    except utils.Twitch_request_error as e:
+        if e.status_code != 400:
+            logger.exception('set_chatters')
+        else:
+            logger.debug(e.message)
+    except Exception:
         logger.exception('set_chatters')
 
 async def update_channels_check():
