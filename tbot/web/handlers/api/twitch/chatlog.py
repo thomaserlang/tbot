@@ -138,4 +138,4 @@ async def has_mod(handler, channel_id):
     ''',
         (handler.current_user['user_id'], handler.current_user['user_id'], channel_id))
     if not mod:
-        raise web.HTTPError(403, 'You can not view chat logs for this channel')
+        raise web.HTTPError(403, 'You cannot view chat logs for this channel')
