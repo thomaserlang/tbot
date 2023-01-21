@@ -1,6 +1,6 @@
 import asyncio, json, copy
 from dateutil.parser import parse
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from tbot import config, utils, logger
 from tbot.twitch_bot.bot_base import bot
 
@@ -196,7 +196,18 @@ async def set_chatters(channel_id: str):
             if not r.get('pagination'):
                 break
             after = r['pagination']['cursor']
+
+        prev_user_ids = [user['id'] for user in bot.channels_check[channel_id]['users']]
         bot.channels_check[channel_id]['users'] = users
+        
+        dt = datetime.now(tz=timezone.utc) + timedelta(days=30)
+        data = [(user['id'], user['user'], dt) for user in users if user['id'] not in prev_user_ids]
+        if data:
+            await bot.db.executemany('''
+                INSERT INTO twitch_usernames (user_id, user, expires) 
+                VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE user=VALUES(user), expires=VALUES(expires)
+            ''', data)
+
     except utils.Twitch_request_error as e:
         if e.status_code != 400:
             logger.exception('set_chatters')
