@@ -2,6 +2,7 @@ import logging
 from tornado import web
 from ..base import Api_handler
 from dateutil.parser import parse
+from tbot import utils
 
 
 class Handler(Api_handler):
@@ -15,11 +16,16 @@ class Handler(Api_handler):
         user = self.get_argument('user', None)
         if user:
             u = await self.db.fetchone('SELECT user_id FROM twitch_usernames WHERE user=%s', [user])
+            user_id: str = ''
             if not u:
-                self.set_status(204)
-                return
+                user_id = await utils.twitch_lookup_user_id(self.ahttp, self.db, user)
+                if not user_id:
+                    self.set_status(204)
+                    return
+            else:
+                user_id = u['user_id']
             sql += ' AND user_id=%s'
-            args.append(u['user_id'])
+            args.append(user_id)
 
         before_id = self.get_argument('before_id', None)
         if before_id:
@@ -64,10 +70,14 @@ class User_stats_handler(Api_handler):
 
         user = self.get_argument('user')
         u = await self.db.fetchone('SELECT user_id FROM twitch_usernames WHERE user=%s', [user])
+        user_id: str = ''
         if not u:
-            self.set_status(404)
-            return
-        user_id = u['user_id']
+            user_id = await utils.twitch_lookup_user_id(self.ahttp, self.db, user)
+            if not user_id:
+                self.set_status(204)
+                return
+        else:
+            user_id = u['user_id']
         sql = '''
             SELECT 
                 bans, timeouts, purges, chat_messages, 
@@ -94,19 +104,26 @@ class User_streams_watched_handler(Api_handler):
     async def get(self, channel_id):
         await has_mod(self, channel_id)        
         user = self.get_argument('user')
-        args = [user, channel_id]
+        u = await self.db.fetchone('SELECT user_id FROM twitch_usernames WHERE user=%s', [user])
+        user_id: str = ''
+        if not u:
+            user_id = await utils.twitch_lookup_user_id(self.ahttp, self.db, user)
+            if not user_id:
+                self.set_status(204)
+                return
+        else:
+            user_id = u['user_id']
+        args = [user_id, channel_id]
         sql = '''
             select 
                 s.started_at, s.uptime, sw.`time` as watchtime,
                 s.stream_id
             from 
-                twitch_usernames u,
                 twitch_streams s,
                 twitch_stream_watchtime sw
             where 
-                u.user=%s AND
+                sw.user_id=%s AND
                 sw.channel_id=%s AND
-                sw.user_id=u.user_id AND
                 s.stream_id = sw.stream_id
         '''
         after_id = self.get_argument('after_id', None)
