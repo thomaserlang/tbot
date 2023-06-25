@@ -3,13 +3,13 @@ COPY . .
 RUN npm ci; npm run build
 
 
-FROM python:3.9-bullseye as pybuilder
+FROM python:3.10-bookworm as pybuilder
 COPY . .
 RUN pip wheel -r requirements.txt --wheel-dir=/wheels
 RUN pip wheel mysqlclient==2.1.0 --wheel-dir=/wheels
 
 
-FROM python:3.9-slim-bullseye
+FROM python:3.10-slim-bookworm
 RUN apt-get update; apt-get upgrade -y; apt-get install curl -y
 ENV \
     PIP_NO_CACHE_DIR=1 \
