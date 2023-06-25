@@ -115,15 +115,15 @@ async def twitch_refresh_token(bot, channel_id, refresh_token):
         if r.status == 200:
             data = await r.json()
             await bot.db.execute(
-                'UPDATE twitch_channels SET twitch_token=%s, twitch_refresh_token=%s WHERE channel_id=%s;',
-                (data['access_token'], data['refresh_token'], channel_id)
+                'UPDATE twitch_channels SET twitch_token=%s, twitch_refresh_token=%s, updated_at=%s WHERE channel_id=%s;',
+                (data['access_token'], data['refresh_token'], datetime.datetime.now(tz=datetime.timezone.utc), channel_id)
             )
             return data['access_token']
         else:
             if r.status == 400:
                 await bot.db.execute(
-                    'UPDATE twitch_channels SET twitch_token=null, twitch_refresh_token=null WHERE channel_id=%s;',
-                    (channel_id,)
+                    'UPDATE twitch_channels SET twitch_token=null, twitch_refresh_token=null, twitch_scope=null, updated_at=%s WHERE channel_id=%s;',
+                    (datetime.datetime.now(tz=datetime.timezone.utc), channel_id,)
                 )
                 raise Twitch_request_error(
                     'Extra authorization is needed, please sign in to the dashboard and '
@@ -131,17 +131,14 @@ async def twitch_refresh_token(bot, channel_id, refresh_token):
                     400
                 )
             error = await r.text()
-            raise Twitch_request_error('{}: {}'.format(
-                r.status,
-                error,
-            ), r.status)
+            raise Twitch_request_error(f'{r.status}: {error}', r.status)
 
 async def twitch_lookup_usernames(ahttp, db, usernames):
     '''
     :returns: List[Dict[{'user': str, 'id': str}]]
     '''
     users = []
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now(tz=datetime.timezone.utc)
     m1 = now + datetime.timedelta(days=30)
     usernames = [s.lower() for s in set(usernames)]
     for unames in chunks(list(usernames), 5000):
@@ -185,7 +182,7 @@ async def twitch_lookup_from_user_id(ahttp, db, userids):
     :returns: List[Dict[{'user': str, 'id': str}]]
     '''
     users = []
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now(tz=datetime.timezone.utc)
     m1 = now + datetime.timedelta(days=30)
     userids = [s for s in set(userids)]
     for uids in chunks(list(userids), 5000):
