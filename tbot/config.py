@@ -36,6 +36,14 @@ class ConfigTwitchModel(BaseModel):
                     'moderator:manage:announcements', 'chat:edit', 'chat:read',
                     ]
 
+class ConfigDiscordCustomNotificaitonsModel(BaseModel):
+    action: str
+    if_channel_ids: Optional[list[int]]
+    if_member_ids: Optional[list[int]]
+    apprise_dsn: str
+    message: str
+
+
 class ConfigDiscordModel(BaseModel):
     client_id: Optional[str]
     client_secret: Optional[str]
@@ -43,6 +51,7 @@ class ConfigDiscordModel(BaseModel):
     token: Optional[str]
     user_token: Optional[str]
     twitch_sync_every = 3600 # seconds
+    custom_notifications: Optional[list[ConfigDiscordCustomNotificaitonsModel]]
 
 class ConfigSpotifyConfig(BaseModel):
     client_id: Optional[str]

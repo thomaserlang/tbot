@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from discord.ext import commands
 from tbot import logger
+from tbot.discord_bot.custom_notification import custom_notification
 
 class Chat_log(commands.Cog):
 
@@ -147,6 +148,7 @@ class Chat_log(commands.Cog):
                     after.channel.id,
                     after.channel.name
                 ))
+                custom_notification('voice.join', after.channel.id, member.id)
 
             # Leave
             if before.channel and not after.channel:
@@ -167,6 +169,7 @@ class Chat_log(commands.Cog):
                     before.channel.id,
                     before.channel.name
                 ))
+                custom_notification('voice.leave', before.channel.id, member.id)
         except:
             logger.exception('on_voice_state_update')
 
