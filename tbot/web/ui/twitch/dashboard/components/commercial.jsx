@@ -22,7 +22,7 @@ class Commercial extends React.Component {
             this.retryTimer = setInterval(() => this.forceUpdate(), 1000)
         }).catch(e => {
             alert(e.response.data.message)
-            if (!e.response.data.extra.retry_after) {
+            if (!e.response.data.extra?.retry_after) {
                 this.setState({
                     retry_at: (Math.floor(new Date().getTime() / 1000)) + e.response.data.extra.retry_after,
                 })
