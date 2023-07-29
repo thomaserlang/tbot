@@ -28,4 +28,4 @@ class Handler(Api_handler):
                 'message': data['data'][0]['message'],
             })
         except Twitch_request_error as e:
-            raise Api_exception(e.status_code, e.message, e.extra)
+            raise Api_exception(e.status_code, e.message, extra=e.extra)
