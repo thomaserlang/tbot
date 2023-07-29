@@ -17,11 +17,17 @@ class Commercial extends React.Component {
             'length': length,
         }).then(r => {
             this.setState({
-                retry_at: (Math.floor(new Date().getTime() / 1000)) + r.data['retry_after'],
+                retry_at: (Math.floor(new Date().getTime() / 1000)) + r.data.retry_after,
             })
             this.retryTimer = setInterval(() => this.forceUpdate(), 1000)
         }).catch(e => {
             alert(e.response.data.message)
+            if (!e.response.data.retry_after) {
+                this.setState({
+                    retry_at: (Math.floor(new Date().getTime() / 1000)) + r.data.retry_after,
+                })
+                this.retryTimer = setInterval(() => this.forceUpdate(), 1000)
+            }
         })
     }
 
