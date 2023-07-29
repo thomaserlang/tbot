@@ -6,9 +6,10 @@ twitch_app_token = None
 
 class Twitch_request_error(Exception):
 
-    def __init__(self, message, status_code):
+    def __init__(self, message, status_code, extra=None):
         self.status_code = status_code
         self.message = message
+        self.extra = extra
         super().__init__(message)
 
 async def twitch_request(ahttp, url, params=None, headers={}, 
@@ -33,13 +34,13 @@ async def twitch_request(ahttp, url, params=None, headers={},
                     return await twitch_request(ahttp, url, params, headers, method, data, json)
             d = await r.json()
             if raise_exception:
-                raise Twitch_request_error(d['message'], r.status)
+                raise Twitch_request_error(d['message'], r.status, d)
             else:
                 logger.error(d)
         if r.status >= 400:
             error = await r.json()
             if raise_exception:
-                raise Twitch_request_error(error['message'], r.status)
+                raise Twitch_request_error(error['message'], r.status, error)
             else:
                 logger.error(error)
         if 'Content-Type' in r.headers:
