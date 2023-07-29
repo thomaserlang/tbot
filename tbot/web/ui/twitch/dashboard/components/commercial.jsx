@@ -47,6 +47,7 @@ class Commercial extends React.Component {
             <div className="buttons">
                 <button className="btn btn-secondary" onClick={this.startAd} data-length="30">30 seconds</button>
                 <button className="btn btn-secondary" onClick={this.startAd} data-length="60">1 minute</button>
+                <button className="btn btn-secondary" onClick={this.startAd} data-length="90">1.5 minute</button>
                 <button className="btn btn-secondary" onClick={this.startAd} data-length="120">2 minutes</button>
                 <button className="btn btn-secondary" onClick={this.startAd} data-length="180">3 minutes</button>
             </div>
