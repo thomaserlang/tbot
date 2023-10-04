@@ -2,6 +2,7 @@ import asyncio
 from tbot import logger
 from tbot.twitch_bot.bot_base import bot
 from tbot.twitch_bot import var_filler
+from tbot.utils.twitch import Twitch_request_error
 
 cmds = []
 _cmd_lookup = {}
@@ -94,8 +95,10 @@ async def db_command(cmd, target, data):
             bot.send("PRIVMSG", target=target, message='@{}, {}'.format(data['display_name'], e))
         except var_filler.Send_break:
             pass
-        except:
-            logger.exception('db_command')
+        except Twitch_request_error as e:
+            bot.send("PRIVMSG", target=target, message=str(e))
+        except Exception as e:
+            logger.exception(str(e))
 
 async def get_user_level(badges, user_id, channel_id, required_level):
     if 'broadcaster' in badges:
