@@ -1,9 +1,8 @@
-import logging
 from tbot.twitch_bot.var_filler import fills_vars, Send_error
 from tbot import utils
 
 @fills_vars('title', 'game')
-async def title_game_views_followers(bot, channel_id, **kwargs):
+async def get_title_game(bot, channel_id, **kwargs):
     data = await utils.twitch_request(bot.ahttp, 
         f'https://api.twitch.tv/helix/channels?broadcaster_id={channel_id}',
     )
@@ -15,9 +14,13 @@ async def title_game_views_followers(bot, channel_id, **kwargs):
     }
 
 @fills_vars('followers')
-async def title_game_views_followers(bot, channel_id, **kwargs):
-    data = await utils.twitch_request(bot.ahttp, 
-        f'https://api.twitch.tv/helix/users/follows?to_id={channel_id}&first=1',
+async def get_followers(bot, channel_id, **kwargs):
+    data = await utils.twitch_channel_token_request(bot.ahttp, channel_id,
+        'https://api.twitch.tv/helix/channels/followers',
+        params={
+            'first': 1,
+            'broadcaster_id': channel_id,
+        }
     )
     if not data['data']:
         raise Send_error('No data')
