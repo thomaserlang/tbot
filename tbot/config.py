@@ -34,6 +34,7 @@ class ConfigTwitchModel(BaseModel):
                     'moderator:manage:banned_users', 'moderator:read:chatters', 'channel:read:vips',
                     'moderator:manage:chat_messages', 'moderator:manage:chat_settings',
                     'moderator:manage:announcements', 'chat:edit', 'chat:read',
+                    'moderator:read:followers',
                     ]
 
 class ConfigDiscordCustomNotificaitonsModel(BaseModel):

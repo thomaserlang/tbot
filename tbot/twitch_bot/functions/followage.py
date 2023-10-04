@@ -13,17 +13,15 @@ async def followage(bot, user_id, display_name, channel_id, channel, args, **kwa
         if not uid:
             uid = user_id
             user = display_name
-    data = await utils.twitch_request(bot.ahttp, 
-        'https://api.twitch.tv/helix/users/follows',
+    data = await utils.twitch_channel_token_request(bot.ahttp, channel_id,
+        'https://api.twitch.tv/helix/channels/followers',
         params={
-            'from_id': uid,
-            'to_id': channel_id,
+            'user_id': uid,
+            'broadcaster_id': channel_id,
         }
     )
     if not data['data']:
-        raise Send_error('{} does not follow {}'.format(
-            user, channel
-        ))
+        raise Send_error(f'{user} does not follow {channel}')
     followed_at = parse(data['data'][0]['followed_at']).replace(tzinfo=None)
 
     return {
