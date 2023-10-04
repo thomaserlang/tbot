@@ -15,7 +15,7 @@ async def get_title_game(bot, channel_id, **kwargs):
 
 @fills_vars('followers')
 async def get_followers(bot, channel_id, **kwargs):
-    data = await utils.twitch_channel_token_request(bot.ahttp, channel_id,
+    data = await utils.twitch_channel_token_request(bot, channel_id,
         'https://api.twitch.tv/helix/channels/followers',
         params={
             'first': 1,

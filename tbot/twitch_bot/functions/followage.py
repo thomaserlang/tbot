@@ -13,7 +13,7 @@ async def followage(bot, user_id, display_name, channel_id, channel, args, **kwa
         if not uid:
             uid = user_id
             user = display_name
-    data = await utils.twitch_channel_token_request(bot.ahttp, channel_id,
+    data = await utils.twitch_channel_token_request(bot, channel_id,
         'https://api.twitch.tv/helix/channels/followers',
         params={
             'user_id': uid,
