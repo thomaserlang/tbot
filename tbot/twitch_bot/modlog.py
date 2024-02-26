@@ -104,19 +104,6 @@ class Pubsub():
 
     async def log_sub(self, data):
         try:
-            # If the viewer is upgrading from a gifted sub or a prime sub,
-            # the partner plus points are first awarded the next month.
-            # This month
-            is_already_prime_or_gifted = await self.db.fetchone('''
-                SELECT 1 
-                FROM twitch_sub_log 
-                WHERE 
-                    channel_id=%s 
-                    AND user_id=%s 
-                    AND created_at > NOW() - INTERVAL 1 MONTH
-                    AND (is_gift=1 OR tier='Prime')
-            ''', (data['channel_id'], data['user_id'],))
-
             await self.db.execute('''
                 INSERT INTO twitch_sub_log (channel_id, created_at, user_id, plan_name, tier, gifter_id, is_gift, total) VALUES
                     (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -130,28 +117,6 @@ class Pubsub():
                 data['is_gift'],
                 data.get('cumulative_months'),
             ))
-
-            points = 1
-            if data['sub_plan'] == '2000':
-                points = 2
-            elif data['sub_plan'] == '3000':
-                points = 6
-            if not is_already_prime_or_gifted:
-                await self.db.execute('''
-                    INSERT INTO twitch_sub_stats (channel_id, self_sub_points, gifted_sub_points, primes, updated_at) VALUES
-                        (%s, %s, %s, %s, %s)
-                    ON DUPLICATE KEY UPDATE
-                        self_sub_points=self_sub_points+VALUES(self_sub_points),
-                        gifted_sub_points=gifted_sub_points+VALUES(gifted_sub_points),
-                        primes=primes+VALUES(primes),
-                        updated_at=VALUES(updated_at)
-                ''', (
-                    data['channel_id'],
-                    points if not data['is_gift'] else 0,
-                    points if data['is_gift'] else 0,
-                    points if data['sub_plan'] == 'Prime' else 0,
-                    datetime.utcnow(),
-                ))
         except Exception as e:
             logger.exception(e)
 
