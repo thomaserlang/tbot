@@ -14,7 +14,7 @@ async def count_subs():
             FROM twitch_channels 
             WHERE 
                 active="Y" AND 
-                not isnull(twitch_scope);
+                not isnull(twitch_scope)
         ''')
         logger.info('Counting subs')
         for c in channels:
@@ -25,6 +25,7 @@ async def count_subs():
             try:
                 subs = await get_subs(bot, c['channel_id'])
                 await _count_subs(bot, c['channel_id'], subs)
+                await insert_subs(bot, c['channel_id'], subs)
             except Exception as e:
                 logger.exception(e)
     finally:
@@ -79,3 +80,35 @@ async def _count_subs(bot, channel_id: str, subs: list):
             primes=VALUES(primes),
             updated_at=VALUES(updated_at)
     ''', (channel_id, self_subs, gifted_subs, primes, datetime.now(tz=timezone.utc)))
+
+
+async def insert_subs(bot, channel_id: str, subs: list):
+    data = []
+    updated_at = datetime.now(tz=timezone.utc)
+    for sub in subs:
+        data.append((
+            channel_id,
+            updated_at,
+            sub['user_id'],
+            sub['plan_name'],
+            sub['tier'],
+            sub['gifter_id'],
+            sub['is_gift'],
+            sub['total'],
+        ))
+    await bot.db.executemany('''
+        INSERT INTO twitch_sub_log 
+            (channel_id, updated_at, user_id, plan_name, tier, gifter_id, is_gift, total)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+            updated_at=VALUES(updated_at),
+            user_id=VALUES(user_id),
+            plan_name=VALUES(plan_name),
+            tier=VALUES(tier),
+            gifter_id=VALUES(gifter_id),
+            is_gift=VALUES(is_gift),
+            total=VALUES(total)
+    ''', data)
+    await bot.db.execute('''
+        delete from twitch_sub_log where channel_id=%s and updated_at < %s
+    ''', (channel_id, updated_at))
