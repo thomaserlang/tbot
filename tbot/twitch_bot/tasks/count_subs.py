@@ -94,21 +94,19 @@ async def insert_subs(bot, channel_id: str, subs: list):
             sub['tier'],
             sub['gifter_id'],
             sub['is_gift'],
-            sub['total'],
         ))
     await bot.db.executemany('''
-        INSERT INTO twitch_sub_log 
-            (channel_id, updated_at, user_id, plan_name, tier, gifter_id, is_gift, total)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO twitch_subs 
+            (channel_id, updated_at, user_id, plan_name, tier, gifter_id, is_gift)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         ON DUPLICATE KEY UPDATE
             updated_at=VALUES(updated_at),
             user_id=VALUES(user_id),
             plan_name=VALUES(plan_name),
             tier=VALUES(tier),
             gifter_id=VALUES(gifter_id),
-            is_gift=VALUES(is_gift),
-            total=VALUES(total)
+            is_gift=VALUES(is_gift)
     ''', data)
     await bot.db.execute('''
-        delete from twitch_sub_log where channel_id=%s and updated_at < %s
+        delete from twitch_subs where channel_id=%s and updated_at < %s
     ''', (channel_id, updated_at))
