@@ -212,7 +212,7 @@ class Pubsub():
             l.append({
                 'channel_id': r['channel_id'],
                 'name': r['name'].lower(),
-                'twitch_scopes': utils.json_loads(r['twitch_scope']),
+                'twitch_scopes': utils.json_loads(r['twitch_scope']) if r['twitch_scope'] else [],
             })
         return l
 

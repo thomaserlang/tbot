@@ -179,7 +179,7 @@ async def timer_update_mods():
 async def get_channels():
     rows = await bot.db.fetchall('''
     SELECT 
-        c.channel_id, c.name, c.muted, c.chatlog_enabled
+        c.channel_id, c.name, c.muted, c.chatlog_enabled, twitch_scope
     FROM
         twitch_channels c
     WHERE
@@ -192,6 +192,7 @@ async def get_channels():
             'name': r['name'].lower(),
             'muted': r['muted'] == 'Y',
             'chatlog_enabled': r['chatlog_enabled'] == 'Y',
+            'twitch_scopes': utils.json_loads(r['twitch_scope']) if r['twitch_scope'] else [],
         }
     return l
 

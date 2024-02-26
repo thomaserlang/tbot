@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime, timezone
 from tbot import config, logger
 from tbot.utils.twitch import twitch_channel_token_request
 
@@ -56,6 +57,7 @@ class Twitch_sync_channel:
 
     async def set_sub_roles(self, returninfo):
         subs = await self.get_subscribers()
+        await self.count_subs(subs)
         subs = {d['user_id']: d for d in subs}
         cached_badges = await self.get_cached_badges_months()
         for member in self.server.members:
@@ -158,6 +160,34 @@ class Twitch_sync_channel:
                 break
             after = d['pagination']['cursor']
         return subs
+    
+    async def count_subs(self, subs: list):
+        self_subs = 0
+        gifted_subs = 0
+        primes = 0
+        for sub in subs:
+            points = 1
+            if sub['tier'] == '2000':
+                points = 2
+            elif sub['tier'] == '3000':
+                points = 6
+
+            if sub['is_gift']:
+                gifted_subs += points
+            elif sub['tier'].lower() == 'prime':
+                primes += points
+            else:
+                self_subs += points
+        await self.bot.db.execute('''
+            INSERT INTO twitch_sub_stats 
+                (channel_id, self_sub_points, gifted_sub_points, primes, updated_at)
+            VALUES (%s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                self_sub_points=VALUES(self_sub_points),
+                gifted_sub_points=VALUES(gifted_sub_points),
+                primes=VALUES(primes),
+                updated_at=VALUES(updated_at)
+        ''', (self.info['channel_id'], self_subs, gifted_subs, primes, datetime.now(tz=timezone.utc)))
 
     async def get_cached_badges_months(self):
         rows = await self.bot.db.fetchall(
