@@ -1,21 +1,40 @@
-import logging, asyncio, hmac, hashlib, aiohttp
-from os import EX_CANTCREAT
-from tbot.utils.twitch import twitch_request
+import asyncio, hmac, hashlib, aiohttp
+from typing import Generic, TypeVar
+from uuid import UUID
+from datetime import datetime
+from pydantic import BaseModel
 from urllib.parse import urljoin
 from tornado import web, escape
-from ...base import Api_handler, Api_exception
-from tbot import db, utils, config
+from ...base import Api_handler
+from tbot import utils, config
 
-def channel_events(channel_id):
+class EventSubResponseSubscription(BaseModel):
+    id: UUID
+    type: str
+    version: str
+    status: str
+    condition: dict
+    created_at: datetime
+
+T = TypeVar('T')
+
+class EventSubResponse(BaseModel, Generic[T]):
+    subscription: EventSubResponseSubscription
+    event: T
+
+def channel_events(channel_id: str, scopes: list[str]):
     events = [
-        'channel.goal.begin',
-        'channel.goal.progress',
-        'channel.goal.end',
+        #{
+        #    'type': 'channel.subscribe',
+        #    'scope': 'channel:read:subscriptions'
+        #}
     ]
     r = []
     for e in events:
+        if e['scope'] not in scopes:
+            continue
         r.append({
-            'type': e,
+            'type': e['type'],
             'version': '1',
             'condition': {
                 'broadcaster_user_id': channel_id,
@@ -59,9 +78,7 @@ class Handler(Api_handler):
     async def notification(self):
         pass
 
-async def create_eventsubs(ahttp, channel_id, events=None):
-    if not events:
-        events = channel_events(channel_id)
+async def create_eventsubs(ahttp, events: list[dict]):
     url = urljoin(config.data.twitch.eventsub_host, '/helix/eventsub/subscriptions')
     tasks = []
     for e in events:
@@ -96,7 +113,7 @@ async def task_check_channels():
     from tbot import db
     db = await db.Db().connect(None)
     try:
-        channels = await db.fetchall('SELECT channel_id FROM twitch_channels WHERE active="Y" AND not isnull(twitch_scope);')
+        channels = await db.fetchall('SELECT channel_id, twitch_scope FROM twitch_channels WHERE active="Y" AND not isnull(twitch_scope);')
         async with aiohttp.ClientSession() as ahttp:
             esubs = await get_all_eventsubs(ahttp)
             grouped = {}
@@ -107,7 +124,8 @@ async def task_check_channels():
             for c in channels:
                 to_add = []
                 to_delete = []
-                cevents = channel_events(c['channel_id'])
+                scopes = utils.json_loads(c['twitch_scope'])
+                cevents = channel_events(c['channel_id'], scopes=scopes)
                 eevents = grouped.get(c['channel_id'], [])
                 for a in cevents:
                     for e in eevents:
@@ -122,7 +140,7 @@ async def task_check_channels():
                 if to_delete:
                     await delete_eventsubs(ahttp, to_delete)
                 if to_add:
-                    await create_eventsubs(ahttp, c['channel_id'], events=to_add)
+                    await create_eventsubs(ahttp, events=to_add)
     finally:
         db.pool.close()
         await db.pool.wait_closed()

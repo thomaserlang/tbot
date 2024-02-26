@@ -16,6 +16,8 @@ def cli(config, log_path, log_level):
 def twitch_bot():
     set_logger('twitch_bot.log')
     from tbot.twitch_bot import bot_main
+    from tbot.web.handlers.api.twitch.eventsubs.eventsub import task_check_channels
+    asyncio.run(task_check_channels())
     asyncio.run(bot_main.main())
 
 @cli.command()

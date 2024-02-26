@@ -22,7 +22,10 @@ class Pubsub():
             await self.ws.close()
         elif message['type'] == 'MESSAGE':
             m = json.loads(message['data']['message'])
-            self.loop.create_task(self.log_mod_action(message['data']['topic'], m['data']))
+            if message['data']['topic'].startswith('chat_moderator_actions'):
+                await self.log_mod_action(message['data']['topic'], m['data'])
+            elif message['data']['topic'].startswith('channel-subscribe-events-v1'):
+                await self.log_sub(message['data']['topic'], m['data'])
 
     async def log_mod_action(self, topic, data):
         if 'moderation_action' not in data:
@@ -96,8 +99,48 @@ class Pubsub():
                             VALUES (%s, %s, 1) ON DUPLICATE KEY UPDATE {0}={0}+1
                         '''.format(field), (c[2], data['target_user_id'],)))
 
-        except:
-            logger.exception('log_mod_action')
+        except Exception as e:
+            logger.exception(e)
+
+    async def log_sub(self, data):
+        try:
+            await self.db.execute('''
+                INSERT INTO twitch_sub_log (channel_id, created_at, user_id, plan_name, tier, gifter_id, is_gift, total) VALUES
+                    (%s, %s, %s, %s, %s, %s, %s, %s)
+            ''', (
+                data['channel_id'],
+                datetime.utcnow(),
+                data.get('recipient_id', data.get('user_id')),
+                data['sub_plan_name'],
+                data['sub_plan'],
+                data.get('user_id', data.get('recipient_id')),
+                data['is_gift'],
+                data.get('cumulative_months'),
+            ))
+
+            points = 1
+            if data['sub_plan'] == '2000':
+                points = 2
+            elif data['sub_plan'] == '3000':
+                points = 6
+
+            await self.db.execute('''
+                INSERT INTO twitch_sub_stats (channel_id, self_sub_points, gifted_sub_points, primes, updated_at) VALUES
+                    (%s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE
+                    self_sub_points=self_sub_points+VALUES(self_sub_points),
+                    gifted_sub_points=gifted_sub_points+VALUES(gifted_sub_points),
+                    primes=primes+VALUES(primes),
+                    updated_at=VALUES(updated_at)
+            ''', (
+                data['channel_id'],
+                points if not data['is_gift'] else 0,
+                points if data['is_gift'] else 0,
+                points if data['sub_plan'] == 'Prime' else 0,
+                datetime.utcnow(),
+            ))
+        except Exception as e:
+            logger.exception(e)
 
     async def run(self):
         self.ahttp = aiohttp.ClientSession()        
@@ -117,10 +160,10 @@ class Pubsub():
                 channels = await self.get_channels() 
                 topics = []
                 for c in channels:
-                    topics.append('chat_moderator_actions.{}.{}'.format(
-                        self.current_user_id,
-                        c['channel_id'],
-                    ))
+                    if 'channel:moderate' in c['twitch_scopes']:
+                        topics.append(f'chat_moderator_actions.{self.current_user_id}.{c["channel_id"]}')
+                    if 'channel:read:subscriptions' in c['twitch_scopes']:
+                        topics.append(f'channel-subscribe-events-v1.{c["channel_id"]}')
                 if topics:
                     await self.ws.send(json.dumps({
                         'type': 'LISTEN',
@@ -158,7 +201,7 @@ class Pubsub():
     async def get_channels(self):
         rows = await self.db.fetchall('''
         SELECT 
-            channel_id, name
+            channel_id, name, twitch_scope
         FROM
             twitch_channels
         WHERE
@@ -169,6 +212,7 @@ class Pubsub():
             l.append({
                 'channel_id': r['channel_id'],
                 'name': r['name'].lower(),
+                'twitch_scopes': utils.json_loads(r['twitch_scope']),
             })
         return l
 
