@@ -134,7 +134,7 @@ class Pubsub():
                 user_id,
                 user,
                 data['sub_message'].get('message'),
-                data['sub_plan'],
+                data['sub_plan'].lower(),
                 gifter_id,
                 gifter_user,
                 data['is_gift'],
@@ -146,15 +146,15 @@ class Pubsub():
                 '1000': 'Tier 1 Sub',
                 '2000': 'Tier 2 Sub',
                 '3000': 'Tier 3 Sub',
-                'Prime': 'Prime Sub',
+                'prime': 'Prime Sub',
             }
 
             if not data['is_gift']:
                 if message:
                     message = f': {message}'
-                message = f'{user} subscribed with a {tiers.get(data["sub_plan"], "unknown")} ({data["cumulative_months"]}){message}'
+                message = f'{user} subscribed with a {tiers.get(data["sub_plan"].lower(), "unknown")} ({data["cumulative_months"]}){message}'
             else:
-                message = f'{gifter_user} gifted a {tiers.get(data["sub_plan"], "unknown")} to {user}'
+                message = f'{gifter_user} gifted a {tiers.get(data["sub_plan"].lower(), "unknown")} to {user}'
 
             await self.db.execute('''
                 INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message) VALUES
