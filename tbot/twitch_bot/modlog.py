@@ -176,7 +176,6 @@ class Pubsub():
         asyncio.create_task(self.receive_server_commands())
 
         logger.info('PubSub Connecting to {}'.format(self.url))
-        
         async for ws in websockets.connect(self.url):
             self.ws = ws
             try:
@@ -184,27 +183,29 @@ class Pubsub():
                     self.ping_callback.cancel()
                 self.ping_callback = asyncio.create_task(self.ping())
                 user = await utils.twitch_current_user(self.ahttp)
+                logger.info('Connected to PubSub as {}'.format(user['login']))
                 self.current_user_id = user['id']
                 channels = await self.get_channels() 
-                topics = []
                 for c in channels:
-                    if 'channel:moderate' in c['twitch_scopes']:
-                        topics.append(f'chat_moderator_actions.{self.current_user_id}.{c["channel_id"]}')
-                    if 'channel:read:subscriptions' in c['twitch_scopes']:
-                        topics.append(f'channel-subscribe-events-v1.{c["channel_id"]}')
-                if topics:
+                    topics = self.get_topics(c['channel_id'], c['twitch_scopes'])
+                    if not topics:
+                        continue
                     await self.ws.send(json.dumps({
                         'type': 'LISTEN',
+                        'nonce': c['channel_id'],
                         'data': {
                             'topics': topics,
-                            'auth_token': self.token,
+                            'auth_token': c['twitch_token'],
                         }
                     }))
 
                 while True:
                     try:
-                        message = await self.ws.recv()
-                        await self.parse_message(json.loads(message))
+                        data = await self.ws.recv()
+                        message = json.loads(data)
+                        if message.get('error'):
+                            logger.info(message)
+                        await self.parse_message(message)
                     except KeyboardInterrupt:
                         raise KeyboardInterrupt()
 
@@ -229,7 +230,7 @@ class Pubsub():
     async def get_channels(self):
         rows = await self.db.fetchall('''
         SELECT 
-            channel_id, name, twitch_scope
+            channel_id, name, twitch_scope, twitch_token
         FROM
             twitch_channels
         WHERE
@@ -241,8 +242,18 @@ class Pubsub():
                 'channel_id': r['channel_id'],
                 'name': r['name'].lower(),
                 'twitch_scopes': utils.json_loads(r['twitch_scope']) if r['twitch_scope'] else [],
+                'twitch_token': r['twitch_token'],
             })
         return l
+
+    def get_topics(self, channel_id: str, scopes: list[str]):
+        topics = []
+        if 'channel:moderate' in scopes:
+            topics.append(f'chat_moderator_actions.{channel_id}.{channel_id}')
+        if 'channel:read:subscriptions' in scopes:
+            topics.append(f'channel-subscribe-events-v1.{channel_id}')
+        return topics
+        
 
     async def receive_server_commands(self):
         sub = self.redis_sub[0]
@@ -255,10 +266,12 @@ class Pubsub():
                 cmd = msg.pop(0)
                 if cmd not in ['join', 'part']:
                     return
-                topic = 'chat_moderator_actions.{}.{}'.format(
-                    self.current_user_id,
-                    msg[0],
-                )
+                topics = []
+                channel = await self.db.fetchone('select twitch_scope, twitch_token from twitch_channels where channel_id=%s', (msg[0],))
+                if not channel:
+                    return
+                scopes = json.loads(channel['twitch_scope']) if channel['twitch_scope'] else []
+                topics = self.get_topics(msg[0], scopes)
                 type_ = ''
                 if cmd == 'join':
                     type_ = 'LISTEN'
@@ -267,8 +280,8 @@ class Pubsub():
                 await self.ws.send(json.dumps({
                     'type': type_,
                     'data': {
-                        'topics': [topic],
-                        'auth_token': self.token,
+                        'topics': topics,
+                        'auth_token': channel['twitch_token'],
                     }
                 }))
             except:
