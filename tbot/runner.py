@@ -58,10 +58,10 @@ def twitch_eventsub_check():
     asyncio.run(task_check_channels())
 
 @cli.command()
-def twitch_count_subs():
-    set_logger('twitch_count_subs.log')
-    from tbot.twitch_bot.tasks.count_subs import count_subs
-    asyncio.run(count_subs())
+def twitch_get_subs():
+    set_logger('twitch_get_subs.log')
+    from tbot.twitch_bot.tasks.get_subs import get_subs
+    asyncio.run(get_subs())
 
 def main():
     cli()
