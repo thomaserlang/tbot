@@ -1,5 +1,5 @@
 import asyncio, websockets, random, json, aiohttp
-from datetime import datetime
+from datetime import datetime, timezone
 from tbot import config, utils, logger
 
 class Pubsub():
@@ -104,18 +104,68 @@ class Pubsub():
 
     async def log_sub(self, data):
         try:
+            user_id = data.get('user_id')
+            user = data.get('user_name', 'anonsubgift')
+            gifter_id = None
+            gifter_user = None
+            if data['is_gift']:
+                gifter_id = user_id
+                gifter_user = user
+                user_id = data['recipient_id']
+                user = data['recipient_user_name']
+
             await self.db.execute('''
-                INSERT INTO twitch_sub_log (channel_id, created_at, user_id, plan_name, tier, gifter_id, is_gift, total) VALUES
-                    (%s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO twitch_sub_log (
+                    channel_id, 
+                    created_at, 
+                    user_id, 
+                    user,
+                    message, 
+                    tier, 
+                    gifter_id, 
+                    gifter,
+                    is_gift, 
+                    total
+                ) VALUES
+                    (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
                 data['channel_id'],
-                datetime.utcnow(),
-                data.get('recipient_id', data.get('user_id')),
-                data['sub_plan_name'],
+                datetime.now(tz=timezone.utc),
+                user_id,
+                user,
+                data['sub_message'].get('message'),
                 data['sub_plan'],
-                data.get('user_id', data.get('recipient_id')),
+                gifter_id,
+                gifter_user,
                 data['is_gift'],
                 data.get('cumulative_months'),
+            ))
+
+            message = data['sub_message'].get('message')
+            tiers = {
+                '1000': 'Tier 1 Sub',
+                '2000': 'Tier 2 Sub',
+                '3000': 'Tier 3 Sub',
+                'Prime': 'Prime Sub',
+            }
+
+            if not data['is_gift']:
+                if message:
+                    message = f': {message}'
+                message = f'{user} subscribed with a {tiers.get(data["sub_plan"], "unknown")} ({data["cumulative_months"]}){message}'
+            else:
+                message = f'{gifter_user} gifted a {tiers.get(data["sub_plan"], "unknown")} to {user}'
+
+            await self.db.execute('''
+                INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message) VALUES
+                    (%s, %s, %s, %s, %s, %s)
+            ''', (
+                2,
+                datetime.now(tz=timezone.utc),
+                data['channel_id'],
+                gifter_user or user,
+                gifter_id or user_id,
+                message,
             ))
         except Exception as e:
             logger.exception(e)
