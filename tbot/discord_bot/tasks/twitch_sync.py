@@ -57,7 +57,6 @@ class Twitch_sync_channel:
 
     async def set_sub_roles(self, returninfo):
         subs = await self.get_subscribers()
-        await self.count_subs(subs)
         subs = {d['user_id']: d for d in subs}
         cached_badges = await self.get_cached_badges_months()
         for member in self.server.members:
@@ -71,7 +70,7 @@ class Twitch_sync_channel:
                     months = cached_badges[twitch_id]['sub'] or 0                    
                 sub_streak_role = None
                 for role in self.roles:
-                    if role['type'] == 'sub_tier' and role['value'] == subinfo['sub_plan']:
+                    if role['type'] == 'sub_tier' and role['value'] == subinfo['tier']:
                         self.give_roles[member].append(role['role'])
                     elif role['type'] == 'sub_streak' and months >= int(role['value']):
                         sub_streak_role = role['role']
@@ -130,38 +129,11 @@ class Twitch_sync_channel:
                 returninfo['removed_users'] += 1
 
     async def get_subscribers(self):
-        '''
-        return [
-            {
-                "broadcaster_id": "123",
-                "broadcaster_name": "test_user",
-                "is_gift": True,
-                "tier": "1000",
-                "plan_name": "Channel Subscription (erleperle)",
-                "user_id": "36981191",
-                "user_name": "erleperle",
-            }
-        ]
-        '''
-
-        subs = []
-        url = 'https://api.twitch.tv/helix/subscriptions'
-        after = ''
-        while True:
-            d = await twitch_channel_token_request(self.bot, self.info['channel_id'], url, params={
-                'broadcaster_id': self.info['channel_id'],
-                'after': after,
-            })
-            if d['data']:
-                subs.extend(d['data'])
-            else:
-                break
-            if not 'pagination' in d or not d['pagination']:
-                break
-            after = d['pagination']['cursor']
-        return subs
-    
-
+        rows = await self.bot.db.fetchall(
+            'SELECT user_id, tier FROM twitch_subs WHERE channel_id=%s',
+            (self.info['channel_id']),
+        )
+        return rows
 
     async def get_cached_badges_months(self):
         rows = await self.bot.db.fetchall(
