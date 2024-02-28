@@ -21,11 +21,11 @@ class Pubsub():
         elif message['type'] == 'RECONNECT':
             await self.ws.close()
         elif message['type'] == 'MESSAGE':
-            m = json.loads(message['data']['message'])
             if message['data']['topic'].startswith('chat_moderator_actions'):
+                m = json.loads(message['data']['message'])
                 await self.log_mod_action(message['data']['topic'], m['data'])
             elif message['data']['topic'].startswith('channel-subscribe-events-v1'):
-                await self.log_sub(m['message'])
+                await self.log_sub(message['data']['message'])
 
     async def log_mod_action(self, topic, data):
         if 'moderation_action' not in data:
