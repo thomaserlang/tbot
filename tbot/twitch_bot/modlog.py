@@ -123,7 +123,7 @@ class Pubsub():
                     message, 
                     tier, 
                     gifter_id, 
-                    gifter,
+                    gifter_user,
                     is_gift, 
                     total
                 ) VALUES
