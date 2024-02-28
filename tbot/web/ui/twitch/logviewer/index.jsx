@@ -147,13 +147,7 @@ class Logviewer extends React.Component {
     renderTypeSymbol(l) {
         switch(l.type) {
             case 2:
-                return <span className="badge badge-danger">B</span>
-                break;
-            case 3:
-                return <span className="badge badge-warning">T</span> 
-                break;
-            case 4:
-                return <span className="badge badge-info">P</span> 
+                return <span className="badge badge-primary">S</span>
                 break;
             case 100:
                 return <span className="badge badge-success">M</span> 

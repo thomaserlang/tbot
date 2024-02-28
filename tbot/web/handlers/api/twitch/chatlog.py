@@ -11,7 +11,7 @@ class Handler(Api_handler):
         await has_mod(self, channel_id)
 
         args = [channel_id]
-        sql = 'SELECT * FROM twitch_chatlog WHERE channel_id=%s  AND type IN (1,100) '
+        sql = 'SELECT * FROM twitch_chatlog WHERE channel_id=%s AND type IN (1,2,100) '
 
         user = self.get_argument('user', None)
         if user:
