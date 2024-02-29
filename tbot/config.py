@@ -31,6 +31,7 @@ class ConfigTwitchModel(BaseModel):
                     'channel:manage:videos', 'channel:manage:broadcast',
                     'channel:read:goals', 'channel:read:hype_train', 'channel:read:polls',
                     'channel:read:predictions', 'channel:read:redemptions', 'channel:read:subscriptions',
+                    'channel:bot',
                     'moderator:manage:banned_users', 'moderator:read:chatters', 'channel:read:vips',
                     'moderator:manage:chat_messages', 'moderator:manage:chat_settings',
                     'moderator:manage:announcements', 'chat:edit', 'chat:read',
