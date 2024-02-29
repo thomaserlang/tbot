@@ -67,7 +67,9 @@ def App():
             (r'/api/rtmp-auth', handlers.api.rtmp_auth.Handler),
             (r'/api/srt-auth', handlers.api.srt_auth.Handler),
             
-            #(r'/api/twitch/webhooks/channel.subscribe', handlers.api.twitch.eventsubs.channel_subscribe.Handler),
+            (r'/api/twitch/webhooks/channel.subscribe', handlers.api.twitch.eventsubs.channel_subscribe.Handler),
+            (r'/api/twitch/webhooks/channel.subscribe.end', handlers.api.twitch.eventsubs.channel_subscribe_end.Handler),
+            
             (r"/api/twitch/widget-ws", handlers.api.twitch.widgets.widget_ws.Handler),
             
             (r"/twitch/widgets/goal/([a-zA-Z0-9]+)", handlers.twitch.widgets.goal.Handler),

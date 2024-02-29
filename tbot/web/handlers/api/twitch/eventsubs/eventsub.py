@@ -24,10 +24,14 @@ class EventSubResponse(BaseModel, Generic[T]):
 
 def channel_events(channel_id: str, scopes: list[str]):
     events = [
-        #{
-        #    'type': 'channel.subscribe',
-        #    'scope': 'channel:read:subscriptions'
-        #}
+        {
+            'type': 'channel.subscribe',
+            'scope': 'channel:read:subscriptions'
+        },
+        {
+            'type': 'channel.subscription.end',
+            'scope': 'channel:read:subscriptions'
+        },
     ]
     r = []
     for e in events:
