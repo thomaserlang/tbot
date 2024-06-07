@@ -29,13 +29,13 @@ export default function({ channelId, user }) {
     }, [channelId, user])
 
     if (loading) 
-        return <div style={{marginTop: '2rem'}}><h3>Streams watched</h3> <div className="spacing">Loading streams watched...</div></div>
+        return <div style={{marginTop: '1rem'}}><h3>Streams watched</h3> <div className="spacing">Loading streams watched...</div></div>
     
     if (error) 
-        return <div style={{marginTop: '2rem'}}><h3>Streams watched</h3> <div className="spacing">Failed to load streams watched, try again.</div></div>
+        return <div style={{marginTop: '1rem'}}><h3>Streams watched</h3> <div className="spacing">Failed to load streams watched, try again.</div></div>
 
     if (!data || (data.length === 0))
-        return <div style={{marginTop: '2rem'}}><h3>Streams watched</h3> <div className="spacing">Didn't find any streams watched for user.</div></div>
+        return <div style={{marginTop: '1rem'}}><h3>Streams watched</h3> <div className="spacing">Didn't find any streams watched for user.</div></div>
 
     const loadMore = (e) => {
         e.preventDefault()
@@ -55,9 +55,9 @@ export default function({ channelId, user }) {
         ))
     }
 
-    return <div style={{marginTop: '2rem'}}>
+    return <div style={{marginTop: '1rem'}}>
         <h3>Streams watched</h3>
-        <table className="table table-dark table-striped table-sm table-hover">
+        <table className="table table-dark table-sm table-hover">
             <thead>
                 <tr>
                     <th className="fit-content">Stream date</th>

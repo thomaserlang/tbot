@@ -1,4 +1,3 @@
-import logging
 from tornado import web
 from ..base import Api_handler
 from dateutil.parser import parse
@@ -133,6 +132,34 @@ class User_streams_watched_handler(Api_handler):
         sql += ' ORDER BY s.started_at DESC LIMIT 5'
         streams = await self.db.fetchall(sql, args)
         self.write_object(list(streams))
+
+
+class User_akas_handler(Api_handler):
+
+    async def get(self, channel_id):
+        await has_mod(self, channel_id)        
+        user = self.get_argument('user')
+        u = await self.db.fetchone('SELECT user_id FROM twitch_usernames WHERE user=%s', [user])
+        user_id: str = ''
+        if not u:
+            user_id = await utils.twitch_lookup_user_id(self.ahttp, self.db, user)
+            if not user_id:
+                self.set_status(204)
+                return
+        else:
+            user_id = u['user_id']
+        args = [user_id]
+        sql = '''
+            select 
+                user
+            from 
+                twitch_usernames
+            where 
+                user_id=%s
+            ORDER BY expires DESC
+        '''
+        akas = await self.db.fetchall(sql, args)
+        self.write_object(list(akas))
 
 
 async def has_mod(handler, channel_id):

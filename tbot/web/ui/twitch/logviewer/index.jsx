@@ -7,6 +7,7 @@ import Loading from 'tbot/components/loading'
 import UserInput from './userinput'
 import UserStats from './user_stats'
 import UserStreamsWatched from './user_streams_watched'
+import UserAKAs from './user_akas'
 import './logviewer.scss'
 import '../dashboard/components/topbar.scss'
 
@@ -107,7 +108,7 @@ class Logviewer extends React.Component {
         
         return <div className="chatlog">
                 <h3>Chat logs</h3>        
-                <table className="table table-dark table-striped table-sm table-hover">
+                <table className="table table-dark table-sm table-hover">
                 <tbody>
                     {this.state.showLoadBefore?
                         <tr><td colSpan="3" style={{textAlign: 'center'}}>
@@ -219,6 +220,8 @@ class Logviewer extends React.Component {
 
             {this.query.user?<UserStreamsWatched channelId={this.state.channel.id} user={this.query.user} />: null}
             
+            {this.query.user?<UserAKAs channelId={this.state.channel.id} user={this.query.user} />: null}
+
         </div>;
     }
 
