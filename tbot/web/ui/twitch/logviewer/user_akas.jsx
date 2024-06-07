@@ -37,11 +37,11 @@ export default function({ channelId, user }) {
         <table className="table table-dark table-sm table-hover">
             <tbody>
                 {data.map(s => (
-                    <tr key={s.stream_id}>
+                    <tr key={s.user}>
                         <td 
                             className="fit-content"
                         >
-                            {data['user']}
+                            {s.user}
                         </td>
                     </tr>
                 ))}
