@@ -10,7 +10,7 @@ title: Quotes
 `{quote.add}`
 
 Adds a quote and returns "Quote created with number: x".  
-Syntax: !<command> <message>
+Syntax: !command message
 
 
 ## Edit a quote
@@ -18,7 +18,7 @@ Syntax: !<command> <message>
 `{quote.edit}`
 
 Edit a quote a quote and returns "Quote updated".  
-Syntax: !<command> <quote number> <message>
+Syntax: !command number message
 
 
 ## Delete a quote
@@ -26,7 +26,7 @@ Syntax: !<command> <quote number> <message>
 `{quote.delete}`
 
 Delete a quote. Returns "Quote deleted".  
-Syntax: !<command> <quote number>
+Syntax: !command number>
 
 
 ## Display a quote
