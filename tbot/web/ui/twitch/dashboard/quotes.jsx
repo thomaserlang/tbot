@@ -44,7 +44,7 @@ class Quotes extends React.Component {
                         <tr key={quote.number}>
                             <td>{quote.number}</td>
                             <td>{quote.message}</td>
-                            <td className="text-right"><Link to={`quotes/edit/${quote.id}`}>Edit</Link></td>
+                            <td className="text-right"><Link to={`quotes/edit/${quote.number}`}>Edit</Link></td>
                         </tr>
                     ): <tr><td colSpan="8" className="text-center">No quotes.</td></tr>}
                 </tbody>
