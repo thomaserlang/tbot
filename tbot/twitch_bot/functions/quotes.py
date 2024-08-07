@@ -1,5 +1,4 @@
 from tbot.twitch_bot.var_filler import fills_vars, Send_error
-from tbot import config
 from datetime import datetime
 
 @fills_vars('quote.add')
@@ -40,7 +39,7 @@ async def quote_edit(bot, channel_id, cmd, args, **kwargs):
         'WHERE channel_id=%s and number=%s',
         (' '.join(args), datetime.utcnow(), channel_id, n)
     )
-    raise Send_error(f'Quote updated')
+    raise Send_error('Quote updated')
 
 @fills_vars('quote.delete')
 async def quote_delete(bot, channel_id, cmd, args, **kwargs):

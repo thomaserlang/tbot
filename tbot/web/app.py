@@ -41,6 +41,8 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/commands/([0-9]+)', handlers.api.twitch.commands.Handler),
             (r'/api/twitch/channels/([0-9]+)/commands-public', handlers.api.twitch.commands.Public_collection),
             (r'/api/twitch/template-commands', handlers.api.twitch.commands.Template_collection),
+            (r'/api/twitch/channels/([0-9]+)/quotes', handlers.api.twitch.quotes.Collection_handler),
+            (r'/api/twitch/channels/([0-9]+)/quotes/([0-9]+)', handlers.api.twitch.quotes.Handler),
             (r'/api/twitch/channels/([0-9]+)/admins', handlers.api.twitch.admin_of.Channel_admins),
             (r'/api/twitch/channels/([0-9]+)/admins/([0-9]+)', handlers.api.twitch.admin_of.Channel_admins),
             (r'/api/twitch/channels/([0-9]+)/filters', handlers.api.twitch.filters.Filters),

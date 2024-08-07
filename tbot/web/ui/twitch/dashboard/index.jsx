@@ -8,6 +8,8 @@ import Sidebar from './components/sidebar'
 import Topbar from './components/topbar'
 import Dashboard from './dashboard'
 import Commands from './commands'
+import Quotes from './quotes'
+import Quote from './quote'
 import Command from './command'
 import Spotify from './spotify'
 import Discord from './discord'
@@ -52,6 +54,8 @@ class Main extends React.Component {
                     <Route exact path='/twitch/:channel/commands' component={Commands}/>
                     <Route exact path='/twitch/:channel/commands/edit/:id' component={Command}/>
                     <Route exact path='/twitch/:channel/commands/new' component={Command}/>
+                    <Route exact path='/twitch/:channel/quotes' component={Quotes}/>
+                    <Route exact path='/twitch/:channel/quotes/edit/:number' component={Quote}/>
                     <Route exact path='/twitch/:channel/spotify' component={Spotify}/>
                     <Route exact path='/twitch/:channel/discord' component={Discord}/>
                     <Route exact path='/twitch/:channel/admins' component={Admins}/>
