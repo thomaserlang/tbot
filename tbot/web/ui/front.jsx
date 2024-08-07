@@ -18,17 +18,6 @@ class Front extends React.Component {
                     Logviewer
                 </Link>
             </div>
-            <div className="items">
-                <div className="title">
-                    Discord
-                </div>
-                <a className="item discord">
-                    Dashboard
-                </a>
-                <a className="item discord">
-                    Logviewer
-                </a>
-            </div>
         </div>
     }
 }
