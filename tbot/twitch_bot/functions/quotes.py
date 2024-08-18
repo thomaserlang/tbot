@@ -56,9 +56,12 @@ async def quote_delete(bot, channel_id, cmd, args, **kwargs):
         raise Send_error('This quote is deleted')
 
     await bot.db.execute(
-        'UPDATE twitch_quotes SET '
-        'enabled=0 '
+        'DELETE FROM twitch_quotes '
         'WHERE channel_id=%s AND number=%s',
+        (channel_id, args[0],)
+    )
+    await bot.db.execute(
+        'update twitch_quotes set number = number - 1 where channel_id=%s and number>%s',
         (channel_id, args[0],)
     )
 

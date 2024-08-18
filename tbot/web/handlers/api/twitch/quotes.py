@@ -75,15 +75,20 @@ class Handler(Api_handler):
 
     @Level(1)
     async def delete(self, channel_id, number):
-        await self.db.execute('''
-            UPDATE twitch_quotes SET enabled=0 WHERE channel_id=%s and number=%s
-        ''', (channel_id, number,))
+        await self.db.execute(
+            'DELETE FROM twitch_quotes '
+            'WHERE channel_id=%s AND number=%s', 
+            (channel_id, number,)
+        )
+        await self.db.execute(
+            'update twitch_quotes set number = number - 1 where channel_id=%s and number>%s',
+            (channel_id, number,)
+        )
         self.set_status(204)
 
 async def get_quote(self, channel_id, number):
     cmd = await self.db.fetchone('''
-        SELECT *
-        FROM twitch_quotes
+        SELECT * FROM twitch_quotes 
         WHERE channel_id=%s and number=%s
     ''', (channel_id, number,))
     return cmd
