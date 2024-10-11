@@ -56,8 +56,6 @@ def handle_command(nick, target, message, **kwargs):
         twitch_command(
             cmd=cmd,
             target=target,
-            args=args,
-            kwargs=kwargs,
             data={
                 'bot': bot,
                 'args': args,
@@ -74,21 +72,10 @@ def handle_command(nick, target, message, **kwargs):
     )
 
 
-async def twitch_command(cmd, target, data, args, kwargs):
+async def twitch_command(cmd, target, data):
     msg = await db_command(
         cmd=cmd,
-        data={
-            'bot': bot,
-            'args': args,
-            'user': kwargs['user'],
-            'display_name': kwargs['display-name'] or kwargs['user'],
-            'user_id': kwargs['user-id'],
-            'channel': target.strip('#'),
-            'channel_id': kwargs['room-id'],
-            'badges': kwargs['badges'],
-            'emotes': kwargs['emotes'],
-            'cmd': cmd,
-        },
+        data=data,
     )
     if msg:
         bot.send('PRIVMSG', target=target, message=msg)
