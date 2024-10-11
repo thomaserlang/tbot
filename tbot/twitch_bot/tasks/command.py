@@ -57,6 +57,7 @@ def handle_command(nick, target, message, **kwargs):
             cmd=cmd,
             target=target,
             args=args,
+            kwargs=kwargs,
             data={
                 'bot': bot,
                 'args': args,
@@ -73,7 +74,7 @@ def handle_command(nick, target, message, **kwargs):
     )
 
 
-async def twitch_command(cmd, target, data, args):
+async def twitch_command(cmd, target, data, args, kwargs):
     msg = await db_command(
         cmd=cmd,
         data={
