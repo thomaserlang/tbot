@@ -1,6 +1,9 @@
-import os, yaml
-from typing import List, Optional, Literal
+import os
+from typing import List, Literal, Optional
+
+import yaml
 from pydantic import BaseModel, BaseSettings, DirectoryPath
+
 
 class ConfigWebModel(BaseModel):
     port = 8001
@@ -46,6 +49,12 @@ class ConfigDiscordCustomNotificaitonsModel(BaseModel):
     message: str
 
 
+class ConfigYoutubeModel(BaseModel):
+    client_id: Optional[str] = None
+    client_secret: Optional[str] = None
+    twitch_bot_channel_id: Optional[str] = None
+
+
 class ConfigDiscordModel(BaseModel):
     client_id: Optional[str]
     client_secret: Optional[str]
@@ -84,6 +93,7 @@ class ConfigModel(BaseSettings):
     web = ConfigWebModel()
     twitch = ConfigTwitchModel()
     discord = ConfigDiscordModel()
+    youtube = ConfigYoutubeModel()
     spotify = ConfigSpotifyConfig()
     logging = ConfigLoggingModel()
     mysql = ConfigMySQLModel()

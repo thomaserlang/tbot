@@ -1,6 +1,8 @@
-import os, sys
+import os
 from subprocess import list2cmdline
+
 from honcho.manager import Manager
+
 
 def main():  
     path = os.path.dirname(os.path.realpath(__file__))

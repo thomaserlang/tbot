@@ -1,7 +1,11 @@
-import asyncio, json, copy
+import asyncio
+import copy
+import json
+from datetime import datetime, timedelta, timezone
+
 from dateutil.parser import parse
-from datetime import datetime, timezone, timedelta
-from tbot import config, utils, logger
+
+from tbot import config, logger, utils
 from tbot.twitch_bot.bot_base import bot
 
 """
@@ -34,6 +38,7 @@ def channel_extra_default():
         'users': [],
         'last_check': None,
         'uptime': 0,
+        'youtube_chat_next_page_token': None,
     }
 
 @bot.on('AFTER_CHANNELS_JOINED')
@@ -148,6 +153,7 @@ async def cache_channel(channel_id):
             'went_offline_at_delay': went_offline_at_delay.isoformat() \
                 if went_offline_at_delay else None,
             'uptime': bot.channels_check[channel_id]['uptime'],
+            'youtube_chat_next_page_token': bot.channels_check[channel_id]['youtube_chat_next_page_token'],
         })
     ))
 
@@ -164,6 +170,7 @@ async def load_channels_cache():
         bot.channels_check[r['channel_id']]['went_offline_at_delay'] = \
             parse(data['went_offline_at_delay']) if data.get('went_offline_at_delay') else None
         bot.channels_check[r['channel_id']]['uptime'] = data['uptime'] if data.get('uptime') else 0
+        bot.channels_check[r['channel_id']]['youtube_chat_next_page_token'] = data.get('youtube_chat_next_page_token')
 
 async def set_chatters(channel_id: str):
     try:

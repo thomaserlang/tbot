@@ -27,6 +27,7 @@ class Sidebar extends React.Component {
             <div className="title">CONNECT</div>
             <NavLink to={`/twitch/${managedUser.name}/spotify`} activeClassName="active">Spotify</NavLink> 
             <NavLink to={`/twitch/${managedUser.name}/discord`} activeClassName="active">Discord</NavLink> 
+            <NavLink to={`/twitch/${managedUser.name}/youtube`} activeClassName="active">YouTube</NavLink> 
         </span>
     }    
 
