@@ -37,17 +37,23 @@ async def check_youtubes_chat():
 
 
 async def check_youtube_chat(channel_id: str):
-    live = await get_live_streams(channel_id)
+    live_chat_id = await get_live_chat_id(channel_id)
+    logger.debug(f'Checking youtube chat for {channel_id} ({live_chat_id})')
 
-    if not live or not live['items']:
+    if not live_chat_id:
         return
 
-    chat = await get_youtube_chat(channel_id, live['items'][0]['snippet']['liveChatId'])
+    chat = await get_youtube_chat(channel_id, live_chat_id)
+    if chat.get('offlineAt'):
+        bot.channels_check[channel_id]['youtube_live_chat_id'] = None
+        await cache_channel(channel_id)
+        return
+
     for m in chat.get('items', []):
-        logger.info(m)
         if m['snippet']['type'] != 'textMessageEvent':
             continue
         message = m['snippet']['displayMessage']
+        logger.debug(f'Received message {message}')
         author = m['snippet']['authorChannelId']
         author_name = m['authorDetails']['displayName']
         if not message.startswith('!'):
@@ -78,9 +84,12 @@ async def check_youtube_chat(channel_id: str):
             },
         )
         if send_msg:
+            logger.debug(
+                f'Matched command: {cmd} - Sending to YouTube chat: {send_msg} ({live_chat_id})'
+            )
             await send_youtube_chat(
                 config.data.youtube.twitch_bot_channel_id or channel_id,
-                live['items'][0]['snippet']['liveChatId'],
+                live_chat_id,
                 send_msg,
             )
 
@@ -173,12 +182,18 @@ async def youtube_request(
             data=data,
             json=json,
         )
-    if r.status_code != 200:
-        raise Exception(r.text)
+    try:
+        r.raise_for_status()
+    except Exception as e:
+        logger.error(f'Youtube request failed: {r.text}')
+        raise e
     return r.json()
 
 
-async def get_live_streams(channel_id: str):
+async def get_live_chat_id(channel_id: str):
+    if bot.channels_check[channel_id].get('youtube_live_chat_id'):
+        return bot.channels_check[channel_id]['youtube_live_chat_id']
+
     live = await youtube_request(
         channel_id,
         'https://www.googleapis.com/youtube/v3/liveBroadcasts',
@@ -187,4 +202,15 @@ async def get_live_streams(channel_id: str):
             'mine': 'true',
         },
     )
-    return live
+    if not live or not live['items']:
+        logger.debug(f'No live broadcast for {channel_id}')
+        return
+
+    logger.debug(
+        f'Got live broadcast for {channel_id} - {live["items"][0]["snippet"]["liveChatId"]}'
+    )
+
+    live_chat_id = live['items'][0]['snippet']['liveChatId']
+    bot.channels_check[channel_id]['youtube_live_chat_id'] = live_chat_id
+    await cache_channel(channel_id)
+    return live_chat_id
