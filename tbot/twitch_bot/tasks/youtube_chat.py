@@ -173,6 +173,7 @@ async def youtube_request(
             'update twitch_youtube set token=%s where channel_id=%s',
             (yt['access_token'], channel_id),
         )
+        params['Authorization'] = f'Bearer {yt["access_token"]}'
 
         r = await client.request(
             method,
