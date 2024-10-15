@@ -58,7 +58,11 @@ class YouTube extends React.Component {
             )
         return (
             <div>
-                <p>Connect your YouTube account to activate commands, timers and chat moderation for your YouTube Live streams.</p>
+                <p>
+                    Connect your YouTube account to activate commands, timers and chat moderation for your YouTube Live streams.
+                    <br />
+                    The bot will add itself as a moderator of your live chat.
+                </p>
                 <form
                     method="post"
                     onSubmit={this.handleSubmit}

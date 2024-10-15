@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timezone
+from typing import Optional
 
 from dateutil.parser import parse as parse_dt
 from httpx import AsyncClient
@@ -15,15 +16,19 @@ _started = False
 
 channel_tasks: dict[str, asyncio.Task] = {}
 
+youtube_bot_channel_id: str = ''
+
 
 @bot.on('AFTER_CHANNELS_JOINED')
 async def connected(**kwargs):
     global _started
+    global youtube_bot_channel_id
     if not config.data.youtube.client_id:
         return
     if not _started:
         _started = True
         logger.info('Starting youtube chat tasks')
+        youtube_bot_channel_id = await get_bot_channel_id() or ''
         await asyncio.sleep(5)
         await create_tasks()
 
@@ -36,11 +41,14 @@ async def redis_server_command(cmd, cmd_args):
             channel_tasks[cmd_args[0]] = bot.loop.create_task(
                 check_youtube_chat(cmd_args[0])
             )
+
     if cmd == 'youtube_disconnected':
         logger.debug(f'Canceling youtube chat task for {cmd_args[0]}')
         if channel_tasks.get(cmd_args[0]):
             channel_tasks[cmd_args[0]].cancel()
             del channel_tasks[cmd_args[0]]
+            bot.channels_check[cmd_args[0]]['youtube_live_chat_id'] = None
+            await cache_channel(cmd_args[0])
 
 
 async def create_tasks():
@@ -167,6 +175,7 @@ async def get_youtube_chat(channel_id: str, live_chat_id: str):
     bot.channels_check[channel_id]['youtube_chat_next_page_token'] = chat.get(
         'nextPageToken', ''
     )
+    
     await cache_channel(channel_id)
     return chat
 
@@ -254,4 +263,40 @@ async def get_live_chat_id(channel_id: str):
     live_chat_id = live['items'][0]['snippet']['liveChatId']
     bot.channels_check[channel_id]['youtube_live_chat_id'] = live_chat_id
     await cache_channel(channel_id)
+    await add_moderator(channel_id, youtube_bot_channel_id,  live_chat_id)
     return live_chat_id
+
+
+async def add_moderator(channel_id: str, moderator_id: str, live_chat_id: str):
+    await youtube_request(
+        channel_id,
+        'https://www.googleapis.com/youtube/v3/liveChat/moderators',
+        method='POST',
+        params={
+            'part': 'snippet',
+        },
+        json={
+            'snippet': {
+                'liveChatId': live_chat_id,
+                'moderatorDetails': {
+                    'channelId': moderator_id,
+                },
+            },
+        },
+    )
+
+
+async def get_bot_channel_id() -> Optional[str]:
+    if not config.data.youtube.twitch_bot_channel_id:
+        return
+    if not config.data.youtube.client_id:
+        return
+    r = await youtube_request(
+        config.data.youtube.twitch_bot_channel_id,
+        'https://www.googleapis.com/youtube/v3/channels',
+        params={
+            'part': 'snippet',
+            'mine': 'true',
+        },
+    )
+    return r['items'][0]['id']

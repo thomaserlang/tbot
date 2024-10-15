@@ -24,12 +24,29 @@ class Handler(Api_handler):
 
     @Level(3)
     async def delete(self, channel_id):
+        token = await self.db.fetchone(
+            'SELECT token FROM twitch_youtube WHERE channel_id=%s', (channel_id,)
+        )
         await self.db.fetchone(
             'DELETE FROM twitch_youtube WHERE channel_id=%s', (channel_id,)
         )
         await self.redis.publish_json(
             'tbot:server:commands', ['youtube_disconnected', channel_id]
         )
+
+        if token:
+            http = httpclient.AsyncHTTPClient()
+            await http.fetch(
+                'https://oauth2.googleapis.com/revoke',
+                method='POST',
+                headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                body=parse.urlencode(
+                    {
+                        'token': token['token'],
+                    }
+                ),
+            )
+
         self.set_status(204)
 
     @Level(3)
