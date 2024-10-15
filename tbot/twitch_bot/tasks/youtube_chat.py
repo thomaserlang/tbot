@@ -68,6 +68,7 @@ async def check_youtube_chat(channel_id: str):
             badges += 'moderator,'
         if m['authorDetails']['isChatOwner']:
             badges += 'broadcaster,'
+
         send_msg = await db_command(
             cmd=cmd,
             data={
@@ -173,7 +174,7 @@ async def youtube_request(
             'update twitch_youtube set token=%s where channel_id=%s',
             (yt['access_token'], channel_id),
         )
-        params['Authorization'] = f'Bearer {yt["access_token"]}'
+        headers['Authorization'] = f'Bearer {yt["access_token"]}'
 
         r = await client.request(
             method,
