@@ -58,6 +58,7 @@ class YouTube extends React.Component {
             )
         return (
             <div>
+                <p>Connect your YouTube account to activate commands, timers and chat moderation for your YouTube Live streams.</p>
                 <form
                     method="post"
                     onSubmit={this.handleSubmit}

@@ -1,5 +1,7 @@
 import asyncio
+from datetime import datetime, timezone
 
+from dateutil.parser import parse as parse_dt
 from httpx import AsyncClient
 
 from tbot import config, logger
@@ -11,46 +13,83 @@ client = AsyncClient()
 
 _started = False
 
+channel_tasks: dict[str, asyncio.Task] = {}
 
-@bot.on('AFTER_CONNECTED')
+
+@bot.on('AFTER_CHANNELS_JOINED')
 async def connected(**kwargs):
     global _started
     if not config.data.youtube.client_id:
         return
     if not _started:
         _started = True
-        bot.loop.create_task(runner())
+        logger.info('Starting youtube chat tasks')
+        await asyncio.sleep(5)
+        await create_tasks()
 
 
-async def runner():
-    while True:
-        await asyncio.sleep(1)
-        bot.loop.create_task(check_youtubes_chat())
+@bot.on('REDIS_SERVER_COMMAND')
+async def redis_server_command(cmd, cmd_args):
+    if cmd == 'youtube_connected':
+        logger.debug(f'Starting youtube chat task for {cmd_args[0]}')
+        if not channel_tasks.get(cmd_args[0]):
+            channel_tasks[cmd_args[0]] = bot.loop.create_task(
+                check_youtube_chat(cmd_args[0])
+            )
+    if cmd == 'youtube_disconnected':
+        logger.debug(f'Canceling youtube chat task for {cmd_args[0]}')
+        if channel_tasks.get(cmd_args[0]):
+            channel_tasks[cmd_args[0]].cancel()
+            del channel_tasks[cmd_args[0]]
 
 
-async def check_youtubes_chat():
+async def create_tasks():
+    logger.info('Setting up youtube chat tasks')
     channels = await bot.db.fetchall(
         'SELECT c.channel_id FROM twitch_channels c, twitch_youtube y WHERE c.active=1 AND c.channel_id=y.channel_id',
     )
     for t in channels:
-        bot.loop.create_task(check_youtube_chat(t['channel_id']))
+        logger.debug(f'Starting youtube chat task for {t["channel_id"]}')
+        channel_tasks[t['channel_id']] = bot.loop.create_task(
+            check_youtube_chat(t['channel_id'])
+        )
 
 
 async def check_youtube_chat(channel_id: str):
-    live_chat_id = await get_live_chat_id(channel_id)
-    logger.debug(f'Checking youtube chat for {channel_id} ({live_chat_id})')
+    while True:
+        try:
+            live_chat_id = await get_live_chat_id(channel_id)
+            logger.debug(f'Checking youtube chat for {channel_id} ({live_chat_id})')
 
-    if not live_chat_id:
-        return
+            if not live_chat_id:
+                await asyncio.sleep(60)
+                continue
 
-    chat = await get_youtube_chat(channel_id, live_chat_id)
-    if chat.get('offlineAt'):
-        bot.channels_check[channel_id]['youtube_live_chat_id'] = None
-        await cache_channel(channel_id)
-        return
+            chat = await get_youtube_chat(channel_id, live_chat_id)
+            if chat.get('offlineAt'):
+                bot.channels_check[channel_id]['youtube_live_chat_id'] = None
+                await cache_channel(channel_id)
+                await asyncio.sleep(60)
+                continue
 
+            _ = asyncio.create_task(parse_chatmessages(channel_id, live_chat_id, chat))
+
+            logger.debug(
+                f'Youtube chat task sleeping for {chat["pollingIntervalMillis"]}ms for {channel_id}'
+            )
+            await asyncio.sleep(chat['pollingIntervalMillis'] / 1000)
+        except Exception as e:
+            logger.error(f'Error in youtube chat task: {e}')
+            await asyncio.sleep(60)
+
+
+async def parse_chatmessages(channel_id: str, live_chat_id: str, chat: dict):
     for m in chat.get('items', []):
         if m['snippet']['type'] != 'textMessageEvent':
+            continue
+        if (
+            datetime.now(tz=timezone.utc) - parse_dt(m['snippet']['publishedAt'])
+        ).total_seconds() > 30:
             continue
         message = m['snippet']['displayMessage']
         logger.debug(f'Received message {message}')

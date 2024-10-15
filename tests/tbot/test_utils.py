@@ -1,8 +1,11 @@
 import unittest
+from datetime import datetime
+
+from dateutil.parser import parse
+
 import tbot.testbase
 from tbot import utils
-from datetime import datetime
-from dateutil.parser import parse
+
 
 class test_utils(unittest.TestCase):
 

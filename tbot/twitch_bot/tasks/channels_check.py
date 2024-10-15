@@ -440,7 +440,7 @@ async def send_discord_live_notification(channel_id):
                             error,
                         )
                     )
-        except:
+        except Exception:
             logger.exception(
                 'twitch discord webhook-id: {} '.format(
                     w['id'],
