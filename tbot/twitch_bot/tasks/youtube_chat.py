@@ -241,7 +241,7 @@ async def youtube_request(
     try:
         r.raise_for_status()
     except Exception as e:
-        logger.error(f'Youtube request failed: {r.text}')
+        logger.error(f'Youtube request failed for channel {channel_id}: {r.text}')
         raise e
     return r.json()
 
