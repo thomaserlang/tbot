@@ -105,8 +105,8 @@ class ConfigModel(BaseSettings):
     rtmp_keys: List[str] = []
 
     class Config:
-        env_prefix = 'tbot_'
-        env_nested_delimiter = '.'
+        env_prefix = 'tbot__'
+        env_nested_delimiter = '__'
         validate_assignment = True
         case_sensitive = False
 
