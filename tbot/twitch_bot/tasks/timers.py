@@ -1,10 +1,13 @@
-import asyncio, random
-from tbot.twitch_bot.bot_base import bot
-from tbot import utils, config
+import asyncio
+import random
 from datetime import datetime, timedelta
+
+from tbot import config, utils
 from tbot.twitch_bot import var_filler
+from tbot.twitch_bot.bot_base import bot
 
 _started = False
+
 
 @bot.on('AFTER_CONNECTED')
 async def connected(**kwargs):
@@ -13,27 +16,30 @@ async def connected(**kwargs):
         _started = True
         bot.loop.create_task(runner())
 
+
 async def runner():
     while True:
         await asyncio.sleep(config.data.twitch.check_timers_every)
         bot.loop.create_task(check_timers())
 
+
 async def check_timers():
     timers = await bot.db.fetchall(
         'SELECT *, c.name as channel_name FROM twitch_timers t, twitch_channels c WHERE t.enabled=1 AND t.next_run<=%s AND t.channel_id=c.channel_id',
-        (datetime.utcnow(),)
+        (datetime.utcnow(),),
     )
     for t in timers:
         bot.loop.create_task(handle_timer(t))
 
+
 async def handle_timer(t):
     await bot.db.execute(
-        'UPDATE twitch_timers SET next_run=%s WHERE id=%s',(
-        datetime.utcnow()+timedelta(minutes=t['interval']),
-        t['id']
-    ))
-    if t['enabled_status'] > 0 and \
-        t['enabled_status'] != get_enabled_status(t['channel_id']):
+        'UPDATE twitch_timers SET next_run=%s WHERE id=%s',
+        (datetime.utcnow() + timedelta(minutes=t['interval']), t['id']),
+    )
+    if t['enabled_status'] > 0 and t['enabled_status'] != get_enabled_status(
+        t['channel_id']
+    ):
         return
     messages = utils.json_loads(t['messages'])
 
@@ -51,10 +57,8 @@ async def handle_timer(t):
         pos = 1
 
     await bot.db.execute(
-        'UPDATE twitch_timers SET last_sent_message=%s WHERE id=%s',(
-        pos,
-        t['id']
-    ))
+        'UPDATE twitch_timers SET last_sent_message=%s WHERE id=%s', (pos, t['id'])
+    )
     try:
         data = {
             'bot': bot,
@@ -68,12 +72,21 @@ async def handle_timer(t):
             'emotes': '',
             'cmd': '',
         }
-        msg = await var_filler.fill_message(messages[pos-1], **data)
-        bot.send("PRIVMSG", target='#'+t['channel_name'], message=msg)
+        msg = await var_filler.fill_message(messages[pos - 1], **data)
+        bot.send('PRIVMSG', target='#' + t['channel_name'], message=msg)
+        if bot.channels_check[t['channel_id']]['youtube_live_chat_id']:
+            from .youtube_chat import send_youtube_chat
+            await send_youtube_chat(
+                config.data.youtube.twitch_bot_channel_id or t['channel_id'],
+                bot.channels_check[t['channel_id']]['youtube_live_chat_id'],
+                msg,
+            )
+
     except var_filler.Send_error as e:
-        bot.send("PRIVMSG", target='#'+t['channel_name'], message=str(e))
+        bot.send('PRIVMSG', target='#' + t['channel_name'], message=str(e))
     except var_filler.Send_break:
         pass
+
 
 def get_enabled_status(channel_id):
     if bot.channels_check[channel_id]['is_streaming']:

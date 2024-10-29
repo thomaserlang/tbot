@@ -148,9 +148,9 @@ async def parse_chatmessages(channel_id: str, live_chat_id: str, chat: dict):
             )
 
 
-async def send_youtube_chat(channel_id: str, live_chat_id: str, message: str):
+async def send_youtube_chat(sender_channel_id: str, live_chat_id: str, message: str):
     await youtube_request(
-        channel_id,
+        sender_channel_id,
         url='https://www.googleapis.com/youtube/v3/liveChat/messages',
         method='POST',
         params={
