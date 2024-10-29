@@ -84,15 +84,23 @@ async def check_youtube_chat(channel_id: str):
 
             await asyncio.sleep(chat['pollingIntervalMillis'] / 1000)
         except httpx.HTTPStatusError as e:
-            if e.response.status_code == 403:
-                if 'liveStreamingNotEnabled' in e.response.text:
-                    logger.info(
-                        f'Live streaming not enabled for {channel_id}, removing youtube chat task'
-                    )
-                    channel_tasks[channel_id].cancel()
-                    del channel_tasks[channel_id]
-                    bot.channels_check[channel_id]['youtube_live_chat_id'] = None
-                    await cache_channel(channel_id)
+            if 'liveStreamingNotEnabled' in e.response.text:
+                logger.info(
+                    f'Live streaming not enabled for {channel_id}, removing youtube chat task'
+                )
+                channel_tasks[channel_id].cancel()
+                del channel_tasks[channel_id]
+                bot.channels_check[channel_id]['youtube_live_chat_id'] = None
+                await cache_channel(channel_id)
+            elif 'liveChatEnded' in e.response.text:
+                bot.channels_check[channel_id]['youtube_live_chat_id'] = None
+                await cache_channel(channel_id)
+                await asyncio.sleep(60)
+            elif 'liveChatNotFound' in e.response.text:
+                await asyncio.sleep(60)
+            else:
+                logger.exception(e)
+                await asyncio.sleep(60)
         except Exception as e:
             logger.exception(e)
             await asyncio.sleep(60)
