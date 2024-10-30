@@ -19,6 +19,7 @@ async def message(nick, target, message, **kwargs):
             kwargs['id'],
             kwargs['display-name'],
             kwargs['color'],
+            kwargs['emotes'],
         )
     )
 
@@ -33,7 +34,16 @@ async def message(nick, target, message, **kwargs):
 
 
 async def save(
-    type_, channel, channel_id, user, user_id, message, msg_id, display_name, user_color
+    type_,
+    channel,
+    channel_id,
+    user,
+    user_id,
+    message,
+    msg_id,
+    display_name,
+    user_color,
+    emotes,
 ):
     try:
         now = datetime.utcnow()
@@ -116,7 +126,8 @@ async def save(
                     'user': display_name,
                     'message': message,
                     'created_at': datetime.now(tz=timezone.utc).isoformat(),
-                    'color': user_color,
+                    'user_color': user_color,
+                    'emotes': emotes,
                 },
             )
     except Exception:

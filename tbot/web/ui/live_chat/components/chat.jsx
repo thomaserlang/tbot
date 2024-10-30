@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
-import useWebSocket, { ReadyState } from "react-use-websocket";
+import { useParseEmotes } from "./parse_emotes";
+import useWebSocket from "react-use-websocket";
+import sanitizeHtml from "sanitize-html";
 import "./chat.scss";
 
 export function Chat({ channelId }) {
-  const {
-    sendMessage,
-    sendJsonMessage,
-    lastMessage,
-    lastJsonMessage,
-    readyState,
-    getWebSocket,
-  } = useWebSocket(`/api/live-chat/${channelId}`, {
+  const { lastJsonMessage } = useWebSocket(`/api/live-chat/${channelId}`, {
     onOpen: () => console.log("opened"),
     shouldReconnect: (closeEvent) => true,
   });
   const [messageHistory, setMessageHistory] = useState([]);
   const messagesEndRef = useRef(null);
+  const { parseEmoteMessage } = useParseEmotes({ channelId });
 
   useEffect(() => {
     if (lastJsonMessage !== null) {
@@ -41,7 +37,18 @@ export function Chat({ channelId }) {
             <span className="username" style={{ color: msg.color }}>
               {msg.user}
             </span>
-            : <span className="text">{msg.message}</span>
+            :{" "}
+            <span
+              className="text"
+              dangerouslySetInnerHTML={{
+                __html: sanitizeHtml(parseEmoteMessage(msg.message), {
+                  allowedTags: ["img"],
+                  allowedAttributes: {
+                    img: ["src", "title", "class"],
+                  },
+                }),
+              }}
+            ></span>
           </div>
         ))}
         <div ref={messagesEndRef} />

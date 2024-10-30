@@ -123,7 +123,7 @@ async def parse_chatmessages(channel_id: str, live_chat_id: str, chat: dict):
                 'user': m['authorDetails']['displayName'],
                 'message': m['snippet']['displayMessage'],
                 'created_at': m['snippet']['publishedAt'],
-                'color': '',
+                'user_color': '',
             },
         )
 
