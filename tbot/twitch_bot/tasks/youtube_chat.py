@@ -114,6 +114,19 @@ async def parse_chatmessages(channel_id: str, live_chat_id: str, chat: dict):
             datetime.now(tz=timezone.utc) - parse_dt(m['snippet']['publishedAt'])
         ).total_seconds() > 30:
             continue
+
+        await bot.redis.publish_json(
+            f'tbot:live_chat:{channel_id}',
+            {
+                'provider': 'youtube',
+                'user_id': m['snippet']['authorChannelId'],
+                'user': m['authorDetails']['displayName'],
+                'message': m['snippet']['displayMessage'],
+                'created_at': m['snippet']['publishedAt'],
+                'color': '',
+            },
+        )
+
         message = m['snippet']['displayMessage']
         author = m['snippet']['authorChannelId']
         author_name = m['authorDetails']['displayName']

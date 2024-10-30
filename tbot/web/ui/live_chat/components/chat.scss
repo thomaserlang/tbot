@@ -1,0 +1,55 @@
+.chat-container {
+    width: 420px;
+    padding: 20px;
+    background-color: #18181b;
+    color: #e0e0e0;
+    border: 1px solid #2d2d2d;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    font-size: 13px;
+}
+
+.channel-name {
+    font-size: 1.5rem;
+    color: #9147ff;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.messages {
+    height: 100%;
+    overflow-y: auto;
+    background-color: #1f1f23;
+    padding: 10px;
+}
+
+.message {
+    padding: 2px 0;
+    display: flex;
+    align-items: baseline;
+}
+
+.username {
+    font-weight: 700;
+    margin-right: 5px;
+    color: #ffa600; 
+}
+
+.text {
+    color: #ffffff;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.provider {
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+.twitch {
+    color: #9147ff;
+}
+
+.youtube {
+    color: #ff0000;
+}

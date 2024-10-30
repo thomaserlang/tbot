@@ -1,14 +1,17 @@
-from functools import partial
+import asyncio
 import logging
 import os
-import asyncio
-import aioredis
-import aiohttp
 import signal
+from functools import partial
+
+import aiohttp
+import aioredis
 from tornado import web
+
 from tbot import config, db
 from tbot.web import handlers
 from tbot.web.io_sighandler import sig_handler
+
 
 def App():
     return web.Application(
@@ -72,6 +75,7 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/check-extra-auth', handlers.api.twitch.check_extra_auth.Handler),
             (r'/api/twitch/channels/([0-9]+)/commercial', handlers.api.twitch.commercial.Handler),
             (r'/api/twitch/channels/([0-9]+)/self-subs', handlers.api.twitch.self_subs.Handler),
+            (r'/api/live-chat/([0-9]+)', handlers.api.live_chat.LiveChatHandler),
             
             (r'/api/rtmp-auth', handlers.api.rtmp_auth.Handler),
             (r'/api/srt-auth', handlers.api.srt_auth.Handler),
