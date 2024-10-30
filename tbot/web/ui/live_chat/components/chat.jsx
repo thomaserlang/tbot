@@ -31,7 +31,7 @@ export function Chat({ channelId }) {
       messagesEndRef.current.scrollIntoView({ behavior: "instant" });
     }
   }, [messageHistory]);
-  console.log(lastJsonMessage);
+
   return (
     <div className="chat-container">
       <div className="messages">
