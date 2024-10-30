@@ -34,7 +34,7 @@ export function Chat({ channelId }) {
         {messageHistory.map((msg, index) => (
           <div key={index} className="message">
             {providerShort(msg.provider)}
-            <span className="username" style={{ color: msg.color }}>
+            <span className="username" style={{ color: msg.user_color }}>
               {msg.user}
             </span>
             :{" "}
