@@ -39,9 +39,9 @@ export function Chat({ channelId }) {
           <div key={index} className="message">
             {providerShort(msg.provider)}
             <span className="username" style={{ color: msg.color }}>
-              {msg.user}:
-            </span>{" "}
-            <span className="text">{msg.message}</span>
+              {msg.user}
+            </span>
+            : <span className="text">{msg.message}</span>
           </div>
         ))}
         <div ref={messagesEndRef} />
