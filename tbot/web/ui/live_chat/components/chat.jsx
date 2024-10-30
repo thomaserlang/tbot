@@ -6,8 +6,7 @@ import "./chat.scss";
 
 export function Chat({ channelId }) {
   const { lastJsonMessage } = useWebSocket(`/api/live-chat/${channelId}`, {
-    onOpen: () => console.log("opened"),
-    shouldReconnect: (closeEvent) => true,
+    shouldReconnect: () => true,
   });
   const [messageHistory, setMessageHistory] = useState([]);
   const messagesEndRef = useRef(null);
