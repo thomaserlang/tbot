@@ -51,6 +51,8 @@ function fixColor(color) {
       return "#837AC3";
     case "#0E3820":
       return "#5B8969";
+    case "#161917":
+      return "#7A7A7A";
     default:
       return color;
   }
