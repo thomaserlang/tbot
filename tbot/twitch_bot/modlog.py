@@ -1,9 +1,16 @@
-import asyncio, websockets, random, json, aiohttp
+import asyncio
+import json
+import random
 from datetime import datetime, timezone
-from tbot import config, utils, logger
+from uuid import uuid4
 
-class Pubsub():
+import aiohttp
+import websockets
 
+from tbot import config, logger, utils
+
+
+class Pubsub:
     def __init__(self):
         self.url = config.data.twitch.pubsub_url
         self.token = config.data.twitch.chat_token
@@ -31,17 +38,20 @@ class Pubsub():
         if 'moderation_action' not in data:
             return
         c = topic.split('.')
+
         def get_target_user():
             if data.get('target_user_login'):
                 return data['target_user_login']
             if data.get('args'):
                 return data['args'][0]
+
         def get_created_by():
             if data.get('created_by'):
                 return data['created_by']
             if data.get('created_by_login'):
                 return data['created_by_login']
             return 'twitch'
+
         def created_by_user_id():
             if data.get('created_by_user_id'):
                 return data['created_by_user_id']
@@ -55,49 +65,107 @@ class Pubsub():
 
             if data['moderation_action'] == 'delete':
                 data['args'] = [data['args'][0], data['args'][-1]]
-            self.loop.create_task(self.db.execute('''
+            self.loop.create_task(
+                self.db.execute(
+                    """
                 INSERT INTO twitch_modlog (created_at, channel_id, user, user_id, command, args, target_user, target_user_id) VALUES
                     (%s, %s, %s, %s, %s, %s, %s, %s)
-            ''', (
-                datetime.utcnow(),
-                c[2],
-                get_created_by(),
-                created_by_user_id(),
-                data['moderation_action'],
-                ' '.join(data['args']).strip()[:200] if data.get('args') else '',
-                get_target_user(),
-                data['target_user_id'] if data.get('target_user_id') else None,
-            )))
+            """,
+                    (
+                        datetime.utcnow(),
+                        c[2],
+                        get_created_by(),
+                        created_by_user_id(),
+                        data['moderation_action'],
+                        ' '.join(data['args']).strip()[:200]
+                        if data.get('args')
+                        else '',
+                        get_target_user(),
+                        data['target_user_id'] if data.get('target_user_id') else None,
+                    ),
+                )
+            )
             if data.get('target_user_id'):
-                self.loop.create_task(self.db.execute('''
+                self.loop.create_task(
+                    self.db.execute(
+                        """
                     INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message) VALUES
                         (%s, %s, %s, %s, %s, %s)
-                ''', (
-                    100,
-                    datetime.utcnow(),
-                    c[2],
-                    get_target_user(),
-                    data['target_user_id'],
-                    '<{}{} (by {})>'.format(
-                        data['moderation_action'],
-                        ' '+(' '.join(data['args']).strip() if data.get('args') else '')+
-                        ' '+data['moderator_message'] if data.get('moderator_message') else '',
-                        get_created_by(),
-                    ),
-                )))
+                """,
+                        (
+                            100,
+                            datetime.utcnow(),
+                            c[2],
+                            get_target_user(),
+                            data['target_user_id'],
+                            '<{}{} (by {})>'.format(
+                                data['moderation_action'],
+                                ' '
+                                + (
+                                    ' '.join(data['args']).strip()
+                                    if data.get('args')
+                                    else ''
+                                )
+                                + ' '
+                                + data['moderator_message']
+                                if data.get('moderator_message')
+                                else '',
+                                get_created_by(),
+                            ),
+                        ),
+                    )
+                )
 
                 if data['moderation_action'] in ['ban', 'timeout', 'delete']:
                     field = data['moderation_action'] + 's'
                     if field == 'timeouts' and data['args'][1] == '1':
                         field = 'purges'
-                    r = await self.db.execute('''
+
+                    r = await self.db.execute(
+                        """
                         UPDATE twitch_user_chat_stats SET {0}={0}+1 WHERE channel_id=%s AND user_id=%s
-                    '''.format(field), (c[2], data['target_user_id'],))
+                    """.format(field),
+                        (
+                            c[2],
+                            data['target_user_id'],
+                        ),
+                    )
                     if not r.rowcount:
-                        self.loop.create_task(self.db.execute('''
+                        self.loop.create_task(
+                            self.db.execute(
+                                """
                             INSERT INTO twitch_user_chat_stats (channel_id, user_id, {0}) 
                             VALUES (%s, %s, 1) ON DUPLICATE KEY UPDATE {0}={0}+1
-                        '''.format(field), (c[2], data['target_user_id'],)))
+                        """.format(field),
+                                (
+                                    c[2],
+                                    data['target_user_id'],
+                                ),
+                            )
+                        )
+                if data['moderation_action'] in ['ban', 'timeout', 'delete', 'unban']:
+                    try:
+                        actions = {
+                            'ban': 'banned',
+                            'timeout': 'timed out',
+                            'delete': 'deleted',
+                            'unban': 'removed ban on',
+                        }
+                        message = f'{get_created_by()} {actions.get(data["moderation_action"])} {get_target_user()}'
+
+                        await self.redis.publish_json(
+                            f'tbot:live_chat:{c[2]}',
+                            {
+                                'type': 'mod_action',
+                                'subtype': data['moderation_action'],
+                                'provider': 'twitch',
+                                'message': message,
+                                'created_at': datetime.now(tz=timezone.utc).isoformat(),
+                                'id': str(uuid4()),
+                            },
+                        )
+                    except Exception as e:
+                        logger.exception(e)
 
         except Exception as e:
             logger.exception(e)
@@ -114,7 +182,8 @@ class Pubsub():
                 user_id = data['recipient_id']
                 user = data['recipient_user_name']
 
-            await self.db.execute('''
+            await self.db.execute(
+                """
                 INSERT INTO twitch_sub_log (
                     channel_id, 
                     created_at, 
@@ -128,18 +197,20 @@ class Pubsub():
                     total
                 ) VALUES
                     (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ''', (
-                data['channel_id'],
-                datetime.now(tz=timezone.utc),
-                user_id,
-                user,
-                data['sub_message'].get('message'),
-                data['sub_plan'].lower(),
-                gifter_id,
-                gifter_user,
-                data['is_gift'],
-                data.get('cumulative_months'),
-            ))
+            """,
+                (
+                    data['channel_id'],
+                    datetime.now(tz=timezone.utc),
+                    user_id,
+                    user,
+                    data['sub_message'].get('message'),
+                    data['sub_plan'].lower(),
+                    gifter_id,
+                    gifter_user,
+                    data['is_gift'],
+                    data.get('cumulative_months'),
+                ),
+            )
 
             message = data['sub_message'].get('message')
             tiers = {
@@ -156,22 +227,25 @@ class Pubsub():
             else:
                 message = f'{gifter_user} gifted a {tiers.get(data["sub_plan"].lower(), "unknown")} to {user}'
 
-            await self.db.execute('''
+            await self.db.execute(
+                """
                 INSERT INTO twitch_chatlog (type, created_at, channel_id, user, user_id, message) VALUES
                     (%s, %s, %s, %s, %s, %s)
-            ''', (
-                2,
-                datetime.now(tz=timezone.utc),
-                data['channel_id'],
-                gifter_user or user,
-                gifter_id or user_id,
-                message,
-            ))
+            """,
+                (
+                    2,
+                    datetime.now(tz=timezone.utc),
+                    data['channel_id'],
+                    gifter_user or user,
+                    gifter_id or user_id,
+                    message,
+                ),
+            )
         except Exception as e:
             logger.exception(e)
 
     async def run(self):
-        self.ahttp = aiohttp.ClientSession()        
+        self.ahttp = aiohttp.ClientSession()
         self.redis_sub = await self.redis.subscribe('tbot:server:commands')
         asyncio.create_task(self.receive_server_commands())
 
@@ -185,19 +259,23 @@ class Pubsub():
                 user = await utils.twitch_current_user(self.ahttp)
                 logger.info('Connected to PubSub as {}'.format(user['login']))
                 self.current_user_id = user['id']
-                channels = await self.get_channels() 
+                channels = await self.get_channels()
                 for c in channels:
                     topics = self.get_topics(c['channel_id'], c['twitch_scopes'])
                     if not topics:
                         continue
-                    await self.ws.send(json.dumps({
-                        'type': 'LISTEN',
-                        'nonce': c['channel_id'],
-                        'data': {
-                            'topics': topics,
-                            'auth_token': c['twitch_token'],
-                        }
-                    }))
+                    await self.ws.send(
+                        json.dumps(
+                            {
+                                'type': 'LISTEN',
+                                'nonce': c['channel_id'],
+                                'data': {
+                                    'topics': topics,
+                                    'auth_token': c['twitch_token'],
+                                },
+                            }
+                        )
+                    )
 
                 while True:
                     try:
@@ -228,22 +306,26 @@ class Pubsub():
         await self.ws.close()
 
     async def get_channels(self):
-        rows = await self.db.fetchall('''
+        rows = await self.db.fetchall("""
         SELECT 
             channel_id, name, twitch_scope, twitch_token
         FROM
             twitch_channels
         WHERE
             active="Y";
-        ''')
+        """)
         l = []
         for r in rows:
-            l.append({
-                'channel_id': r['channel_id'],
-                'name': r['name'].lower(),
-                'twitch_scopes': utils.json_loads(r['twitch_scope']) if r['twitch_scope'] else [],
-                'twitch_token': r['twitch_token'],
-            })
+            l.append(
+                {
+                    'channel_id': r['channel_id'],
+                    'name': r['name'].lower(),
+                    'twitch_scopes': utils.json_loads(r['twitch_scope'])
+                    if r['twitch_scope']
+                    else [],
+                    'twitch_token': r['twitch_token'],
+                }
+            )
         return l
 
     def get_topics(self, channel_id: str, scopes: list[str]):
@@ -253,11 +335,10 @@ class Pubsub():
         if 'channel:read:subscriptions' in scopes:
             topics.append(f'channel-subscribe-events-v1.{channel_id}')
         return topics
-        
 
     async def receive_server_commands(self):
         sub = self.redis_sub[0]
-        while (await sub.wait_message()):
+        while await sub.wait_message():
             try:
                 msg = await sub.get_json()
                 logger.debug('Received server command: {}'.format(msg))
@@ -267,22 +348,33 @@ class Pubsub():
                 if cmd not in ['join', 'part']:
                     return
                 topics = []
-                channel = await self.db.fetchone('select twitch_scope, twitch_token from twitch_channels where channel_id=%s', (msg[0],))
+                channel = await self.db.fetchone(
+                    'select twitch_scope, twitch_token from twitch_channels where channel_id=%s',
+                    (msg[0],),
+                )
                 if not channel:
                     return
-                scopes = json.loads(channel['twitch_scope']) if channel['twitch_scope'] else []
+                scopes = (
+                    json.loads(channel['twitch_scope'])
+                    if channel['twitch_scope']
+                    else []
+                )
                 topics = self.get_topics(msg[0], scopes)
                 type_ = ''
                 if cmd == 'join':
                     type_ = 'LISTEN'
                 elif cmd == 'part':
                     type_ = 'UNLISTEN'
-                await self.ws.send(json.dumps({
-                    'type': type_,
-                    'data': {
-                        'topics': topics,
-                        'auth_token': channel['twitch_token'],
-                    }
-                }))
+                await self.ws.send(
+                    json.dumps(
+                        {
+                            'type': type_,
+                            'data': {
+                                'topics': topics,
+                                'auth_token': channel['twitch_token'],
+                            },
+                        }
+                    )
+                )
             except:
                 logger.exception('receive_server_commands')

@@ -1,6 +1,7 @@
 import asyncio
 from datetime import datetime, timezone
 from typing import Optional
+from uuid import uuid4
 
 import httpx
 from dateutil.parser import parse as parse_dt
@@ -125,6 +126,7 @@ async def parse_chatmessages(channel_id: str, live_chat_id: str, chat: dict):
                 'message': m['snippet']['displayMessage'],
                 'created_at': m['snippet']['publishedAt'],
                 'user_color': '',
+                'id': str(uuid4()),
             },
         )
 

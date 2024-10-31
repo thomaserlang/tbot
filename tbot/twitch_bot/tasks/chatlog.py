@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from uuid import uuid4
 
 from tbot import logger, utils
 from tbot.twitch_bot.bot_base import bot
@@ -20,6 +21,7 @@ async def message(nick, target, message, **kwargs):
             kwargs['display-name'],
             kwargs['color'],
             kwargs['emotes'],
+            kwargs['badges']
         )
     )
 
@@ -44,6 +46,7 @@ async def save(
     display_name,
     user_color,
     emotes,
+    badges,
 ):
     try:
         now = datetime.utcnow()
@@ -129,6 +132,8 @@ async def save(
                     'created_at': datetime.now(tz=timezone.utc).isoformat(),
                     'user_color': user_color,
                     'emotes': emotes,
+                    'badges': badges,
+                    'id': str(uuid4()),
                 },
             )
     except Exception:
