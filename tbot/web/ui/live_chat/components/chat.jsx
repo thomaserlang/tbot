@@ -39,6 +39,8 @@ export function Chat({ channelId }) {
             },
           })
         ).toHTML(1, true, false);
+      } else {
+        msg.message = parseEmoteMessage(msg.message);
       }
       setMessageHistory((prevMessages) => {
         const updatedMessages = [...prevMessages, msg];
