@@ -34,7 +34,7 @@ export function RenderMessage({ msg }) {
 }
 
 function fixColor(color) {
-  switch (color) {
+  switch (color.toUpperCase()) {
     case "#0000FF":
       return "#8b58FF";
     case "#8A2BE2":
@@ -45,6 +45,10 @@ function fixColor(color) {
       return "#877587";
     case "#893939":
       return "#B7625F";
+    case "#4D4C4D":
+      return "#7D7E7F";
+    case "#191D59":
+      return "#837AC3";
     default:
       return color;
   }
