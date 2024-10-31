@@ -118,6 +118,7 @@ async def parse_chatmessages(channel_id: str, live_chat_id: str, chat: dict):
         await bot.redis.publish_json(
             f'tbot:live_chat:{channel_id}',
             {
+                'type': 'message',
                 'provider': 'youtube',
                 'user_id': m['snippet']['authorChannelId'],
                 'user': m['authorDetails']['displayName'],

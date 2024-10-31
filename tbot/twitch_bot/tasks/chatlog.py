@@ -121,6 +121,7 @@ async def save(
             await bot.redis.publish_json(
                 f'tbot:live_chat:{channel_id}',
                 {
+                    'type': 'message',
                     'provider': 'twitch',
                     'user_id': user_id,
                     'user': display_name,
