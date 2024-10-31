@@ -80,6 +80,7 @@ class Sidebar extends React.Component {
 
                     <div className="title">LINKS</div>
                     <NavLink to={`/twitch/logviewer/${managedUser.name}`}>Logviewer</NavLink> 
+                    <NavLink to={`/live-chat/${managedUser.id}`}>Live chat</NavLink> 
 
                 </div>
                 {this.state.showSelectChannel?
