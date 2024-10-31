@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { parseBadges, parseEmotes } from "emotettv";
+import { parseEmotes } from "emotettv";
 import useWebSocket from "react-use-websocket";
 import { RenderMessage } from "./render_message";
 import { RenderModAction } from "./render_mod_action";
 import { RenderNotice } from "./render_notice";
 import { parseTwitchEmotes, parseTwitchBadges } from "../parse_tags";
+import { useParseEmotes } from "./parse_emotes";
 
 import "./chat.scss";
 
@@ -14,6 +15,7 @@ export function Chat({ channelId }) {
   });
   const [messageHistory, setMessageHistory] = useState([]);
   const messagesEndRef = useRef(null);
+  const { parseEmoteMessage } = useParseEmotes({ channelId });
 
   useEffect(() => {
     if (lastJsonMessage === null) return;
@@ -23,10 +25,20 @@ export function Chat({ channelId }) {
       if (msg.provider === "twitch") {
         parseTwitchEmotes(msg);
         parseTwitchBadges(msg);
-        msg.badgesHTML = (await parseBadges(msg.badges, msg.user)).toHTML();
+
+        // emotettv.parseEmotes keeps fetching all emotes on each message
+        // only use it for twitch emotes since they are parsed directly.
         msg.message = (
-          await parseEmotes(msg.message, msg.emotes, { channelId: channelId })
-        ).toHTML();
+          await parseEmotes(parseEmoteMessage(msg.message), msg.emotes, {
+            channelId: channelId,
+            providers: {
+              ffz: false,
+              bttv: false,
+              seventv: false,
+              twitch: true,
+            },
+          })
+        ).toHTML(1, true, false);
       }
       setMessageHistory((prevMessages) => {
         const updatedMessages = [...prevMessages, msg];
