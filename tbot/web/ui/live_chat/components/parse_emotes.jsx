@@ -44,7 +44,6 @@ export function useParseEmotes({ channelId }) {
             new TwitchEmote(fetcher.channels.get(channelId), emote.id, emote)
           );
         }
-        console.log(emotes.map((emote) => emote.toObject()));
         fetcher.fromObject(emotes.map((emote) => emote.toObject()));
         setLoading(false);
       })
