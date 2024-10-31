@@ -23,7 +23,7 @@ async def usernotice(**kwargs):
     alert = None
 
     try:
-        await self.redis.publish_json(
+        await bot.redis.publish_json(
             f'tbot:live_chat:{kwargs["room-id"]}',
             {
                 'type': 'notice',
