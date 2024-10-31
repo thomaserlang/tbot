@@ -32,12 +32,22 @@ export function Chat({ channelId }) {
       <div className="messages">
         {messageHistory.map((msg, index) => (
           <div key={index} className="message">
+            <div className="time">
+              {new Date(msg.created_at).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })}
+            </div>
             {providerShort(msg.provider)}
-            <span className="username" style={{ color: msg.user_color }}>
-              {msg.user}
-            </span>
-            :{" "}
-            <span
+            <div>
+              <span className="username" style={{ color: msg.user_color }}>
+                {msg.user}
+              </span>
+              :
+            </div>
+
+            <div
               className="text"
               dangerouslySetInnerHTML={{
                 __html: sanitizeHtml(parseEmoteMessage(msg.message), {
@@ -47,7 +57,7 @@ export function Chat({ channelId }) {
                   },
                 }),
               }}
-            ></span>
+            ></div>
           </div>
         ))}
         <div ref={messagesEndRef} />
@@ -59,8 +69,16 @@ export function Chat({ channelId }) {
 function providerShort(provider) {
   switch (provider) {
     case "twitch":
-      return <span className="provider twitch">T</span>;
+      return (
+        <span className="provider twitch" title="Twitch">
+          T
+        </span>
+      );
     case "youtube":
-      return <span className="provider youtube">Y</span>;
+      return (
+        <span className="provider youtube" title="YouTube">
+          Y
+        </span>
+      );
   }
 }
