@@ -95,12 +95,12 @@ def App():
         cookie_secret=config.data.web.cookie_secret,
         template_path=os.path.join(os.path.dirname(__file__), 'templates'),
         autoescape=None,
+        websocket_ping_interval=15,
     )
 
 async def main():
     app = App()
     server = app.listen(config.data.web.port)
-
     app.db = await db.Db().connect()
     app.redis = await aioredis.create_redis_pool(
         f'redis://{config.data.redis.host}:{config.data.redis.port}',
