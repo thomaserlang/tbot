@@ -35,14 +35,16 @@ export function RenderMessage({ msg }) {
 
 function fixColor(color) {
   switch (color) {
-    case "#0000ff":
-      return "#8b58ff";
+    case "#0000FF":
+      return "#8b58FF";
     case "#8A2BE2":
-      return "#8b58ff";
+      return "#8B58FF";
     case "#000000":
       return "#7A7A7A";
     case "#3A2B2B":
       return "#877587";
+    case "#893939":
+      return "#B7625F";
     default:
       return color;
   }
