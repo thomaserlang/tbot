@@ -1,7 +1,7 @@
 export function RenderNotice({ msg }) {
   return (
     <div className="notice">
-      <div className="text">{msg.message}</div>
+      <span className="text">{msg.message}</span>
     </div>
   );
 }

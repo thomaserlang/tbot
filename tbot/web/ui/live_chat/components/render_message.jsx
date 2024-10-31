@@ -6,36 +6,19 @@ import "./chat.scss";
 export function RenderMessage({ msg }) {
   return (
     <div className="message">
-      <div className="time">
+      <span className="time">
         {new Date(msg.created_at).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
           hour12: false,
         })}
-      </div>
-
+      </span>
       {providerShort(msg.provider)}
-
-      <div
-        className="badges"
-        dangerouslySetInnerHTML={{
-          __html: sanitizeHtml(msg.badgesHTML, {
-            allowedTags: ["img"],
-            allowedAttributes: {
-              img: ["src", "title", "class"],
-            },
-          }),
-        }}
-      ></div>
-
-      <div>
-        <span className="username" style={{ color: msg.user_color }}>
-          {msg.user}
-        </span>
-        :
-      </div>
-
-      <div
+      <span className="username" style={{ color: msg.user_color }}>
+        {msg.user}
+      </span>
+      :
+      <span
         className="text"
         dangerouslySetInnerHTML={{
           __html: sanitizeHtml(msg.message, {
@@ -45,7 +28,7 @@ export function RenderMessage({ msg }) {
             },
           }),
         }}
-      ></div>
+      ></span>
     </div>
   );
 }

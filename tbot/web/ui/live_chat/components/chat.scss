@@ -18,26 +18,27 @@
 
 .message {
     padding: 2px 0;
-    display: flex;
     gap: 0.5rem;
-    align-items: center;
+    vertical-align: baseline;
 }
 
 .username {
     font-weight: 700;
     color: #ffa600; 
+    display: inline;
 }
 
 .text {
     color: #ffffff;
     word-wrap: break-word;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
+    display: inline;
+    vertical-align: baseline;
+    margin-left: 0.25rem;
 }
 
 .provider {
     font-weight: bold;
+    margin-right: 0.5rem;
 }
 
 .twitch {
@@ -50,6 +51,7 @@
 
 .time {
     color: #8c8c8c;
+    margin-right: 0.5rem;
 }
 
 .notice {
@@ -60,12 +62,6 @@
 }
 
 .emotettv-img {
-    width: 2rem;
-    height: 2rem;
-}
-
-.emotettv-badge {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-top: -0.2rem;
+    max-width: 2rem;
+    max-height: 2rem;
 }
