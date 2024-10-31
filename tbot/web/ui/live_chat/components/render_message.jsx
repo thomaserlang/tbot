@@ -14,7 +14,7 @@ export function RenderMessage({ msg }) {
         })}
       </span>
       {providerShort(msg.provider)}
-      <span className="username" style={{ color: msg.user_color }}>
+      <span className="username" style={{ color: fixColor(msg.user_color) }}>
         {msg.user}
       </span>
       :
@@ -31,4 +31,17 @@ export function RenderMessage({ msg }) {
       ></span>
     </div>
   );
+}
+
+function fixColor(color) {
+  switch (color) {
+    case "#0000ff":
+      return "#8b58ff";
+    case "#8A2BE2":
+      return "#8b58ff";
+    case "#000000":
+      return "#7A7A7A";
+    default:
+      return color;
+  }
 }
