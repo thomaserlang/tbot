@@ -12,6 +12,28 @@ import "./chat.scss";
 export function Chat({ channelId }) {
   const { lastJsonMessage } = useWebSocket(`/api/live-chat/${channelId}`, {
     shouldReconnect: () => true,
+    onOpen: () => {
+      setMessageHistory([
+        ...messageHistory,
+        {
+          id: Math.random().toString(),
+          type: "mod_action",
+          message: "Connected to chat",
+          created_at: new Date().toISOString(),
+        },
+      ]);
+    },
+    onClose: () => {
+      setMessageHistory([
+        ...messageHistory,
+        {
+          id: Math.random().toString(),
+          type: "mod_action",
+          message: "Disconnected from chat",
+          created_at: new Date().toISOString(),
+        },
+      ]);
+    },
   });
   const [messageHistory, setMessageHistory] = useState([]);
   const messagesEndRef = useRef(null);
