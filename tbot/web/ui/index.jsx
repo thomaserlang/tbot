@@ -13,29 +13,35 @@ import TwitchPublic from "tbot/twitch/public";
 
 import "./index.scss";
 
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
+
 ReactDOM.render(
-  <BrowserRouter>
-    <Switch>
-      <Route exact path="/" component={Front} />
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/" component={Front} />
 
-      <Route exact path="/live-chat/:channelId" component={LiveChat} />
+        <Route exact path="/live-chat/:channelId" component={LiveChat} />
 
-      <Route
-        exact
-        path="/twitch/logviewer"
-        component={TwitchLogViewerSelectChannel}
-      />
-      <Route
-        exact
-        path="/twitch/logviewer/:channel"
-        component={TwitchLogviewer}
-      />
+        <Route
+          exact
+          path="/twitch/logviewer"
+          component={TwitchLogViewerSelectChannel}
+        />
+        <Route
+          exact
+          path="/twitch/logviewer/:channel"
+          component={TwitchLogviewer}
+        />
 
-      <Route path="/t/:channel" component={TwitchPublic} />
+        <Route path="/t/:channel" component={TwitchPublic} />
 
-      <Route path="/twitch/dashboard" component={TwitchDashboard} />
-      <Route path="/twitch/:channel" component={TwitchDashboard} />
-    </Switch>
-  </BrowserRouter>,
+        <Route path="/twitch/dashboard" component={TwitchDashboard} />
+        <Route path="/twitch/:channel" component={TwitchDashboard} />
+      </Switch>
+    </BrowserRouter>
+  </QueryClientProvider>,
   document.getElementById("root")
 );

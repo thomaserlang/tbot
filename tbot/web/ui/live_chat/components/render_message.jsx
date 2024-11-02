@@ -1,9 +1,10 @@
 import React from "react";
 import sanitizeHtml from "sanitize-html";
+import { Badges } from "./badges";
 import { providerShort } from "./provider_short";
 import "./chat.scss";
 
-export function RenderMessage({ msg }) {
+export function RenderMessage({ msg, channelId }) {
   return (
     <div className="message">
       <span className="time">
@@ -13,7 +14,11 @@ export function RenderMessage({ msg }) {
           hour12: false,
         })}
       </span>
+
       {providerShort(msg.provider)}
+
+      <Badges channelId={channelId} badges={msg.badges} />
+
       <span className="username" style={{ color: fixColor(msg.user_color) }}>
         {msg.user}
       </span>

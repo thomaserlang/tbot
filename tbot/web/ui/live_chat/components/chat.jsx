@@ -46,7 +46,6 @@ export function Chat({ channelId }) {
       const msg = { ...lastJsonMessage };
       if (msg.provider === "twitch") {
         parseTwitchEmotes(msg);
-        parseTwitchBadges(msg);
 
         // emotettv.parseEmotes keeps fetching all emotes on each message
         // only use it for twitch emotes since they are parsed directly.
@@ -82,7 +81,7 @@ export function Chat({ channelId }) {
     <div className="chat-container">
       <div className="messages">
         {messageHistory.map((msg) => (
-          <RenderMsg key={msg.id} msg={msg} />
+          <RenderMsg key={msg.id} msg={msg} channelId={channelId} />
         ))}
         <div ref={messagesEndRef} />
       </div>
@@ -90,9 +89,9 @@ export function Chat({ channelId }) {
   );
 }
 
-function RenderMsg({ msg }) {
+function RenderMsg({ msg, channelId }) {
   if (msg.type == "message") {
-    return <RenderMessage msg={msg} />;
+    return <RenderMessage msg={msg} channelId={channelId} />;
   }
   if (msg.type == "mod_action") {
     return <RenderModAction msg={msg} />;

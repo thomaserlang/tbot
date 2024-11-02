@@ -76,6 +76,7 @@ def App():
             (r'/api/twitch/channels/([0-9]+)/commercial', handlers.api.twitch.commercial.Handler),
             (r'/api/twitch/channels/([0-9]+)/self-subs', handlers.api.twitch.self_subs.Handler),
             (r'/api/twitch/channels/([0-9]+)/emotes', handlers.api.twitch.emotes.EmotesHandler),
+            (r'/api/twitch/channels/([0-9]+)/badges', handlers.api.twitch.badges.BadgesHandler),
             (r'/api/live-chat/([0-9]+)', handlers.api.live_chat.LiveChatHandler),
             
             (r'/api/rtmp-auth', handlers.api.rtmp_auth.Handler),

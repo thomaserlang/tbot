@@ -15,8 +15,7 @@
 }
 
 .message {
-    padding: 2px 0;
-    gap: 0.5rem;
+    padding: 0.1rem 0;
     vertical-align: baseline;
 }
 
@@ -27,7 +26,7 @@
 }
 
 .text {
-    color: #ffffff;
+    color: #e0e0e0;
     word-wrap: break-word;
     display: inline;
     vertical-align: baseline;
@@ -60,6 +59,11 @@
 }
 
 .emotettv-img {
-    max-width: 2rem;
-    max-height: 2rem;
+    max-height: 1.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.chat-badge {
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
 }

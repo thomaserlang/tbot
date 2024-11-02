@@ -55,7 +55,7 @@ export function useParseEmotes({ channelId }) {
   }, [loadEmotes]);
 
   const parseEmoteMessage = useCallback((message) => {
-    if (!loading) {
+    if (loading) {
       return message;
     }
     return parser.parse(message);
