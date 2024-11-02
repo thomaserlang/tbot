@@ -44,6 +44,7 @@ export function Chat({ channelId }) {
 
     const parse = async () => {
       const msg = { ...lastJsonMessage };
+      console.log(msg);
       if (msg.provider === "twitch") {
         parseTwitchEmotes(msg);
 
