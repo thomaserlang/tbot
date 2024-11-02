@@ -213,6 +213,18 @@ class Pubsub:
             )
 
             message = data['sub_message'].get('message')
+            if message:
+                await self.redis.publish_json(
+                    f'tbot:live_chat:{data["channel_id"]}',
+                    {
+                        'type': 'notice',
+                        'subtype': 'sub-message',
+                        'provider': 'twitch',
+                        'message': f'{user} sub message: {message}',
+                        'created_at': datetime.now(tz=timezone.utc).isoformat(),
+                        'id': str(uuid4()),
+                    },
+                )
             tiers = {
                 '1000': 'Tier 1 Sub',
                 '2000': 'Tier 2 Sub',
