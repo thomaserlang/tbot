@@ -69,7 +69,6 @@ async def check_youtube_chat(channel_id: str):
     while True:
         try:
             live_chat_id = await get_live_chat_id(channel_id)
-
             if not live_chat_id:
                 await asyncio.sleep(60)
                 continue
@@ -81,7 +80,7 @@ async def check_youtube_chat(channel_id: str):
                 await asyncio.sleep(60)
                 continue
 
-            _ = asyncio.create_task(parse_chatmessages(channel_id, live_chat_id, chat))
+            _ = asyncio.create_task(parse_snippit(channel_id, live_chat_id, chat))
 
             await asyncio.sleep(chat['pollingIntervalMillis'] / 1000)
         except httpx.HTTPStatusError as e:
@@ -107,70 +106,128 @@ async def check_youtube_chat(channel_id: str):
             await asyncio.sleep(60)
 
 
-async def parse_chatmessages(channel_id: str, live_chat_id: str, chat: dict):
+async def parse_snippit(channel_id: str, live_chat_id: str, chat: dict):
     for m in chat.get('items', []):
-        if m['snippet']['type'] != 'textMessageEvent':
-            continue
         if (
             datetime.now(tz=timezone.utc) - parse_dt(m['snippet']['publishedAt'])
         ).total_seconds() > 30:
             continue
+        type: str = m['snippet']['type']
+        if type == 'textMessageEvent':
+            await parse_chatmessages(channel_id, live_chat_id, m)
+        elif type in (
+            'messageDeletedEvent',
+            'userBannedEvent',
+        ):
+            await parse_mod_action(channel_id, live_chat_id, m)
+        elif type in (
+            'newSponsorEvent',
+            'memberMilestoneChatEvent',
+            'superChatEvent',
+            'superStickerEvent',
+            'membershipGiftingEvent',
+            'giftMembershipReceivedEvent',
+        ):
+            await bot.redis.publish_json(
+                f'tbot:live_chat:{channel_id}',
+                {
+                    'type': 'notice',
+                    'provider': 'youtube',
+                    'subtype': type,
+                    'message': m['snippet'].get('displayMessage', ''),
+                    'created_at': m['snippet']['publishedAt'],
+                    'user_color': '',
+                    'id': str(uuid4()),
+                    'data': m['id'],
+                },
+            )
 
-        await bot.redis.publish_json(
-            f'tbot:live_chat:{channel_id}',
-            {
-                'type': 'message',
-                'provider': 'youtube',
-                'user_id': m['snippet']['authorChannelId'],
-                'user': m['authorDetails']['displayName'],
-                'message': m['snippet']['displayMessage'],
-                'created_at': m['snippet']['publishedAt'],
-                'user_color': '',
-                'id': str(uuid4()),
-            },
+
+async def parse_chatmessages(channel_id: str, live_chat_id: str, data: dict):
+    await bot.redis.publish_json(
+        f'tbot:live_chat:{channel_id}',
+        {
+            'type': 'message',
+            'provider': 'youtube',
+            'user_id': data['snippet']['authorChannelId'],
+            'user': data['authorDetails']['displayName'],
+            'message': data['snippet']['displayMessage'],
+            'created_at': data['snippet']['publishedAt'],
+            'user_color': '',
+            'id': str(uuid4()),
+        },
+    )
+
+    message = data['snippet']['displayMessage']
+    author = data['snippet']['authorChannelId']
+    author_name = data['authorDetails']['displayName']
+    logger.debug(f'     RECEIVIED: {author_name} - {message}')
+    if not message.startswith('!'):
+        return
+    if author_name == bot.user['login']:
+        return
+    args = message.split(' ')
+    cmd = args.pop(0).lower().strip('!')
+
+    badges = ''
+    if data['authorDetails']['isChatModerator']:
+        badges += 'moderator,'
+    if data['authorDetails']['isChatOwner']:
+        badges += 'broadcaster,'
+
+    send_msg = await db_command(
+        cmd=cmd,
+        data={
+            'bot': bot,
+            'args': args,
+            'user': author_name,
+            'display_name': author_name,
+            'user_id': author,
+            'channel': bot.channels[channel_id]['name'],
+            'channel_id': channel_id,
+            'badges': badges,
+            'emotes': '',
+            'cmd': cmd,
+        },
+    )
+    if send_msg:
+        logger.debug(
+            f'      Matched command: {cmd} - Sending to YouTube chat: {send_msg} ({live_chat_id})'
+        )
+        await send_youtube_chat(
+            config.data.youtube.twitch_bot_channel_id or channel_id,
+            live_chat_id,
+            send_msg,
         )
 
-        message = m['snippet']['displayMessage']
-        author = m['snippet']['authorChannelId']
-        author_name = m['authorDetails']['displayName']
-        logger.debug(f'     RECEIVIED: {author_name} - {message}')
-        if not message.startswith('!'):
-            continue
-        if author_name == bot.user['login']:
-            continue
-        args = message.split(' ')
-        cmd = args.pop(0).lower().strip('!')
 
-        badges = ''
-        if m['authorDetails']['isChatModerator']:
-            badges += 'moderator,'
-        if m['authorDetails']['isChatOwner']:
-            badges += 'broadcaster,'
+async def parse_mod_action(channel_id: str, live_chat_id: str, data: dict):
+    message = ''
+    mod_user = data['authorDetails']['displayName']
+    if data['snippet']['type'] == 'messageDeletedEvent':
+        user = data['snippet']['messageDeletedDetails']['displayName']
+        message = f'{mod_user} deleted {user}'
+    elif data['snippet']['type'] == 'userBannedEvent':
+        user = data['snippet']['userBannedDetails']['bannedUserDetails']['displayName']
+        if data['snippet']['userBannedDetails']['banType'] == 'permanent':
+            message = f'{mod_user} banned {user}'
+        else:
+            duration = data['snippet']['userBannedDetails']['banDurationSeconds']
+            message = f'{mod_user} timed out {user} for {duration} seconds'
 
-        send_msg = await db_command(
-            cmd=cmd,
-            data={
-                'bot': bot,
-                'args': args,
-                'user': author_name,
-                'display_name': author_name,
-                'user_id': author,
-                'channel': bot.channels[channel_id]['name'],
-                'channel_id': channel_id,
-                'badges': badges,
-                'emotes': '',
-                'cmd': cmd,
-            },
-        )
-        if send_msg:
-            logger.debug(
-                f'      Matched command: {cmd} - Sending to YouTube chat: {send_msg} ({live_chat_id})'
-            )
-            await send_youtube_chat(
-                config.data.youtube.twitch_bot_channel_id or channel_id,
-                live_chat_id,
-                send_msg,
-            )
+    await bot.redis.publish_json(
+        f'tbot:live_chat:{channel_id}',
+        {
+            'type': 'mod_action',
+            'provider': 'youtube',
+            'subtype': data['snippet']['type'],
+            'message': message,
+            'created_at': data['snippet']['publishedAt'],
+            'user_color': '',
+            'id': data['id'],
+            'data': data,
+        },
+    )
 
 
 async def send_youtube_chat(sender_channel_id: str, live_chat_id: str, message: str):
