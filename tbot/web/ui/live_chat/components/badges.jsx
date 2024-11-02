@@ -40,13 +40,15 @@ export function Badges({ channelId, badges }) {
 }
 
 function findBadge(badges, set_id, id) {
+  let b = null;
   for (const badge of badges) {
     if (badge.set_id === set_id) {
       for (const version of badge.versions) {
         if (version.id === id) {
-          return version;
+          b = version;
         }
       }
     }
   }
+  return b
 }
