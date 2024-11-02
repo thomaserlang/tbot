@@ -15,7 +15,7 @@
 }
 
 .message {
-    padding: 0.1rem 0;
+    padding: 0.30rem 0;
     vertical-align: baseline;
 }
 
@@ -59,8 +59,17 @@
 }
 
 .emotettv-img {
+    align-items: center;
+    cursor: pointer;
+    display: inline-flex;
+    font-style: normal;
     max-height: 1.8rem;
-    margin-bottom: 0.25rem;
+    justify-content: center;
+    margin: -.5rem 0;
+    outline: none;
+    pointer-events: all;
+    position: relative;
+    vertical-align: middle;
 }
 
 .chat-badge {
