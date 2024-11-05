@@ -4,7 +4,7 @@ import useWebSocket from "react-use-websocket";
 import { RenderMessage } from "./render_message";
 import { RenderModAction } from "./render_mod_action";
 import { RenderNotice } from "./render_notice";
-import { parseTwitchEmotes, parseTwitchBadges } from "../parse_tags";
+import { parseTwitchEmotes } from "../parse_tags";
 import { useParseEmotes } from "./parse_emotes";
 
 import "./chat.scss";
