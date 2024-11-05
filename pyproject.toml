@@ -1,7 +1,7 @@
 [project]
-name = "klips"
-version = "2.0"
-description = "Patient management system"
+name = "tbot"
+version = "1.0"
+description = "Twitch, Discord and YouTube bot"
 dependencies = [
     "bottom==2.2.0",
     "pyyaml>=6.0",
