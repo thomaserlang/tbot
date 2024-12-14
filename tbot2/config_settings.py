@@ -1,36 +1,36 @@
 import os
 import sys
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel
-from yaml_settings_pydantic import YamlSettingsConfigDict
+from yaml_settings_pydantic import BaseYamlSettings, YamlSettingsConfigDict
 
 
 class ConfigWebModel(BaseModel):
-    port = 8001
-    cookie_secret: str | None = None
-    name = 'TBot'
-    base_url = 'https://botashell.com'
+    port: int = 8001
+    cookie_secret: str = ''
+    name: str = 'TBot'
+    base_url: str = 'https://botashell.com'
 
 
 class ConfigTwitchModel(BaseModel):
-    username: str | None = None
-    chat_token: str | None = None
-    client_id: str | None = None
-    client_secret: str | None = None
-    eventsub_host = 'https://api.twitch.tv'
-    eventsub_secret: str | None = None
-    irc_host = 'irc.chat.twitch.tv'
-    irc_port = 6697
-    irc_use_ssl = True
-    irc_rate_limit = 80  # messages, every 30 second
-    check_channels_every = 60  # seconds
-    check_timers_every = 30  # seconds
-    delay_offline = 0  # seconds
+    username: str = ''
+    chat_token: str = ''
+    client_id: str = ''
+    client_secret: str = ''
+    eventsub_host: str = 'https://api.twitch.tv'
+    eventsub_secret: str = ''
+    irc_host: str = 'irc.chat.twitch.tv'
+    irc_port: int = 6697
+    irc_use_ssl: bool = True
+    irc_rate_limit: int = 80  # messages, every 30 second
+    check_channels_every: int = 60  # seconds
+    check_timers_every: int = 30  # seconds
+    delay_offline: int = 0  # seconds
     # Only reset streams in a row if the stream was longer than `stream_min_length`.
-    stream_min_length = 1800  # seconds
-    pubsub_url = 'wss://pubsub-edge.twitch.tv'
-    request_scope = [
+    stream_min_length: int = 1800  # seconds
+    pubsub_url: str = 'wss://pubsub-edge.twitch.tv'
+    request_scope: list[str] = [
         'channel_editor',
         'bits:read',
         'clips:edit',
@@ -58,58 +58,54 @@ class ConfigTwitchModel(BaseModel):
         'chat:edit',
         'chat:read',
         'moderator:read:followers',
+        'user:bot',
     ]
 
 
-class ConfigDiscordCustomNotificaitonsModel(BaseModel):
-    action: str
-    if_channel_ids: Optional[list[int]]
-    if_member_ids: Optional[list[int]]
-    apprise_dsn: str
-    message: str
-
-
 class ConfigYoutubeModel(BaseModel):
-    client_id: str | None = None
-    client_secret: str | None = None
-    twitch_bot_channel_id: str | None = None
+    client_id: str = ''
+    client_secret: str = ''
+    twitch_bot_channel_id: str = ''
 
 
 class ConfigDiscordModel(BaseModel):
-    client_id: str | None = None
-    client_secret: str | None = None
-    permissions = 470019158
+    client_id: str = ''
+    client_secret: str = ''
+    permissions: int = 470019158
     token: str | None = None
     user_token: str | None = None
-    twitch_sync_every = 3600  # seconds
-    custom_notifications: list[ConfigDiscordCustomNotificaitonsModel] = []
+    twitch_sync_every: int = 3600  # seconds
 
 
 class ConfigSpotifyConfig(BaseModel):
-    client_id: str | None = None
-    client_secret: str | None = None
+    client_id: str = ''
+    client_secret: str = ''
 
 
 class ConfigLoggingModel(BaseModel):
     level: Literal['notset', 'debug', 'info', 'warn', 'error', 'critical'] = 'warn'
     path: str | None = None
     max_size: int = 100 * 1000 * 1000  # ~ 95 mb
-    num_backups = 10
+    num_backups: int = 10
 
 
 class ConfigMySQLModel(BaseModel):
-    host = '127.0.0.1'
-    port = 3306
-    user = 'root'
+    drivername: str = 'mariadb+asyncmy'
+    host: str = '127.0.0.1'
+    port: int = 3306
+    user: str = 'root'
     password: str | None = None
-    database = 'tbot'
+    database: str = 'tbot'
 
 
 class ConfigRedisModel(BaseModel):
-    host = '127.0.0.1'
-    port = 6379
-    pool_min_size = 5
-    pool_max_size = 20
+    host: str = '127.0.0.1'
+    port: int = 6379
+    pool_min_size: int = 5
+    pool_max_size: int = 20
+    password: str | None = None
+    db: int = 0
+    queue_name: str = 'tbot'
 
 
 def get_config_path():
@@ -141,10 +137,10 @@ def get_config_path():
         logging.info(f'Using config: {path}')
     else:
         raise Exception('No config file specified')
-    return set((path,))
+    return path
 
 
-class ConfigSettings(BaseModel):
+class ConfigSettings(BaseYamlSettings):
     model_config = YamlSettingsConfigDict(
         env_prefix='tbot__',
         env_nested_delimiter='__',
@@ -155,7 +151,7 @@ class ConfigSettings(BaseModel):
         yaml_reload=False,
     )
 
-    debug = False
+    debug: bool = False
     sentry_dsn: str | None = None
     web: ConfigWebModel = ConfigWebModel()
     twitch: ConfigTwitchModel = ConfigTwitchModel()

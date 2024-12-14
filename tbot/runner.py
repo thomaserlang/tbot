@@ -1,5 +1,11 @@
-import click, asyncio, os, logging
+import asyncio
+import logging
+import os
+
+import click
+
 from tbot import config, config_load, set_logger
+
 
 @click.group()
 @click.option('--config', default=None, help='path to the config file')
@@ -35,8 +41,7 @@ def discord():
 @cli.command()
 def upgrade():
     set_logger('migration.log')
-    from yoyo import read_migrations
-    from yoyo import get_backend
+    from yoyo import get_backend, read_migrations
 
     backend = get_backend('mysql://{}:{}@{}:{}/{}'.format(
         config.data.mysql.user,

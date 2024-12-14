@@ -1,27 +1,33 @@
 [project]
 name = "tbot"
-version = "1.0"
+version = "2.0"
 description = "Twitch, Discord and YouTube bot"
 dependencies = [
-    "bottom==2.2.0",
-    "pyyaml>=6.0",
+    "twitchAPI==4.3.1",
+    "fastapi==0.115.4",
+    "sqlalchemy==2.0.36",
+    "yaml-settings-pydantic==2.3.2",
+    "pydantic==2.9.2",
+    "redis==5.2.0",
+    "httpx[http2]==0.27.2",
+    "httpx_auth==0.22.0",
     "click==8.0.1",
-    "python-dateutil==2.8.2",
-    "pytz==2021.3",
-    "websockets==10.3",
-    "tornado==6.1",
-    "aiohttp<3.8.0",
-    "aiomysql==0.1.1",
-    "honcho==1.1.0",
-    "aioredis<2.0",
-    "pytest==6.2.5",
-    "good==0.0.8",
-    "yoyo-migrations==7.3.2",
-    "discord2==2.0.1",
-    "sentry-sdk==1.5.12",
-    "pydantic==1.10.9",
-    "apprise==1.4.0",
-    "httpx==0.27.2",
+    "uvicorn==0.32.0",
+    "honcho==2.0.0",
+    "arq==0.26.1",
+    "asyncmy==0.2.9",
+    "alembic==1.14.0",
+    "uuid6==2024.7.10",
+    "humanize==4.11.0",
+    "python-dateutil==2.9.0.post0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest-httpx==0.33.0",
+    "pytest==8.3.3",
+    "pytest-asyncio==0.24.0",
+    "pytest-mock-3.14.0",
 ]
 
 [build-system]

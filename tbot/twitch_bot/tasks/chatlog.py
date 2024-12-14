@@ -21,7 +21,7 @@ async def message(nick, target, message, **kwargs):
             kwargs['display-name'],
             kwargs['color'],
             kwargs['emotes'],
-            kwargs['badges']
+            kwargs['badges'],
         )
     )
 

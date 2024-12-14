@@ -1,0 +1,2 @@
+class VarFillError(Exception):
+    pass
