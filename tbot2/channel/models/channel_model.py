@@ -12,7 +12,7 @@ class MChannel(ModelBase):
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)
     display_name: Mapped[str] = mapped_column(sa.String(200))
-    twitch_id: Mapped[str] = mapped_column(sa.String(36))
+    twitch_id: Mapped[str | None] = mapped_column(sa.String(36))
     created_at: Mapped[datetime]
     bot_active: Mapped[bool]
     bot_muted: Mapped[bool]
