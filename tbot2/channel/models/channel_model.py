@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from uuid import UUID
 
@@ -9,6 +10,7 @@ from tbot2.model_base import ModelBase
 
 class MChannel(ModelBase):
     __tablename__ = 'channels'
+    __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)
     display_name: Mapped[str] = mapped_column(sa.String(200))
