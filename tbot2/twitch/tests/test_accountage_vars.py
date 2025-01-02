@@ -12,7 +12,7 @@ from tbot2.twitch.cmd_var_fillers import accountage_vars
 
 
 @pytest.mark.asyncio
-async def test_accountage_filler(mocker: MockFixture):
+async def test_accountage_vars(mocker: MockFixture):
     twitch_lookup_users = mocker.patch(
         'tbot2.twitch.command_var_fillers.accountage.twitch_lookup_users'
     )

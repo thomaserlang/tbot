@@ -12,7 +12,7 @@ from tbot2.twitch.cmd_var_fillers.followage_vars import followage_vars
 
 
 @pytest.mark.asyncio
-async def test_followage_filler(mocker: MockFixture):
+async def test_followage_vars(mocker: MockFixture):
     twitch_channel_follower = mocker.patch(
         'tbot2.twitch.command_var_fillers.followage.twitch_channel_follower'
     )

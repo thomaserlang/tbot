@@ -4,7 +4,7 @@ from tbot2.common import ChatMessage
 
 
 @fills_vars(provider='all', vars=('gamble_roulette',))
-async def roulette_command(
+async def roulette_vars(
     chat_message: ChatMessage, command: Command, vars: TMessageVars
 ):
     result = await roulette(

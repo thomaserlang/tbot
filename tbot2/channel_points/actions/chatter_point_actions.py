@@ -1,6 +1,7 @@
 from uuid import UUID
 
 import sqlalchemy as sa
+from sqlalchemy.dialects.mysql import insert
 
 from tbot2.common import TProvider
 from tbot2.contexts import AsyncSession, get_session
@@ -74,4 +75,36 @@ async def inc_points(
             provider=provider,
             chatter_id=chatter_id,
             session=session,
+        )
+
+
+async def inc_bulk_points(
+    *,
+    channel_id: UUID,
+    provider: TProvider,
+    chatter_ids: list[str],
+    points: int,
+    session: AsyncSession | None = None,
+):
+    async with get_session(session) as session:
+        await session.execute(
+            insert(MChatterPoints)
+            .values(
+                [
+                    {
+                        'channel_id': channel_id,
+                        'provider': provider,
+                        'chatter_id': chatter_id,
+                        'points': points if points > 0 else 0,
+                    }
+                    for chatter_id in chatter_ids
+                ]
+            )
+            .on_duplicate_key_update(
+                points=sa.func.if_(
+                    MChatterPoints.points + points > 0,
+                    MChatterPoints.points + points,
+                    0,
+                )
+            )
         )

@@ -108,3 +108,25 @@ twitch_user_client = AsyncClient(
 twitch_client = Twitch(
     app_id=config.twitch.client_id, app_secret=config.twitch.client_secret
 )
+
+
+async def get_twitch_pagination(
+    response: Response,
+):
+    data = response.json()
+    all_data: list[dict[str, typing.Any]] = data['data']
+
+    pagination = data.get('pagination')
+    while pagination:
+        response = await twitch_user_client.get(
+            response.url.path.replace('/helix', ''),
+            params={
+                **response.url.params,
+                'after': pagination['cursor'],
+            },
+        )
+        data = response.json()
+        all_data.extend(data['data'])
+        pagination = data.get('pagination')
+
+    return all_data

@@ -4,8 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from tbot2.common import TProvider
-
+from ..types.provider_type import TProvider
 from .twitch_schemas import TwitchBadge, TwitchMessageFragment
 
 
