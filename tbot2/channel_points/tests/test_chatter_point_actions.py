@@ -2,6 +2,7 @@ import pytest
 
 from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_points.actions.chatter_point_actions import get_points, inc_points
+from tbot2.common import TProvider
 from tbot2.testbase import run_file
 
 
@@ -11,21 +12,21 @@ async def test_point_actions(db: None):
 
     await inc_points(
         channel_id=channel.id,
-        provider='twitch',
+        provider=TProvider.twitch,
         chatter_id='123',
         points=10,
     )
 
     points = await get_points(
         channel_id=channel.id,
-        provider='twitch',
+        provider=TProvider.twitch,
         chatter_id='123',
     )
     assert points.points == 10
 
     points = await inc_points(
         channel_id=channel.id,
-        provider='twitch',
+        provider=TProvider.twitch,
         chatter_id='123',
         points=10,
     )
@@ -33,7 +34,7 @@ async def test_point_actions(db: None):
 
     points = await inc_points(
         channel_id=channel.id,
-        provider='twitch',
+        provider=TProvider.twitch,
         chatter_id='123',
         points=-5,
     )
@@ -41,14 +42,14 @@ async def test_point_actions(db: None):
 
     points = await get_points(
         channel_id=channel.id,
-        provider='twitch',
+        provider=TProvider.twitch,
         chatter_id='123',
     )
     assert points.points == 15
 
     points = await inc_points(
         channel_id=channel.id,
-        provider='twitch',
+        provider=TProvider.twitch,
         chatter_id='123',
         points=-1000,
     )

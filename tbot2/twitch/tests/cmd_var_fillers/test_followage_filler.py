@@ -6,13 +6,13 @@ from twitchAPI.twitch import ChannelFollower, TwitchUser
 from uuid6 import uuid7
 
 from tbot2.command import Command, MessageVar
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
-from tbot2.twitch.command_var_fillers import followage
+from tbot2.twitch.cmd_var_fillers.followage_vars import followage_vars
 
 
 @pytest.mark.asyncio
-async def test_followage(mocker: MockFixture):
+async def test_followage_filler(mocker: MockFixture):
     twitch_channel_follower = mocker.patch(
         'tbot2.twitch.command_var_fillers.followage.twitch_channel_follower'
     )
@@ -39,11 +39,11 @@ async def test_followage(mocker: MockFixture):
     )
     mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=timezone.utc)
 
-    await followage(
+    await followage_vars(
         chat_message=ChatMessage(  # type: ignore
             type='message',
             created_at=datetime.now(tz=timezone.utc),
-            provider='twitch',
+            provider=TProvider.twitch,
             provider_id='1234',
             channel_id=uuid7(),
             chatter_id='1234',
@@ -79,11 +79,11 @@ async def test_followage(mocker: MockFixture):
         )
     ]
 
-    await followage.followage(
+    await followage_vars(
         chat_message=ChatMessage(  # type: ignore
             type='message',
             created_at=datetime.now(tz=timezone.utc),
-            provider='twitch',
+            provider=TProvider.twitch,
             provider_id='1234',
             channel_id=uuid7(),
             chatter_id='1234',

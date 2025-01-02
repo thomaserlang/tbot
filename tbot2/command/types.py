@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Awaitable, Callable, Sequence
 
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessage, TProvider
 
 __all__ = [
     'MessageVar',
@@ -28,7 +28,7 @@ class Command:
 
 @dataclass(slots=True)
 class FillVars:
-    provider: str
+    provider: str | TProvider
     vars: Sequence[str]
 
 

@@ -25,7 +25,9 @@ faceit_client = AsyncClient(
         'faceit.next_level',
     ),
 )
-async def faceit_elo(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def faceit_elo_vars(
+    chat_message: ChatMessage, command: Command, vars: TMessageVars
+):
     if not vars['faceit.username'].args:
         raise VarFillError('{faceit.username <username>} is missing')
 
@@ -51,19 +53,19 @@ async def faceit_elo(chat_message: ChatMessage, command: Command, vars: TMessage
     elif response.status_code >= 400:
         raise VarFillError(f'Faceit error: {response.text}')
     data = response.json()
-    if 'csgo' not in data['games']:
-        raise VarFillError('The user does not have CSGO in their Faceit profile')
+    if 'cs2' not in data['games']:
+        raise VarFillError('The user does not have cs2 in their Faceit profile')
 
     next_level_points = 0
     next_level = 'unknown'
     for i, e in enumerate(elos):
-        if e[0] < data['games']['csgo']['faceit_elo']:
+        if e[0] < data['games']['cs2']['faceit_elo']:
             if i + 1 < len(elos):
                 next_level = elos[i + 1][1]
-                next_level_points = elos[i + 1][0] - data['games']['csgo']['faceit_elo']
+                next_level_points = elos[i + 1][0] - data['games']['cs2']['faceit_elo']
 
     vars['faceit.username'].value = ''
-    vars['faceit.elo'].value = data['games']['csgo']['faceit_elo']
-    vars['faceit.level'].value = data['games']['csgo']['skill_level_label']
+    vars['faceit.elo'].value = data['games']['cs2']['faceit_elo']
+    vars['faceit.level'].value = data['games']['cs2']['skill_level_label']
     vars['faceit.next_level_points'].value = next_level_points
     vars['faceit.next_level'].value = next_level

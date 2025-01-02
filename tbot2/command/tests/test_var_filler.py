@@ -5,6 +5,7 @@ from uuid6 import uuid7
 
 from tbot2.command.types import Command, TMessageVars
 from tbot2.command.var_filler import fill_message, fills_vars
+from tbot2.common import TProvider
 from tbot2.common.schemas.chat_message_schema import ChatMessage
 from tbot2.testbase import run_file
 
@@ -30,7 +31,7 @@ async def test_var_filler():
             chatter_id=str(uuid7()),
             chatter_name='test_user',
             chatter_display_name='Test User',
-            provider='twitch',
+            provider=TProvider.twitch,
             provider_id='123',
             msg_id='123',
         ),

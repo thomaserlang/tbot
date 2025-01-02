@@ -11,12 +11,14 @@ from ..var_filler import fills_vars
 
 
 @fills_vars(provider='all', vars=('countdown',))
-async def countdown(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def countdown_vars(
+    chat_message: ChatMessage, command: Command, vars: TMessageVars
+):
     try:
         dt = parse(' '.join(vars['countdown'].args))
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-            
+
         vars['countdown'].value = humanize.precisedelta(datetime_now() - dt)
     except ValueError:
         raise VarFillError(

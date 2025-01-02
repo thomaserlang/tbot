@@ -5,6 +5,7 @@ import pytest
 from uuid6 import uuid7
 
 from tbot2.chatlog.actions.chatlog_action import create_chatlog
+from tbot2.common import TProvider
 from tbot2.common.schemas.chat_message_schema import ChatMessage
 from tbot2.testbase import run_file
 
@@ -21,7 +22,7 @@ async def test_create_chatlog(db: Any):
             chatter_display_name='test',
             message='test',
             msg_id='test',
-            provider='twitch',
+            provider=TProvider.twitch,
             provider_id='123',
         )
     )

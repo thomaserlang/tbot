@@ -1,7 +1,7 @@
 import humanize.time
 
 from tbot2.command import Command, TMessageVars, VarFillError, fills_vars
-from tbot2.common import ChatMessage, datetime_now
+from tbot2.common import ChatMessage, TProvider, datetime_now
 
 from ..actions.twitch_channel_follower_action import twitch_channel_follower
 from ..actions.twitch_lookup_users_action import (
@@ -10,9 +10,12 @@ from ..actions.twitch_lookup_users_action import (
 
 
 @fills_vars(
-    provider='twitch', vars=('followage', 'followage_date', 'followage_datetime')
+    provider=TProvider.twitch,
+    vars=('followage', 'followage_date', 'followage_datetime'),
 )
-async def followage(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def followage_vars(
+    chat_message: ChatMessage, command: Command, vars: TMessageVars
+):
     followed_at = await twitch_followed_at(chat_message=chat_message, command=command)
 
     vars['followage'].value = (

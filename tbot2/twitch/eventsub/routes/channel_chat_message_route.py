@@ -6,6 +6,7 @@ from tbot2.channel.actions.lookup_twitch_id_to_channel_id_action import (
     lookup_twitch_id_to_channel_id,
 )
 from tbot2.chatlog.actions.chatlog_action import create_chatlog
+from tbot2.common import TProvider
 from tbot2.common.schemas.chat_message_schema import ChatMessage
 from tbot2.database import database
 
@@ -51,7 +52,7 @@ async def eventsub_message(
         created_at=headers.message_timestamp,
         message=data.event.message.text,
         msg_id=data.event.message_id,
-        provider='twitch',
+        provider=TProvider.twitch,
         provider_id=data.event.broadcaster_user_id,
         twitch_fragments=data.event.message.fragments,
         twitch_badges=data.event.badges,

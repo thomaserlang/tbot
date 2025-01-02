@@ -65,7 +65,7 @@ async def inc_points(
                     channel_id=channel_id,
                     provider=provider,
                     chatter_id=chatter_id,
-                    points=points,
+                    points=points if points > 0 else 0,
                 )
             )
 

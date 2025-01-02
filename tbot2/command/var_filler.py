@@ -1,7 +1,7 @@
 import re
 from typing import Literal, Sequence
 
-from tbot2.common import ChatMessage, split
+from tbot2.common import ChatMessage, TProvider, split
 
 from .types import Command, FillVars, MessageVar, TFillerType
 
@@ -16,9 +16,7 @@ var_fillers: dict[str, TFillerType] = {}
 filler_vars: dict[TFillerType, FillVars] = {}
 
 
-def fills_vars(
-    provider: Literal['all', 'twitch', 'youtube', 'discord'], vars: Sequence[str]
-):
+def fills_vars(provider: Literal['all'] | TProvider, vars: Sequence[str]):
     def decorator(func: TFillerType):
         for var in vars:
             var_fillers[var] = func

@@ -4,6 +4,8 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from tbot2.common import TProvider
+
 from .twitch_schemas import TwitchBadge, TwitchMessageFragment
 
 
@@ -11,7 +13,7 @@ class ChatMessage(BaseModel):
     type: Literal['message', 'notice', 'mod_action']
     sub_type: str | None = None
     created_at: datetime
-    provider: Literal['twitch', 'youtube']
+    provider: TProvider
     "The provider of the chat message, e.g. 'twitch' or 'youtube'"
     provider_id: str
     'The ID of e.g. the Twitch channel or YouTube live stream'

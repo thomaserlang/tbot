@@ -6,13 +6,13 @@ from twitchAPI.twitch import TwitchUser
 from uuid6 import uuid7
 
 from tbot2.command import Command, MessageVar
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
-from tbot2.twitch.command_var_fillers import accountage
+from tbot2.twitch.cmd_var_fillers import accountage_vars
 
 
 @pytest.mark.asyncio
-async def test_accountage(mocker: MockFixture):
+async def test_accountage_filler(mocker: MockFixture):
     twitch_lookup_users = mocker.patch(
         'tbot2.twitch.command_var_fillers.accountage.twitch_lookup_users'
     )
@@ -46,11 +46,11 @@ async def test_accountage(mocker: MockFixture):
     )
     mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=timezone.utc)
 
-    await accountage.accountage(
+    await accountage_vars.accountage_vars(
         chat_message=ChatMessage(  # type: ignore
             type='message',
             created_at=datetime.now(tz=timezone.utc),
-            provider='twitch',
+            provider=TProvider.twitch,
             provider_id='1234',
             channel_id=uuid7(),
             chatter_id='1234',
@@ -83,11 +83,11 @@ async def test_accountage(mocker: MockFixture):
         )
     ]
 
-    await accountage.accountage(
+    await accountage_vars.accountage_vars(
         chat_message=ChatMessage(  # type: ignore
             type='message',
             created_at=datetime.now(tz=timezone.utc),
-            provider='twitch',
+            provider=TProvider.twitch,
             provider_id='1234',
             channel_id=uuid7(),
             chatter_id='1234',
