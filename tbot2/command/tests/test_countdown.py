@@ -13,7 +13,7 @@ from tbot2.testbase import run_file
 
 @pytest.mark.asyncio
 async def test_countdown(mocker: MockFixture):
-    mock_datetime = mocker.patch('tbot2.command.var_fillers.countdown.datetime_now')
+    mock_datetime = mocker.patch('tbot2.command.var_fillers.countdown_vars.datetime_now')
     mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=timezone.utc)
 
     text = await fill_message(

@@ -7,15 +7,11 @@ from httpx_auth import OAuth2ClientCredentials
 from twitchAPI.twitch import Twitch
 
 from tbot2.config_settings import config
-from tbot2.twitch.actions.user_oauth_actions import (
+
+from .actions.user_oauth_actions import (
     get_twitch_oauth_token,
     save_twitch_oauth_token,
 )
-
-__all__ = [
-    'twitch_app_client',
-    'twitch_client',
-]
 
 
 class TwitchOauth2ClientCredentials(OAuth2ClientCredentials):

@@ -36,7 +36,7 @@ async def test_roulette_actions(db: None):
             bet=4,
         )
 
-    with pytest.raises(ValueError, match='Invalid bet: invalid'):
+    with pytest.raises(ValueError, match='Invalid points: invalid'):
         await roulette(
             channel_id=channel.id,
             provider=TProvider.twitch,

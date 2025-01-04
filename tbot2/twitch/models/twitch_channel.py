@@ -1,3 +1,5 @@
+import sys
+
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -6,6 +8,7 @@ from tbot2.model_base import ModelBase
 
 class MTwitchChannel(ModelBase):
     __tablename__ = 'twitch_channels'
+    __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     channel_id: Mapped[str] = mapped_column(sa.String(36), primary_key=True)
     name: Mapped[str] = mapped_column(sa.String(25))
