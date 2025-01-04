@@ -13,10 +13,10 @@ from tbot2.twitch.cmd_var_fillers import accountage_vars
 
 @pytest.mark.asyncio
 async def test_accountage_vars(mocker: MockFixture):
-    twitch_lookup_users = mocker.patch(
-        'tbot2.twitch.command_var_fillers.accountage.twitch_lookup_users'
+    lookup_twitch_users = mocker.patch(
+        'tbot2.twitch.cmd_var_fillers.accountage_vars.lookup_twitch_users'
     )
-    twitch_lookup_users.return_value = [
+    lookup_twitch_users.return_value = [
         TwitchUser(
             id='1234',
             login='test',
@@ -42,7 +42,7 @@ async def test_accountage_vars(mocker: MockFixture):
     }
 
     mock_datetime = mocker.patch(
-        'tbot2.twitch.command_var_fillers.accountage.datetime_now'
+        'tbot2.twitch.cmd_var_fillers.accountage_vars.datetime_now'
     )
     mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=timezone.utc)
 
@@ -68,7 +68,7 @@ async def test_accountage_vars(mocker: MockFixture):
     assert vars['accountage_datetime'].value == '2017-05-24 22:22:08 UTC'
 
     # Accountage of another user
-    twitch_lookup_users.return_value = [
+    lookup_twitch_users.return_value = [
         TwitchUser(
             id='1234',
             login='testuser',
@@ -103,8 +103,8 @@ async def test_accountage_vars(mocker: MockFixture):
     assert vars['accountage'].value == '7 years and 2 days ago'
     assert vars['accountage_date'].value == 'May 24 2017'
     assert vars['accountage_datetime'].value == '2017-05-24 22:22:08 UTC'
-    assert twitch_lookup_users.await_count == 2
-    twitch_lookup_users.assert_has_calls(
+    assert lookup_twitch_users.await_count == 2
+    lookup_twitch_users.assert_has_calls(
         calls=[
             mocker.call(logins=[], user_ids=['1234']),
             mocker.call(logins=['testuser'], user_ids=[]),

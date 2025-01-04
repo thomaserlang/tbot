@@ -3,7 +3,7 @@ from uuid import UUID
 
 from tbot2.channel_points import get_channel_point_settings, get_points, inc_points
 from tbot2.command import fill_from_dict
-from tbot2.common import TProvider
+from tbot2.common import TProvider, convert_to_points
 
 from ..actions.chatter_gambling_stats_actions import (
     inc_chatter_gambling_stats,
@@ -13,7 +13,6 @@ from ..schemas.chatter_gambling_stats_schema import (
     ChatterGamblingStatsUpdate,
 )
 from ..schemas.roulette_schema import RouletteResult
-from ..utils import parse_bet_to_int
 
 
 async def roulette(
@@ -29,7 +28,7 @@ async def roulette(
         channel_id=channel_id, provider=provider, chatter_id=chatter_id
     )
 
-    bet = parse_bet_to_int(bet, points.points)
+    bet = convert_to_points(bet, points.points)
 
     if bet < settings.min_bet:
         raise ValueError(f'Bet is too low, minimum is {settings.min_bet}')

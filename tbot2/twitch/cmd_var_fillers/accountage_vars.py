@@ -3,7 +3,7 @@ import humanize.time
 from tbot2.command import Command, TMessageVars, VarFillError, fills_vars
 from tbot2.common import ChatMessage, TProvider, datetime_now
 
-from ..actions.twitch_lookup_users_action import twitch_lookup_users
+from ..actions.twitch_lookup_users_action import lookup_twitch_users
 
 
 @fills_vars(
@@ -26,7 +26,7 @@ async def accountage_vars(
 
 
 async def twitch_accountage(chat_message: ChatMessage, command: Command):
-    users = await twitch_lookup_users(
+    users = await lookup_twitch_users(
         logins=[command.args[0]] if command.args else [],
         user_ids=[chat_message.chatter_id] if not command.args else [],
     )

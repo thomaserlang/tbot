@@ -12,3 +12,7 @@ class ChatterPoints(BaseModel):
     chatter_id: str
     provider: str
     points: int
+
+
+class ChatterPointsRank(ChatterPoints):
+    rank: int = 0

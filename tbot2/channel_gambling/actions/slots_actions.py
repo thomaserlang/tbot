@@ -4,11 +4,10 @@ from uuid import UUID
 
 from tbot2.channel_points import get_channel_point_settings, get_points, inc_points
 from tbot2.command import fill_from_dict
-from tbot2.common import TProvider
+from tbot2.common import TProvider, convert_to_points
 
 from ..actions.slots_settings_actions import get_slots_settings
 from ..schemas.slots_schema import SlotsResult
-from ..utils import parse_bet_to_int
 
 
 async def slots(
@@ -24,7 +23,7 @@ async def slots(
         channel_id=channel_id, provider=provider, chatter_id=chatter_id
     )
 
-    bet = parse_bet_to_int(bet, points.points)
+    bet = convert_to_points(bet, points.points)
 
     if bet < settings.min_bet:
         raise ValueError(f'Bet is too low, minimum is {settings.min_bet}')

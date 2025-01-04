@@ -27,7 +27,7 @@ def fills_vars(provider: Literal['all'] | TProvider, vars: Sequence[str]):
 
 
 async def fill_message(
-    response_message: str, command: Command, chat_message: ChatMessage
+    *, response_message: str, command: Command, chat_message: ChatMessage
 ):
     parsed_vars = _parse_vars(response_message)
 

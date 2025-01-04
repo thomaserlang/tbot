@@ -14,7 +14,7 @@ from tbot2.twitch.cmd_var_fillers.followage_vars import followage_vars
 @pytest.mark.asyncio
 async def test_followage_vars(mocker: MockFixture):
     twitch_channel_follower = mocker.patch(
-        'tbot2.twitch.command_var_fillers.followage.twitch_channel_follower'
+        'tbot2.twitch.cmd_var_fillers.followage_vars.twitch_channel_follower'
     )
     twitch_channel_follower.return_value = ChannelFollower(
         from_id='1234',
@@ -35,7 +35,7 @@ async def test_followage_vars(mocker: MockFixture):
     }
 
     mock_datetime = mocker.patch(
-        'tbot2.twitch.command_var_fillers.followage.datetime_now'
+        'tbot2.twitch.cmd_var_fillers.followage_vars.datetime_now'
     )
     mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=timezone.utc)
 
@@ -61,10 +61,10 @@ async def test_followage_vars(mocker: MockFixture):
     assert vars['followage_datetime'].value == '2017-05-24 22:22:08 UTC'
 
     # Followage of another user
-    twitch_lookup_users = mocker.patch(
-        'tbot2.twitch.command_var_fillers.followage.twitch_lookup_users'
+    lookup_twitch_users = mocker.patch(
+        'tbot2.twitch.cmd_var_fillers.followage_vars.lookup_twitch_users'
     )
-    twitch_lookup_users.return_value = [
+    lookup_twitch_users.return_value = [
         TwitchUser(
             id='1234',
             login='testuser',
@@ -96,8 +96,8 @@ async def test_followage_vars(mocker: MockFixture):
         vars=vars,
     )
     assert vars['followage'].value == '7 years and 2 days ago'
-    assert twitch_lookup_users.called
-    assert twitch_lookup_users.call_args.kwargs['logins'] == ['testuser']
+    assert lookup_twitch_users.called
+    assert lookup_twitch_users.call_args.kwargs['logins'] == ['testuser']
 
 
 if __name__ == '__main__':

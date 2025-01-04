@@ -26,9 +26,9 @@ async def test_twitch_lookup_users(db: None, httpx_mock: HTTPXMock):
             ]
         },
     )
-    from tbot2.twitch.actions.twitch_lookup_users_action import twitch_lookup_users
+    from tbot2.twitch.actions.twitch_lookup_users_action import lookup_twitch_users
 
-    users = await twitch_lookup_users(logins=['twitchdev'])
+    users = await lookup_twitch_users(logins=['twitchdev'])
     assert users
     assert users[0].login == 'twitchdev'
     assert users[0].id == '141981764'

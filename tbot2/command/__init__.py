@@ -5,4 +5,5 @@ from .types import MessageVar as MessageVar
 from .types import TFillerType as TFillerType
 from .types import TMessageVars as TMessageVars
 from .var_filler import fill_from_dict as fill_from_dict
+from .var_filler import fill_message as fill_message
 from .var_filler import fills_vars as fills_vars

@@ -5,7 +5,7 @@ from tbot2.common import ChatMessage, TProvider, datetime_now
 
 from ..actions.twitch_channel_follower_action import twitch_channel_follower
 from ..actions.twitch_lookup_users_action import (
-    twitch_lookup_users,
+    lookup_twitch_users,
 )
 
 
@@ -32,7 +32,7 @@ async def twitch_followed_at(chat_message: ChatMessage, command: Command):
     user_id = chat_message.chatter_id
     display_name = chat_message.chatter_display_name
     if command.args:
-        user = await twitch_lookup_users(logins=[command.args[0]])
+        user = await lookup_twitch_users(logins=[command.args[0]])
         if not user:
             raise VarFillError(f'User {command.args[0]} not found.')
         user_id = user[0].id

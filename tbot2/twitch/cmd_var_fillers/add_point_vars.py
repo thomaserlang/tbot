@@ -1,7 +1,7 @@
 from tbot2.channel_points import get_channel_point_settings, inc_bulk_points, inc_points
 from tbot2.command import Command, TMessageVars, fills_vars
 from tbot2.common import ChatMessage, TProvider, safe_username
-from tbot2.twitch import get_twitch_chatters, twitch_lookup_user
+from tbot2.twitch import get_twitch_chatters, lookup_twitch_user
 
 
 @fills_vars(provider=TProvider.twitch, vars=('add_points',))
@@ -32,7 +32,7 @@ async def add_points_vars(
             'add_points'
         ].value = f'Gave {points} {settings.points_name} to {len(chatters)} chatters.'
     else:
-        give_to_user = await twitch_lookup_user(login=safe_username(command.args[0]))
+        give_to_user = await lookup_twitch_user(login=safe_username(command.args[0]))
         if not give_to_user:
             raise ValueError('User not found.')
         points = await inc_points(
