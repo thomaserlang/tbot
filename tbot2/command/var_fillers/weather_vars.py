@@ -23,7 +23,7 @@ weather_client = AsyncClient(base_url='https://api.openweathermap.org/data/2.5')
         'weather.wind_speed',
     ),
 )
-async def weather(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def weather_vars(chat_message: ChatMessage, command: Command, vars: TMessageVars):
     if not config.openweathermap_apikey:
         raise ValueError('`openweathermap_apikey` is missing in the config')
 

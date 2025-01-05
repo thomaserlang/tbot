@@ -1,5 +1,3 @@
-from httpx import AsyncClient
-
 from tbot2.common import ChatMessage
 from tbot2.spotify import (
     get_spotify_currently_playing,
@@ -9,14 +7,6 @@ from tbot2.spotify import (
 
 from ..types import Command, TMessageVars
 from ..var_filler import fills_vars
-
-spotify_client = AsyncClient(
-    base_url='https://api.spotify.com/v1',
-    headers={
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-    },
-)
 
 
 @fills_vars(
@@ -28,7 +18,7 @@ spotify_client = AsyncClient(
         'spotify.song_duration',
     ),
 )
-async def spotify(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def spotify_vars(chat_message: ChatMessage, command: Command, vars: TMessageVars):
     try:
         playing = await get_spotify_currently_playing(
             channel_id=chat_message.channel_id,
@@ -56,7 +46,7 @@ async def spotify(chat_message: ChatMessage, command: Command, vars: TMessageVar
         'spotify.playlist_url',
     ),
 )
-async def spotify_playlist(
+async def spotify_playlist_vars(
     chat_message: ChatMessage, command: Command, vars: TMessageVars
 ):
     try:
@@ -94,7 +84,7 @@ async def spotify_playlist(
         'spotify.prev_song_artists',
     ),
 )
-async def spotify_prev_song(
+async def spotify_prev_song_vars(
     chat_message: ChatMessage, command: Command, vars: TMessageVars
 ):
     try:

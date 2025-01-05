@@ -10,7 +10,7 @@ from ..var_filler import fills_vars
     provider='all',
     vars=('time',),
 )
-async def time(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def time_vars(chat_message: ChatMessage, command: Command, vars: TMessageVars):
     if not vars['time'].args:
         raise ValueError(
             'A timezone must be specified with time. Example {time Europe/Copenhagen}'
