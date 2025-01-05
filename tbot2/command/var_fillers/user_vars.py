@@ -10,3 +10,5 @@ from ..var_filler import fills_vars
 )
 async def user(chat_message: ChatMessage, command: Command, vars: TMessageVars):
     vars['user'].value = chat_message.chatter_display_name
+    if command.args:
+        vars['user'].value = command.args[0]
