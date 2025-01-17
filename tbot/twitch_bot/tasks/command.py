@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from tbot import logger
 from tbot.twitch_bot import var_filler
@@ -38,6 +39,7 @@ def handle_command(nick, target, message, **kwargs):
     cmd = args.pop(0).lower().strip('!')
     if cmd == bot.user['login']:
         cmd = '__thebotname'
+    logging.info(kwargs)
     if kwargs['source-room-id'] and kwargs['source-room-id'] != kwargs['room-id']:
         return
     if cmd in _cmd_lookup:
