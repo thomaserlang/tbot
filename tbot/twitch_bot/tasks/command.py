@@ -38,8 +38,7 @@ def handle_command(nick, target, message, **kwargs):
     cmd = args.pop(0).lower().strip('!')
     if cmd == bot.user['login']:
         cmd = '__thebotname'
-    logger.info(kwargs)
-    if kwargs['source-room-id'] and kwargs['source-room-id'] != kwargs['room-id']:
+    if kwargs.get('source-room-id') and kwargs['source-room-id'] != kwargs['room-id']:
         return
     if cmd in _cmd_lookup:
         f = _cmd_lookup[cmd]['func']

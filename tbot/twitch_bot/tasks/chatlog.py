@@ -9,6 +9,10 @@ from tbot.twitch_bot.bot_base import bot
 async def message(nick, target, message, **kwargs):
     if not bot.channels[kwargs['room-id']]['chatlog_enabled']:
         return
+
+    if kwargs.get('source-room-id') and kwargs['source-room-id'] != kwargs['room-id']:
+        return
+
     bot.loop.create_task(
         save(
             1,
@@ -21,7 +25,7 @@ async def message(nick, target, message, **kwargs):
             kwargs['display-name'],
             kwargs['color'],
             kwargs['emotes'],
-            kwargs['badges']
+            kwargs['badges'],
         )
     )
 
