@@ -1,6 +1,7 @@
-from tbot2.channel_gambling import roulette
 from tbot2.command import Command, TMessageVars, fills_vars
 from tbot2.common import ChatMessage
+
+from ..actions.roulette_actions import roulette
 
 
 @fills_vars(provider='all', vars=('gamble_roulette',))

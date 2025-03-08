@@ -7,6 +7,7 @@ from .schemas.oauth2_client_schemas import (
 )
 from .schemas.oauth2_client_schemas import Oauth2TokenParams as Oauth2TokenParams
 from .schemas.oauth2_client_schemas import Oauth2TokenResponse as Oauth2TokenResponse
+from .schemas.token_data_schema import TokenData as TokenData
 from .types.provider_type import TProvider as TProvider
 from .utils.convert_to_points import convert_to_points as convert_to_points
 from .utils.datetime_now import datetime_now as datetime_now

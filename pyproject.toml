@@ -4,19 +4,20 @@ version = "2.0"
 description = "Twitch, Discord and YouTube bot"
 dependencies = [
     "twitchAPI==4.3.1",
-    "fastapi==0.115.4",
-    "sqlalchemy==2.0.36",
+    "fastapi==0.115.7",
+    "sqlalchemy==2.0.37",
     "yaml-settings-pydantic==2.3.2",
-    "pydantic==2.9.2",
-    "redis==5.2.0",
-    "httpx[http2]==0.27.2",
-    "httpx_auth==0.22.0",
-    "click==8.0.1",
-    "uvicorn==0.32.0",
+    "pydantic==2.10.6",
+    "redis==5.2.1",
+    "httpx[http2]==0.28.1",
+    "httpx_auth==0.23.1",
+    "authlib==1.4.0",
+    "click==8.1.8",
+    "uvicorn==0.34.0",
     "honcho==2.0.0",
-    "arq==0.26.1",
-    "asyncmy==0.2.9",
-    "alembic==1.14.0",
+    "arq==0.26.3",
+    "asyncmy==0.2.10",
+    "alembic==1.14.1",
     "uuid6==2024.7.10",
     "humanize==4.11.0",
     "python-dateutil==2.9.0.post0",
@@ -24,10 +25,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest-httpx==0.33.0",
-    "pytest==8.3.3",
-    "pytest-asyncio==0.24.0",
-    "pytest-mock-3.14.0",
+    "pytest-httpx==0.35.0",
+    "pytest==8.3.4",
+    "pytest-asyncio==0.25.2",
+    "pytest-mock==3.14.0",
 ]
 
 [build-system]
