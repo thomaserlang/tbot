@@ -1,6 +1,8 @@
-from typing import Annotated
+import base64
+import json
+from typing import Annotated, Any
 
-from pydantic import BaseModel, StringConstraints
+from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
 
 
 class Oauth2AuthorizeParams(BaseModel):
@@ -8,11 +10,30 @@ class Oauth2AuthorizeParams(BaseModel):
     redirect_uri: Annotated[str, StringConstraints(min_length=1)]
     response_type: Annotated[str, StringConstraints(min_length=1)] = 'code'
     scope: Annotated[str, StringConstraints(min_length=1)]
+    state: dict[str, Any] = {}
+
+    model_config = ConfigDict(
+        json_encoders={
+            dict: lambda v: base64.b64encode(json.dumps(v).encode('utf-8')).decode(
+                'utf-8'
+            ),
+        }
+    )
 
 
 class Oauth2AuthorizeResponse(BaseModel):
     code: Annotated[str, StringConstraints(min_length=1)]
     scope: Annotated[str, StringConstraints(min_length=1)]
+    state: dict[str, Any]
+
+    @field_validator('state')
+    def validate_state(cls, value: str | dict[str, Any]):
+        result: dict[str, Any] = {}
+
+        if isinstance(value, str):
+            result = json.loads(base64.b64decode(value).decode('utf-8'))
+
+        return result
 
 
 class Oauth2TokenParams(BaseModel):

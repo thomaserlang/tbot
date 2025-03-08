@@ -11,8 +11,9 @@ from .actions.spotify_oauth_actions import (
     save_spotify_oauth_token,
 )
 
+TBOT_CHANNEL_ID_HEADER = 'X-TBot-Channel-Id'
 
-class TwitchUserOAuth(Auth):
+class SpotifyOAuth(Auth):
     def __init__(self):
         self._async_lock = asyncio.Lock()
 
@@ -20,9 +21,9 @@ class TwitchUserOAuth(Auth):
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
         async with self._async_lock:
-            channel_id: UUID = UUID(request.headers.get('X-Channel-Id'))
+            channel_id: UUID = UUID(request.headers.get(TBOT_CHANNEL_ID_HEADER))
             if not channel_id:
-                raise ValueError('Missing X-Channel-Id header')
+                raise ValueError(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
             token = await get_spotify_oauth_token(channel_id)
             if not token:
                 raise ValueError(

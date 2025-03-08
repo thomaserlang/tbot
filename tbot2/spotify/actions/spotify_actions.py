@@ -6,7 +6,7 @@ from tbot2.spotify.schemas.spotify_schema import (
     SpotifyPlaylist,
 )
 
-from ..http_client import spotify_client
+from ..http_client import TBOT_CHANNEL_ID_HEADER, spotify_client
 
 
 async def get_spotify_currently_playing(
@@ -16,7 +16,7 @@ async def get_spotify_currently_playing(
     repsonse = await spotify_client.get(
         '/me/player/currently-playing',
         headers={
-            'X-Channel-Id': str(channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
     repsonse.raise_for_status()
@@ -32,7 +32,7 @@ async def get_spotify_recently_played(
     repsonse = await spotify_client.get(
         '/me/player/recently-played',
         headers={
-            'X-Channel-Id': str(channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
     repsonse.raise_for_status()
@@ -44,7 +44,7 @@ async def get_spotify_playlist(*, channel_id: UUID, playlist_url: str):
     response = await spotify_client.get(
         f'{playlist_url}',
         headers={
-            'X-Channel-Id': str(channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
     response.raise_for_status()
