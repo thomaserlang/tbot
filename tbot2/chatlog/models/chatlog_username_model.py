@@ -3,10 +3,10 @@ from datetime import datetime
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
-from tbot2.model_base import ModelBase
+from tbot2.model_base import Base
 
 
-class MChatlogUsername(ModelBase):
+class MChatlogUsername(Base):
     __tablename__ = 'chatlog_chatters'
 
     provider: Mapped[str] = mapped_column(sa.String(100))

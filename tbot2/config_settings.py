@@ -62,6 +62,16 @@ class ConfigTwitchModel(BaseModel):
     ]
 
 
+class ConfigGoogleModel(BaseModel):
+    client_id: str = ''
+    client_secret: str = ''
+
+
+class ConfigGithubModel(BaseModel):
+    client_id: str = ''
+    client_secret: str = ''
+
+
 class ConfigYoutubeModel(BaseModel):
     client_id: str = ''
     client_secret: str = ''
@@ -156,6 +166,8 @@ class ConfigSettings(BaseYamlSettings):
     web: ConfigWebModel = ConfigWebModel()
     twitch: ConfigTwitchModel = ConfigTwitchModel()
     discord: ConfigDiscordModel = ConfigDiscordModel()
+    google: ConfigGoogleModel = ConfigGoogleModel()
+    github: ConfigGithubModel = ConfigGithubModel()
     youtube: ConfigYoutubeModel = ConfigYoutubeModel()
     spotify: ConfigSpotifyConfig = ConfigSpotifyConfig()
     logging: ConfigLoggingModel = ConfigLoggingModel()

@@ -4,10 +4,10 @@ version = "2.0"
 description = "Twitch, Discord and YouTube bot"
 dependencies = [
     "twitchAPI==4.3.1",
-    "fastapi==0.115.7",
-    "sqlalchemy==2.0.37",
+    "fastapi==0.115.11",
+    "sqlalchemy==2.0.38",
     "yaml-settings-pydantic==2.3.2",
-    "pydantic==2.10.6",
+    "pydantic[email]==2.10.6",
     "redis==5.2.1",
     "httpx[http2]==0.28.1",
     "httpx_auth==0.23.1",
@@ -21,6 +21,9 @@ dependencies = [
     "uuid6==2024.7.10",
     "humanize==4.11.0",
     "python-dateutil==2.9.0.post0",
+    "sqlakeyset==2.0.1739066250",
+    "PyJWT==2.10.1",
+    "PyMySQL==1.1.1",
 ]
 
 [project.optional-dependencies]

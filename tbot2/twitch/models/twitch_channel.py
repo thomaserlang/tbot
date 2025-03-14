@@ -3,10 +3,10 @@ import sys
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
-from tbot2.model_base import ModelBase
+from tbot2.model_base import Base
 
 
-class MTwitchChannel(ModelBase):
+class MTwitchChannel(Base):
     __tablename__ = 'twitch_channels'
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 

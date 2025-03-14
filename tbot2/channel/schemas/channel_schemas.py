@@ -2,7 +2,9 @@ from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
+from pydantic import BaseModel, StringConstraints, field_validator
+
+from tbot2.common import BaseSchema
 
 
 class ChannelCreate(BaseModel):
@@ -24,18 +26,13 @@ class ChannelUpdate(BaseModel):
     bot_chatlog_enabled: bool | None = None
 
     @field_validator('bot_active', 'bot_muted', 'bot_chatlog_enabled', 'display_name')
-    @classmethod
     def check_not_none(cls, value: str | bool | None):
         if value is None:
             raise ValueError('Must not be None')
         return value
 
 
-class Channel(BaseModel):
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
-
+class Channel(BaseSchema):
     id: UUID
     display_name: str
     twitch_id: str | None

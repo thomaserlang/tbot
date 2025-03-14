@@ -1,18 +1,13 @@
 from typing import Annotated
+from uuid import UUID
 
-from fastapi import Depends, Header, HTTPException, Request
-from fastapi.security import OAuth2, SecurityScopes
+from fastapi import Depends, Header, HTTPException, Path, Request
+from fastapi.security import (
+    OAuth2,
+    SecurityScopes,
+)
 
 from tbot2.common import TokenData
-
-from .database import database
-
-
-async def get_session():
-    async with database.session() as session:
-        yield session
-        await session.commit()
-
 
 oauth2_scheme = OAuth2(auto_error=False)
 
@@ -29,11 +24,26 @@ async def get_token_data(
     return request.user
 
 
-# token_data: Annotated[TokenData, Security(authenticated, scopes=['SCOPE'])]
 async def authenticated(
     security_scopes: SecurityScopes,
     token_data: Annotated[TokenData, Depends(get_token_data)],
 ):
+    """
+    Usage: token_data: Annotated[TokenData, Security(authenticated, scopes=['SCOPE'])]
+    """
     if security_scopes.scopes and not token_data.has_any_scope(security_scopes.scopes):  # type: ignore
-        raise
+        raise HTTPException(status_code=403, detail='Not enough permissions')
+    return token_data
+
+
+async def auth_channel(
+    security_scopes: SecurityScopes,
+    channel_id: Annotated[UUID, Path()],
+    token_data: Annotated[TokenData, Depends(get_token_data)],
+):
+    """
+    Usage: token_data: Annotated[TokenData, Security(auth_channel, scopes=['SCOPE'])]
+    """
+    if not await token_data.is_valid_for_channel(channel_id):
+        raise HTTPException(status_code=403, detail='Not authorized for this channel')
     return token_data

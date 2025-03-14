@@ -4,10 +4,10 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.mysql import DATETIME
 from sqlalchemy.orm import Mapped, mapped_column
 
-from tbot2.model_base import ModelBase
+from tbot2.model_base import Base
 
 
-class MChatlog(ModelBase):
+class MChatlog(Base):
     __tablename__ = 'chatlogs'
 
     id: Mapped[int] = mapped_column(sa.Integer, primary_key=True, autoincrement=True)

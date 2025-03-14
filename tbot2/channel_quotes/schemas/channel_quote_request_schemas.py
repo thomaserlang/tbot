@@ -1,0 +1,40 @@
+from typing import Annotated
+
+from pydantic import BaseModel, StringConstraints, field_validator
+
+
+class ChannelQuoteCreate(BaseModel):
+    message: Annotated[str, StringConstraints(min_length=1, max_length=500)]
+    provider: Annotated[str, StringConstraints(min_length=0, max_length=36)]
+    created_by_chatter_id: Annotated[
+        str, StringConstraints(min_length=0, max_length=36)
+    ]
+    created_by_display_name: Annotated[
+        str, StringConstraints(min_length=1, max_length=200)
+    ]
+
+
+class ChannelQuoteUpdate(BaseModel):
+    message: Annotated[str, StringConstraints(min_length=1, max_length=500)] | None = (
+        None
+    )
+    provider: Annotated[str, StringConstraints(min_length=0, max_length=36)] | None = (
+        None
+    )
+    created_by_chatter_id: (
+        Annotated[str, StringConstraints(min_length=1, max_length=36)] | None
+    ) = None
+    created_by_display_name: (
+        Annotated[str, StringConstraints(min_length=1, max_length=200)] | None
+    ) = None
+
+    @field_validator(
+        'message',
+        'provider',
+        'created_by_chatter_id',
+        'created_by_display_name',
+    )
+    def check_not_none(cls, v: str | None):
+        if v is None:
+            raise ValueError('Field cannot be None')
+        return v

@@ -5,10 +5,10 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import Mapped, mapped_column
 
-from tbot2.model_base import ModelBase
+from tbot2.model_base import Base
 
 
-class MChatterPoints(ModelBase):
+class MChatterPoints(Base):
     __tablename__ = 'channel_chatter_points'
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 

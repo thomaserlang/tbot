@@ -5,10 +5,10 @@ from uuid import UUID
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
-from tbot2.model_base import ModelBase
+from tbot2.model_base import Base
 
 
-class MChannel(ModelBase):
+class MChannel(Base):
     __tablename__ = 'channels'
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 

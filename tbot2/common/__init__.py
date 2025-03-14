@@ -1,3 +1,4 @@
+from .schemas.base_schema import BaseSchema as BaseSchema
 from .schemas.chat_message_schema import ChatMessage as ChatMessage
 from .schemas.oauth2_client_schemas import (
     Oauth2AuthorizeParams as Oauth2AuthorizeParams,
@@ -9,6 +10,7 @@ from .schemas.oauth2_client_schemas import Oauth2TokenParams as Oauth2TokenParam
 from .schemas.oauth2_client_schemas import Oauth2TokenResponse as Oauth2TokenResponse
 from .schemas.token_data_schema import TokenData as TokenData
 from .types.provider_type import TProvider as TProvider
+from .types.scope_type import TScope as TScope
 from .utils.convert_to_points import convert_to_points as convert_to_points
 from .utils.datetime_now import datetime_now as datetime_now
 from .utils.text_utils import check_message as check_message

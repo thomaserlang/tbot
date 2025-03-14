@@ -3,10 +3,10 @@ from uuid import UUID
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
-from tbot2.model_base import ModelBase
+from tbot2.model_base import Base
 
 
-class MChatlogUserStats(ModelBase):
+class MChatlogUserStats(Base):
     __tablename__ = 'chatlog_chatter_stats'
 
     channel_id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)

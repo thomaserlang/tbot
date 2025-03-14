@@ -5,10 +5,10 @@ from uuid import UUID
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
-from tbot2.model_base import ModelBase
+from tbot2.model_base import Base
 
 
-class MSpotifyOAuth(ModelBase):
+class MSpotifyOAuth(Base):
     __tablename__ = 'spotify_oauth'
     __table_args__ = {'extend_existing': True if 'pytest' in sys.modules else False}
 
