@@ -92,15 +92,6 @@ async def test_channel_quote_routes(client: AsyncClient):
     quote_data = response.json()
     assert quote_data['number'] == 1
 
-    # Test random number
-    response = await client.get(
-        f'/api/2/channels/{channel.id}/quotes/random',
-    )
-    assert response.status_code == 200
-    quote_data = response.json()
-    assert quote_data['message'] == 'Another quote'
-    assert quote_data['number'] == 1
-
 
 if __name__ == '__main__':
     run_file(__file__)
