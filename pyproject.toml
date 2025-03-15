@@ -24,6 +24,7 @@ dependencies = [
     "sqlakeyset==2.0.1739066250",
     "PyJWT==2.10.1",
     "PyMySQL==1.1.1",
+    "more_itertools==10.6.0",
 ]
 
 [project.optional-dependencies]

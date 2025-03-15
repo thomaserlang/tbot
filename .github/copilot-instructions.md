@@ -45,7 +45,7 @@ ID's are always `UUID` and use the `uuid7()` function to generate them.
 Only create one __init__.py for in the root of the feature folder.
 Use the following example import style for the __init__.py file:
 ```python
-from <relative path>.<module> import <function/model name> as <function/model name>
+from .<module> import <function/model name> as <function/model name>
 ```
 
 Do not use `__all__ = [ ... ]` in the `__init__.py` file.
