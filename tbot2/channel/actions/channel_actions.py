@@ -10,7 +10,9 @@ from ..models.channel_model import MChannel
 from ..schemas.channel_schemas import Channel, ChannelCreate, ChannelUpdate
 
 
-async def get_channel(*, id: UUID, session: AsyncSession | None = None):
+async def get_channel(
+    *, id: UUID, session: AsyncSession | None = None
+) -> Channel | None:
     async with get_session(session) as session:
         result = await session.scalar(sa.select(MChannel).where(MChannel.id == id))
         if result:
