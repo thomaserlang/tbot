@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from fastapi import HTTPException
 from pydantic import BaseModel
 from starlette.authentication import BaseUser
 
@@ -18,6 +19,17 @@ class TokenData(BaseUser, BaseModel):
     async def is_valid_for_channel(
         self, *, channel_id: UUID, access_level: TAccessLevel
     ) -> bool:
+        from tbot2.channel import get_channel_user_access_level
+
+        level = await get_channel_user_access_level(
+            user_id=self.user_id,
+            channel_id=channel_id,
+        )
+        if level is None or level.access_level < access_level.value:
+            raise HTTPException(
+                status_code=403,
+                detail='Insufficient access level',
+            )
         return True
 
     def has_any_scope(self, scopes: list[TScope]) -> bool:

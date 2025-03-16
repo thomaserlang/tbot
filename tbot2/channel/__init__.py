@@ -15,6 +15,9 @@ from .actions.lookup_twitch_id_to_channel_id_action import (
     lookup_twitch_id_to_channel_id as lookup_twitch_id_to_channel_id,
 )
 from .models.channel_model import MChannel as MChannel
+from .models.channel_user_access_levels_model import (
+    MChannelUserAccessLevel as MChannelUserAccessLevel,
+)
 from .schemas.channel_schemas import Channel as Channel
 from .schemas.channel_schemas import ChannelCreate as ChannelCreate
 from .schemas.channel_schemas import ChannelUpdate as ChannelUpdate
