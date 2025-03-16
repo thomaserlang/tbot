@@ -3,7 +3,7 @@ from httpx import AsyncClient
 
 from tbot2.channel_quote import ChannelQuoteCreate, ChannelQuoteUpdate
 from tbot2.channel_quote.types import TChannelQuoteScope
-from tbot2.testbase import create_channel_test, run_file, user_signin
+from tbot2.testbase import run_file, user_signin
 
 
 @pytest.mark.asyncio
@@ -12,19 +12,18 @@ async def test_channel_quote_routes(client: AsyncClient):
         client,
         scopes=[TChannelQuoteScope.READ, TChannelQuoteScope.WRITE],
     )
-    channel = await create_channel_test()
 
-    response = await client.get(f'/api/2/channels/{channel.id}/quotes')
+    response = await client.get(f'/api/2/channels/{user.channel.id}/quotes')
     assert response.status_code == 200
 
     # Create a quote
     response = await client.post(
-        f'/api/2/channels/{channel.id}/quotes',
+        f'/api/2/channels/{user.channel.id}/quotes',
         json=ChannelQuoteCreate(
             message='Test quote',
             provider='test',
-            created_by_chatter_id=str(user.id),
-            created_by_display_name=user.display_name,
+            created_by_chatter_id=str(user.user.id),
+            created_by_display_name=user.user.display_name,
         ).model_dump(),
     )
     assert response.status_code == 201
@@ -33,7 +32,7 @@ async def test_channel_quote_routes(client: AsyncClient):
 
     # Get the quote by ID
     response = await client.get(
-        f'/api/2/channels/{channel.id}/quotes/{quote["id"]}',
+        f'/api/2/channels/{user.channel.id}/quotes/{quote["id"]}',
     )
     assert response.status_code == 200
     quote_data = response.json()
@@ -41,7 +40,7 @@ async def test_channel_quote_routes(client: AsyncClient):
 
     # Get the quote by number
     response = await client.get(
-        f'/api/2/channels/{channel.id}/quotes/number/1',
+        f'/api/2/channels/{user.channel.id}/quotes/number/1',
     )
     assert response.status_code == 200
     quote_data = response.json()
@@ -49,7 +48,7 @@ async def test_channel_quote_routes(client: AsyncClient):
 
     # Update the quote
     response = await client.put(
-        f'/api/2/channels/{channel.id}/quotes/{quote["id"]}',
+        f'/api/2/channels/{user.channel.id}/quotes/{quote["id"]}',
         json=ChannelQuoteUpdate(
             message='Updated quote',
         ).model_dump(exclude_unset=True),
@@ -61,12 +60,12 @@ async def test_channel_quote_routes(client: AsyncClient):
 
     # Create another quote
     response = await client.post(
-        f'/api/2/channels/{channel.id}/quotes',
+        f'/api/2/channels/{user.channel.id}/quotes',
         json=ChannelQuoteCreate(
             message='Another quote',
             provider='test',
-            created_by_chatter_id=str(user.id),
-            created_by_display_name=user.display_name,
+            created_by_chatter_id=str(user.user.id),
+            created_by_display_name=user.user.display_name,
         ).model_dump(),
     )
     assert response.status_code == 201
@@ -75,18 +74,18 @@ async def test_channel_quote_routes(client: AsyncClient):
     assert quote2['number'] == 2
 
     response = await client.delete(
-        f'/api/2/channels/{channel.id}/quotes/{quote["id"]}',
+        f'/api/2/channels/{user.channel.id}/quotes/{quote["id"]}',
     )
     assert response.status_code == 204
 
     response = await client.get(
-        f'/api/2/channels/{channel.id}/quotes/{quote["id"]}',
+        f'/api/2/channels/{user.channel.id}/quotes/{quote["id"]}',
     )
     assert response.status_code == 404
 
     # Test number changed
     response = await client.get(
-        f'/api/2/channels/{channel.id}/quotes/{quote2["id"]}',
+        f'/api/2/channels/{user.channel.id}/quotes/{quote2["id"]}',
     )
     assert response.status_code == 200
     quote_data = response.json()

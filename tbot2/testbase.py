@@ -1,13 +1,25 @@
 from typing import Any, TypeVar
 
+from attr import dataclass
 from httpx import AsyncClient
 
 from tbot2.auth_backend import create_token_str
-from tbot2.channel import ChannelCreate, create_channel
-from tbot2.common import TokenData, TScope
-from tbot2.user import UserCreate, create_user
+from tbot2.channel import (
+    Channel,
+    ChannelCreate,
+    create_channel,
+    set_channel_user_access_level,
+)
+from tbot2.common import TAccessLevel, TokenData, TScope
+from tbot2.user import User, UserCreate, create_user
 
 T = TypeVar('T')
+
+
+@dataclass(slots=True)
+class TTestUser:
+    user: User
+    channel: Channel
 
 
 async def user_signin(
@@ -21,6 +33,17 @@ async def user_signin(
             username='testuser',
         )
     )
+    channel = await create_channel(
+        data=ChannelCreate(
+            display_name='Test Channel',
+        )
+    )
+    await set_channel_user_access_level(
+        channel_id=channel.id,
+        user_id=user.id,
+        access_level=TAccessLevel.OWNER,
+    )
+
     token_str = await create_token_str(
         token_data=TokenData(
             scopes=scopes,
@@ -28,16 +51,10 @@ async def user_signin(
         )
     )
     client.headers.update({'Authorization': f'Bearer {token_str}'})
-    return user
-
-
-async def create_channel_test():
-    channel = await create_channel(
-        data=ChannelCreate(
-            display_name='Test Channel',
-        )
+    return TTestUser(
+        user=user,
+        channel=channel,
     )
-    return channel
 
 
 def parse_obj_as(type: type[T], obj: Any) -> T:

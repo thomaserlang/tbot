@@ -2,6 +2,12 @@ from .actions.channel_actions import create_channel as create_channel
 from .actions.channel_actions import delete_channel as delete_channel
 from .actions.channel_actions import get_channel as get_channel
 from .actions.channel_actions import update_channel as update_channel
+from .actions.channel_user_access_level_actions import (
+    get_channel_user_access_level as get_channel_user_access_level,
+)
+from .actions.channel_user_access_level_actions import (
+    set_channel_user_access_level as set_channel_user_access_level,
+)
 from .actions.lookup_twitch_id_to_channel_id_action import (
     clear_twitch_id_to_user_id_cache as clear_twitch_id_to_user_id_cache,
 )

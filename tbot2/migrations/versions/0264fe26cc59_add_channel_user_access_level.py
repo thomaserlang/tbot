@@ -34,7 +34,12 @@ def upgrade() -> None:
             sa.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'),
             nullable=False,
         ),
-        sa.Column('auth_level', sa.SmallInteger, nullable=False),
+        sa.Column('access_level', sa.SmallInteger, nullable=False),
+        sa.UniqueConstraint(
+            'channel_id',
+            'user_id',
+            name='uq_channel_user_access_levels',
+        ),
     )
     op.drop_table('twitch_channel_admins')
 
@@ -50,16 +55,16 @@ def upgrade() -> None:
     """)
 
     op.execute("""
-        INSERT INTO channel_user_access_levels (id, channel_id, user_id, auth_level)
+        INSERT INTO channel_user_access_levels (id, channel_id, user_id, access_level)
         SELECT 
             uuid_v7(), 
             c.id as channel_id, 
             u.id as user_id,
-            9 as auth_level
+            9 as access_level
         FROM channels c, users u where u.twitch_id = c.twitch_id
     """)
 
-    op.execute(""""
+    op.execute("""
         INSERT INTO user_oauth_providers (id, user_id, provider, provider_user_id, created_at)
         SELECT 
             uuid_v7(), 
