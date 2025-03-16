@@ -9,6 +9,7 @@ from .schemas.oauth2_client_schemas import (
 from .schemas.oauth2_client_schemas import Oauth2TokenParams as Oauth2TokenParams
 from .schemas.oauth2_client_schemas import Oauth2TokenResponse as Oauth2TokenResponse
 from .schemas.token_data_schema import TokenData as TokenData
+from .types.access_level_type import TAccessLevel as TAccessLevel
 from .types.provider_type import TProvider as TProvider
 from .types.scope_type import TScope as TScope
 from .utils.convert_to_points import convert_to_points as convert_to_points

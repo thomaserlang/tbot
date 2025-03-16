@@ -19,6 +19,8 @@ class Command(BaseSchema):
     enabled_status: int
     enabled: bool
     public: bool
+    aliases: list[str] | None
+    patterns: list[str] | None
     access_level: int
     created_at: datetime
     updated_at: datetime | None = None
@@ -40,6 +42,8 @@ class CommandCreate(BaseModel):
     enabled_status: Annotated[int, conint(ge=0, le=32767)] = 0
     enabled: bool = True
     public: bool = True
+    aliases: list[str] | None = None
+    patterns: list[str] | None = None
     access_level: Annotated[int, conint(ge=0, le=32767)] = 0
 
 
@@ -68,6 +72,8 @@ class CommandUpdate(BaseModel):
     enabled_status: Annotated[int, conint(ge=0, le=32767)] | None = None
     enabled: bool | None = None
     public: bool | None = None
+    aliases: list[str] | None = None
+    patterns: list[str] | None = None
     access_level: Annotated[int, conint(ge=0, le=32767)] | None = None
 
     @field_validator(

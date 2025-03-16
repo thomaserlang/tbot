@@ -39,9 +39,11 @@ def upgrade() -> None:
         ),
         sa.Column('enabled', sa.Boolean, nullable=False, server_default='1'),
         sa.Column('public', sa.Boolean, nullable=False, server_default='1'),
+        sa.Column('aliases', sa.JSON(), nullable=True),
+        sa.Column('patterns', sa.JSON(), nullable=True),
         sa.Column('access_level', sa.SmallInteger, nullable=False, server_default='0'),
         sa.Column('created_at', sa.DateTime(), nullable=False),
-        sa.Column('updated_at', sa.DateTime(), nullable=True),
+        sa.Column('updated_at', sa.DateTime(), nullable=False),
     )
 
     op.execute("""
@@ -60,7 +62,7 @@ def upgrade() -> None:
             t.public,
             t.user_level as access_level,
             t.created_at,
-            t.updated_at
+            ifnull(t.updated_at, t.created_at)
         FROM 
             twitch_commands t, 
             channels c

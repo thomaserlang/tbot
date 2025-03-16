@@ -83,16 +83,6 @@ token_data: Annotated[
 ```
 If you do not need to validate a scope the list can be left empty: `scopes=[]`.
 
-
-For requiring scopes and validating that the user has access to managing the channel use the following:
-```python
-from tbot2.dependecies import auth_channel
-from tbot2.common import TokenData
-token_data: Annotated[
-    TokenData, Security(auth_channel, scopes=[T<feature>.READ])
-],
-```
-
 For each feature specify the scopes in <feature>/types.py like so:
 ```python
 from tbot2.common import TScope

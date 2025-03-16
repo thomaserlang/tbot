@@ -6,6 +6,7 @@ from .schemas.command_schemas import Command as Command
 from .schemas.command_schemas import CommandCreate as CommandCreate
 from .schemas.command_schemas import CommandUpdate as CommandUpdate
 from .types import TCommand as TCommand
+from .types import TCommandScope as TCommandScope
 from .types import TFillerType as TFillerType
 from .types import TMessageVar as TMessageVar
 from .types import TMessageVars as TMessageVars

@@ -1,5 +1,5 @@
 from tbot2.channel_gambling import cmd_var_fillers as cmd_var_fillers
-from tbot2.channel_quotes import cmd_var_fillers as cmd_var_fillers  # noqa: F811
+from tbot2.channel_quote import cmd_var_fillers as cmd_var_fillers  # noqa: F811
 from tbot2.twitch import cmd_var_fillers as cmd_var_fillers  # noqa: F811
 
 from . import countdown_vars as countdown_vars

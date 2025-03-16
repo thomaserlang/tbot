@@ -36,6 +36,7 @@ async def create_command(
                 id=command_id,
                 channel_id=channel_id,
                 created_at=datetime.now(tz=timezone.utc),
+                updated_at=datetime.now(tz=timezone.utc),
                 **data.model_dump(),
             )
         )
@@ -66,3 +67,15 @@ async def update_command(
         if not cmd:
             raise Exception('Failed to update command')
         return cmd
+
+
+async def delete_command(
+    *,
+    command_id: UUID,
+    session: AsyncSession | None = None,
+) -> bool:
+    async with get_session(session) as session:
+        result = await session.execute(
+            sa.delete(MCommand).where(MCommand.id == command_id)
+        )
+        return result.rowcount > 0

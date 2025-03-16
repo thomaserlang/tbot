@@ -40,10 +40,12 @@ class MCommand(Base):
         sa.Boolean, nullable=False, server_default='1'
     )
     public: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, server_default='1')
+    aliases: Mapped[list[str] | None] = mapped_column(sa.JSON, nullable=True)
+    patterns: Mapped[list[str] | None] = mapped_column(sa.JSON, nullable=True)
     access_level: Mapped[int] = mapped_column(
         sa.SmallInteger, nullable=False, server_default='0'
     )
     created_at: Mapped[datetime] = mapped_column(
         sa.DateTime, nullable=False, default=datetime.now
     )
-    updated_at: Mapped[datetime | None] = mapped_column(sa.DateTime, nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(sa.DateTime)

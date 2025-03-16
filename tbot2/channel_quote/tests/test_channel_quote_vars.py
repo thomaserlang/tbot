@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import pytest
 
 from tbot2.channel import ChannelCreate, create_channel
-from tbot2.channel_quotes import cmd_var_fillers as cmd_var_fillers
+from tbot2.channel_quote import cmd_var_fillers as cmd_var_fillers
 from tbot2.command import TCommand, fill_message
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file

@@ -1,8 +1,8 @@
 import pytest
 from httpx import AsyncClient
 
-from tbot2.channel_quotes import ChannelQuoteCreate, ChannelQuoteUpdate
-from tbot2.channel_quotes.types import TChannelQuoteScope
+from tbot2.channel_quote import ChannelQuoteCreate, ChannelQuoteUpdate
+from tbot2.channel_quote.types import TChannelQuoteScope
 from tbot2.testbase import create_channel_test, run_file, user_signin
 
 

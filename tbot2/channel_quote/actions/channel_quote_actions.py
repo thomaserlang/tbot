@@ -147,4 +147,4 @@ async def delete_channel_quote(
                 )
             )
 
-        return True
+        return r.rowcount == 1
