@@ -5,7 +5,7 @@ from pytest_mock import MockFixture
 from twitchAPI.twitch import TwitchUser
 from uuid6 import uuid7
 
-from tbot2.command import Command, MessageVar
+from tbot2.command import TCommand, TMessageVar
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
 from tbot2.twitch.cmd_var_fillers import accountage_vars
@@ -32,11 +32,11 @@ async def test_accountage_vars(mocker: MockFixture):
     ]
 
     vars = {
-        'accountage': MessageVar(name='accountage', match_raw='accountage', args=[]),
-        'accountage_date': MessageVar(
+        'accountage': TMessageVar(name='accountage', match_raw='accountage', args=[]),
+        'accountage_date': TMessageVar(
             name='accountage_date', match_raw='accountage_date', args=[]
         ),
-        'accountage_datetime': MessageVar(
+        'accountage_datetime': TMessageVar(
             name='accountage_datetime', match_raw='accountage_datetime', args=[]
         ),
     }
@@ -59,7 +59,7 @@ async def test_accountage_vars(mocker: MockFixture):
             message='!accountage',
             msg_id='123',
         ),
-        command=Command(args=[], name='accountage'),
+        command=TCommand(args=[], name='accountage'),
         vars=vars,
     )
 
@@ -96,7 +96,7 @@ async def test_accountage_vars(mocker: MockFixture):
             message='!accountage testuser',
             msg_id='123',
         ),
-        command=Command(args=['testuser'], name='accountage'),
+        command=TCommand(args=['testuser'], name='accountage'),
         vars=vars,
     )
 

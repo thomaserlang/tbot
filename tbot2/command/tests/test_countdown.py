@@ -4,7 +4,7 @@ import pytest
 from pytest_mock import MockFixture
 from uuid6 import uuid7
 
-from tbot2.command.types import Command
+from tbot2.command.types import TCommand
 from tbot2.command.var_filler import fill_message
 from tbot2.common import TProvider
 from tbot2.common.schemas.chat_message_schema import ChatMessage
@@ -30,7 +30,7 @@ async def test_countdown(mocker: MockFixture):
             provider_id='123',
             msg_id='123',
         ),
-        command=Command(name='countdown', args=[]),
+        command=TCommand(name='countdown', args=[]),
     )
     assert text == 'Countdown: 4 days, 4 hours, 22 minutes and 8 seconds since'
 
@@ -48,7 +48,7 @@ async def test_countdown(mocker: MockFixture):
             provider_id='123',
             msg_id='123',
         ),
-        command=Command(name='countdown', args=[]),
+        command=TCommand(name='countdown', args=[]),
     )
     assert text == 'Countdown until: 5 days, 19 hours, 37 minutes and 52 seconds'
 

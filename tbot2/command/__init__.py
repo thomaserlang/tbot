@@ -1,8 +1,13 @@
-from . import var_fillers as var_fillers
+from .actions.command_actions import create_command as create_command
+from .actions.command_actions import get_command as get_command
+from .actions.command_actions import update_command as update_command
 from .exceptions import VarFillError as VarFillError
-from .types import Command as Command
-from .types import MessageVar as MessageVar
+from .schemas.command_schemas import Command as Command
+from .schemas.command_schemas import CommandCreate as CommandCreate
+from .schemas.command_schemas import CommandUpdate as CommandUpdate
+from .types import TCommand as TCommand
 from .types import TFillerType as TFillerType
+from .types import TMessageVar as TMessageVar
 from .types import TMessageVars as TMessageVars
 from .var_filler import fill_from_dict as fill_from_dict
 from .var_filler import fill_message as fill_message

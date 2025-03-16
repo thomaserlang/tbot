@@ -1,5 +1,5 @@
 from tbot2.channel_viewer_stats import get_channel_viewer_stats
-from tbot2.command import Command, TMessageVars, fills_vars
+from tbot2.command import TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage, TProvider, safe_username
 
 from ..actions.twitch_lookup_users_action import lookup_twitch_user
@@ -16,7 +16,7 @@ from ..actions.twitch_lookup_users_action import lookup_twitch_user
     ),
 )
 async def streams_in_a_row_vars(
-    chat_message: ChatMessage, command: Command, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
 ):
     for_viewer_id = chat_message.chatter_id
     if len(command.args) > 0:

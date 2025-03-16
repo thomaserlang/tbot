@@ -2,7 +2,7 @@ from random import randint
 
 from tbot2.common import ChatMessage
 
-from ..types import Command, TMessageVars
+from ..types import TCommand, TMessageVars
 from ..var_filler import fills_vars
 
 
@@ -10,7 +10,7 @@ from ..var_filler import fills_vars
     provider='all',
     vars=('randint',),
 )
-async def randint_vars(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def randint_vars(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
     from_ = 1
     to = 100
 

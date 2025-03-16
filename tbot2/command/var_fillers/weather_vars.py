@@ -3,7 +3,7 @@ from httpx import AsyncClient
 from tbot2.common import ChatMessage
 from tbot2.config_settings import config
 
-from ..types import Command, TMessageVars
+from ..types import TCommand, TMessageVars
 from ..var_filler import fills_vars
 
 weather_client = AsyncClient(base_url='https://api.openweathermap.org/data/2.5')
@@ -23,7 +23,7 @@ weather_client = AsyncClient(base_url='https://api.openweathermap.org/data/2.5')
         'weather.wind_speed',
     ),
 )
-async def weather_vars(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def weather_vars(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
     if not config.openweathermap_apikey:
         raise ValueError('`openweathermap_apikey` is missing in the config')
 

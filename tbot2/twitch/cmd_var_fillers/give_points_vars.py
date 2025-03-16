@@ -1,5 +1,5 @@
 from tbot2.channel_points import get_channel_point_settings, get_points, inc_points
-from tbot2.command import Command, TMessageVars, fills_vars
+from tbot2.command import TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage, TProvider, convert_to_points, safe_username
 from tbot2.contexts import get_session
 
@@ -8,7 +8,7 @@ from ..actions.twitch_lookup_users_action import lookup_twitch_user
 
 @fills_vars(provider=TProvider.twitch, vars=('give_points',))
 async def give_points_vars(
-    chat_message: ChatMessage, command: Command, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
 ):
     if len(command.args) != 2:
         raise ValueError(f'Syntax: !{command.name} <user> <points>')

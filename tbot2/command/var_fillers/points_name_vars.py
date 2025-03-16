@@ -3,7 +3,7 @@ from tbot2.channel_points import (
 )
 from tbot2.common import ChatMessage
 
-from ..types import Command, TMessageVars
+from ..types import TCommand, TMessageVars
 from ..var_filler import fills_vars
 
 
@@ -12,7 +12,7 @@ from ..var_filler import fills_vars
     vars=('points_name',),
 )
 async def points_name_vars(
-    chat_message: ChatMessage, command: Command, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
 ):
     settings = await get_channel_point_settings(channel_id=chat_message.channel_id)
 

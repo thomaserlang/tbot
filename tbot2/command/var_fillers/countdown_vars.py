@@ -6,13 +6,13 @@ from dateutil.parser import parse
 from tbot2.common import ChatMessage, datetime_now
 
 from ..exceptions import VarFillError
-from ..types import Command, TMessageVars
+from ..types import TCommand, TMessageVars
 from ..var_filler import fills_vars
 
 
 @fills_vars(provider='all', vars=('countdown',))
 async def countdown_vars(
-    chat_message: ChatMessage, command: Command, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
 ):
     try:
         dt = parse(' '.join(vars['countdown'].args))

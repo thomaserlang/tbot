@@ -5,7 +5,7 @@ from pytest_mock import MockFixture
 
 from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_points import inc_points
-from tbot2.command import Command, fill_message
+from tbot2.command import TCommand, fill_message
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
 from tbot2.twitch import TwitchUser
@@ -131,7 +131,7 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture):
             message='!points_ranking',
             msg_id='123',
         ),
-        command=Command(args=[], name='points_ranking'),
+        command=TCommand(args=[], name='points_ranking'),
     )
 
     assert message == (

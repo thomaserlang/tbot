@@ -7,7 +7,7 @@ from tbot2.channel_gambling import (
     ChatterGamblingStatsUpdate,
     inc_chatter_gambling_stats,
 )
-from tbot2.command import Command, fill_message
+from tbot2.command import TCommand, fill_message
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
 from tbot2.twitch import cmd_var_fillers as cmd_var_fillers
@@ -41,7 +41,7 @@ async def test_gambling_stats_vars(db: None):
             message='!gambling_stats',
             msg_id='123',
         ),
-        command=Command(args=[], name='gambling_stats'),
+        command=TCommand(args=[], name='gambling_stats'),
     )
 
     assert message == 'Slots: 1 wins, 1 loses, 2 total games, 50.0% win percent'
@@ -63,7 +63,7 @@ async def test_gambling_stats_vars(db: None):
             message='!gambling_stats',
             msg_id='123',
         ),
-        command=Command(args=[], name='gambling_stats'),
+        command=TCommand(args=[], name='gambling_stats'),
     )
 
     assert message == 'Roulette: 0 wins, 0 loses, 0 total games, 0% win percent'

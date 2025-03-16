@@ -3,16 +3,9 @@ from typing import Awaitable, Callable, Sequence
 
 from tbot2.common import ChatMessage, TProvider
 
-__all__ = [
-    'MessageVar',
-    'Command',
-    'TMessageVars',
-    'TFillerType',
-]
-
 
 @dataclass(slots=True)
-class MessageVar:
+class TMessageVar:
     name: str
     match_raw: str
     args: Sequence[str]
@@ -21,16 +14,16 @@ class MessageVar:
 
 
 @dataclass(slots=True)
-class Command:
+class TCommand:
     name: str
     args: Sequence[str]
 
 
 @dataclass(slots=True)
-class FillVars:
+class TFillVars:
     provider: str | TProvider
     vars: Sequence[str]
 
 
-TMessageVars = dict[str, MessageVar]
-TFillerType = Callable[[ChatMessage, Command, TMessageVars], Awaitable[None]]
+TMessageVars = dict[str, TMessageVar]
+TFillerType = Callable[[ChatMessage, TCommand, TMessageVars], Awaitable[None]]

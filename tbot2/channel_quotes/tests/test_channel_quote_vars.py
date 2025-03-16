@@ -4,7 +4,7 @@ import pytest
 
 from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_quotes import cmd_var_fillers as cmd_var_fillers
-from tbot2.command import Command, fill_message
+from tbot2.command import TCommand, fill_message
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
 
@@ -27,7 +27,7 @@ async def test_gambling_stats_vars(db: None):
             message='!qadd test quote',
             msg_id='123',
         ),
-        command=Command(args=['test', 'quote'], name='qadd'),
+        command=TCommand(args=['test', 'quote'], name='qadd'),
     )
     assert message == 'Quote created with number: 1'
 
@@ -45,7 +45,7 @@ async def test_gambling_stats_vars(db: None):
             message='!qedit 1 test quote edited',
             msg_id='123',
         ),
-        command=Command(args=['1', 'test', 'quote', 'edited'], name='qedit'),
+        command=TCommand(args=['1', 'test', 'quote', 'edited'], name='qedit'),
     )
     assert message == 'Quote updated with number: 1'
 
@@ -63,7 +63,7 @@ async def test_gambling_stats_vars(db: None):
             message='!q',
             msg_id='123',
         ),
-        command=Command(args=[], name='q'),
+        command=TCommand(args=[], name='q'),
     )
     assert message == 'test quote edited (1)'
 
@@ -81,7 +81,7 @@ async def test_gambling_stats_vars(db: None):
             message='!qdelete 1',
             msg_id='123',
         ),
-        command=Command(args=['1'], name='qdelete'),
+        command=TCommand(args=['1'], name='qdelete'),
     )
     assert message == 'Quote deleted with number: 1'
 

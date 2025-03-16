@@ -2,7 +2,7 @@ import pytz
 
 from tbot2.common import ChatMessage, datetime_now
 
-from ..types import Command, TMessageVars
+from ..types import TCommand, TMessageVars
 from ..var_filler import fills_vars
 
 
@@ -10,7 +10,7 @@ from ..var_filler import fills_vars
     provider='all',
     vars=('time',),
 )
-async def time_vars(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def time_vars(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
     if not vars['time'].args:
         raise ValueError(
             'A timezone must be specified with time. Example {time Europe/Copenhagen}'

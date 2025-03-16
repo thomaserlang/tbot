@@ -5,7 +5,7 @@ from pytest_mock import MockFixture
 from twitchAPI.twitch import ChannelFollower, TwitchUser
 from uuid6 import uuid7
 
-from tbot2.command import Command, MessageVar
+from tbot2.command import TCommand, TMessageVar
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
 from tbot2.twitch.cmd_var_fillers.followage_vars import followage_vars
@@ -25,11 +25,11 @@ async def test_followage_vars(mocker: MockFixture):
     )
 
     vars = {
-        'followage': MessageVar(name='followage', match_raw='followage', args=[]),
-        'followage_date': MessageVar(
+        'followage': TMessageVar(name='followage', match_raw='followage', args=[]),
+        'followage_date': TMessageVar(
             name='followage_date', match_raw='followage_date', args=[]
         ),
-        'followage_datetime': MessageVar(
+        'followage_datetime': TMessageVar(
             name='followage_datetime', match_raw='followage_datetime', args=[]
         ),
     }
@@ -52,7 +52,7 @@ async def test_followage_vars(mocker: MockFixture):
             message='!followage',
             msg_id='123',
         ),
-        command=Command(args=[], name='followage'),
+        command=TCommand(args=[], name='followage'),
         vars=vars,
     )
 
@@ -92,7 +92,7 @@ async def test_followage_vars(mocker: MockFixture):
             message='!followage testuser',
             msg_id='123',
         ),
-        command=Command(args=['testuser'], name='followage'),
+        command=TCommand(args=['testuser'], name='followage'),
         vars=vars,
     )
     assert vars['followage'].value == '7 years and 2 days ago'

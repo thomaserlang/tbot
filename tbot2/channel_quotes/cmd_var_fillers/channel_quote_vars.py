@@ -1,4 +1,4 @@
-from tbot2.command import Command, TMessageVars, fills_vars
+from tbot2.command import TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage
 
 from ..actions.channel_quote_actions import (
@@ -15,7 +15,7 @@ from ..schemas.channel_quote_request_schemas import (
 
 
 @fills_vars(provider='all', vars=('quote.add',))
-async def quote_add(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def quote_add(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
     if len(command.args) == 0:
         raise ValueError(f'Syntax error, use !{command.name} <your quote>')
 
@@ -32,7 +32,7 @@ async def quote_add(chat_message: ChatMessage, command: Command, vars: TMessageV
 
 
 @fills_vars(provider='all', vars=('quote.edit',))
-async def quote_edit(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def quote_edit(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
     if len(command.args) < 2 or not command.args[0].isdigit():
         raise ValueError(f'Syntax error, use !{command.name} <number> <new text>')
 
@@ -53,7 +53,7 @@ async def quote_edit(chat_message: ChatMessage, command: Command, vars: TMessage
 
 
 @fills_vars(provider='all', vars=('quote.delete',))
-async def quote_delete(chat_message: ChatMessage, command: Command, vars: TMessageVars):
+async def quote_delete(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
     if len(command.args) != 1 or not command.args[0].isdigit():
         raise ValueError(f'Syntax error, use !{command.name} <number>')
 
@@ -82,7 +82,7 @@ async def quote_delete(chat_message: ChatMessage, command: Command, vars: TMessa
 )
 async def quote_get(
     chat_message: ChatMessage,
-    command: Command,
+    command: TCommand,
     vars: TMessageVars,
 ):
     if len(command.args) > 0:
