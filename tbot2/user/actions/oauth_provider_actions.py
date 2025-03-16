@@ -9,15 +9,16 @@ from tbot2.contexts import AsyncSession, get_session
 
 from ..models.oauth_provider_model import MOAuthProvider
 from ..schemas.oauth_provider_schema import (
-    OAuthProvider,
-    OAuthProviderCreate,
-    OAuthProviderUpdate,
+    UserOAuthProvider,
+    UserOAuthProviderCreate,
 )
 
 
-async def create_oauth_provider(
-    *, data: OAuthProviderCreate, session: AsyncSession | None = None
-) -> OAuthProvider:
+async def create_user_oauth_provider(
+    *,
+    data: UserOAuthProviderCreate,
+    session: AsyncSession | None = None,
+) -> UserOAuthProvider:
     async with get_session(session) as session:
         try:
             provider_id = uuid7()
@@ -28,12 +29,12 @@ async def create_oauth_provider(
                     **data.model_dump(),
                 )
             )
-            provider = await get_oauth_provider(
+            provider = await get_user_oauth_provider(
                 provider_id=provider_id, session=session
             )
             if not provider:
                 raise Exception('OAuth provider could not be created')
-            return OAuthProvider.model_validate(provider)
+            return UserOAuthProvider.model_validate(provider)
 
         except IntegrityError:
             provider = await get_oauth_provider_by_user_and_provider(
@@ -57,21 +58,23 @@ async def create_oauth_provider(
             raise
 
 
-async def get_oauth_provider(
-    *, provider_id: UUID, session: AsyncSession | None = None
-) -> OAuthProvider | None:
+async def get_user_oauth_provider(
+    *,
+    provider_id: UUID,
+    session: AsyncSession | None = None,
+) -> UserOAuthProvider | None:
     async with get_session(session) as session:
         provider = await session.scalar(
             sa.select(MOAuthProvider).where(MOAuthProvider.id == provider_id)
         )
         if not provider:
             return None
-        return OAuthProvider.model_validate(provider)
+        return UserOAuthProvider.model_validate(provider)
 
 
 async def get_oauth_provider_by_user_and_provider(
     *, user_id: UUID, provider: str, session: AsyncSession | None = None
-) -> OAuthProvider | None:
+) -> UserOAuthProvider | None:
     async with get_session(session) as session:
         p = await session.scalar(
             sa.select(MOAuthProvider).where(
@@ -81,12 +84,15 @@ async def get_oauth_provider_by_user_and_provider(
         )
         if not p:
             return None
-        return OAuthProvider.model_validate(p)
+        return UserOAuthProvider.model_validate(p)
 
 
 async def get_oauth_provider_by_provider_user_id(
-    *, provider: str, provider_user_id: str, session: AsyncSession | None = None
-) -> OAuthProvider | None:
+    *,
+    provider: str,
+    provider_user_id: str,
+    session: AsyncSession | None = None,
+) -> UserOAuthProvider | None:
     async with get_session(session) as session:
         p = await session.scalar(
             sa.select(MOAuthProvider).where(
@@ -96,42 +102,30 @@ async def get_oauth_provider_by_provider_user_id(
         )
         if not p:
             return None
-        return OAuthProvider.model_validate(p)
+        return UserOAuthProvider.model_validate(p)
 
 
 async def get_oauth_providers_by_user(
-    *, user_id: UUID, session: AsyncSession | None = None
-) -> list[OAuthProvider]:
+    *,
+    user_id: UUID,
+    session: AsyncSession | None = None,
+) -> list[UserOAuthProvider]:
     async with get_session(session) as session:
         providers = await session.scalars(
             sa.select(MOAuthProvider).where(MOAuthProvider.user_id == user_id)
         )
-        return [OAuthProvider.model_validate(provider) for provider in providers]
-
-
-async def update_oauth_provider(
-    *, provider_id: UUID, data: OAuthProviderUpdate, session: AsyncSession | None = None
-) -> OAuthProvider:
-    async with get_session(session) as session:
-        await session.execute(
-            sa.update(MOAuthProvider.__table__)  # type: ignore
-            .where(MOAuthProvider.id == provider_id)
-            .values(
-                updated_at=datetime.now(tz=timezone.utc),
-                **data.model_dump(exclude_unset=True, exclude_defaults=True),
-            )
-        )
-        provider = await get_oauth_provider(provider_id=provider_id, session=session)
-        if not provider:
-            raise ValueError('OAuth provider could not be updated')
-        return OAuthProvider.model_validate(provider)
+        return [UserOAuthProvider.model_validate(provider) for provider in providers]
 
 
 async def delete_oauth_provider(
-    *, provider_id: UUID, session: AsyncSession | None = None
+    *,
+    provider_id: UUID,
+    session: AsyncSession | None = None,
 ) -> bool:
     async with get_session(session) as session:
         result = await session.execute(
-            sa.delete(MOAuthProvider.__table__).where(MOAuthProvider.id == provider_id)  # type: ignore
+            sa.delete(MOAuthProvider.__table__).where(  # type: ignore
+                MOAuthProvider.id == provider_id,
+            )
         )
         return result.rowcount > 0

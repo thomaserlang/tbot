@@ -1,10 +1,9 @@
 from .actions.oauth_provider_actions import (
-    create_oauth_provider as create_oauth_provider,
+    create_user_oauth_provider as create_user_oauth_provider,
 )
 from .actions.oauth_provider_actions import (
     delete_oauth_provider as delete_oauth_provider,
 )
-from .actions.oauth_provider_actions import get_oauth_provider as get_oauth_provider
 from .actions.oauth_provider_actions import (
     get_oauth_provider_by_provider_user_id as get_oauth_provider_by_provider_user_id,
 )
@@ -15,7 +14,7 @@ from .actions.oauth_provider_actions import (
     get_oauth_providers_by_user as get_oauth_providers_by_user,
 )
 from .actions.oauth_provider_actions import (
-    update_oauth_provider as update_oauth_provider,
+    get_user_oauth_provider as get_user_oauth_provider,
 )
 from .actions.user_actions import create_user as create_user
 from .actions.user_actions import get_user as get_user
@@ -26,10 +25,10 @@ from .models.oauth_provider_model import MOAuthProvider as MOAuthProvider
 
 # Models
 from .models.user_model import MUser as MUser
-from .schemas.oauth_provider_schema import OAuthProvider as OAuthProvider
-from .schemas.oauth_provider_schema import OAuthProviderCreate as OAuthProviderCreate
-from .schemas.oauth_provider_schema import OAuthProviderInfo as OAuthProviderInfo
-from .schemas.oauth_provider_schema import OAuthProviderUpdate as OAuthProviderUpdate
+from .schemas.oauth_provider_schema import UserOAuthProvider as UserOAuthProvider
+from .schemas.oauth_provider_schema import (
+    UserOAuthProviderCreate as UserOAuthProviderCreate,
+)
 
 # Schemas
 from .schemas.user_schema import User as User

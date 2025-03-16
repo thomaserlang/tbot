@@ -1,4 +1,4 @@
-"""add_oauth_providers_table
+"""add_user_oauth_providers_table
 
 Revision ID: d8a6ec05016f
 Revises: 5e5eb4a0418e
@@ -20,14 +20,11 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'oauth_providers',
+        'user_oauth_providers',
         sa.Column('id', sa.UUID(), nullable=False, primary_key=True),
         sa.Column('user_id', sa.UUID(), nullable=False),
-        sa.Column('provider', sa.String(50), nullable=False),
+        sa.Column('provider', sa.String(100), nullable=False),
         sa.Column('provider_user_id', sa.String(255), nullable=False),
-        sa.Column('access_token', sa.String(1024), nullable=False),
-        sa.Column('refresh_token', sa.String(1024), nullable=True),
-        sa.Column('expires_at', sa.DateTime(), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(
@@ -36,20 +33,25 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('id'),
     )
     op.create_index(
-        op.f('ix_oauth_providers_provider_provider_user_id'),
-        'oauth_providers',
+        op.f('ix_user_oauth_providers_provider_provider_user_id'),
+        'user_oauth_providers',
         ['provider', 'provider_user_id'],
         unique=True,
     )
     op.create_index(
-        op.f('ix_oauth_providers_user_id'), 'oauth_providers', ['user_id'], unique=False
+        op.f('ix_user_oauth_providers_user_id'),
+        'user_oauth_providers',
+        ['user_id'],
+        unique=False,
     )
 
 
 def downgrade() -> None:
-    op.drop_index(op.f('ix_oauth_providers_user_id'), table_name='oauth_providers')
     op.drop_index(
-        op.f('ix_oauth_providers_provider_provider_user_id'),
-        table_name='oauth_providers',
+        op.f('ix_user_oauth_providers_user_id'), table_name='user_oauth_providers'
     )
-    op.drop_table('oauth_providers')
+    op.drop_index(
+        op.f('ix_user_oauth_providers_provider_provider_user_id'),
+        table_name='user_oauth_providers',
+    )
+    op.drop_table('user_oauth_providers')

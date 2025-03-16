@@ -22,15 +22,13 @@ def upgrade() -> None:
     op.create_table(
         'users',
         sa.Column('id', sa.UUID(), nullable=False, primary_key=True),
-        sa.Column('username', sa.String(length=100), nullable=False),
-        sa.Column('email', sa.String(length=255), nullable=False),
+        sa.Column('username', sa.String(length=100), nullable=False, unique=True),
+        sa.Column('email', sa.String(length=255), nullable=True, unique=True),
         sa.Column('display_name', sa.String(length=255), nullable=False),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=True),
         sa.Column('is_active', sa.Boolean(), nullable=False, server_default='1'),
-        sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('username'),
-        sa.UniqueConstraint('email'),
+        sa.Column('twitch_id', sa.String(length=100), nullable=True),
     )
 
 

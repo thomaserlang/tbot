@@ -15,7 +15,9 @@ class MUser(Base):
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True, default=uuid7)
     username: Mapped[str] = mapped_column(sa.String(100), unique=True)
-    email: Mapped[str] = mapped_column(sa.String(255), unique=True)
+    email: Mapped[str | None] = mapped_column(
+        sa.String(255), unique=True, nullable=True
+    )
     display_name: Mapped[str] = mapped_column(sa.String(255))
     created_at: Mapped[datetime] = mapped_column(sa.DateTime)
     updated_at: Mapped[datetime | None] = mapped_column(sa.DateTime, nullable=True)
