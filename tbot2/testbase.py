@@ -14,6 +14,7 @@ async def user_signin(
 ):
     await create_user(
         data=UserCreate(
+            username='test_user',
             email='test@example.net',
             display_name='Test User',
         )

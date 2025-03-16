@@ -14,7 +14,7 @@ from ..actions.twitch_lookup_users_action import lookup_twitch_user
         'points_rank',
     ),
 )
-async def chatter_points(
+async def chatter_point_vars(
     chat_message: ChatMessage, command: Command, vars: TMessageVars
 ):
     for_chatter_id = chat_message.chatter_id

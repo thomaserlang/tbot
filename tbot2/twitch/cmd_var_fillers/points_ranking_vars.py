@@ -14,7 +14,7 @@ from tbot2.twitch import lookup_twitch_users
     provider=TProvider.twitch,
     vars=('points_ranking',),
 )
-async def points_ranking(
+async def points_ranking_vars(
     chat_message: ChatMessage, command: Command, vars: TMessageVars
 ):
     async with get_session() as session:

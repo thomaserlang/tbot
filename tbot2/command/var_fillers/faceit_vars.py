@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from tbot2.common.schemas.chat_message_schema import ChatMessage
+from tbot2.common import ChatMessage
 from tbot2.config_settings import config
 
 from ..exceptions import VarFillError
