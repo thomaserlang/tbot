@@ -26,9 +26,6 @@ from .models.oauth_provider_model import MOAuthProvider as MOAuthProvider
 # Models
 from .models.user_model import MUser as MUser
 from .schemas.oauth_provider_schema import UserOAuthProvider as UserOAuthProvider
-from .schemas.oauth_provider_schema import (
-    UserOAuthProviderCreate as UserOAuthProviderCreate,
-)
 
 # Schemas
 from .schemas.user_schema import User as User
