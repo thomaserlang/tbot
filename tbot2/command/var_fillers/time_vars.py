@@ -17,7 +17,7 @@ async def time_vars(chat_message: ChatMessage, command: Command, vars: TMessageV
         )
     if vars['time'].args[0] not in pytz.all_timezones:
         raise ValueError(
-            'Invalid timezone. Valid list: https://docs.botashell.com/vars/time'
+            'Invalid timezone. Valid list: https://docs.botashell.com/docs/time'
         )
     dt = pytz.utc.localize(
         datetime_now(),
