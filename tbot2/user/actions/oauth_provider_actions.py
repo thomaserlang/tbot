@@ -10,13 +10,14 @@ from tbot2.contexts import AsyncSession, get_session
 from ..models.oauth_provider_model import MOAuthProvider
 from ..schemas.oauth_provider_schema import (
     UserOAuthProvider,
-    UserOAuthProviderCreate,
 )
 
 
 async def create_user_oauth_provider(
     *,
-    data: UserOAuthProviderCreate,
+    user_id: UUID,
+    provider: str,
+    provider_user_id: str,
     session: AsyncSession | None = None,
 ) -> UserOAuthProvider:
     async with get_session(session) as session:
@@ -26,33 +27,36 @@ async def create_user_oauth_provider(
                 sa.insert(MOAuthProvider.__table__).values(  # type: ignore
                     id=provider_id,
                     created_at=datetime.now(tz=timezone.utc),
-                    **data.model_dump(),
+                    user_id=user_id,
+                    provider=provider,
+                    provider_user_id=provider_user_id,
                 )
             )
-            provider = await get_user_oauth_provider(
-                provider_id=provider_id, session=session
+            p = await get_user_oauth_provider(
+                provider_id=provider_id,
+                session=session,
             )
-            if not provider:
+            if not p:
                 raise Exception('OAuth provider could not be created')
             return UserOAuthProvider.model_validate(provider)
 
         except IntegrityError:
-            provider = await get_oauth_provider_by_user_and_provider(
-                user_id=data.user_id, provider=data.provider, session=session
+            p = await get_oauth_provider_by_user_and_provider(
+                user_id=user_id, provider=provider, session=session
             )
-            if provider:
+            if p:
                 raise ValueError(
-                    f"OAuth provider '{data.provider}' already connected for this user"
+                    f"OAuth provider '{provider}' already connected for this user"
                 )
 
-            provider = await get_oauth_provider_by_provider_user_id(
-                provider=data.provider,
-                provider_user_id=data.provider_user_id,
+            p = await get_oauth_provider_by_provider_user_id(
+                provider=provider,
+                provider_user_id=provider_user_id,
                 session=session,
             )
-            if provider:
+            if p:
                 raise ValueError(
-                    f'This {data.provider} account is already connected to a different user'
+                    f'This {provider} account is already connected to a different user'
                 )
 
             raise

@@ -1,19 +1,10 @@
 from datetime import datetime
-from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from tbot2.common import BaseSchema
 
 
-class UserOAuthProviderCreate(BaseModel):
-    user_id: UUID
-    provider: Annotated[str, StringConstraints(min_length=1, max_length=50)]
-    provider_user_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
-
-
-class UserOAuthProvider(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
+class UserOAuthProvider(BaseSchema):
     id: UUID
     user_id: UUID
     provider: str
