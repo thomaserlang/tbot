@@ -40,7 +40,7 @@ async def get_channel_quotes_route(
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.READ])
     ],
 ):
-    await token_data.is_valid_for_channel(
+    await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -76,7 +76,7 @@ async def get_channel_quote_route(
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.READ])
     ],
 ):
-    await token_data.is_valid_for_channel(
+    await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -108,7 +108,7 @@ async def get_channel_quote_by_number_route(
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.READ])
     ],
 ):
-    await token_data.is_valid_for_channel(
+    await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -142,7 +142,7 @@ async def create_channel_quote_route(
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.WRITE])
     ],
 ):
-    await token_data.is_valid_for_channel(
+    await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -171,7 +171,7 @@ async def update_channel_quote_route(
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.WRITE])
     ],
 ):
-    await token_data.is_valid_for_channel(
+    await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -209,7 +209,7 @@ async def delete_channel_quote_route(
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.WRITE])
     ],
 ):
-    await token_data.is_valid_for_channel(
+    await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )

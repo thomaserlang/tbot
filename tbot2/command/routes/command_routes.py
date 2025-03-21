@@ -36,7 +36,7 @@ async def get_commands_route(
         TokenData, Security(authenticated, scopes=[TCommandScope.READ])
     ],
 ):
-    await token_data.is_valid_for_channel(
+    await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -70,7 +70,7 @@ async def get_command_route(
         TokenData, Security(authenticated, scopes=[TCommandScope.READ])
     ],
 ):
-    await token_data.is_valid_for_channel(
+    await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -100,7 +100,7 @@ async def create_command_route(
         TokenData, Security(authenticated, scopes=[TCommandScope.WRITE])
     ],
 ):
-    await token_data.is_valid_for_channel(
+    await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -128,7 +128,7 @@ async def update_command_route(
         TokenData, Security(authenticated, scopes=[TCommandScope.WRITE])
     ],
 ):
-    await token_data.is_valid_for_channel(
+    await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
