@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends, Header, HTTPException, Request
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import (
     OAuth2,
     SecurityScopes,
@@ -14,9 +14,6 @@ oauth2_scheme = OAuth2(auto_error=False)
 async def get_token_data(
     request: Request,
     _: Annotated[str, Depends(oauth2_scheme)],
-    # To add the authorization header to the documentation
-    authorization: Annotated[str, Header(name='Authorization', examples=['Bearer 123'])]
-    | None = None,
 ) -> TokenData:
     if not request.user or not request.user.is_authenticated:
         raise HTTPException(status_code=401, detail='Not authenticated')

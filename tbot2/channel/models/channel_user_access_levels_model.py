@@ -22,3 +22,4 @@ class MChannelUserAccessLevel(Base):
         nullable=False,
     )
     access_level: Mapped[int] = mapped_column(sa.SmallInteger, nullable=False)
+    
