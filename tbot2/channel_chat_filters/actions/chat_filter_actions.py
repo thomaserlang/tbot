@@ -10,8 +10,8 @@ from tbot2.contexts import AsyncSession, get_session
 from ..models.chat_filter_model import MChatFilter
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
-    ChatFilterCreate,
-    ChatFilterUpdate,
+    ChatFilterBaseCreate,
+    ChatFilterBaseUpdate,
 )
 
 
@@ -27,9 +27,23 @@ async def get_chat_filter(
             return TypeAdapter(FilterTypesUnion).validate_python(result)  # type: ignore
 
 
+async def get_chat_filters(
+    channel_id: UUID,
+    session: AsyncSession | None = None,
+) -> list[ChatFilterBase]:
+    async with get_session(session) as session:
+        filters = await session.scalars(
+            sa.select(MChatFilter).where(MChatFilter.channel_id == channel_id)
+        )
+        return [
+            TypeAdapter(FilterTypesUnion).validate_python(filter_)  # type: ignore
+            for filter_ in filters
+        ]
+
+
 async def create_chat_filter(
     channel_id: UUID,
-    data: ChatFilterCreate,
+    data: ChatFilterBaseCreate,
     session: AsyncSession | None = None,
 ) -> ChatFilterBase:
     async with get_session(session) as session:
@@ -55,7 +69,7 @@ async def create_chat_filter(
 
 async def update_chat_filter(
     filter_id: UUID,
-    data: ChatFilterUpdate,
+    data: ChatFilterBaseUpdate,
     session: AsyncSession | None = None,
 ):
     async with get_session(session) as session:

@@ -7,7 +7,7 @@ from uuid6 import uuid7
 from tbot2.model_base import Base
 
 
-class MChatFilterBannedTerms(Base):
+class MChatFilterBannedTerm(Base):
     __tablename__ = 'chat_filter_banned_terms'
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True, default=uuid7)
@@ -16,5 +16,6 @@ class MChatFilterBannedTerms(Base):
         sa.ForeignKey('chat_filters.id', onupdate='CASCADE', ondelete='CASCADE'),
         nullable=False,
     )
+    type: Mapped[str] = mapped_column(sa.String(50), nullable=False)
     text: Mapped[str] = mapped_column(sa.String(1000), nullable=False)
     enabled: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, default=True)

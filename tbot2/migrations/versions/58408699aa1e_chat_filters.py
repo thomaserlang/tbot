@@ -77,7 +77,7 @@ def upgrade() -> None:
     """)
 
     op.create_table(
-        'chat_filter_links_whitelist',
+        'chat_filter_link_allowlist',
         sa.Column('id', sa.UUID(), primary_key=True),
         sa.Column(
             'chat_filter_id',

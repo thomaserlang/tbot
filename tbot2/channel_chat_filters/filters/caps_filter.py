@@ -1,12 +1,15 @@
+from re import findall
 from typing import Annotated, Literal
 
 from pydantic import Field
 
+from tbot2.common import ChatMessage
+
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
+    ChatFilterBaseCreate,
     ChatFilterBaseSettings,
-    ChatFilterCreate,
-    ChatFilterUpdate,
+    ChatFilterBaseUpdate,
 )
 
 
@@ -15,17 +18,23 @@ class ChatFilterCapsSettings(ChatFilterBaseSettings):
     max_percent: Annotated[int, Field(ge=0, le=100)] = 60
 
 
-class ChatFilterCaps(ChatFilterBase):
-    type: Literal['caps']
-    settings: ChatFilterCapsSettings
-
-
-class ChatFilterCapsCreate(ChatFilterCreate):
+class ChatFilterCapsCreate(ChatFilterBaseCreate):
     type: Literal['caps']
     name: str = 'Caps Filter'
     settings: ChatFilterCapsSettings = ChatFilterCapsSettings()
 
 
-class ChatFilterCapsUpdate(ChatFilterUpdate):
+class ChatFilterCapsUpdate(ChatFilterBaseUpdate):
     type: Literal['caps']
     settings: ChatFilterCapsSettings | None = None
+
+
+class ChatFilterCaps(ChatFilterBase):
+    type: Literal['caps']
+    settings: ChatFilterCapsSettings
+
+    async def check_message(self, message: ChatMessage) -> bool:
+        caps = findall(r'[A-Z]', message.message_without_fragments())
+        return (
+            len(caps) / len(message.message_without_fragments())
+        ) * 100 > self.settings.max_percent

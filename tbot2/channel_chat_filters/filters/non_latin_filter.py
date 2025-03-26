@@ -1,12 +1,15 @@
+from re import IGNORECASE, findall, sub
 from typing import Annotated, Literal
 
 from pydantic import Field
 
+from tbot2.common import ChatMessage
+
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
+    ChatFilterBaseCreate,
     ChatFilterBaseSettings,
-    ChatFilterCreate,
-    ChatFilterUpdate,
+    ChatFilterBaseUpdate,
 )
 
 
@@ -15,17 +18,27 @@ class ChatFilterNonLatinSettings(ChatFilterBaseSettings):
     max_percent: Annotated[int, Field(ge=0, le=100)] = 80
 
 
-class ChatFilterNonLatin(ChatFilterBase):
-    type: Literal['non_latin']
-    settings: ChatFilterNonLatinSettings
-
-
-class ChatFilterNonLatinCreate(ChatFilterCreate):
+class ChatFilterNonLatinCreate(ChatFilterBaseCreate):
     type: Literal['non_latin']
     name: str = 'Non-latin Filter'
     settings: ChatFilterNonLatinSettings = ChatFilterNonLatinSettings()
 
 
-class ChatFilterNonLatinUpdate(ChatFilterUpdate):
+class ChatFilterNonLatinUpdate(ChatFilterBaseUpdate):
     type: Literal['non_latin']
     settings: ChatFilterNonLatinSettings | None = None
+
+
+class ChatFilterNonLatin(ChatFilterBase):
+    type: Literal['non_latin']
+    settings: ChatFilterNonLatinSettings
+
+    async def check_message(self, message: ChatMessage) -> bool:
+        chars = sub(r'[\W]', '', message.message_without_fragments())
+        if not chars:
+            return False
+
+        non_latin = findall(r'[^a-z0-9_]', chars, IGNORECASE)
+        return ((len(non_latin) / len(chars)) * 100 > self.settings.max_percent) and (
+            len(non_latin)
+        ) >= self.settings.min_length

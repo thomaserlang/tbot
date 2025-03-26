@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import ConfigDict, StringConstraints, field_validator
 
-from tbot2.common import BaseRequestSchema, BaseSchema, TAccessLevel
+from tbot2.common import BaseRequestSchema, BaseSchema, ChatMessage, TAccessLevel
 
 
 class ChatFilterBaseSettings(BaseSchema):
@@ -25,8 +25,11 @@ class ChatFilterBase(BaseSchema):
     timeout_message: str
     timeout_duration: int
 
+    async def check_message(self, message: ChatMessage) -> bool:
+        return False
 
-class ChatFilterCreate(BaseRequestSchema):
+
+class ChatFilterBaseCreate(BaseRequestSchema):
     name: Annotated[str, StringConstraints(min_length=1, max_length=500)]
     enabled: bool = True
     exclude_access_level: TAccessLevel = TAccessLevel.MOD
@@ -41,7 +44,7 @@ class ChatFilterCreate(BaseRequestSchema):
     timeout_duration: int = 60
 
 
-class ChatFilterUpdate(BaseRequestSchema):
+class ChatFilterBaseUpdate(BaseRequestSchema):
     name: Annotated[str, StringConstraints(min_length=1, max_length=500)] | None = None
     enabled: bool | None = None
     exclude_access_level: TAccessLevel | None = None

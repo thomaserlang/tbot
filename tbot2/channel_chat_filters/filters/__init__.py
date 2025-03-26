@@ -4,8 +4,8 @@ from pydantic import Discriminator
 
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
-    ChatFilterCreate,
-    ChatFilterUpdate,
+    ChatFilterBaseCreate,
+    ChatFilterBaseUpdate,
 )
 from . import banned_terms_filter as banned_terms_filter
 from . import caps_filter as caps_filter
@@ -26,8 +26,8 @@ FilterTypesUnion = Annotated[
     Union[tuple(ChatFilterBase.__subclasses__())], discriminator
 ]
 FilterTypeCreateUnion = Annotated[
-    Union[tuple(ChatFilterCreate.__subclasses__())], discriminator
+    Union[tuple(ChatFilterBaseCreate.__subclasses__())], discriminator
 ]
 FilterTypeUpdateUnion = Annotated[
-    Union[tuple(ChatFilterUpdate.__subclasses__())], discriminator
+    Union[tuple(ChatFilterBaseUpdate.__subclasses__())], discriminator
 ]
