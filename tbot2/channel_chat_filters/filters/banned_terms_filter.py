@@ -1,4 +1,5 @@
 import shlex
+import sys
 from re import IGNORECASE, search
 from typing import Literal
 from uuid import UUID
@@ -12,6 +13,7 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBase,
     ChatFilterBaseCreate,
     ChatFilterBaseUpdate,
+    FilterMatchResult,
 )
 from ..types import TBannedTermType
 
@@ -28,18 +30,26 @@ class ChatFilterBannedTermsUpdate(ChatFilterBaseUpdate):
 class ChatFilterBannedTerms(ChatFilterBase):
     type: Literal['banned_terms']
 
-    async def check_message(self, message: ChatMessage) -> bool:
+    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
         banned_terms = await get_banned_terms(filter_id=self.id)
         for term in banned_terms:
-            if (term.type == TBannedTermType.re) or (
+            import logging
+
+            logging.error(term.type)
+            if (term.type == TBannedTermType.regex) or (
                 term.text.startswith('re:')  # Backwards compatibility
             ):
+                import logging
+
+                logging.error(
+                    term.text if not term.text.startswith('re:') else term.text[3:]
+                )
                 if search(
                     term.text if not term.text.startswith('re:') else term.text[3:],
                     message.message_without_fragments(),
                     flags=IGNORECASE,
                 ):
-                    return True
+                    return FilterMatchResult(filter=self, matched=True, sub_id=term.id)
             elif term.type == TBannedTermType.phrase:
                 split = (
                     term.text.split(' ')
@@ -56,10 +66,10 @@ class ChatFilterBannedTerms(ChatFilterBase):
                         for s in split
                     ]
                 ):
-                    return True
-        return False
+                    return FilterMatchResult(filter=self, matched=True, sub_id=term.id)
+        return FilterMatchResult(filter=self, matched=False)
 
 
-@alru_cache(ttl=1)
+@alru_cache(ttl=1, maxsize=1000 if 'pytest' not in sys.modules else 0)
 async def get_banned_terms(filter_id: UUID):
     return await _get_banned_terms(filter_id=filter_id)

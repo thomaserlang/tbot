@@ -1,3 +1,4 @@
+import sys
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -9,6 +10,7 @@ from tbot2.model_base import Base
 
 class MChatFilterLinkAllowlist(Base):
     __tablename__ = 'chat_filter_link_allowlist'
+    __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True, default=uuid7)
     chat_filter_id: Mapped[UUID] = mapped_column(

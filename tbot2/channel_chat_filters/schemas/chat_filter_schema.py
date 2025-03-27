@@ -2,6 +2,8 @@ from typing import Annotated
 from uuid import UUID
 
 from pydantic import ConfigDict, StringConstraints, field_validator
+from pydantic.dataclasses import dataclass
+from typing_extensions import Doc
 
 from tbot2.common import BaseRequestSchema, BaseSchema, ChatMessage, TAccessLevel
 
@@ -10,6 +12,15 @@ class ChatFilterBaseSettings(BaseSchema):
     model_config = ConfigDict(
         from_attributes=True,
         extra='forbid',
+    )
+
+
+@dataclass(slots=True)
+class FilterMatchResult:
+    filter: 'ChatFilterBase'
+    matched: bool = False
+    sub_id: Annotated[UUID | None, Doc('Used e.g. for which banned term matched')] = (
+        None
     )
 
 
@@ -25,8 +36,8 @@ class ChatFilterBase(BaseSchema):
     timeout_message: str
     timeout_duration: int
 
-    async def check_message(self, message: ChatMessage) -> bool:
-        return False
+    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
+        return FilterMatchResult(filter=self, matched=False)
 
 
 class ChatFilterBaseCreate(BaseRequestSchema):

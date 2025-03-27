@@ -34,3 +34,4 @@ class TwitchMessageFragment(BaseModel):
     cheermote: TwitchFragmentCheermote | None
     emote: TwitchFragmentEmote | None
     mention: TwitchFragmentMention | None
+    

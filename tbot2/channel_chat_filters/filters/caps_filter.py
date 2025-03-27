@@ -10,6 +10,7 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseCreate,
     ChatFilterBaseSettings,
     ChatFilterBaseUpdate,
+    FilterMatchResult,
 )
 
 
@@ -33,8 +34,10 @@ class ChatFilterCaps(ChatFilterBase):
     type: Literal['caps']
     settings: ChatFilterCapsSettings
 
-    async def check_message(self, message: ChatMessage) -> bool:
+    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
         caps = findall(r'[A-Z]', message.message_without_fragments())
-        return (
-            len(caps) / len(message.message_without_fragments())
-        ) * 100 > self.settings.max_percent
+        return FilterMatchResult(
+            filter=self,
+            matched=(len(caps) / len(message.message_without_fragments())) * 100
+            > self.settings.max_percent,
+        )

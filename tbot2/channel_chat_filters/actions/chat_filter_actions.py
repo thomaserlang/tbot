@@ -1,3 +1,4 @@
+from typing import TypeVar, cast
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -14,17 +15,20 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseUpdate,
 )
 
+T = TypeVar('T', bound=ChatFilterBase)
+
 
 async def get_chat_filter(
     filter_id: UUID,
     session: AsyncSession | None = None,
-) -> ChatFilterBase | None:
+    model: type[T] = ChatFilterBase,
+) -> T | None:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MChatFilter).where(MChatFilter.id == filter_id)
         )
         if result:
-            return TypeAdapter(FilterTypesUnion).validate_python(result)  # type: ignore
+            return cast(T, TypeAdapter(FilterTypesUnion).validate_python(result))
 
 
 async def get_chat_filters(
@@ -36,7 +40,7 @@ async def get_chat_filters(
             sa.select(MChatFilter).where(MChatFilter.channel_id == channel_id)
         )
         return [
-            TypeAdapter(FilterTypesUnion).validate_python(filter_)  # type: ignore
+            TypeAdapter(FilterTypesUnion).validate_python(filter_)
             for filter_ in filters
         ]
 

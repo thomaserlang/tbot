@@ -10,4 +10,4 @@ class TChatFilterScope(TScope):
 
 class TBannedTermType(str, Enum):
     phrase = 'phrase'
-    re = 're'
+    regex = 'regex'

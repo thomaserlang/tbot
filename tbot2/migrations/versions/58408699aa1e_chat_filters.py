@@ -72,7 +72,7 @@ def upgrade() -> None:
         insert into chat_filter_banned_terms 
             (id, chat_filter_id, text, type) 
         select uuid_v7(), f.id, w.banned_words, 
-            if(left(w.banned_words, 3) = "re:", "re", "phrase") 
+            if(left(w.banned_words, 3) = "re:", "regex", "phrase") 
         from twitch_filter_banned_words w, chat_filters f where f.old_id = w.filter_id
     """)
 

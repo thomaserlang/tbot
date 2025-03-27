@@ -9,6 +9,7 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseCreate,
     ChatFilterBaseSettings,
     ChatFilterBaseUpdate,
+    FilterMatchResult,
 )
 
 
@@ -31,5 +32,8 @@ class ChatFilterParagraph(ChatFilterBase):
     type: Literal['paragraph']
     settings: ChatFilterParagraphSettings
 
-    async def check_message(self, message: ChatMessage) -> bool:
-        return len(message.message_without_fragments()) > self.settings.max_length
+    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
+        return FilterMatchResult(
+            filter=self,
+            matched=len(message.message_without_fragments()) > self.settings.max_length,
+        )

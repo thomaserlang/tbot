@@ -1,4 +1,5 @@
 import re
+import sys
 from typing import Literal
 from uuid import UUID
 
@@ -11,6 +12,7 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBase,
     ChatFilterBaseCreate,
     ChatFilterBaseUpdate,
+    FilterMatchResult,
 )
 
 
@@ -26,19 +28,19 @@ class ChatFilterLinkUpdate(ChatFilterBaseUpdate):
 class ChatFilterLink(ChatFilterBase):
     type: Literal['link']
 
-    async def check_message(self, message: ChatMessage) -> bool:
+    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
         matches = RE_URL.findall(message.message_without_fragments())
         if not matches:
-            return False
+            return FilterMatchResult(filter=self, matched=False)
         allowlist = await get_link_allowlist(filter_id=self.id)
         for match in matches:
             for allow in allowlist:
                 if match[2] in allow.url:
-                    return False
-        return True
+                    return FilterMatchResult(filter=self, matched=False)
+        return FilterMatchResult(filter=self, matched=True)
 
 
-@alru_cache(ttl=1)
+@alru_cache(ttl=1, maxsize=1000 if 'pytest' not in sys.modules else 0)
 async def get_link_allowlist(
     filter_id: UUID,
 ):

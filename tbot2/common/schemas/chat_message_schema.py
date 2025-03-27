@@ -5,8 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel
 from typing_extensions import Doc
 
-from tbot2.common import TAccessLevel
-
+from ..types.access_level_type import TAccessLevel
 from ..types.provider_type import TProvider
 from .twitch_schemas import TwitchBadge, TwitchMessageFragment
 

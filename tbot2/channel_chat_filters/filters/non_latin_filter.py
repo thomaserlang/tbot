@@ -10,6 +10,7 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseCreate,
     ChatFilterBaseSettings,
     ChatFilterBaseUpdate,
+    FilterMatchResult,
 )
 
 
@@ -33,12 +34,14 @@ class ChatFilterNonLatin(ChatFilterBase):
     type: Literal['non_latin']
     settings: ChatFilterNonLatinSettings
 
-    async def check_message(self, message: ChatMessage) -> bool:
+    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
         chars = sub(r'[\W]', '', message.message_without_fragments())
         if not chars:
-            return False
+            return FilterMatchResult(filter=self, matched=False)
 
         non_latin = findall(r'[^a-z0-9_]', chars, IGNORECASE)
-        return ((len(non_latin) / len(chars)) * 100 > self.settings.max_percent) and (
-            len(non_latin)
-        ) >= self.settings.min_length
+        return FilterMatchResult(
+            filter=self,
+            matched=((len(non_latin) / len(chars)) * 100 > self.settings.max_percent)
+            and (len(non_latin)) >= self.settings.min_length,
+        )

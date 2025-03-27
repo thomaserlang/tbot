@@ -10,6 +10,7 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseCreate,
     ChatFilterBaseSettings,
     ChatFilterBaseUpdate,
+    FilterMatchResult,
 )
 
 
@@ -32,6 +33,8 @@ class ChatFilterSymbol(ChatFilterBase):
     type: Literal['symbol']
     settings: ChatFilterSymbolSettings
 
-    async def check_message(self, message: ChatMessage) -> bool:
+    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
         symbols = findall(r'[^ \w]', message.message_without_fragments())
-        return len(symbols) > self.settings.max_symbols
+        return FilterMatchResult(
+            filter=self, matched=len(symbols) > self.settings.max_symbols
+        )

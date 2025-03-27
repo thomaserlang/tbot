@@ -9,6 +9,7 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseCreate,
     ChatFilterBaseSettings,
     ChatFilterBaseUpdate,
+    FilterMatchResult,
 )
 
 
@@ -31,15 +32,19 @@ class ChatFilterEmote(ChatFilterBase):
     type: Literal['emote']
     settings: ChatFilterEmoteSettings
 
-    async def check_message(self, message: ChatMessage) -> bool:
+    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
         if message.provider == TProvider.youtube:
             emote_count = message.message.count(':') // 2
-            return emote_count > self.settings.max_emotes
+            return FilterMatchResult(
+                filter=self, matched=emote_count > self.settings.max_emotes
+            )
         elif message.provider == TProvider.twitch:
             if not message.twitch_fragments:
-                return False
+                return FilterMatchResult(filter=self, matched=False)
             emote_count = sum(
                 1 for fragment in message.twitch_fragments if fragment.type == 'emote'
             )
-            return emote_count > self.settings.max_emotes
-        return False
+            return FilterMatchResult(
+                filter=self, matched=emote_count > self.settings.max_emotes
+            )
+        return FilterMatchResult(filter=self, matched=False)

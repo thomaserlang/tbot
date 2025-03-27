@@ -13,23 +13,24 @@ class BannedTerm(BaseSchema):
     chat_filter_id: UUID
     type: TBannedTermType
     text: str
-    enabled: bool
 
 
 class BannedTermCreate(BaseRequestSchema):
     type: TBannedTermType
     text: Annotated[str, StringConstraints(min_length=1, max_length=1000)]
-    enabled: bool = True
 
 
 class BannedTermUpdate(BaseRequestSchema):
     type: TBannedTermType | None = None
     text: Annotated[str, StringConstraints(min_length=1, max_length=1000)] | None = None
-    enabled: bool | None = None
 
-    @field_validator('type', 'text', 'enabed')
+    @field_validator('type', 'text')
     @classmethod
     def check_not_none(cls, v: str | bool | None) -> str | bool:
         if v is None:
             raise ValueError('Field cannot be None')
         return v
+
+
+class BannedTermTest(BaseRequestSchema):
+    message: Annotated[str, StringConstraints(min_length=1, max_length=1000)]

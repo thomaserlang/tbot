@@ -6,7 +6,7 @@ from uuid6 import uuid7
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.chat_filter_banned_terms_model import MChatFilterBannedTerm
-from ..schemas.banned_term_schema import BannedTerm, BannedTermCreate
+from ..schemas.banned_term_schema import BannedTerm, BannedTermCreate, BannedTermUpdate
 
 
 async def get_banned_term(
@@ -57,13 +57,12 @@ async def create_banned_term(
             chat_filter_id=filter_id,
             type=data.type,
             text=data.text,
-            enabled=data.enabled,
         )
 
 
 async def update_banned_term(
     term_id: UUID,
-    data: BannedTerm,
+    data: BannedTermUpdate,
     session: AsyncSession | None = None,
 ) -> BannedTerm:
     async with get_session(session) as session:
