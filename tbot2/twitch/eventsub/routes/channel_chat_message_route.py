@@ -1,10 +1,8 @@
 from typing import Annotated
+from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, Request, Response
 
-from tbot2.channel.actions.lookup_twitch_id_to_channel_id_action import (
-    lookup_twitch_id_to_channel_id,
-)
 from tbot2.chatlog.actions.chatlog_action import create_chatlog
 from tbot2.common import TProvider
 from tbot2.common.schemas.chat_message_schema import ChatMessage
@@ -26,6 +24,7 @@ router = APIRouter()
 async def eventsub_message(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],
     request: Request,
+    channel_id: UUID,
 ):
     if headers.message_type == 'webhook_callback_verification':
         return Response(content=(await request.json())['challenge'])
@@ -36,15 +35,9 @@ async def eventsub_message(
         await request.body()
     )
 
-    user_id = await lookup_twitch_id_to_channel_id(
-        twitch_id=data.event.broadcaster_user_id
-    )
-    if not user_id:
-        raise HTTPException(400, 'Twitch channel not conneccted to any user')
-
     data = ChatMessage(
         type='message',
-        channel_id=user_id,
+        channel_id=channel_id,
         chatter_id=data.event.chatter_user_id,
         chatter_name=data.event.chatter_user_login,
         chatter_display_name=data.event.chatter_user_name,

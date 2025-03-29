@@ -4,6 +4,7 @@ import typing
 
 from httpx import AsyncClient, Auth, Request, Response
 from httpx_auth import OAuth2ClientCredentials
+from pydantic import BaseModel
 from twitchAPI.twitch import Twitch
 
 from tbot2.config_settings import config
@@ -106,9 +107,13 @@ twitch_client = Twitch(
 )
 
 
+T = typing.TypeVar('T', bound=BaseModel)
+
+
 async def get_twitch_pagination(
     response: Response,
-):
+    schema: type[T],
+) -> list[T]:
     data = response.json()
     all_data: list[dict[str, typing.Any]] = data['data']
 
@@ -121,8 +126,9 @@ async def get_twitch_pagination(
                 'after': pagination['cursor'],
             },
         )
+        response.raise_for_status()
         data = response.json()
         all_data.extend(data['data'])
         pagination = data.get('pagination')
 
-    return all_data
+    return [schema.model_validate(item) for item in all_data]
