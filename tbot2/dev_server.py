@@ -1,7 +1,7 @@
 import os
 from subprocess import list2cmdline
 
-from honcho.manager import Manager
+from honcho.manager import Manager  # type: ignore
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
 
     manager = Manager()
     for name, cmd, cwd in start:
-        manager.add_process(
+        manager.add_process( # type: ignore
             name,
             list2cmdline(cmd),
             quiet=False,
