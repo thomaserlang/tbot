@@ -21,7 +21,7 @@ from .actions.user_actions import get_user as get_user
 from .actions.user_actions import get_user_by_email as get_user_by_email
 from .actions.user_actions import get_user_by_username as get_user_by_username
 from .actions.user_actions import update_user as update_user
-from .models.oauth_provider_model import MOAuthProvider as MOAuthProvider
+from .models.oauth_provider_model import MUserOAuthProvider as MUserOAuthProvider
 
 # Models
 from .models.user_model import MUser as MUser

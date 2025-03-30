@@ -31,6 +31,7 @@ def upgrade(revision: str):
 
     from alembic import command
     from alembic.config import Config
+
     logging.error(Path(__file__).parent / 'alembic.ini')
     cfg = Config(Path(__file__).parent / 'alembic.ini')
     cfg.set_main_option('script_location', 'tbot2:migrations')

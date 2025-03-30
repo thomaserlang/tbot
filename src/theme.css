@@ -1,0 +1,99 @@
+@import "@mantine/core/styles.css" layer(mantine-core);
+@import "@mantine/notifications/styles.css" layer(mantine-notifications);
+@layer mantine-core, mantine-notifications, mantine-dates, mantine-datatable;
+
+body {
+  --tbot-content-height: calc(
+    100dvh -
+      calc(
+        var(--app-shell-header-offset, 0.5rem) +
+          var(--app-shell-padding, 0.5rem) * 2
+      )
+  );
+
+  @mixin light {
+    background-color: var(--mantine-color-gray-0);
+
+    --tbot-border-color: var(--mantine-color-gray-3);
+  }
+
+  @mixin dark {
+    background-color: var(--mantine-color-dark-8);
+
+    --tbot-border-color: var(--mantine-color-dark-4);
+
+    --mantine-datatable-shadow-background-bottom: linear-gradient(
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 0.2)
+      ),
+      linear-gradient(rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.2));
+  }
+}
+
+.mantine-Checkbox-labelWrapper {
+  --label-offset-start: 0.5rem;
+}
+
+.mantine-Modal-title {
+  font-weight: bolder;
+  width: 100%;
+}
+
+.mantine-Modal-close:focus,
+.mantine-Drawer-close:focus {
+  outline: none;
+}
+
+.no-outline:focus {
+  outline: none;
+}
+
+.mantine-datatable-scroll-area-bottom-shadow {
+  background: linear-gradient(
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, light-dark(0.05, 0.2))
+    ),
+    linear-gradient(rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, light-dark(0.05, 0.2)));
+}
+
+.mantine-datatable-scroll-area-top-shadow {
+  background: linear-gradient(
+      rgba(0, 0, 0, light-dark(0.05, 0.2)),
+      rgba(0, 0, 0, 0)
+    ),
+    linear-gradient(rgba(0, 0, 0, light-dark(0.05, 0.2)) 30%, rgba(0, 0, 0, 0));
+}
+
+.mantine-datatable-scroll-area-left-shadow {
+  background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, light-dark(0.05, 0.2)),
+      rgba(0, 0, 0, 0)
+    ),
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, light-dark(0.05, 0.2)),
+      rgba(0, 0, 0, 0) 30%
+    );
+}
+
+.mantine-datatable-scroll-area-right-shadow {
+  background: linear-gradient(
+      to left,
+      rgba(0, 0, 0, light-dark(0.05, 0.2)),
+      rgba(0, 0, 0, 0)
+    ),
+    linear-gradient(
+      to left,
+      rgba(0, 0, 0, light-dark(0.05, 0.2)),
+      rgba(0, 0, 0, 0) 30%
+    );
+}
+
+.mantine-datatable-loader {
+  background: light-dark(rgba(255, 255, 255, 0.75), rgba(0, 0, 0, 0.5));
+}
+
+.mantine-datatable-header-cell-sortable-text {
+  font-weight: 500;
+}

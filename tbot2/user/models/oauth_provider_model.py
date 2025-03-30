@@ -9,8 +9,8 @@ from uuid6 import uuid7
 from tbot2.model_base import Base
 
 
-class MOAuthProvider(Base):
-    __tablename__ = 'oauth_providers'
+class MUserOAuthProvider(Base):
+    __tablename__ = 'user_oauth_providers'
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True, default=uuid7)
@@ -19,8 +19,5 @@ class MOAuthProvider(Base):
     )
     provider: Mapped[str] = mapped_column(sa.String(50))  # 'google', 'github', etc
     provider_user_id: Mapped[str] = mapped_column(sa.String(255))
-    access_token: Mapped[str] = mapped_column(sa.String(1024))
-    refresh_token: Mapped[str | None] = mapped_column(sa.String(1024), nullable=True)
-    expires_at: Mapped[datetime | None] = mapped_column(sa.DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(sa.DateTime)
     updated_at: Mapped[datetime | None] = mapped_column(sa.DateTime, nullable=True)

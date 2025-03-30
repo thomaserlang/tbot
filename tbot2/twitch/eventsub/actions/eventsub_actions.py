@@ -53,7 +53,9 @@ async def _register_eventsub(
             'transport': {
                 'method': 'webhook',
                 'callback': urljoin(
-                    config.web.base_url,
+                    str(
+                        config.twitch.eventsub_callback_base_url or config.web.base_url
+                    ),
                     f'/twitch/eventsub/{event_type}?channel_id={channel_id}',
                 ),
                 'secret': config.twitch.eventsub_secret,

@@ -2,7 +2,7 @@ import os
 import sys
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import AnyHttpUrl, BaseModel
 from yaml_settings_pydantic import BaseYamlSettings, YamlSettingsConfigDict
 
 
@@ -10,7 +10,7 @@ class ConfigWebModel(BaseModel):
     port: int = 8001
     cookie_secret: str = ''
     name: str = 'TBot'
-    base_url: str = 'https://botashell.com'
+    base_url: AnyHttpUrl = AnyHttpUrl('https://botashell.com')
 
 
 class ConfigTwitchModel(BaseModel):
@@ -20,6 +20,7 @@ class ConfigTwitchModel(BaseModel):
     client_secret: str = ''
     eventsub_host: str = 'https://api.twitch.tv'
     eventsub_secret: str = ''
+    eventsub_callback_base_url: AnyHttpUrl | None = None
     irc_host: str = 'irc.chat.twitch.tv'
     irc_port: int = 6697
     irc_use_ssl: bool = True

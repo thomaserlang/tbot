@@ -15,6 +15,4 @@ async def get_twitch_chatters(broadcaster_id: str):
     )
     response.raise_for_status()
 
-    results = await get_twitch_pagination(response)
-
-    return [Chatter(**chatter) for chatter in results]
+    return await get_twitch_pagination(response, schema=Chatter)

@@ -5,6 +5,7 @@ import typing
 from httpx import AsyncClient, Auth, Request, Response
 from httpx_auth import OAuth2ClientCredentials
 from pydantic import BaseModel
+from twitchAPI.object.base import TwitchObject
 from twitchAPI.twitch import Twitch
 
 from tbot2.config_settings import config
@@ -107,7 +108,7 @@ twitch_client = Twitch(
 )
 
 
-T = typing.TypeVar('T', bound=BaseModel)
+T = typing.TypeVar('T')
 
 
 async def get_twitch_pagination(
@@ -131,4 +132,11 @@ async def get_twitch_pagination(
         all_data.extend(data['data'])
         pagination = data.get('pagination')
 
-    return [schema.model_validate(item) for item in all_data]
+    if schema is TwitchObject:
+        return [schema(**item) for item in all_data]
+    elif schema is BaseModel:
+        return [schema.model_validate(item) for item in all_data]
+    else:
+        raise ValueError(
+            f'Invalid schema type: {schema}. Must be either BaseModel or TwitchObject.'
+        )

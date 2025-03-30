@@ -22,3 +22,6 @@ class MUser(Base):
     created_at: Mapped[datetime] = mapped_column(sa.DateTime)
     updated_at: Mapped[datetime | None] = mapped_column(sa.DateTime, nullable=True)
     is_active: Mapped[bool] = mapped_column(sa.Boolean, default=True)
+    default_channel_id: Mapped[UUID | None] = mapped_column(
+        sa.UUID, sa.ForeignKey('channels.id', ondelete='set null', onupdate='cascade'), nullable=True
+    )

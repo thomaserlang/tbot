@@ -41,7 +41,11 @@ async def get_user_by_username(
         return User.model_validate(user)
 
 
-async def create_user(*, data: UserCreate, session: AsyncSession | None = None) -> User:
+async def create_user(
+    *,
+    data: UserCreate,
+    session: AsyncSession | None = None,
+) -> User:
     async with get_session(session) as session:
         try:
             user_id = uuid7()
@@ -55,6 +59,7 @@ async def create_user(*, data: UserCreate, session: AsyncSession | None = None) 
             user = await get_user(user_id=user_id, session=session)
             if not user:
                 raise ValueError('User could not be created')
+
             return user
         except IntegrityError:
             result = await session.scalar(
