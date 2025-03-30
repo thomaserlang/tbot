@@ -35,7 +35,6 @@ class ChannelUpdate(BaseModel):
 class Channel(BaseSchema):
     id: UUID
     display_name: str
-    twitch_id: str | None
     created_at: datetime
     bot_active: bool
     bot_muted: bool

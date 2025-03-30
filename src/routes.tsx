@@ -8,9 +8,23 @@ import {
 } from 'react-router-dom'
 import { QueryParamProvider } from 'use-query-params'
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
-import { Shell } from './components/shell'
+import { CurrentUserProvider } from './components/current-user'
+import { ChannelShell } from './features/channel/channel-shell'
 
-const protectedRoutes: RouteObject[] = []
+const protectedRoutes: RouteObject[] = [
+    {
+        path: '',
+        lazy: () => import('./features/root/root.page'),
+    },
+    {
+        path: '/channels/:channelId',
+        element: (
+            <ChannelShell>
+                <Outlet />
+            </ChannelShell>
+        ),
+    },
+]
 
 const publicRoutes: RouteObject[] = [
     {
@@ -35,16 +49,18 @@ export const router = createBrowserRouter([
         },
         children: [
             {
-                path: '/',
+                path: '',
                 children: [
                     {
                         path: '',
                         element: (
-                            <QueryParamProvider adapter={ReactRouter6Adapter}>
-                                <Shell>
+                            <CurrentUserProvider>
+                                <QueryParamProvider
+                                    adapter={ReactRouter6Adapter}
+                                >
                                     <Outlet />
-                                </Shell>
-                            </QueryParamProvider>
+                                </QueryParamProvider>
+                            </CurrentUserProvider>
                         ),
                         ErrorBoundary: () => {
                             const error = useRouteError()
@@ -56,9 +72,10 @@ export const router = createBrowserRouter([
                         },
                         children: [...protectedRoutes],
                     },
-                    ...publicRoutes,
                 ],
             },
+
+            ...publicRoutes,
         ],
     },
 ])

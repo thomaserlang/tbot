@@ -1,6 +1,7 @@
 @import "@mantine/core/styles.css" layer(mantine-core);
 @import "@mantine/notifications/styles.css" layer(mantine-notifications);
-@layer mantine-core, mantine-notifications, mantine-dates, mantine-datatable;
+@import "mantine-datatable/styles.css" layer(mantine-datatable);
+@layer mantine-core, mantine-notifications, mantine-datatable;
 
 body {
   --tbot-content-height: calc(
