@@ -1,5 +1,6 @@
 import pytest
 from pytest_httpx import HTTPXMock
+from uuid6 import uuid7
 
 from tbot2.testbase import run_file
 
@@ -28,7 +29,10 @@ async def test_twitch_lookup_users(db: None, httpx_mock: HTTPXMock):
     )
     from tbot2.twitch.actions.twitch_lookup_users_action import lookup_twitch_users
 
-    users = await lookup_twitch_users(logins=['twitchdev'])
+    users = await lookup_twitch_users(
+        channel_id=uuid7(),
+        logins=['twitchdev'],
+    )
     assert users
     assert users[0].login == 'twitchdev'
     assert users[0].id == '141981764'

@@ -1,18 +1,27 @@
+from uuid import UUID
+
 from twitchAPI.twitch import TwitchUser
 
 from tbot2.common import safe_username
+from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
-from ..http_client import twitch_app_client
+from ..twitch_http_client import twitch_app_client
 
 
 async def lookup_twitch_users(
-    *, logins: list[str] = [], user_ids: list[str] = []
+    *,
+    channel_id: UUID,
+    logins: list[str] = [],
+    user_ids: list[str] = [],
 ) -> list[TwitchUser]:
     response = await twitch_app_client.get(
         '/users',
         params={
             'login': [safe_username(login) for login in logins],
             'id': user_ids,
+        },
+        headers={
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
     response.raise_for_status()
@@ -22,13 +31,20 @@ async def lookup_twitch_users(
     return [TwitchUser(**user) for user in data['data']]
 
 
-async def lookup_twitch_user(*, login: str | None = None, user_id: str | None = None):
+async def lookup_twitch_user(
+    *,
+    channel_id: UUID,
+    login: str | None = None,
+    user_id: str | None = None,
+):
     if not login and not user_id:
         raise ValueError('login or user_id must be provided')
     if login and user_id:
         raise ValueError('login and user_id cannot both be provided')
     data = await lookup_twitch_users(
-        logins=[login] if login else [], user_ids=[user_id] if user_id else []
+        channel_id=channel_id,
+        logins=[login] if login else [],
+        user_ids=[user_id] if user_id else [],
     )
     if not data:
         return

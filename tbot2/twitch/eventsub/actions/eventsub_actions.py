@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 from uuid import UUID
 
 from tbot2.config_settings import config
-from tbot2.twitch.http_client import get_twitch_pagination, twitch_app_client
+from tbot2.twitch.twitch_http_client import get_twitch_pagination, twitch_app_client
 
 from ..schemas.eventsub_notification_schema import (
     EventSubSubscription,

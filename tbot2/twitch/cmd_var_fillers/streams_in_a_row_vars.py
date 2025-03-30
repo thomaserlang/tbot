@@ -20,7 +20,10 @@ async def streams_in_a_row_vars(
 ):
     for_viewer_id = chat_message.chatter_id
     if len(command.args) > 0:
-        chatter = await lookup_twitch_user(login=safe_username(command.args[0]))
+        chatter = await lookup_twitch_user(
+            channel_id=chat_message.channel_id,
+            login=safe_username(command.args[0]),
+        )
         if not chatter:
             raise ValueError('User not found.')
         for_viewer_id = chatter.id

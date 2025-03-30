@@ -26,7 +26,10 @@ async def give_points_vars(
 
     settings = await get_channel_point_settings(channel_id=chat_message.channel_id)
 
-    give_to_user = await lookup_twitch_user(login=safe_username(command.args[0]))
+    give_to_user = await lookup_twitch_user(
+        channel_id=chat_message.channel_id,
+        login=safe_username(command.args[0]),
+    )
     if not give_to_user:
         raise ValueError('User not found.')
 

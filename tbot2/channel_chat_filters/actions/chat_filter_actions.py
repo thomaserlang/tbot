@@ -1,4 +1,4 @@
-from typing import TypeVar, cast
+from typing import TypeVar
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -28,7 +28,7 @@ async def get_chat_filter(
             sa.select(MChatFilter).where(MChatFilter.id == filter_id)
         )
         if result:
-            return cast(T, TypeAdapter(FilterTypesUnion).validate_python(result))
+            return TypeAdapter[T](FilterTypesUnion).validate_python(result)
 
 
 async def get_chat_filters(

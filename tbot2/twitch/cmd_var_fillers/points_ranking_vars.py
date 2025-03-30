@@ -43,7 +43,10 @@ async def points_ranking_vars(
                 }
             )
 
-        users = await lookup_twitch_users(user_ids=[r['chatter_id'] for r in ranks])
+        users = await lookup_twitch_users(
+            channel_id=chat_message.channel_id,
+            user_ids=[r['chatter_id'] for r in ranks],
+        )
 
         for rank, user in zip(ranks, users):
             rank['user'] = user.display_name if user else 'Unknown'

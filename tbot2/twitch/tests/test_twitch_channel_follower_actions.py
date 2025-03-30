@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 import pytest
 from pytest_httpx import HTTPXMock
+from uuid6 import uuid7
 
 from tbot2.testbase import run_file
 from tbot2.twitch.actions.twitch_channel_follower_action import twitch_channel_follower
@@ -26,7 +27,9 @@ async def test_twitch_channel_follower(db: None, httpx_mock: HTTPXMock):
     )
 
     following = await twitch_channel_follower(
-        user_id='11111', broadcaster_id='141981764'
+        channel_id=uuid7(),
+        user_id='11111',
+        broadcaster_id='141981764',
     )
     assert following
     assert following.user_id == '11111'

@@ -4,14 +4,15 @@ from uuid import UUID
 
 from httpx import AsyncClient, Auth, Request, Response
 
-from tbot2.config_settings import config
-
-from .actions.spotify_oauth_actions import (
-    get_spotify_oauth_token,
-    save_spotify_oauth_token,
+from tbot2.channel_oauth_provider import (
+    ChannelOAuthProviderRequest,
+    get_channel_oauth_provider,
+    save_channel_oauth_provider,
 )
+from tbot2.common import TProvider
+from tbot2.config_settings import config
+from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
-TBOT_CHANNEL_ID_HEADER = 'X-TBot-Channel-Id'
 
 class SpotifyOAuth(Auth):
     def __init__(self):
@@ -24,30 +25,30 @@ class SpotifyOAuth(Auth):
             channel_id: UUID = UUID(request.headers.get(TBOT_CHANNEL_ID_HEADER))
             if not channel_id:
                 raise ValueError(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
-            token = await get_spotify_oauth_token(channel_id)
-            if not token:
+            provider = await get_channel_oauth_provider(
+                channel_id=channel_id,
+                provider=TProvider.spotify,
+            )
+            if not provider:
                 raise ValueError(
                     f'Channel {channel_id} needs to grant the bot access in the dashboard'
                 )
-            request.headers['Authorization'] = f'Bearer {token.access_token}'
+            request.headers['Authorization'] = f'Bearer {provider.access_token}'
 
         response = yield request
 
         if response.status_code == 401:
             async with self._async_lock:
-                token = await self._refresh_token(
-                    channel_id=channel_id, refresh_token=token.refresh_token
+                provider = await self._refresh_token(
+                    channel_id=channel_id, refresh_token=provider.refresh_token or ''
                 )
-                if not token:
+                if not provider:
                     raise ValueError(
                         f'Channel {channel_id} needs to grant the bot access in the dashboard'
                     )
-                request.headers['Authorization'] = f'Bearer {token.access_token}'
+                request.headers['Authorization'] = f'Bearer {provider.access_token}'
 
             yield request
-
-    async def _fetch_token(self, channel_id: UUID):
-        return await get_spotify_oauth_token(channel_id)
 
     async def _refresh_token(self, channel_id: UUID, refresh_token: str):
         async with AsyncClient() as client:
@@ -62,10 +63,14 @@ class SpotifyOAuth(Auth):
             )
             response.raise_for_status()
             data = response.json()
-            await save_spotify_oauth_token(
+            await save_channel_oauth_provider(
                 channel_id=channel_id,
-                access_token=data['access_token'],
-                refresh_token=data['refresh_token'],
+                provider=TProvider.spotify,
+                data=ChannelOAuthProviderRequest(
+                    access_token=data['access_token'],
+                    refresh_token=data['refresh_token'],
+                    expires_in=data['expires_in'],
+                ),
             )
             return data['access_token']
 

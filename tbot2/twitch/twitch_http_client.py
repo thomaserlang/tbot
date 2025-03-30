@@ -1,6 +1,7 @@
 import asyncio
 import sys
 import typing
+from uuid import UUID
 
 from httpx import AsyncClient, Auth, Request, Response
 from httpx_auth import OAuth2ClientCredentials
@@ -8,12 +9,14 @@ from pydantic import BaseModel
 from twitchAPI.object.base import TwitchObject
 from twitchAPI.twitch import Twitch
 
-from tbot2.config_settings import config
-
-from .actions.user_oauth_actions import (
-    get_twitch_oauth_token,
-    save_twitch_oauth_token,
+from tbot2.channel_oauth_provider import (
+    ChannelOAuthProviderRequest,
+    get_channel_oauth_provider,
+    save_channel_oauth_provider,
 )
+from tbot2.common import TProvider
+from tbot2.config_settings import config
+from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
 
 class TwitchOauth2ClientCredentials(OAuth2ClientCredentials):
@@ -38,33 +41,35 @@ class TwitchUserOAuth(Auth):
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
         async with self._async_lock:
-            broadcaster_id: str = request.url.params.get('broadcaster_id')
-            token = await get_twitch_oauth_token(broadcaster_id)
-            if not token:
+            channel_id: UUID = UUID(request.headers.get(TBOT_CHANNEL_ID_HEADER))
+            if not channel_id:
+                raise ValueError(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
+            provider = await get_channel_oauth_provider(
+                channel_id=channel_id,
+                provider=TProvider.twitch,
+            )
+            if not provider:
                 raise ValueError(
-                    f'Channel {broadcaster_id} needs to grant the bot access in the dashboard'
+                    f'Channel {channel_id} needs to grant the bot access in the dashboard'
                 )
-            request.headers['Authorization'] = f'Bearer {token.access_token}'
+            request.headers['Authorization'] = f'Bearer {provider.access_token}'
 
         response = yield request
 
         if response.status_code == 401:
             async with self._async_lock:
-                token = await self._refresh_token(
-                    broadcaster_id=broadcaster_id, refresh_token=token.refresh_token
+                provider = await self._refresh_token(
+                    channel_id=channel_id, refresh_token=provider.refresh_token or ''
                 )
-                if not token:
+                if not provider:
                     raise ValueError(
-                        f'Channel {broadcaster_id} needs to grant the bot access in the dashboard'
+                        f'Channel {channel_id} needs to grant the bot access in the dashboard'
                     )
-                request.headers['Authorization'] = f'Bearer {token.access_token}'
+                request.headers['Authorization'] = f'Bearer {provider.access_token}'
 
             yield request
 
-    async def _fetch_token(self, broadcaster_id: str):
-        return await get_twitch_oauth_token(broadcaster_id)
-
-    async def _refresh_token(self, broadcaster_id: str, refresh_token: str):
+    async def _refresh_token(self, channel_id: UUID, refresh_token: str):
         async with AsyncClient() as client:
             response = await client.post(
                 'https://id.twitch.tv/oauth2/token',
@@ -77,10 +82,14 @@ class TwitchUserOAuth(Auth):
             )
             response.raise_for_status()
             data = response.json()
-            await save_twitch_oauth_token(
-                broadcaster_id=broadcaster_id,
-                access_token=data['access_token'],
-                refresh_token=data['refresh_token'],
+            await save_channel_oauth_provider(
+                channel_id=channel_id,
+                provider=TProvider.twitch,
+                data=ChannelOAuthProviderRequest(
+                    access_token=data['access_token'],
+                    refresh_token=data['refresh_token'],
+                    expires_in=data['expires_in'],
+                ),
             )
             return data['access_token']
 
@@ -132,9 +141,9 @@ async def get_twitch_pagination(
         all_data.extend(data['data'])
         pagination = data.get('pagination')
 
-    if schema is TwitchObject:
+    if issubclass(schema, TwitchObject):
         return [schema(**item) for item in all_data]
-    elif schema is BaseModel:
+    elif issubclass(schema, BaseModel):
         return [schema.model_validate(item) for item in all_data]
     else:
         raise ValueError(

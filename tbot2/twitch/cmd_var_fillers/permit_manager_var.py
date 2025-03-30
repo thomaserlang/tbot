@@ -15,7 +15,10 @@ async def permit_manager_var(
 ):
     if len(command.args) != 1:
         raise ValueError(f'Syntax: !{command.name} <user>')
-    chatter = await lookup_twitch_user(login=safe_username(command.args[0]))
+    chatter = await lookup_twitch_user(
+        channel_id=chat_message.channel_id,
+        login=safe_username(command.args[0]),
+    )
     if not chatter:
         raise ValueError('User not found.')
     for_chatter_id = chatter.id

@@ -46,13 +46,15 @@ async def test_accountage_vars(mocker: MockFixture):
     )
     mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=timezone.utc)
 
+    channel_id = uuid7()
+
     await accountage_vars.accountage_vars(
         chat_message=ChatMessage(  # type: ignore
             type='message',
             created_at=datetime.now(tz=timezone.utc),
             provider=TProvider.twitch,
             provider_id='1234',
-            channel_id=uuid7(),
+            channel_id=channel_id,
             chatter_id='1234',
             chatter_name='test',
             chatter_display_name='Test',
@@ -89,7 +91,7 @@ async def test_accountage_vars(mocker: MockFixture):
             created_at=datetime.now(tz=timezone.utc),
             provider=TProvider.twitch,
             provider_id='1234',
-            channel_id=uuid7(),
+            channel_id=channel_id,
             chatter_id='1234',
             chatter_name='test',
             chatter_display_name='Test',
@@ -106,8 +108,8 @@ async def test_accountage_vars(mocker: MockFixture):
     assert lookup_twitch_users.await_count == 2
     lookup_twitch_users.assert_has_calls(
         calls=[
-            mocker.call(logins=[], user_ids=['1234']),
-            mocker.call(logins=['testuser'], user_ids=[]),
+            mocker.call(channel_id=channel_id, logins=[], user_ids=['1234']),
+            mocker.call(channel_id=channel_id, logins=['testuser'], user_ids=[]),
         ],  # type: ignore
     )
 

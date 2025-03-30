@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from uuid import UUID
 
@@ -5,7 +6,12 @@ import sqlalchemy as sa
 from sqlalchemy.exc import IntegrityError
 from uuid6 import uuid7
 
-from tbot2.channel import ChannelCreate, create_channel, set_channel_user_access_level
+from tbot2.channel import (
+    Channel,
+    ChannelCreate,
+    create_channel,
+    set_channel_user_access_level,
+)
 from tbot2.common import TAccessLevel, TokenData, TProvider, TScope
 from tbot2.contexts import AsyncSession, get_session
 
@@ -13,8 +19,16 @@ from ..models.oauth_provider_model import MUserOAuthProvider
 from ..schemas.oauth_provider_schema import (
     UserOAuthProvider,
 )
-from ..schemas.user_schema import UserCreate, UserUpdate
+from ..schemas.user_schema import User, UserCreate, UserUpdate
 from .user_actions import create_user, get_user, update_user
+
+
+@dataclass(slots=True)
+class GetOrCreateUserResult:
+    user: User
+    channel: Channel | None
+    created: bool
+    token_data: TokenData
 
 
 async def get_or_create_user(
@@ -23,7 +37,10 @@ async def get_or_create_user(
     provider_user_id: str,
     data: UserCreate,
     session: AsyncSession | None = None,
-) -> TokenData:
+) -> GetOrCreateUserResult:
+    """
+    Returns a tuple of TokenData and a boolean indicating if the user was created.
+    """
     async with get_session(session) as session:
         p = await get_oauth_provider_by_provider_user_id(
             provider=provider,
@@ -61,15 +78,28 @@ async def get_or_create_user(
                 ),
                 session=session,
             )
+            return GetOrCreateUserResult(
+                user=user,
+                channel=channel,
+                created=True,
+                token_data=TokenData(
+                    user_id=user.id,
+                    scopes=TScope.get_all_scopes(),
+                ),
+            )
         else:
             user = await get_user(user_id=p.user_id, session=session)
             if not user:
                 raise ValueError('User not found')
-
-        return TokenData(
-            user_id=user.id,
-            scopes=TScope.get_all_scopes(),
-        )
+            return GetOrCreateUserResult(
+                user=user,
+                channel=None,
+                created=False,
+                token_data=TokenData(
+                    user_id=user.id,
+                    scopes=TScope.get_all_scopes(),
+                ),
+            )
 
 
 async def create_user_oauth_provider(

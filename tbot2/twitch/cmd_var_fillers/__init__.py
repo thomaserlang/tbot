@@ -6,4 +6,4 @@ from . import give_points_vars as give_points_vars
 from . import permit_manager_var as permit_manager_var
 from . import points_ranking_vars as points_ranking_vars
 from . import points_vars as points_vars
-from . import streams_in_a_row as streams_in_a_row
+from . import streams_in_a_row_vars as streams_in_a_row_vars

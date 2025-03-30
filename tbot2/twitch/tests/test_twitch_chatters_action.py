@@ -1,5 +1,6 @@
 import pytest
 from pytest_httpx import HTTPXMock
+from uuid6 import uuid7
 
 from tbot2.testbase import run_file
 
@@ -34,7 +35,10 @@ async def test_get_twitch_chatters(db: None, httpx_mock: HTTPXMock):
     )
     from tbot2.twitch.actions.twitch_chatters_action import get_twitch_chatters
 
-    chatters = await get_twitch_chatters(broadcaster_id='123')
+    chatters = await get_twitch_chatters(
+        channel_id=uuid7(),
+        broadcaster_id='123',
+    )
     assert chatters
     assert chatters[0].user_login == 'smittysmithers'
     assert chatters[0].user_id == '1'

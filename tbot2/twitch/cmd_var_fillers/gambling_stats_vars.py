@@ -23,7 +23,10 @@ async def gambling_stats(
 ):
     for_chatter_id = chat_message.chatter_id
     if len(command.args) > 0:
-        chatter = await lookup_twitch_user(login=safe_username(command.args[0]))
+        chatter = await lookup_twitch_user(
+            channel_id=chat_message.channel_id,
+            login=safe_username(command.args[0]),
+        )
         if not chatter:
             raise ValueError('User not found.')
         for_chatter_id = chatter.id
@@ -39,14 +42,14 @@ async def gambling_stats(
     total_slots_games = stats.slots_wins + stats.slots_losses
     vars['gambling_stats.slots_total_games'].value = total_slots_games
     vars['gambling_stats.slots_win_percent'].value = (
-        f'{stats.slots_wins/total_slots_games:.1%}' if total_slots_games > 0 else '0%'
+        f'{stats.slots_wins / total_slots_games:.1%}' if total_slots_games > 0 else '0%'
     )
     vars['gambling_stats.roulette_wins'].value = stats.roulette_wins
     vars['gambling_stats.roulette_loses'].value = stats.roulette_losses
     total_roulette_games = stats.roulette_wins + stats.roulette_losses
     vars['gambling_stats.roulette_total_games'].value = total_roulette_games
     vars['gambling_stats.roulette_win_percent'].value = (
-        f'{stats.roulette_wins/total_roulette_games:.1%}'
+        f'{stats.roulette_wins / total_roulette_games:.1%}'
         if total_roulette_games > 0
         else '0%'
     )

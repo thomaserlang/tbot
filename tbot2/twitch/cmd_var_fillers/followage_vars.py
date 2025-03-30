@@ -32,14 +32,19 @@ async def twitch_followed_at(chat_message: ChatMessage, command: TCommand):
     user_id = chat_message.chatter_id
     display_name = chat_message.chatter_display_name
     if command.args:
-        user = await lookup_twitch_users(logins=[command.args[0]])
+        user = await lookup_twitch_users(
+            channel_id=chat_message.channel_id,
+            logins=[command.args[0]],
+        )
         if not user:
             raise VarFillError(f'User {command.args[0]} not found.')
         user_id = user[0].id
         display_name = user[0].display_name
 
     follower = await twitch_channel_follower(
-        user_id=user_id, broadcaster_id=chat_message.provider_id
+        channel_id=chat_message.channel_id,
+        user_id=user_id,
+        broadcaster_id=chat_message.provider_id,
     )
     if not follower:
         raise VarFillError(f'{display_name} is not following.')

@@ -20,6 +20,7 @@ async def add_points_vars(
 
     if command.args[0] == 'all':
         chatters = await get_twitch_chatters(
+            channel_id=chat_message.channel_id,
             broadcaster_id=chat_message.provider_id,
         )
         await inc_bulk_points(
@@ -32,7 +33,9 @@ async def add_points_vars(
             'add_points'
         ].value = f'Gave {points} {settings.points_name} to {len(chatters)} chatters.'
     else:
-        give_to_user = await lookup_twitch_user(login=safe_username(command.args[0]))
+        give_to_user = await lookup_twitch_user(
+            channel_id=chat_message.channel_id, login=safe_username(command.args[0])
+        )
         if not give_to_user:
             raise ValueError('User not found.')
         points = await inc_points(

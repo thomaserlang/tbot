@@ -19,7 +19,10 @@ async def chatter_point_vars(
 ):
     for_chatter_id = chat_message.chatter_id
     if len(command.args) > 0:
-        chatter = await lookup_twitch_user(login=safe_username(command.args[0]))
+        chatter = await lookup_twitch_user(
+            channel_id=chat_message.channel_id,
+            login=safe_username(command.args[0]),
+        )
         if not chatter:
             raise ValueError('User not found.')
         for_chatter_id = chatter.id

@@ -27,6 +27,7 @@ async def accountage_vars(
 
 async def twitch_accountage(chat_message: ChatMessage, command: TCommand):
     users = await lookup_twitch_users(
+        channel_id=chat_message.channel_id,
         logins=[command.args[0]] if command.args else [],
         user_ids=[chat_message.chatter_id] if not command.args else [],
     )
