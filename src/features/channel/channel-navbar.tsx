@@ -1,5 +1,7 @@
 import { Box, NavLink, Paper } from '@mantine/core'
 import {
+    IconBlocks,
+    IconClock,
     IconCoin,
     IconFilter,
     IconHome,
@@ -33,6 +35,18 @@ export function ChannelNavbar() {
                     to={`/channels/${channel.id}/logviewer`}
                     label="Logviewer"
                     leftSection={<IconWood size={20} />}
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/commands`}
+                    label="Commands"
+                    leftSection={<IconBlocks size={20} />}
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/timers`}
+                    label="Timers"
+                    leftSection={<IconClock size={20} />}
                 />
                 <NavLink
                     component={RouterNavLink}
