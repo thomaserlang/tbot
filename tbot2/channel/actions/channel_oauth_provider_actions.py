@@ -7,10 +7,10 @@ from uuid6 import uuid7
 from tbot2.common import TProvider
 from tbot2.contexts import AsyncSession, get_session
 
-from .channel_oauth_provider_model import (
+from ..models.channel_oauth_provider_model import (
     MChannelOAuthProvider,
 )
-from .channel_oauth_provider_schema import (
+from ..schemas.channel_oauth_provider_schema import (
     ChannelOAuthProvider,
     ChannelOAuthProviderRequest,
 )

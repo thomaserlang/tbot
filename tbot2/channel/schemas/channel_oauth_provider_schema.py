@@ -19,6 +19,12 @@ class ChannelOAuthProvider(BaseSchema):
     name: str | None
 
 
+class ChannelProvider(BaseSchema):
+    id: UUID
+    provider: TProvider
+    name: str | None
+
+
 class ChannelOAuthProviderRequest(BaseRequestSchema):
     provider_user_id: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None

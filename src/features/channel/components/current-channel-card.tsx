@@ -32,7 +32,7 @@ export function CurrentChannelCard({ nameFw, maw = 160, w }: IProps) {
                 <Text truncate="end" maw={w || maw} w={w} size="md" fw={nameFw}>
                     {channel.display_name}
                 </Text>
-                <IconChevronDown size={14} />
+                <IconChevronDown size={20} />
             </Flex>
             <Modal
                 size="lg"

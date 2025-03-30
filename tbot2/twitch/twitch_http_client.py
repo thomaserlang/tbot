@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from twitchAPI.object.base import TwitchObject
 from twitchAPI.twitch import Twitch
 
-from tbot2.channel_oauth_provider import (
+from tbot2.channel import (
     ChannelOAuthProviderRequest,
     get_channel_oauth_provider,
     save_channel_oauth_provider,

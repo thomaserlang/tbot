@@ -8,7 +8,7 @@ from httpx import AsyncClient
 from twitchAPI.twitch import TwitchUser
 
 from tbot2.auth_backend import create_token_str
-from tbot2.channel_oauth_provider import (
+from tbot2.channel import (
     ChannelOAuthProviderRequest,
     save_channel_oauth_provider,
 )

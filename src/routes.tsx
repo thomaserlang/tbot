@@ -23,6 +23,15 @@ const protectedRoutes: RouteObject[] = [
                 <Outlet />
             </ChannelShell>
         ),
+        children: [
+            {
+                path: 'providers',
+                lazy: () =>
+                    import(
+                        './features/channel-providers/channel-providers.page'
+                    ),
+            },
+        ],
     },
 ]
 

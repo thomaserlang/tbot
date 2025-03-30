@@ -6,7 +6,7 @@ from fastapi import Depends, HTTPException, Request, Security
 from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
 
-from tbot2.channel_oauth_provider import (
+from tbot2.channel import (
     ChannelOAuthProviderRequest,
     save_channel_oauth_provider,
 )
