@@ -135,6 +135,7 @@ async def twitch_auth_route(
 
         token = await create_token_str(result.token_data)
         return RedirectResponse(f'/sign-in/success#{token}')
+
     if params.state['mode'] == 'connect':
         await save_channel_oauth_provider(
             channel_id=UUID(params.state['channel_id']),
@@ -148,6 +149,7 @@ async def twitch_auth_route(
                 provider_user_id=twitch_user.id,
             ),
         )
+
     else:
         raise HTTPException(
             status_code=400,
