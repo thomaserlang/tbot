@@ -1,5 +1,14 @@
 import { Box, NavLink, Paper } from '@mantine/core'
-import { IconHome, IconLink } from '@tabler/icons-react'
+import {
+    IconCoin,
+    IconFilter,
+    IconHome,
+    IconLink,
+    IconLock,
+    IconPokerChip,
+    IconQuote,
+    IconWood,
+} from '@tabler/icons-react'
 import { NavLink as RouterNavLink } from 'react-router-dom'
 import { CurrentChannelCard } from './components/current-channel-card'
 import { useCurrentChannel } from './current-channel.provider'
@@ -18,6 +27,55 @@ export function ChannelNavbar() {
                     label="Dashboard"
                     leftSection={<IconHome size={20} />}
                     end
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/logviewer`}
+                    label="Logviewer"
+                    leftSection={<IconWood size={20} />}
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/filters`}
+                    label="Filters"
+                    leftSection={<IconFilter size={20} />}
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/quotes`}
+                    label="Quotes"
+                    leftSection={<IconQuote size={20} />}
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/gambling`}
+                    label="Gambling"
+                    leftSection={<IconCoin size={20} />}
+                >
+                    <NavLink
+                        component={RouterNavLink}
+                        to={`/channels/${channel.id}/gambling/points`}
+                        label="Points Settings"
+                        leftSection={<IconPokerChip size={20} />}
+                    />
+                    <NavLink
+                        component={RouterNavLink}
+                        to={`/channels/${channel.id}/gambling/slots`}
+                        label="Slots Settings"
+                        leftSection={<IconPokerChip size={20} />}
+                    />
+                    <NavLink
+                        component={RouterNavLink}
+                        to={`/channels/${channel.id}/gambling/roulette`}
+                        label="Roulette Settings"
+                        leftSection={<IconPokerChip size={20} />}
+                    />
+                </NavLink>
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/user-access`}
+                    label="User Access"
+                    leftSection={<IconLock size={20} />}
                 />
                 <NavLink
                     component={RouterNavLink}
