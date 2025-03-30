@@ -40,9 +40,11 @@ class User(BaseSchema):
     created_at: datetime
     updated_at: datetime | None = None
     is_active: bool
+    default_channel_id: UUID | None = None
 
 
 class UserPublic(BaseSchema):
     id: UUID
     username: str
     display_name: str
+    default_channel_id: UUID | None = None
