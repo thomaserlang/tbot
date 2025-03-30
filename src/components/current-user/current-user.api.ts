@@ -16,6 +16,5 @@ export function useGetCurrentUser() {
         queryKey: getCurrentUserQueryKey(),
         queryFn: getCurrentUser,
         refetchOnWindowFocus: false,
-        retry: false,
     })
 }
