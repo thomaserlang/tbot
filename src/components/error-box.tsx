@@ -10,7 +10,7 @@ interface IProps {
 
 export function ErrorBox({ message, errorObj }: IProps) {
     return (
-        <Alert title="Fejl" color="red" icon={<IconAlertCircle size={14} />}>
+        <Alert title="Error" color="red" icon={<IconAlertCircle size={14} />}>
             {message || errorMessageFromResponse(errorObj)}
         </Alert>
     )

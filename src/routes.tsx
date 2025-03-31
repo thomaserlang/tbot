@@ -1,7 +1,8 @@
 import { ErrorBox } from '@/components/error-box'
-import { Container } from '@mantine/core'
+import { Container, Text, Title } from '@mantine/core'
 import {
     createBrowserRouter,
+    isRouteErrorResponse,
     Outlet,
     RouteObject,
     useRouteError,
@@ -23,6 +24,16 @@ const protectedRoutes: RouteObject[] = [
                 <Outlet />
             </ChannelShell>
         ),
+        ErrorBoundary: () => {
+            const error = useRouteError()
+            return (
+                <ChannelShell>
+                    <Container pt="1rem">
+                        <ErrorBox errorObj={error} />
+                    </Container>
+                </ChannelShell>
+            )
+        },
         children: [
             {
                 path: 'providers',
@@ -50,6 +61,14 @@ export const router = createBrowserRouter([
     {
         ErrorBoundary: () => {
             const error = useRouteError()
+            if (isRouteErrorResponse(error)) {
+                return (
+                    <Container pt="1rem">
+                        <Title order={1}>{error.status}</Title>
+                        <Text>{error.statusText}</Text>
+                    </Container>
+                )
+            }
             return (
                 <Container pt="1rem">
                     <ErrorBox errorObj={error} />
@@ -61,7 +80,6 @@ export const router = createBrowserRouter([
                 path: '',
                 children: [
                     {
-                        path: '',
                         element: (
                             <CurrentUserProvider>
                                 <QueryParamProvider
