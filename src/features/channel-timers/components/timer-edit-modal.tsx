@@ -2,33 +2,33 @@ import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
 import { ChannelId } from '@/features/channel'
 import { Modal } from '@mantine/core'
-import { useGetCommand } from '../command.api'
-import { CommandId } from '../command.types'
-import { EditCommandForm } from './command-edit-form'
+import { useGetTimer } from '../timer.api'
+import { TimerId } from '../timer.types'
+import { EditTimerForm } from './timer-edit-form'
 
 interface Props {
     channelId: ChannelId
-    commandId: CommandId
+    timerId: TimerId
     onClose: () => void
 }
 
-export function EditCommandModal({ channelId, commandId, onClose }: Props) {
-    const { isLoading, error, data } = useGetCommand({
+export function EditTimerModal({ channelId, timerId, onClose }: Props) {
+    const { isLoading, error, data } = useGetTimer({
         channelId,
-        commandId,
+        timerId,
     })
     return (
         <Modal
             size="lg"
-            opened={!!commandId}
+            opened={!!timerId}
             onClose={onClose}
-            title="Edit Command"
+            title="Edit Timer"
         >
             {isLoading && <PageLoader />}
             {error && <ErrorBox errorObj={error} />}
             {data && (
-                <EditCommandForm
-                    command={data}
+                <EditTimerForm
+                    timer={data}
                     onUpdated={() => {
                         onClose()
                     }}

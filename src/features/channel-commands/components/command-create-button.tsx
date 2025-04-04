@@ -2,7 +2,7 @@ import { ChannelId } from '@/features/channel/types'
 import { Button, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconPlus } from '@tabler/icons-react'
-import { Command } from '../commands.types'
+import { Command } from '../command.types'
 import { CreateCommandForm } from './command-create-form'
 
 interface Props {

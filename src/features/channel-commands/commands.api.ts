@@ -2,7 +2,7 @@ import { PageCursor } from '@/types/page-cursor.type'
 import { api } from '@/utils/api'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { ChannelId } from '../channel/types'
-import { Command } from './commands.types'
+import { Command } from './command.types'
 
 interface IParams {}
 

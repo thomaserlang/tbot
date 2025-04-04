@@ -2,16 +2,16 @@ import { ErrorBox } from '@/components/error-box'
 import { useCurrentChannel } from '@/features/channel'
 import { Container, Flex, Title } from '@mantine/core'
 import { useNavigate, useParams } from 'react-router-dom'
-import { CommandId } from './command.types'
-import { useGetCommands } from './commands.api'
-import { CreateCommandButton } from './components/command-create-button'
-import { EditCommandModal } from './components/command-edit-modal'
-import { CommandsTable } from './components/commands-table'
+import { CreatetimerButton } from './components/timer-create-button'
+import { EditTimerModal } from './components/timer-edit-modal'
+import { TimersTable } from './components/timers-table'
+import { TimerId } from './timer.types'
+import { useGetTimers } from './timers.api'
 
 export function Component() {
     const channel = useCurrentChannel()
-    const data = useGetCommands(channel.id)
-    const { commandId } = useParams<{ commandId?: CommandId }>()
+    const data = useGetTimers(channel.id)
+    const { timerId } = useParams<{ timerId?: TimerId }>()
     const navigate = useNavigate()
 
     return (
@@ -23,9 +23,9 @@ export function Component() {
                     h="var(--tbot-content-height)"
                 >
                     <Flex>
-                        <Title order={2}>Commands</Title>
+                        <Title order={2}>Timers</Title>
 
-                        <CreateCommandButton
+                        <CreatetimerButton
                             channelId={channel.id}
                             onCreated={() => {
                                 data.refetch()
@@ -34,19 +34,19 @@ export function Component() {
                     </Flex>
                     {data.error && <ErrorBox errorObj={data.error} />}
                     {!data.error && (
-                        <CommandsTable
+                        <TimersTable
                             data={data}
-                            onEditClick={(command) => navigate(command.id)}
+                            onEditClick={(timer) => navigate(timer.id)}
                         />
                     )}
                 </Flex>
             </Container>
-            {commandId && (
-                <EditCommandModal
+            {timerId && (
+                <EditTimerModal
                     channelId={channel.id}
-                    commandId={commandId}
+                    timerId={timerId}
                     onClose={() => {
-                        navigate(`/channels/${channel.id}/commands`)
+                        navigate(`/channels/${channel.id}/timers`)
                     }}
                 />
             )}

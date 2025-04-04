@@ -3,15 +3,15 @@ import { pageRecordsFlatten } from '@/utils/page-records'
 import { Anchor } from '@mantine/core'
 import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query'
 import { DataTable } from 'mantine-datatable'
-import { Command } from '../command.types'
-import { CommandMenu } from './command-menu'
+import { Timer, timerActiveModeLabels } from '../timer.types'
+import { TimerMenu } from './timer-menu'
 
 interface Props {
-    data: UseInfiniteQueryResult<InfiniteData<PageCursor<Command>>>
-    onEditClick?: (command: Command) => void
+    data: UseInfiniteQueryResult<InfiniteData<PageCursor<Timer>>>
+    onEditClick?: (command: Timer) => void
 }
 
-export function CommandsTable({ data, onEditClick }: Props) {
+export function TimersTable({ data, onEditClick }: Props) {
     return (
         <DataTable
             records={pageRecordsFlatten(data.data)}
@@ -20,28 +20,38 @@ export function CommandsTable({ data, onEditClick }: Props) {
             onScrollToBottom={() => data.fetchNextPage()}
             fetching={data.isFetching}
             h="100%"
-            noRecordsText="No commands"
+            noRecordsText="No Timers"
             columns={[
                 {
-                    accessor: 'cmds',
-                    title: 'Command/Pattern',
+                    accessor: 'name',
+                    title: 'Name',
                     width: '25%',
-
                     render: (row) => (
                         <Anchor size="sm" onClick={() => onEditClick?.(row)}>
-                            {row.cmds.join(', ')} {row.patterns?.join(', ')}
+                            {row.name}
                         </Anchor>
                     ),
                 },
                 {
-                    accessor: 'response',
-                    title: 'Response',
+                    accessor: 'interval',
+                    title: 'Interval',
+                    render: (row) => <span>{row.interval} minutes</span>,
+                },
+                {
+                    accessor: 'active_mode',
+                    title: 'Active when',
+                    render: (row) => timerActiveModeLabels[row.active_mode],
+                },
+                {
+                    accessor: 'enabled',
+                    title: 'Enabled',
+                    render: (row) => (row.enabled ? 'Yes' : 'No'),
                 },
                 {
                     accessor: '',
                     width: '1%',
                     render: (row) => (
-                        <CommandMenu command={row} onEditClick={onEditClick} />
+                        <TimerMenu timer={row} onEditClick={onEditClick} />
                     ),
                 },
             ]}

@@ -16,7 +16,7 @@ class Timer(BaseSchema):
     messages: list[str]
     interval: int  # in minutes
     enabled: bool
-    next_run: datetime
+    next_run_at: datetime
     provider: Literal['all'] | TProvider
     pick_mode: TimerPickMode
     active_mode: TimerActiveMode
@@ -38,6 +38,7 @@ Messages = Annotated[
         ]
     ],
     Field(
+        min_length=1,
         max_length=100,
     ),
 ]
@@ -51,6 +52,13 @@ class TimerCreate(BaseRequestSchema):
     provider: Literal['all'] | TProvider = 'all'
     pick_mode: TimerPickMode = 'order'
     active_mode: TimerActiveMode = 'always'
+
+    @field_validator('messages', mode='before')
+    @classmethod
+    def check_messages(cls, values: list[str] | None) -> list[str] | None:
+        if values is None:
+            return None
+        return [message.strip() for message in values if message.strip()]
 
 
 class TimerUpdate(BaseRequestSchema):
@@ -78,3 +86,10 @@ class TimerUpdate(BaseRequestSchema):
         if value is None:
             raise ValueError('Cannot be None')
         return value
+
+    @field_validator('messages', mode='before')
+    @classmethod
+    def check_messages(cls, values: list[str] | None) -> list[str] | None:
+        if values is None:
+            return None
+        return [message.strip() for message in values if message.strip()]

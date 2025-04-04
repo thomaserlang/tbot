@@ -1,28 +1,28 @@
 import { ChannelId } from '@/features/channel/types'
-import { AccessLevel } from '@/types/access-level.type'
 import { Alert, Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { AxiosError } from 'axios'
-import { useCreateCommand } from '../command.api'
-import { Command, CommandCreate } from '../command.types'
-import { CommandForm } from './command-form'
+import { useCreateTimer } from '../timer.api'
+import { Timer, TimerCreate } from '../timer.types'
+import { TimerForm } from './timer-form'
 
 interface Props {
     channelId: ChannelId
-    onCreated: (command: Command) => void
+    onCreated: (timer: Timer) => void
 }
 
-export function CreateCommandForm({ channelId, onCreated }: Props) {
-    const create = useCreateCommand({
+export function CreateTimerForm({ channelId, onCreated }: Props) {
+    const create = useCreateTimer({
         onSuccess: (data) => {
             onCreated(data)
         },
         onError: (error) => {
             if (error instanceof AxiosError) {
                 if (error.status === 422) {
+                    console.log(error.response?.data.detail)
                     for (const e of error.response?.data.detail) {
                         form.setFieldError(
-                            e.loc[1],
+                            e.loc.slice(1).join('.'),
                             e.msg.replace('String', '')
                         )
                     }
@@ -30,20 +30,16 @@ export function CreateCommandForm({ channelId, onCreated }: Props) {
             }
         },
     })
-    const form = useForm<CommandCreate>({
+    const form = useForm<TimerCreate>({
         mode: 'uncontrolled',
         initialValues: {
-            cmds: [],
-            patterns: [],
-            response: '',
-            active_mode: 'always',
-            global_cooldown: 5,
-            chatter_cooldown: 15,
-            mod_cooldown: 0,
+            name: '',
+            messages: [''],
+            interval: 30,
             enabled: true,
-            public: true,
-            access_level: AccessLevel.PUBLIC,
             provider: 'all',
+            pick_mode: 'order',
+            active_mode: 'online',
         },
     })
 
@@ -57,10 +53,10 @@ export function CreateCommandForm({ channelId, onCreated }: Props) {
             })}
         >
             <Flex gap="1rem" direction="column">
-                <CommandForm form={form} />
+                <TimerForm form={form} />
 
                 {create.isError && (
-                    <Alert color="red" title="Failed to create the command" />
+                    <Alert color="red" title="Failed to create the timer" />
                 )}
 
                 <Flex>

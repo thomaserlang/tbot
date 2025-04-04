@@ -27,7 +27,7 @@ class MChannelTimer(Base):
     messages: Mapped[list[str]] = mapped_column(sa.JSON(), nullable=False)
     interval: Mapped[int] = mapped_column(sa.SmallInteger(), nullable=False)
     enabled: Mapped[bool] = mapped_column(sa.Boolean(), nullable=False, default=True)
-    next_run: Mapped[datetime] = mapped_column(sa.DateTime(), nullable=False)
+    next_run_at: Mapped[datetime] = mapped_column(sa.DateTime(), nullable=False)
     provider: Mapped[Literal['all'] | TProvider] = mapped_column(
         sa.String(50), nullable=False, server_default='all'
     )

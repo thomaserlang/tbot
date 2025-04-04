@@ -1,17 +1,17 @@
 import { toastPromise } from '@/utils/toast'
 import { ActionIcon, Menu, MenuItem } from '@mantine/core'
 import { IconDotsVertical, IconEdit, IconTrash } from '@tabler/icons-react'
-import { useDeleteCommand } from '../command.api'
-import { Command } from '../command.types'
+import { useDeleteTimer } from '../timer.api'
+import { Timer } from '../timer.types'
 
 interface Props {
-    command: Command
-    onEditClick?: (command: Command) => void
-    onDeleted?: (command: Command) => void
+    timer: Timer
+    onEditClick?: (Timer: Timer) => void
+    onDeleted?: (Timer: Timer) => void
 }
 
-export function CommandMenu({ command, onEditClick }: Props) {
-    const deleteCmd = useDeleteCommand()
+export function TimerMenu({ timer, onEditClick }: Props) {
+    const deleteCmd = useDeleteTimer()
 
     return (
         <Menu width={200}>
@@ -24,7 +24,7 @@ export function CommandMenu({ command, onEditClick }: Props) {
             <Menu.Dropdown>
                 <MenuItem
                     leftSection={<IconEdit size={14} />}
-                    onClick={() => onEditClick?.(command)}
+                    onClick={() => onEditClick?.(timer)}
                 >
                     Edit
                 </MenuItem>
@@ -34,17 +34,17 @@ export function CommandMenu({ command, onEditClick }: Props) {
                     onClick={() => {
                         toastPromise({
                             promise: deleteCmd.mutateAsync({
-                                commandId: command.id,
-                                channelId: command.channel_id,
+                                timerId: timer.id,
+                                channelId: timer.channel_id,
                             }),
                             loading: {
-                                title: 'Deleting command',
+                                title: 'Deleting Timer',
                             },
                             success: {
-                                title: 'Command deleted',
+                                title: 'Timer deleted',
                             },
                             error: {
-                                title: 'Failed to delete command',
+                                title: 'Failed to delete Timer',
                             },
                         })
                     }}

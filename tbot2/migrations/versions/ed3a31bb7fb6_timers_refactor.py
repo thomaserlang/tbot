@@ -32,7 +32,7 @@ def upgrade() -> None:
         sa.Column('messages', sa.JSON(), nullable=False),
         sa.Column('interval', sa.SmallInteger(), nullable=False, comment='minutes'),
         sa.Column('enabled', sa.Boolean(), nullable=False, server_default='1'),
-        sa.Column('next_run', sa.DateTime(), nullable=False),
+        sa.Column('next_run_at', sa.DateTime(), nullable=False),
         sa.Column('provider', sa.String(50), nullable=False, server_default='all'),
         sa.Column('pick_mode', sa.String(50), nullable=False, server_default='order'),
         sa.Column(
@@ -41,11 +41,11 @@ def upgrade() -> None:
         sa.Column('last_message_index', sa.SmallInteger(), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=False),
-        sa.Index('ix_channel_timers_enabled_next_run', 'enabled', 'next_run'),
+        sa.Index('ix_channel_timers_enabled_next_run_at', 'enabled', 'next_run_at'),
     )
 
     op.execute("""
-        INSERT INTO channel_timers (id, channel_id, name, messages, `interval`, enabled, created_at, updated_at, last_message_index, pick_mode, active_mode, next_run)
+        INSERT INTO channel_timers (id, channel_id, name, messages, `interval`, enabled, created_at, updated_at, last_message_index, pick_mode, active_mode, next_run_at)
         SELECT 
             uuid_v7(), 
             c.id as channel_id, 

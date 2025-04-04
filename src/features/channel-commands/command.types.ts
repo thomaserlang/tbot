@@ -3,13 +3,14 @@ import { AccessLevel } from '@/types/access-level.type'
 import { Provider } from '@/types/provider.type'
 import { Branded } from '@/utils/brand'
 
-export const CommandActiveModeLabels: { [mode: string]: string } = {
+export type CommandActiveMode = 'always' | 'online' | 'offline'
+export const commandActiveModeLabels: {
+    [mode: CommandActiveMode | string]: string
+} = {
     always: 'Online & Offline',
     online: 'Online',
     offline: 'Offline',
 } as const
-
-export type CommandActiveMode = 'always' | 'online' | 'offline'
 
 export type CommandId = Branded<string, 'CommandId'>
 

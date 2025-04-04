@@ -2,13 +2,13 @@ import { queryClient } from '@/queryclient'
 import { api } from '@/utils/api'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ChannelId } from '../channel/types'
-import { getCommandsQueryKey } from './commands.api'
 import {
     Command,
     CommandCreate,
     CommandId,
     CommandUpdate,
-} from './commands.types'
+} from './command.types'
+import { getCommandsQueryKey } from './commands.api'
 
 export function getCommandQueryKey(commandId: CommandId) {
     return ['command', commandId]

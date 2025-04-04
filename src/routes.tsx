@@ -50,6 +50,14 @@ const protectedRoutes: RouteObject[] = [
                 path: 'commands/:commandId',
                 lazy: () => import('./features/channel-commands/commands.page'),
             },
+            {
+                path: 'timers',
+                lazy: () => import('./features/channel-timers/timers.page'),
+            },
+            {
+                path: 'timers/:timerId',
+                lazy: () => import('./features/channel-timers/timers.page'),
+            },
         ],
     },
 ]

@@ -19,10 +19,10 @@ import {
     IconMessage,
 } from '@tabler/icons-react'
 import {
-    CommandActiveModeLabels,
+    commandActiveModeLabels,
     CommandCreate,
     CommandUpdate,
-} from '../commands.types'
+} from '../command.types'
 
 interface Props {
     form: UseFormReturnType<CommandCreate> | UseFormReturnType<CommandUpdate>
@@ -94,9 +94,9 @@ export function CommandForm({ form }: Props) {
                 <Select
                     label="Active when"
                     key={form.key('active_mode')}
-                    data={Object.keys(CommandActiveModeLabels).map((key) => ({
+                    data={Object.keys(commandActiveModeLabels).map((key) => ({
                         value: key,
-                        label: CommandActiveModeLabels[key],
+                        label: commandActiveModeLabels[key],
                     }))}
                     {...form.getInputProps('active_mode')}
                 />

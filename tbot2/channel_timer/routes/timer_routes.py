@@ -9,14 +9,13 @@ from tbot2.dependecies import authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQuery, page_cursor
 
 from ..actions.timer_actions import (
-    TimerCreate,
     create_timer,
     delete_timer,
     get_timer,
     update_timer,
 )
 from ..models.timer_model import MChannelTimer
-from ..schemas.timer_schemas import Timer, TimerUpdate
+from ..schemas.timer_schemas import Timer, TimerCreate, TimerUpdate
 from ..types import TimerScope
 
 router = APIRouter()

@@ -17,7 +17,9 @@ async def get_timer(
     session: AsyncSession | None = None,
 ) -> Timer | None:
     async with get_session(session) as session:
-        timer = await session.scalar(sa.select(MChannelTimer).where(MChannelTimer.id == timer_id))
+        timer = await session.scalar(
+            sa.select(MChannelTimer).where(MChannelTimer.id == timer_id)
+        )
         if timer:
             return Timer.model_validate(timer)
 
@@ -35,7 +37,7 @@ async def create_timer(
                 {
                     'id': id,
                     'channel_id': channel_id,
-                    'next_run': datetime_now() + timedelta(minutes=data.interval),
+                    'next_run_at': datetime_now() + timedelta(minutes=data.interval),
                     'created_at': datetime_now(),
                     'updated_at': datetime_now(),
                     **data.model_dump(),
@@ -60,7 +62,7 @@ async def update_timer(
     async with get_session(session) as session:
         data_ = data.model_dump(exclude_unset=True)
         if data.interval:
-            data_['next_run'] = datetime_now() + timedelta(minutes=data.interval)
+            data_['next_run_at'] = datetime_now() + timedelta(minutes=data.interval)
         await session.execute(
             sa.update(MChannelTimer.__table__)  # type: ignore
             .where(MChannelTimer.id == timer_id)

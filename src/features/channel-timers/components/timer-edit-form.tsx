@@ -1,17 +1,17 @@
 import { Alert, Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { AxiosError } from 'axios'
-import { useUpdateCommand } from '../command.api'
-import { Command, CommandUpdate } from '../command.types'
-import { CommandForm } from './command-form'
+import { useUpdateTimer } from '../timer.api'
+import { Timer, TimerUpdate } from '../timer.types'
+import { TimerForm } from './timer-form'
 
 interface Props {
-    command: Command
-    onUpdated?: (command: Command) => void
+    timer: Timer
+    onUpdated?: (timer: Timer) => void
 }
 
-export function EditCommandForm({ command, onUpdated }: Props) {
-    const update = useUpdateCommand({
+export function EditTimerForm({ timer, onUpdated }: Props) {
+    const update = useUpdateTimer({
         onSuccess: (data) => {
             onUpdated?.(data)
         },
@@ -20,7 +20,7 @@ export function EditCommandForm({ command, onUpdated }: Props) {
                 if (error.status === 422) {
                     for (const e of error.response?.data.detail) {
                         form.setFieldError(
-                            e.loc[1],
+                            e.loc.slice(1).join('.'),
                             e.msg.replace('String', '')
                         )
                     }
@@ -28,26 +28,34 @@ export function EditCommandForm({ command, onUpdated }: Props) {
             }
         },
     })
-    const form = useForm<CommandUpdate>({
+    const form = useForm<TimerUpdate>({
         mode: 'uncontrolled',
-        initialValues: command,
+        initialValues: {
+            name: timer.name,
+            interval: timer.interval,
+            active_mode: timer.active_mode,
+            pick_mode: timer.pick_mode,
+            enabled: timer.enabled,
+            messages: timer.messages,
+            provider: timer.provider,
+        },
     })
 
     return (
         <form
             onSubmit={form.onSubmit((values) => {
                 update.mutate({
-                    channelId: command.channel_id,
-                    commandId: command.id,
+                    channelId: timer.channel_id,
+                    timerId: timer.id,
                     data: values,
                 })
             })}
         >
             <Flex gap="1rem" direction="column">
-                <CommandForm form={form} />
+                <TimerForm form={form} />
 
                 {update.isError && (
-                    <Alert color="red" title="Failed to update the command" />
+                    <Alert color="red" title="Failed to update the timer" />
                 )}
 
                 <Flex>
