@@ -15,7 +15,7 @@ class Command(BaseSchema):
     id: UUID
     channel_id: UUID
     cmds: list[str]
-    patterns: list[str] | None
+    patterns: list[str]
     response: str
     group_name: str
     global_cooldown: int
