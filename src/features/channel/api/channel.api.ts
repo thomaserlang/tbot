@@ -1,6 +1,6 @@
 import { api } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
-import { IChannel } from '../types'
+import { Channel } from '../types'
 
 interface IParams {
     channelId: string
@@ -11,7 +11,7 @@ export function getChannelQueryKey(params: IParams) {
 }
 
 export async function getChannel({ channelId }: IParams) {
-    const response = await api.get<IChannel>(`/api/2/channels/${channelId}`)
+    const response = await api.get<Channel>(`/api/2/channels/${channelId}`)
     return response.data
 }
 

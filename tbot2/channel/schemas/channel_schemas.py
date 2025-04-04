@@ -9,9 +9,6 @@ from tbot2.common import BaseSchema
 
 class ChannelCreate(BaseModel):
     display_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
-    twitch_id: (
-        Annotated[str, StringConstraints(min_length=36, max_length=36)] | None
-    ) = None
     bot_active: bool = True
     bot_muted: bool = False
     bot_chatlog_enabled: bool = True

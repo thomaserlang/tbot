@@ -42,6 +42,14 @@ const protectedRoutes: RouteObject[] = [
                         './features/channel-providers/channel-providers.page'
                     ),
             },
+            {
+                path: 'commands',
+                lazy: () => import('./features/channel-commands/commands.page'),
+            },
+            {
+                path: 'commands/:commandId',
+                lazy: () => import('./features/channel-commands/commands.page'),
+            },
         ],
     },
 ]

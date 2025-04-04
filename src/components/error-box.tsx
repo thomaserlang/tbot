@@ -3,12 +3,12 @@ import { IconAlertCircle } from '@tabler/icons-react'
 import { AxiosError } from 'axios'
 import { ReactNode } from 'react'
 
-interface IProps {
+interface Props {
     message?: string
     errorObj?: AxiosError | string | unknown
 }
 
-export function ErrorBox({ message, errorObj }: IProps) {
+export function ErrorBox({ message, errorObj }: Props) {
     return (
         <Alert title="Error" color="red" icon={<IconAlertCircle size={14} />}>
             {message || errorMessageFromResponse(errorObj)}
@@ -24,25 +24,6 @@ export function errorMessageFromResponse(errorObj: any): ReactNode {
     if (errorObj.isAxiosError) {
         const e: AxiosError = errorObj
         const data = e.response?.data as any
-        if (data?.code == 1001) {
-            return (
-                <>
-                    {data.errors.length > 0 && (
-                        <>
-                            <b>{data.message}</b>
-                            <ul>
-                                {data.errors.map((error: any, index: any) => (
-                                    <li key={index}>
-                                        {error['field'].join('.')}:{' '}
-                                        {error['message']}
-                                    </li>
-                                ))}
-                            </ul>
-                        </>
-                    )}
-                </>
-            )
-        }
         if (data?.message) return <>{data?.message}</>
 
         return <>{e.message}</>

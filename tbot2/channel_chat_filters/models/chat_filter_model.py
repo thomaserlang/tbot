@@ -6,7 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 from uuid6 import uuid7
 
 from tbot2.common import TAccessLevel
-from tbot2.common.utils.int_num_utils import IntEnum
 from tbot2.model_base import Base
 
 
@@ -24,7 +23,7 @@ class MChatFilter(Base):
     name: Mapped[str] = mapped_column(sa.String(500), nullable=False)
     enabled: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, default=True)
     exclude_access_level: Mapped[TAccessLevel] = mapped_column(
-        IntEnum(TAccessLevel), nullable=False
+        sa.Integer, nullable=False
     )
     warning_enabled: Mapped[bool] = mapped_column(sa.Boolean, nullable=False)
     warning_message: Mapped[str] = mapped_column(sa.String(1000), nullable=False)

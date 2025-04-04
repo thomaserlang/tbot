@@ -1,9 +1,9 @@
 import { createContext, useContext } from 'react'
 import { useParams } from 'react-router'
 import { useGetChannel } from './api/channel.api'
-import { IChannel } from './types'
+import { Channel } from './types'
 
-const CurrentChannelContext = createContext<IChannel | undefined>(undefined)
+const CurrentChannelContext = createContext<Channel | undefined>(undefined)
 
 export function CurrentChannelProvider({
     children,

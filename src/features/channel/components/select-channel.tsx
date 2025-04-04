@@ -3,13 +3,13 @@ import { Box, Flex, Input } from '@mantine/core'
 import { IconSearch } from '@tabler/icons-react'
 import { DataTable } from 'mantine-datatable'
 import { useGetChannels } from '../api/channels.api'
-import { IChannel } from '../types'
+import { Channel } from '../types'
 
-interface IProps {
-    onSelect?: (channel: IChannel) => void
+interface Props {
+    onSelect?: (channel: Channel) => void
 }
 
-export function SelectChannel({ onSelect }: IProps) {
+export function SelectChannel({ onSelect }: Props) {
     const { data, fetchNextPage, isLoading, isFetchNextPageError } =
         useGetChannels()
     return (

@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class TProvider(str, Enum):
+class TProvider(StrEnum):
     twitch = 'twitch'
     youtube = 'youtube'
     spotify = 'spotify'

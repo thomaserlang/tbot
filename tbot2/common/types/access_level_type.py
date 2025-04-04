@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import IntEnum
 
 
-class TAccessLevel(int, Enum):
+class TAccessLevel(IntEnum):
     PUBLIC = 0
     SUB = 1
     VIP = 2

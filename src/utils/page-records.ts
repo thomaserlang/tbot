@@ -1,10 +1,10 @@
-import { IPageCursor } from '@/types/page-cursor'
+import { PageCursor } from '@/types/page-cursor.type'
 import { InfiniteData } from '@tanstack/react-query'
 
 export function mergePageLookupData<
     T = Record<string, unknown>,
     L = Record<string, unknown[]>
->(data: InfiniteData<IPageCursor<T, L>>): L {
+>(data: InfiniteData<PageCursor<T, L>>): L {
     if (!data) return {} as L
     const lookupData = data.pages[0].lookup_data
     for (const page of data.pages)
@@ -14,7 +14,7 @@ export function mergePageLookupData<
 }
 
 export function pageRecordsFlatten<T = Record<string, unknown>, L = unknown>(
-    data: InfiniteData<IPageCursor<T, L>> | undefined
+    data: InfiniteData<PageCursor<T, L>> | undefined
 ): T[] {
     if (!data) return []
     return data.pages.map((p) => p.records).flat()

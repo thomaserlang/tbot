@@ -13,7 +13,7 @@ def main():
 
     manager = Manager()
     for name, cmd, cwd in start:
-        manager.add_process( # type: ignore
+        manager.add_process(  # type: ignore
             name,
             list2cmdline(cmd),
             quiet=False,

@@ -1,17 +1,17 @@
 import { Avatar, Flex, Modal, StyleProp, Text } from '@mantine/core'
-import { IconChevronDown } from '@tabler/icons-react'
+import { IconSelector } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCurrentChannel } from '../current-channel.provider'
 import { SelectChannel } from './select-channel'
 
-interface IProps {
+interface Props {
     nameFw?: StyleProp<React.CSSProperties['fontWeight']>
     maw?: StyleProp<React.CSSProperties['maxWidth']>
     w?: StyleProp<React.CSSProperties['width']>
 }
 
-export function CurrentChannelCard({ nameFw, maw = 160, w }: IProps) {
+export function CurrentChannelCard({ nameFw, maw = 160, w }: Props) {
     const [showModal, setShowModal] = useState(false)
     const navigate = useNavigate()
     const channel = useCurrentChannel()
@@ -32,7 +32,7 @@ export function CurrentChannelCard({ nameFw, maw = 160, w }: IProps) {
                 <Text truncate="end" maw={w || maw} w={w} size="md" fw={nameFw}>
                     {channel.display_name}
                 </Text>
-                <IconChevronDown size={20} />
+                <IconSelector size={20} />
             </Flex>
             <Modal
                 size="lg"

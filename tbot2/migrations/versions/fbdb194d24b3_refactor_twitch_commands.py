@@ -28,36 +28,40 @@ def upgrade() -> None:
             sa.ForeignKey('channels.id', onupdate='CASCADE', ondelete='CASCADE'),
             nullable=False,
         ),
-        sa.Column('cmd', sa.String(100), nullable=False),
+        sa.Column('cmds', sa.JSON(), nullable=False, server_default='[]'),
+        sa.Column('patterns', sa.JSON(), nullable=False, server_default='[]'),
         sa.Column('response', sa.String(500), nullable=False),
         sa.Column('group_name', sa.String(100), nullable=False, server_default=''),
         sa.Column('global_cooldown', sa.Integer, nullable=False, server_default='0'),
         sa.Column('chatter_cooldown', sa.Integer, nullable=False, server_default='0'),
         sa.Column('mod_cooldown', sa.Integer, nullable=False, server_default='0'),
         sa.Column(
-            'enabled_status', sa.SmallInteger, nullable=False, server_default='0'
+            'active_mode', sa.String(50), nullable=False, server_default='always'
         ),
         sa.Column('enabled', sa.Boolean, nullable=False, server_default='1'),
         sa.Column('public', sa.Boolean, nullable=False, server_default='1'),
-        sa.Column('aliases', sa.JSON(), nullable=True),
-        sa.Column('patterns', sa.JSON(), nullable=True),
         sa.Column('access_level', sa.SmallInteger, nullable=False, server_default='0'),
+        sa.Column('provider', sa.String(50), nullable=False, server_default='all'),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=False),
     )
 
     op.execute("""
-        INSERT INTO commands (id, channel_id, cmd, response, group_name, global_cooldown, chatter_cooldown, mod_cooldown, enabled_status, enabled, public, access_level, created_at, updated_at)
+        INSERT INTO commands (id, channel_id, cmds, response, group_name, global_cooldown, chatter_cooldown, mod_cooldown, active_mode, enabled, public, access_level, created_at, updated_at)
         SELECT 
             uuid_v7(), 
             c.id as channel_id, 
-            t.cmd,
+            Json_Array(t.cmd),
             t.response, 
             ifnull(t.group_name, ''),
             t.global_cooldown,
             t.user_cooldown as chatter_cooldown,
             t.mod_cooldown,
-            t.enabled_status,
+            case t.enabled_status 
+                when 0 then 'always'
+                when 1 then 'online'
+                when 2 then 'offline'
+            end as active_mode,
             t.enabled,
             t.public,
             t.user_level as access_level,

@@ -20,7 +20,7 @@ export function ChannelNavbar() {
     return (
         <>
             <Paper withBorder p="0.5rem" radius="md" m="0.5rem" mb="1rem">
-                <CurrentChannelCard nameFw={500} w={200} />
+                <CurrentChannelCard nameFw={500} w="100%" />
             </Paper>
             <Box pl="0.5rem" pr="0.5rem">
                 <NavLink

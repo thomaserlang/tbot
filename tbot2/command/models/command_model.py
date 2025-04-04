@@ -6,7 +6,10 @@ import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 from uuid6 import uuid7
 
+from tbot2.common import TAccessLevel
 from tbot2.model_base import Base
+
+from ..types import TCommandActiveMode
 
 
 class MCommand(Base):
@@ -19,7 +22,8 @@ class MCommand(Base):
         sa.ForeignKey('channels.id', onupdate='CASCADE', ondelete='CASCADE'),
         nullable=False,
     )
-    cmd: Mapped[str] = mapped_column(sa.String(100), nullable=False)
+    cmds: Mapped[list[str]] = mapped_column(sa.JSON(), nullable=False)
+    patterns: Mapped[list[str]] = mapped_column(sa.JSON(), nullable=False)
     response: Mapped[str] = mapped_column(sa.String(500), nullable=False)
     group_name: Mapped[str] = mapped_column(
         sa.String(100), nullable=False, server_default=''
@@ -33,19 +37,22 @@ class MCommand(Base):
     mod_cooldown: Mapped[int] = mapped_column(
         sa.Integer, nullable=False, server_default='0'
     )
-    enabled_status: Mapped[int] = mapped_column(
-        sa.SmallInteger, nullable=False, server_default='0'
+    active_mode: Mapped[TCommandActiveMode] = mapped_column(
+        sa.Enum(TCommandActiveMode), nullable=False, server_default='always'
     )
     enabled: Mapped[bool] = mapped_column(
         sa.Boolean, nullable=False, server_default='1'
     )
     public: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, server_default='1')
-    aliases: Mapped[list[str] | None] = mapped_column(sa.JSON, nullable=True)
-    patterns: Mapped[list[str] | None] = mapped_column(sa.JSON, nullable=True)
-    access_level: Mapped[int] = mapped_column(
-        sa.SmallInteger, nullable=False, server_default='0'
+    access_level: Mapped[TAccessLevel] = mapped_column(
+        sa.Integer, nullable=False, server_default='0'
+    )
+    provider: Mapped[str] = mapped_column(
+        sa.String(50), nullable=False, server_default='all'
     )
     created_at: Mapped[datetime] = mapped_column(
         sa.DateTime, nullable=False, default=datetime.now
     )
-    updated_at: Mapped[datetime] = mapped_column(sa.DateTime)
+    updated_at: Mapped[datetime] = mapped_column(
+        sa.DateTime, nullable=False, default=datetime.now
+    )

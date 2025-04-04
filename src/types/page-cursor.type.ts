@@ -1,8 +1,8 @@
-export type TLookupData<T = any> = {
+export type LookupData<T = any> = {
     [keyName: string]: { [idOfKey: string]: T }
 }
 
-export interface IPageCursor<T = any, L = TLookupData> {
+export interface PageCursor<T = any, L = LookupData> {
     records: T[]
     total: number
     cursor: string | null

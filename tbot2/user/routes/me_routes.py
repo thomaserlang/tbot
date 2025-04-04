@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Security
+from fastapi import APIRouter, HTTPException, Security
 
 from tbot2.common import TokenData
 from tbot2.dependecies import authenticated
@@ -15,5 +15,8 @@ router = APIRouter()
 async def me(token_data: Annotated[TokenData, Security(authenticated)]):
     user = await get_user(user_id=token_data.user_id)
     if not user:
-        raise Exception(f'User: {token_data.user_id} not found')
+        raise HTTPException(
+            status_code=401,
+            detail='User not found',
+        )
     return user

@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 
 from tbot2.common import TScope
 
@@ -8,6 +8,6 @@ class TChatFilterScope(TScope):
     WRITE = 'chat_filter:write'
 
 
-class TBannedTermType(str, Enum):
+class TBannedTermType(StrEnum):
     phrase = 'phrase'
     regex = 'regex'

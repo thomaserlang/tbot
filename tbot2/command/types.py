@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import StrEnum
 from typing import Awaitable, Callable, Sequence
 
 from tbot2.common import ChatMessage, TProvider, TScope
@@ -32,3 +33,9 @@ TFillerType = Callable[[ChatMessage, TCommand, TMessageVars], Awaitable[None]]
 class TCommandScope(TScope):
     READ = 'command:read'
     WRITE = 'command:write'
+
+
+class TCommandActiveMode(StrEnum):
+    ALWAYS = 'always'
+    ONLINE = 'online'
+    OFFLINE = 'offline'

@@ -10,6 +10,7 @@ from tbot2.page_cursor import PageCursor, PageCursorQuery, page_cursor
 
 from ..actions.command_actions import (
     create_command,
+    delete_command,
     get_command,
     update_command,
 )
@@ -45,7 +46,7 @@ async def get_commands_route(
         .where(
             MCommand.channel_id == channel_id,
         )
-        .order_by(MCommand.updated_at.desc(), MCommand.channel_id)
+        .order_by(MCommand.updated_at.desc(), MCommand.id)
     )
     return await page_cursor(
         query=stmt,
@@ -141,4 +142,32 @@ async def update_command_route(
     cmd = await update_command(
         command_id=command_id,
         data=data,
+    )
+    return cmd
+
+
+@router.delete(
+    '/channels/{channel_id}/commands/{command_id}',
+    name='Delete Command',
+    status_code=204,
+)
+async def delete_command_route(
+    channel_id: UUID,
+    command_id: UUID,
+    token_data: Annotated[
+        TokenData, Security(authenticated, scopes=[TCommandScope.WRITE])
+    ],
+):
+    await token_data.channel_has_access(
+        channel_id=channel_id,
+        access_level=TAccessLevel.MOD,
+    )
+    cmd = await get_command(command_id=command_id)
+    if not cmd or cmd.channel_id != channel_id:
+        raise HTTPException(
+            status_code=404,
+            detail='Command not found',
+        )
+    await delete_command(
+        command_id=command_id,
     )
