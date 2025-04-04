@@ -14,7 +14,7 @@ class Timer(BaseSchema):
     channel_id: UUID
     name: str
     messages: list[str]
-    interval: int  # in minutes
+    interval: Annotated[int, Field(description='Minutes')]
     enabled: bool
     next_run_at: datetime
     provider: Literal['all'] | TProvider
