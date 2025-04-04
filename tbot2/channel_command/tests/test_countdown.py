@@ -4,8 +4,8 @@ import pytest
 from pytest_mock import MockFixture
 from uuid6 import uuid7
 
-from tbot2.command.types import TCommand
-from tbot2.command.var_filler import fill_message
+from tbot2.channel_command.types import TCommand
+from tbot2.channel_command.var_filler import fill_message
 from tbot2.common import TProvider
 from tbot2.common.schemas.chat_message_schema import ChatMessage
 from tbot2.testbase import run_file

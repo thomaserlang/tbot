@@ -1,5 +1,5 @@
+from tbot2.channel_command import TCommand, TMessageVars, fills_vars
 from tbot2.channel_points import get_channel_point_settings, get_points, inc_points
-from tbot2.command import TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage, TProvider, convert_to_points, safe_username
 from tbot2.contexts import get_session
 

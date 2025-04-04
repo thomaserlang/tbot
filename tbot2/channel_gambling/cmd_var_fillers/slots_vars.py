@@ -1,4 +1,4 @@
-from tbot2.command import TCommand, TMessageVars, fills_vars
+from tbot2.channel_command import TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage
 
 from ..actions.slots_actions import slots

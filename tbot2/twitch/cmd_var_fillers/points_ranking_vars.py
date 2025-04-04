@@ -3,8 +3,8 @@ from typing import Any
 import sqlalchemy as sa
 from humanize import intcomma
 
+from tbot2.channel_command import TCommand, TMessageVars, fills_vars
 from tbot2.channel_points import MChatterPoints
-from tbot2.command import TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage, TProvider
 from tbot2.contexts import get_session
 from tbot2.twitch import lookup_twitch_users

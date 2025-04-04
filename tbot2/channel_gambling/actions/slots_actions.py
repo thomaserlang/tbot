@@ -2,8 +2,8 @@ import math
 import random
 from uuid import UUID
 
+from tbot2.channel_command import fill_from_dict
 from tbot2.channel_points import get_channel_point_settings, get_points, inc_points
-from tbot2.command import fill_from_dict
 from tbot2.common import TProvider, convert_to_points
 
 from ..actions.slots_settings_actions import get_slots_settings

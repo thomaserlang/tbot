@@ -1,5 +1,5 @@
+from tbot2.channel_command import TCommand, TMessageVars, fills_vars
 from tbot2.channel_viewer_stats import get_channel_viewer_stats
-from tbot2.command import TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage, TProvider, safe_username
 
 from ..actions.twitch_lookup_users_action import lookup_twitch_user

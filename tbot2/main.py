@@ -6,8 +6,8 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 from tbot2.auth_backend import AuthBackend
 from tbot2.channel.router import channel_router
 from tbot2.channel_chat_filters.router import chat_filter_router
+from tbot2.channel_command.router import command_router
 from tbot2.channel_quote.router import channel_quotes_router
-from tbot2.command.router import command_router
 from tbot2.config_settings import config
 from tbot2.database import database
 from tbot2.spotify.router import spotify_router

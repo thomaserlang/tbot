@@ -5,7 +5,7 @@ from pytest_mock import MockFixture
 from twitchAPI.twitch import ChannelFollower, TwitchUser
 from uuid6 import uuid7
 
-from tbot2.command import TCommand, TMessageVar
+from tbot2.channel_command import TCommand, TMessageVar
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
 from tbot2.twitch.cmd_var_fillers.followage_vars import followage_vars

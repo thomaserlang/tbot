@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 import pytest
 from uuid6 import uuid7
 
-from tbot2.command.types import TCommand, TMessageVars
-from tbot2.command.var_filler import fill_message, fills_vars
+from tbot2.channel_command.types import TCommand, TMessageVars
+from tbot2.channel_command.var_filler import fill_message, fills_vars
 from tbot2.common import TProvider
 from tbot2.common.schemas.chat_message_schema import ChatMessage
 from tbot2.testbase import run_file

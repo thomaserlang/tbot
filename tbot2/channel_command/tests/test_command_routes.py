@@ -1,6 +1,6 @@
 import pytest
 
-from tbot2.command import TCommandScope
+from tbot2.channel_command import TCommandScope
 from tbot2.testbase import AsyncClient, run_file, user_signin
 
 

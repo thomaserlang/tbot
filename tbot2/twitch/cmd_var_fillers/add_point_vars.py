@@ -1,5 +1,5 @@
+from tbot2.channel_command import TCommand, TMessageVars, fills_vars
 from tbot2.channel_points import get_channel_point_settings, inc_bulk_points, inc_points
-from tbot2.command import TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage, TProvider, safe_username
 from tbot2.twitch import get_twitch_chatters, lookup_twitch_user
 
