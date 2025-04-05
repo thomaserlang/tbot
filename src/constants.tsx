@@ -1,1 +1,1 @@
-export const APP_TITLE = 'TBot'
+export const APP_TITLE = 'HEIMRA'
