@@ -33,17 +33,9 @@ class ChatFilterBannedTerms(ChatFilterBase):
     async def check_message(self, message: ChatMessage) -> FilterMatchResult:
         banned_terms = await get_banned_terms(filter_id=self.id)
         for term in banned_terms:
-            import logging
-
-            logging.error(term.type)
             if (term.type == TBannedTermType.regex) or (
                 term.text.startswith('re:')  # Backwards compatibility
             ):
-                import logging
-
-                logging.error(
-                    term.text if not term.text.startswith('re:') else term.text[3:]
-                )
                 if search(
                     term.text if not term.text.startswith('re:') else term.text[3:],
                     message.message_without_fragments(),
