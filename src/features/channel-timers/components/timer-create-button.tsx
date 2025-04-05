@@ -17,10 +17,10 @@ export function CreatetimerButton({ channelId, onCreated }: Props) {
             <Button
                 ml="auto"
                 variant="light"
-                rightSection={<IconPlus size={14} />}
+                leftSection={<IconPlus size={14} />}
                 onClick={open}
             >
-                Create
+                Create Timer
             </Button>
 
             <Modal
