@@ -49,6 +49,20 @@ body {
   outline: none;
 }
 
+.mantine-AppShell-header {
+  background-color: light-dark(
+    var(--mantine-color-gray-0),
+    var(--mantine-color-dark-8)
+  );
+}
+
+.mantine-AppShell-navbar {
+  background-color: light-dark(
+    var(--mantine-color-gray-0),
+    var(--mantine-color-dark-8)
+  );
+}
+
 .mantine-datatable-scroll-area-bottom-shadow {
   background: linear-gradient(
       rgba(0, 0, 0, 0),
