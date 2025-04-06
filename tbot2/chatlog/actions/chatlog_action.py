@@ -6,9 +6,9 @@ from sqlalchemy.dialects.mysql import insert
 from tbot2.common.schemas.chat_message_schema import ChatMessage
 from tbot2.contexts import AsyncSession, get_session
 
+from ..models.chatlog_chatter_stats_model import MChatlogChatterStats
+from ..models.chatlog_chatters_model import MChatlogChatters
 from ..models.chatlog_model import MChatlog
-from ..models.chatlog_user_stats_model import MChatlogUserStats
-from ..models.chatlog_username_model import MChatlogUsername
 
 
 async def create_chatlog(
@@ -23,18 +23,19 @@ async def create_chatlog(
         )
 
         await session.execute(
-            insert(MChatlogUserStats.__table__)  # type: ignore
+            insert(MChatlogChatterStats.__table__)  # type: ignore
             .values(
                 channel_id=data.channel_id,
+                provider=data.provider,
                 chatter_id=data.chatter_id,
                 chat_messages=1,
             )
-            .on_duplicate_key_update(chat_messages=MChatlogUserStats.chat_messages + 1)
+            .on_duplicate_key_update(chat_messages=MChatlogChatterStats.chat_messages + 1)
         )
 
         last_seen_at = datetime.now(tz=timezone.utc)
         await session.execute(
-            insert(MChatlogUsername.__table__)  # type: ignore
+            insert(MChatlogChatters.__table__)  # type: ignore
             .values(
                 provider=data.provider,
                 chatter_id=data.chatter_id,

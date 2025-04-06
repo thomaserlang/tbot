@@ -117,10 +117,14 @@ def upgrade() -> None:
     op.drop_constraint(
         'chatlog_chatter_stats_pkey', 'chatlog_chatter_stats', type_='primary'
     )
+    op.add_column(
+        'chatlog_chatter_stats',
+        sa.Column('provider', sa.String(50), nullable=False, server_default='twitch'),
+    )
     op.create_primary_key(
         'chatlog_chatter_stats_pkey',
         'chatlog_chatter_stats',
-        ['channel_id', 'chatter_id'],
+        ['channel_id', 'provider', 'chatter_id'],
     )
 
     op.alter_column(
@@ -149,8 +153,14 @@ def upgrade() -> None:
     op.alter_column(
         'chatlog_chatters',
         'chatter_display_name',
-        existing_type=sa.String(100),
+        existing_type=sa.String(200),
         nullable=False,
+    )
+    op.drop_constraint('chatlog_chatters_pkey', 'chatlog_chatters', type_='primary')
+    op.create_primary_key(
+        'chatlog_chatters_pkey',
+        'chatlog_chatters',
+        ['provider', 'chatter_id'],
     )
 
 
