@@ -1,4 +1,5 @@
 import { accessLevelLabels } from '@/types/access-level.type'
+import { providerLabels } from '@/types/provider.type'
 import {
     Flex,
     NumberInput,
@@ -38,6 +39,15 @@ export function FilterForm({ form }: Props) {
                     }))}
                     {...form.getInputProps('exclude_access_level')}
                     defaultValue={form.values.exclude_access_level?.toString()}
+                />
+                <Select
+                    label="Provider"
+                    key={form.key('provider')}
+                    data={Object.keys(providerLabels).map((key) => ({
+                        value: key,
+                        label: providerLabels[key],
+                    }))}
+                    {...form.getInputProps('provider')}
                 />
             </SimpleGrid>
 
