@@ -32,7 +32,7 @@ export function FiltersView({ channelId }: Props) {
         return (
             <Flex justify="center" align="center" direction="column" gap="1rem">
                 <IconShieldCog size={40} />
-                <Text fw={500}>No filters found, add one.</Text>
+                <Text fw={500}>No chat filters found, add one.</Text>
             </Flex>
         )
     }
