@@ -1,6 +1,5 @@
-import { PageCursor } from '@/types/page-cursor.type'
-import { api } from '@/utils/api'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { getAllPagesCursor } from '@/utils/api'
+import { useQuery } from '@tanstack/react-query'
 import { ChannelId } from '../channel/types'
 import { Timer } from './timer.types'
 
@@ -14,21 +13,18 @@ export async function getTimers(
     channelId: ChannelId,
     params?: Params & { cursor?: string }
 ) {
-    const r = await api.get<PageCursor<Timer>>(
+    const r = await getAllPagesCursor<Timer>(
         `/api/2/channels/${channelId}/timers`,
         {
             params,
         }
     )
-    return r.data
+    return r
 }
 
 export function useGetTimers(channelId: ChannelId, params?: Params) {
-    return useInfiniteQuery({
+    return useQuery({
         queryKey: getTimersQueryKey(channelId, params),
-        queryFn: ({ pageParam }) =>
-            getTimers(channelId, { ...params, cursor: pageParam }),
-        initialPageParam: '',
-        getNextPageParam: (lastPage) => lastPage.cursor ?? undefined,
+        queryFn: () => getTimers(channelId, params),
     })
 }

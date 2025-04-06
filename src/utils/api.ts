@@ -1,4 +1,5 @@
-import axios, { AxiosError } from 'axios'
+import { PageCursor } from '@/types/page-cursor.type'
+import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 
 export const api = axios.create({
     paramsSerializer: {
@@ -29,4 +30,20 @@ setAuthorizationHeader()
 export function setAccessToken(token: string) {
     localStorage.setItem('accessToken', token)
     setAuthorizationHeader()
+}
+
+export async function getAllPagesCursor<T = any, D = any>(
+    url: string,
+    config: AxiosRequestConfig<D> = {}
+) {
+    let result = await api.get<PageCursor<T>>(url, config)
+    if (!config.params) config.params = {}
+    const items = result.data.records
+    if (result.data.cursor)
+        do {
+            config.params = { ...config.params, cursor: result.data.cursor }
+            result = await api.get<PageCursor<T>>(url, config)
+            items.push(...result.data.records)
+        } while (result.data.cursor !== null)
+    return items
 }

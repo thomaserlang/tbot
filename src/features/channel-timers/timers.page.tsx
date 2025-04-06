@@ -4,7 +4,7 @@ import { Container, Flex, Title } from '@mantine/core'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CreatetimerButton } from './components/timer-create-button'
 import { EditTimerModal } from './components/timer-edit-modal'
-import { TimersTable } from './components/timers-table'
+import { TimersView } from './components/timers-view'
 import { TimerId } from './timer.types'
 import { useGetTimers } from './timers.api'
 
@@ -34,7 +34,7 @@ export function Component() {
                     </Flex>
                     {data.error && <ErrorBox errorObj={data.error} />}
                     {!data.error && (
-                        <TimersTable
+                        <TimersView
                             data={data}
                             onEditClick={(timer) => navigate(timer.id)}
                         />
