@@ -19,7 +19,7 @@ export function CreateBannedTermButton(props: Props) {
         <>
             <Button
                 onClick={open}
-                variant="outline"
+                variant="light"
                 leftSection={<IconPlus size={16} />}
             >
                 Banned Term
