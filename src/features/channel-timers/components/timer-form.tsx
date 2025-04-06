@@ -10,7 +10,7 @@ import {
     TextInput,
 } from '@mantine/core'
 import { UseFormReturnType } from '@mantine/form'
-import { IconHourglassEmpty, IconPlus, IconX } from '@tabler/icons-react'
+import { IconClock, IconPlus, IconX } from '@tabler/icons-react'
 import {
     timerActiveModeLabels,
     TimerCreate,
@@ -33,7 +33,7 @@ export function TimerForm({ form }: Props) {
 
             <SimpleGrid cols={{ base: 2, md: 3 }}>
                 <NumberInput
-                    leftSection={<IconHourglassEmpty size={16} />}
+                    leftSection={<IconClock size={16} />}
                     label="Interval"
                     key={form.key('interval')}
                     allowNegative={false}
