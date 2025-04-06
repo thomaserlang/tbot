@@ -60,9 +60,6 @@ export function TimerForm({ form }: Props) {
                     }))}
                     {...form.getInputProps('pick_mode')}
                 />
-            </SimpleGrid>
-
-            <SimpleGrid cols={{ base: 2, md: 3 }}>
                 <Select
                     label="Provider"
                     key={form.key('provider')}
