@@ -58,6 +58,16 @@ const protectedRoutes: RouteObject[] = [
                 path: 'timers/:timerId',
                 lazy: () => import('./features/channel-timers/timers.page'),
             },
+            {
+                path: 'chat-filters',
+                lazy: () =>
+                    import('./features/channel-chat-filters/filters.page'),
+            },
+            {
+                path: 'chat-filters/:filterId',
+                lazy: () =>
+                    import('./features/channel-chat-filters/filters.page'),
+            },
         ],
     },
 ]

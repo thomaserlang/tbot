@@ -30,7 +30,20 @@ export function EditCommandForm({ command, onUpdated }: Props) {
     })
     const form = useForm<CommandUpdate>({
         mode: 'uncontrolled',
-        initialValues: command,
+        initialValues: {
+            cmds: command.cmds,
+            patterns: command.patterns,
+            response: command.response,
+            active_mode: command.active_mode,
+            global_cooldown: command.global_cooldown,
+            chatter_cooldown: command.chatter_cooldown,
+            mod_cooldown: command.mod_cooldown,
+            enabled: command.enabled,
+            public: command.public,
+            access_level: command.access_level,
+            provider: command.provider,
+            group_name: command.group_name,
+        },
     })
 
     return (

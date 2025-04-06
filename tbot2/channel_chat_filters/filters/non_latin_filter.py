@@ -10,6 +10,9 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseCreate,
     ChatFilterBaseSettings,
     ChatFilterBaseUpdate,
+    ChatFilterName,
+    ChatFilterTimeoutMessage,
+    ChatFilterWarningMessage,
     FilterMatchResult,
 )
 
@@ -21,7 +24,10 @@ class ChatFilterNonLatinSettings(ChatFilterBaseSettings):
 
 class ChatFilterNonLatinCreate(ChatFilterBaseCreate):
     type: Literal['non_latin']
-    name: str = 'Non-latin Filter'
+    name: ChatFilterName = 'Non-latin Filter'
+    warning_message: ChatFilterWarningMessage = 'Please use latin letters [warning]'
+    timeout_message: ChatFilterTimeoutMessage = 'Please use latin letters'
+
     settings: ChatFilterNonLatinSettings = ChatFilterNonLatinSettings()
 
 

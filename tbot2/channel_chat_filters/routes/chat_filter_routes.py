@@ -10,12 +10,39 @@ from ..actions.chat_filter_actions import (
     create_chat_filter,
     delete_chat_filter,
     get_chat_filter,
+    get_chat_filters,
     update_chat_filter,
 )
 from ..filters import FilterTypeCreateUnion, FilterTypesUnion, FilterTypeUpdateUnion
 from ..types import TChatFilterScope
 
 router = APIRouter()
+
+
+@router.get(
+    '/channels/{channel_id}/chat-filters',
+    name='Get channel filters',
+    responses={
+        200: {
+            'model': list[FilterTypesUnion],
+        }
+    },
+)
+async def get_chat_filters_route(
+    channel_id: UUID,
+    token_data: Annotated[
+        TokenData,
+        Security(authenticated, scopes=[TChatFilterScope.READ]),
+    ],
+):
+    await token_data.channel_has_access(
+        channel_id=channel_id,
+        access_level=TAccessLevel.MOD,
+    )
+    filters = await get_chat_filters(
+        channel_id=channel_id,
+    )
+    return filters
 
 
 @router.get(

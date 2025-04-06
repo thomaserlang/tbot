@@ -5,6 +5,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from fastapi import APIRouter, Security
 
+from tbot2.channel_chat_filters.models.chat_filter_model import MChatFilter
 from tbot2.common import ChatMessage, TAccessLevel, TokenData, TProvider
 from tbot2.dependecies import Depends, HTTPException, authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQuery, page_cursor
@@ -30,7 +31,8 @@ router = APIRouter()
 
 
 @router.get(
-    '/channels/{channel_id}/filters/{filter_id}/banned-terms',
+    '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms',
+    name='Get Banned Terms',
     responses={
         200: {
             'model': PageCursor[BannedTerm],
@@ -56,6 +58,8 @@ async def get_banned_terms_route(
         )
         .where(
             MChatFilterBannedTerm.chat_filter_id == filter_id,
+            MChatFilter.id == MChatFilterBannedTerm.chat_filter_id,
+            MChatFilter.channel_id == channel_id,
         )
         .order_by(
             MChatFilterBannedTerm.id,
@@ -72,7 +76,8 @@ async def get_banned_terms_route(
 
 
 @router.get(
-    '/channels/{channel_id}/filters/{filter_id}/banned-terms/{banned_term_id}',
+    '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms/{banned_term_id}',
+    name='Get Banned Term',
     responses={
         200: {
             'model': BannedTerm,
@@ -108,12 +113,14 @@ async def get_banned_term_route(
 
 
 @router.post(
-    '/channels/{channel_id}/filters/{filter_id}/banned-terms',
+    '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms',
+    name='Create Banned Term',
     responses={
-        200: {
+        201: {
             'model': BannedTerm,
         },
     },
+    status_code=201,
 )
 async def create_banned_term_route(
     channel_id: UUID,
@@ -142,7 +149,8 @@ async def create_banned_term_route(
 
 
 @router.put(
-    '/channels/{channel_id}/filters/{filter_id}/banned-terms/{banned_term_id}',
+    '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms/{banned_term_id}',
+    name='Update Banned Term',
     responses={
         200: {
             'model': BannedTerm,
@@ -183,7 +191,8 @@ async def update_banned_term_route(
 
 
 @router.delete(
-    '/channels/{channel_id}/filters/{filter_id}/banned-terms/{banned_term_id}',
+    '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms/{banned_term_id}',
+    name='Delete Banned Term',
     status_code=204,
 )
 async def delete_banned_term_route(
@@ -210,7 +219,8 @@ async def delete_banned_term_route(
 
 
 @router.post(
-    '/channels/{channel_id}/filters/{filter_id}/banned-terms/test',
+    '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms/test',
+    name='Test Banned Term',
     responses={
         200: {
             'model': FilterMatchResult,

@@ -1,17 +1,28 @@
+import { ChannelId } from '@/features/channel/types'
 import { toastPromise } from '@/utils/toast'
 import { ActionIcon, Menu, MenuItem } from '@mantine/core'
 import { IconDotsVertical, IconEdit, IconTrash } from '@tabler/icons-react'
-import { useDeleteTimer } from '../timer.api'
-import { Timer } from '../timer.types'
+import { useDeleteBannedTerm } from './banned-term.api'
+import { BannedTerm } from './banned-terms.types'
 
 interface Props {
-    timer: Timer
-    onEditClick?: (Timer: Timer) => void
-    onDeleted?: (Timer: Timer) => void
+    channelId: ChannelId
+    bannedTerm: BannedTerm
+    onEditClick?: (bannedTerm: BannedTerm) => void
+    onDeleted?: (bannedTerm: BannedTerm) => void
 }
 
-export function TimerMenu({ timer, onEditClick }: Props) {
-    const deleteTimer = useDeleteTimer()
+export function BannedTermMenu({
+    channelId,
+    bannedTerm,
+    onEditClick,
+    onDeleted,
+}: Props) {
+    const deleteBannedTerm = useDeleteBannedTerm({
+        onSuccess: () => {
+            onDeleted?.(bannedTerm)
+        },
+    })
 
     return (
         <Menu width={200}>
@@ -24,7 +35,7 @@ export function TimerMenu({ timer, onEditClick }: Props) {
             <Menu.Dropdown>
                 <MenuItem
                     leftSection={<IconEdit size={14} />}
-                    onClick={() => onEditClick?.(timer)}
+                    onClick={() => onEditClick?.(bannedTerm)}
                 >
                     Edit
                 </MenuItem>
@@ -33,9 +44,10 @@ export function TimerMenu({ timer, onEditClick }: Props) {
                     leftSection={<IconTrash size={14} />}
                     onClick={() => {
                         toastPromise({
-                            promise: deleteTimer.mutateAsync({
-                                timerId: timer.id,
-                                channelId: timer.channel_id,
+                            promise: deleteBannedTerm.mutateAsync({
+                                bannedTermId: bannedTerm.id,
+                                chatFilterId: bannedTerm.chat_filter_id,
+                                channelId: channelId,
                             }),
                             loading: {
                                 title: 'Deleting Timer',

@@ -10,6 +10,9 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseCreate,
     ChatFilterBaseSettings,
     ChatFilterBaseUpdate,
+    ChatFilterName,
+    ChatFilterTimeoutMessage,
+    ChatFilterWarningMessage,
     FilterMatchResult,
 )
 
@@ -21,7 +24,9 @@ class ChatFilterCapsSettings(ChatFilterBaseSettings):
 
 class ChatFilterCapsCreate(ChatFilterBaseCreate):
     type: Literal['caps']
-    name: str = 'Caps Filter'
+    name: ChatFilterName = 'Caps Filter'
+    warning_message: ChatFilterWarningMessage = 'Please stop using all caps [warning]'
+    timeout_message: ChatFilterTimeoutMessage = 'Please stop using all caps'
     settings: ChatFilterCapsSettings = ChatFilterCapsSettings()
 
 

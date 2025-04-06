@@ -20,6 +20,7 @@ class MChatFilter(Base):
         nullable=False,
     )
     type: Mapped[str] = mapped_column(sa.String(100), nullable=False)
+    provider: Mapped[str] = mapped_column(sa.String(50), nullable=False)
     name: Mapped[str] = mapped_column(sa.String(500), nullable=False)
     enabled: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, default=True)
     exclude_access_level: Mapped[TAccessLevel] = mapped_column(

@@ -78,7 +78,7 @@ export function CommandForm({ form }: Props) {
                 {...form.getInputProps('response')}
             />
 
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={{ base: 2, md: 3 }}>
                 <Select
                     leftSection={<IconLock size={16} />}
                     label="Access level"
@@ -108,7 +108,7 @@ export function CommandForm({ form }: Props) {
                 />
             </SimpleGrid>
 
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={{ base: 2, md: 3 }}>
                 <NumberInput
                     leftSection={<IconHourglassEmpty size={16} />}
                     label="Global cooldown"
@@ -137,7 +137,7 @@ export function CommandForm({ form }: Props) {
                 />
             </SimpleGrid>
 
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={{ base: 2, md: 3 }}>
                 <Select
                     label="Provider"
                     key={form.key('provider')}
@@ -152,20 +152,18 @@ export function CommandForm({ form }: Props) {
             <Flex>
                 <Switch
                     label="Enabled"
-                    defaultChecked={!!form.values.enabled}
                     key={form.key('enabled')}
                     style={{ cursor: 'pointer' }}
-                    {...form.getInputProps('enabled')}
+                    {...form.getInputProps('enabled', { type: 'checkbox' })}
                 />
             </Flex>
             <Flex>
                 <Switch
                     label="Public"
                     description="Shown on the public commands page"
-                    defaultChecked={!!form.values.public}
                     key={form.key('public')}
                     style={{ cursor: 'pointer' }}
-                    {...form.getInputProps('public')}
+                    {...form.getInputProps('public', { type: 'checkbox' })}
                 />
             </Flex>
         </Flex>

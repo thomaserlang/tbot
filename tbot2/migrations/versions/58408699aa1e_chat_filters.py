@@ -28,6 +28,7 @@ def upgrade() -> None:
             sa.ForeignKey('channels.id', onupdate='CASCADE', ondelete='CASCADE'),
             nullable=False,
         ),
+        sa.Column('provider', sa.String(50), nullable=False, server_default='all'),
         sa.Column('type', sa.String(100), nullable=False),
         sa.Column('name', sa.String(500), nullable=False),
         sa.Column('enabled', sa.Boolean, nullable=False),

@@ -9,6 +9,9 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseCreate,
     ChatFilterBaseSettings,
     ChatFilterBaseUpdate,
+    ChatFilterName,
+    ChatFilterTimeoutMessage,
+    ChatFilterWarningMessage,
     FilterMatchResult,
 )
 
@@ -19,7 +22,9 @@ class ChatFilterParagraphSettings(ChatFilterBaseSettings):
 
 class ChatFilterParagraphCreate(ChatFilterBaseCreate):
     type: Literal['paragraph']
-    name: str = 'Paragraph Filter'
+    name: ChatFilterName = 'Paragraph Filter'
+    warning_message: ChatFilterWarningMessage = 'Your message was too long [warning]'
+    timeout_message: ChatFilterTimeoutMessage = 'Your message was too long'
     settings: ChatFilterParagraphSettings = ChatFilterParagraphSettings()
 
 

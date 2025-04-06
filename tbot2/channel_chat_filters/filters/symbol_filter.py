@@ -10,6 +10,9 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseCreate,
     ChatFilterBaseSettings,
     ChatFilterBaseUpdate,
+    ChatFilterName,
+    ChatFilterTimeoutMessage,
+    ChatFilterWarningMessage,
     FilterMatchResult,
 )
 
@@ -20,7 +23,13 @@ class ChatFilterSymbolSettings(ChatFilterBaseSettings):
 
 class ChatFilterSymbolCreate(ChatFilterBaseCreate):
     type: Literal['symbol']
-    name: str = 'Symbol Filter'
+    name: ChatFilterName = 'Symbol Filter'
+    warning_message: ChatFilterWarningMessage = (
+        'Your message contained too many symbols [warning]'
+    )
+    timeout_message: ChatFilterTimeoutMessage = (
+        'Your message contained too many symbols'
+    )
     settings: ChatFilterSymbolSettings = ChatFilterSymbolSettings()
 
 

@@ -12,6 +12,8 @@ body {
       )
   );
 
+  --tbot-selected-color: var(--mantine-primary-color-light);
+
   @mixin light {
     background-color: var(--mantine-color-gray-0);
 
@@ -111,4 +113,8 @@ body {
 
 .mantine-datatable-header-cell-sortable-text {
   font-weight: 500;
+}
+
+.mantine-Switch-track {
+  cursor: pointer;
 }

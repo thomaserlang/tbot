@@ -9,6 +9,9 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBaseCreate,
     ChatFilterBaseSettings,
     ChatFilterBaseUpdate,
+    ChatFilterName,
+    ChatFilterTimeoutMessage,
+    ChatFilterWarningMessage,
     FilterMatchResult,
 )
 
@@ -19,7 +22,9 @@ class ChatFilterEmoteSettings(ChatFilterBaseSettings):
 
 class ChatFilterEmoteCreate(ChatFilterBaseCreate):
     type: Literal['emote']
-    name: str = 'Emote Filter'
+    name: ChatFilterName = 'Emote Filter'
+    warning_message: ChatFilterWarningMessage = 'Chill with the emotes [warning]'
+    timeout_message: ChatFilterTimeoutMessage = 'Chill with the emotes'
     settings: ChatFilterEmoteSettings = ChatFilterEmoteSettings()
 
 

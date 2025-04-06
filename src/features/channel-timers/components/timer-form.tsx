@@ -31,7 +31,7 @@ export function TimerForm({ form }: Props) {
                 {...form.getInputProps('name')}
             />
 
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={{ base: 2, md: 3 }}>
                 <NumberInput
                     leftSection={<IconHourglassEmpty size={16} />}
                     label="Interval"
@@ -62,7 +62,7 @@ export function TimerForm({ form }: Props) {
                 />
             </SimpleGrid>
 
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={{ base: 2, md: 3 }}>
                 <Select
                     label="Provider"
                     key={form.key('provider')}
@@ -77,10 +77,9 @@ export function TimerForm({ form }: Props) {
             <Flex>
                 <Switch
                     label="Enabled"
-                    defaultChecked={!!form.values.enabled}
                     key={form.key('enabled')}
                     style={{ cursor: 'pointer' }}
-                    {...form.getInputProps('enabled')}
+                    {...form.getInputProps('enabled', { type: 'checkbox' })}
                 />
             </Flex>
 

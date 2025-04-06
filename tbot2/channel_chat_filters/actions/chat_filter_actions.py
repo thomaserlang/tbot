@@ -5,9 +5,9 @@ import sqlalchemy as sa
 from pydantic import TypeAdapter
 from uuid6 import uuid7
 
-from tbot2.channel_chat_filters.filters import FilterTypesUnion
 from tbot2.contexts import AsyncSession, get_session
 
+from ..filters import FilterTypesUnion
 from ..models.chat_filter_model import MChatFilter
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,

@@ -12,13 +12,18 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBase,
     ChatFilterBaseCreate,
     ChatFilterBaseUpdate,
+    ChatFilterName,
+    ChatFilterTimeoutMessage,
+    ChatFilterWarningMessage,
     FilterMatchResult,
 )
 
 
 class ChatFilterLinkCreate(ChatFilterBaseCreate):
     type: Literal['link']
-    name: str = 'Link Filter'
+    name: ChatFilterName = 'Link Filter'
+    warning_message: ChatFilterWarningMessage = 'You are not permitted to post links [warning]'
+    timeout_message: ChatFilterTimeoutMessage = 'You are not permitted to post links'
 
 
 class ChatFilterLinkUpdate(ChatFilterBaseUpdate):

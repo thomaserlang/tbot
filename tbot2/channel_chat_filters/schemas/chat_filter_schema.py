@@ -1,11 +1,17 @@
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 from pydantic import ConfigDict, StringConstraints, field_validator
 from pydantic.dataclasses import dataclass
 from typing_extensions import Doc
 
-from tbot2.common import BaseRequestSchema, BaseSchema, ChatMessage, TAccessLevel
+from tbot2.common import (
+    BaseRequestSchema,
+    BaseSchema,
+    ChatMessage,
+    TAccessLevel,
+    TProvider,
+)
 
 
 class ChatFilterBaseSettings(BaseSchema):
@@ -28,6 +34,7 @@ class ChatFilterBase(BaseSchema):
     id: UUID
     channel_id: UUID
     name: str
+    provider: Literal['all'] | TProvider
     enabled: bool
     exclude_access_level: TAccessLevel
     warning_enabled: bool
@@ -40,33 +47,36 @@ class ChatFilterBase(BaseSchema):
         return FilterMatchResult(filter=self, matched=False)
 
 
+ChatFilterName = Annotated[str, StringConstraints(min_length=1, max_length=500)]
+ChatFilterWarningMessage = Annotated[
+    str, StringConstraints(min_length=0, max_length=500)
+]
+ChatFilterTimeoutMessage = Annotated[
+    str, StringConstraints(min_length=0, max_length=500)
+]
+
+
 class ChatFilterBaseCreate(BaseRequestSchema):
-    name: Annotated[str, StringConstraints(min_length=1, max_length=500)]
+    name: ChatFilterName
     enabled: bool = True
+    provider: Literal['all'] | TProvider = 'all'
     exclude_access_level: TAccessLevel = TAccessLevel.MOD
     warning_enabled: bool = False
-    warning_message: Annotated[
-        str, StringConstraints(min_length=1, max_length=1000)
-    ] = ''
+    warning_message: ChatFilterWarningMessage = ''
     warning_expire_duration: int = 3600
-    timeout_message: Annotated[
-        str, StringConstraints(min_length=1, max_length=1000)
-    ] = 'Not permitted.'
+    timeout_message: ChatFilterTimeoutMessage = ''
     timeout_duration: int = 60
 
 
 class ChatFilterBaseUpdate(BaseRequestSchema):
-    name: Annotated[str, StringConstraints(min_length=1, max_length=500)] | None = None
+    name: ChatFilterName | None = None
     enabled: bool | None = None
+    provider: Literal['all'] | TProvider = 'all'
     exclude_access_level: TAccessLevel | None = None
     warning_enabled: bool | None = None
-    warning_message: (
-        Annotated[str, StringConstraints(min_length=1, max_length=1000)] | None
-    ) = None
+    warning_message: ChatFilterWarningMessage | None = None
     warning_expire_duration: int | None = None
-    timeout_message: (
-        Annotated[str, StringConstraints(min_length=1, max_length=1000)] | None
-    ) = None
+    timeout_message: ChatFilterTimeoutMessage | None = None
     timeout_duration: int | None = None
 
     @field_validator(

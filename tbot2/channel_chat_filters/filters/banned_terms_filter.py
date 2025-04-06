@@ -13,6 +13,9 @@ from ..schemas.chat_filter_schema import (
     ChatFilterBase,
     ChatFilterBaseCreate,
     ChatFilterBaseUpdate,
+    ChatFilterName,
+    ChatFilterTimeoutMessage,
+    ChatFilterWarningMessage,
     FilterMatchResult,
 )
 from ..types import TBannedTermType
@@ -20,7 +23,9 @@ from ..types import TBannedTermType
 
 class ChatFilterBannedTermsCreate(ChatFilterBaseCreate):
     type: Literal['banned_terms']
-    name: str = 'Banned Terms Filter'
+    name: ChatFilterName = 'Banned Terms Filter'
+    warning_message: ChatFilterWarningMessage = 'Banned word [warning]'
+    timeout_message: ChatFilterTimeoutMessage = 'Banned word'
 
 
 class ChatFilterBannedTermsUpdate(ChatFilterBaseUpdate):

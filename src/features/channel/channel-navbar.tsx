@@ -3,12 +3,12 @@ import {
     IconBlocks,
     IconClock,
     IconCoin,
-    IconFilter,
     IconHome,
     IconLink,
     IconLock,
     IconPokerChip,
     IconQuote,
+    IconShieldCog,
     IconWood,
 } from '@tabler/icons-react'
 import { NavLink as RouterNavLink } from 'react-router-dom'
@@ -50,21 +50,23 @@ export function ChannelNavbar() {
                 />
                 <NavLink
                     component={RouterNavLink}
-                    to={`/channels/${channel.id}/filters`}
-                    label="Filters"
-                    leftSection={<IconFilter size={20} />}
+                    to={`/channels/${channel.id}/chat-filters`}
+                    label="Chat Filters"
+                    leftSection={<IconShieldCog size={20} />}
                 />
                 <NavLink
                     component={RouterNavLink}
                     to={`/channels/${channel.id}/quotes`}
                     label="Quotes"
                     leftSection={<IconQuote size={20} />}
+                    disabled
                 />
                 <NavLink
                     component={RouterNavLink}
                     to={`/channels/${channel.id}/gambling`}
                     label="Gambling"
                     leftSection={<IconCoin size={20} />}
+                    disabled
                 >
                     <NavLink
                         component={RouterNavLink}
@@ -90,6 +92,7 @@ export function ChannelNavbar() {
                     to={`/channels/${channel.id}/user-access`}
                     label="User Access"
                     leftSection={<IconLock size={20} />}
+                    disabled
                 />
                 <NavLink
                     component={RouterNavLink}
