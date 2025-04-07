@@ -5,7 +5,8 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, Request
 
 from tbot2.config_settings import config
-from tbot2.twitch.eventsub.schemas.eventsub_headers import EventSubHeaders
+
+from ..schemas.eventsub_headers import EventSubHeaders
 
 
 async def validate_twitch_webhook_signature(

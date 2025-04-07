@@ -19,6 +19,12 @@ class EventSubSubscription(BaseModel):
     transport: EventSubSubscriptionTransport
 
 
+class EventSubRegistration(BaseModel):
+    event_type: str
+    version: str
+    condition: dict[str, str]
+
+
 TypeEvent = TypeVar('TypeEvent')
 
 

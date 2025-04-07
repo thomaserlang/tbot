@@ -6,6 +6,7 @@ from tbot2.config_settings import config
 from tbot2.twitch.twitch_http_client import get_twitch_pagination, twitch_app_client
 
 from ..schemas.eventsub_notification_schema import (
+    EventSubRegistration,
     EventSubSubscription,
 )
 
@@ -15,48 +16,53 @@ async def register_channel_eventsubs(
     twitch_channel_id: str,
     twitch_bot_user_id: str,
 ):
-    await register_channel_chat_message(
-        channel_id=channel_id,
+    registrations = get_eventsub_registrations(
         twitch_channel_id=twitch_channel_id,
         twitch_bot_user_id=twitch_bot_user_id,
     )
+    for registration in registrations:
+        try:
+            await _register_eventsub(
+                registration=registration,
+                channel_id=channel_id,
+            )
+        except Exception as e:
+            logging.error(f'Failed to register eventsub {registration.event_type}: {e}')
 
 
-async def register_channel_chat_message(
-    channel_id: UUID,
+def get_eventsub_registrations(
     twitch_channel_id: str,
     twitch_bot_user_id: str,
 ):
-    await _register_eventsub(
-        event_type='channel.chat.message',
-        version='1',
-        condition={
-            'broadcaster_user_id': twitch_channel_id,
-            'user_id': twitch_bot_user_id,
-        },
-        channel_id=channel_id,
-    )
+    return [
+        EventSubRegistration(
+            event_type='channel.chat.message',
+            version='1',
+            condition={
+                'broadcaster_user_id': twitch_channel_id,
+                'user_id': twitch_bot_user_id,
+            },
+        )
+    ]
 
 
 async def _register_eventsub(
-    event_type: str,
-    version: str,
-    condition: dict[str, str],
+    registration: EventSubRegistration,
     channel_id: UUID,
 ):
     response = await twitch_app_client.post(
         url='/eventsub/subscriptions',
         json={
-            'type': event_type,
-            'version': version,
-            'condition': condition,
+            'type': registration.event_type,
+            'version': registration.version,
+            'condition': registration.condition,
             'transport': {
                 'method': 'webhook',
                 'callback': urljoin(
                     str(
                         config.twitch.eventsub_callback_base_url or config.web.base_url
                     ),
-                    f'/twitch/eventsub/{event_type}?channel_id={channel_id}',
+                    f'/twitch/eventsub/{registration.event_type}?channel_id={channel_id}',
                 ),
                 'secret': config.twitch.eventsub_secret,
             },
@@ -97,7 +103,7 @@ async def unregister_all_eventsubs():
         try:
             await delete_eventsub_registration(eventsub.id)
         except Exception as e:
-            logging.info(f'Failed to delete eventsub registration {eventsub.id}: {e}')
+            logging.error(f'Failed to delete eventsub registration {eventsub.id}: {e}')
 
 
 async def unregister_channel_eventsubs(

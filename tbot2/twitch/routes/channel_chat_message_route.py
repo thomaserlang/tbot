@@ -8,7 +8,6 @@ from tbot2.common import TProvider
 from tbot2.common.schemas.chat_message_schema import ChatMessage
 from tbot2.database import database
 
-from ..dependencies import validate_twitch_webhook_signature
 from ..schemas.eventsub_channel_chat_message_schema import (
     ChannelChatMessage,
 )
@@ -16,12 +15,13 @@ from ..schemas.eventsub_headers import EventSubHeaders
 from ..schemas.eventsub_notification_schema import (
     EventSubNotification,
 )
+from .dependencies import validate_twitch_webhook_signature
 
 router = APIRouter()
 
 
-@router.post('/channel.chat.message')
-async def eventsub_message(
+@router.post('/twitch/eventsub/channel.chat.message')
+async def channel_chat_message_route(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],
     request: Request,
     channel_id: UUID,

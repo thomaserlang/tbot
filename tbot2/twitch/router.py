@@ -1,8 +1,7 @@
 from fastapi import APIRouter
 
-from .eventsub.router import eventsub_router
-from .routes import twitch_oauth_routes
+from .routes import channel_chat_message_route, twitch_oauth_routes
 
 twitch_router = APIRouter()
-twitch_router.include_router(eventsub_router, include_in_schema=False)
 twitch_router.include_router(twitch_oauth_routes.router, include_in_schema=False)
+twitch_router.include_router(channel_chat_message_route.router, include_in_schema=False)
