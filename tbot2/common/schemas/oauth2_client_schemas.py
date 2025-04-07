@@ -1,13 +1,17 @@
-import base64
 import json
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any
 
+import jwt
+from fastapi import HTTPException
 from pydantic import (
     BaseModel,
     StringConstraints,
     field_serializer,
     field_validator,
 )
+
+from tbot2.config_settings import config
 
 
 class Oauth2AuthorizeParams(BaseModel):
@@ -20,14 +24,18 @@ class Oauth2AuthorizeParams(BaseModel):
 
     @field_serializer('state')
     def serialize_state(self, value: dict[str, Any]):
-        return base64.b64encode(json.dumps(value).encode('utf-8')).decode('utf-8')
+        payload: dict[str, Any] = {
+            'context': value,
+            'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=5),
+        }
+        return jwt.encode(payload, config.web.cookie_secret, algorithm='HS256')
 
     @field_serializer('claims')
     def serialize_claims(self, value: dict[str, str] | None):
         if value is None:
             return None
 
-        return json.dumps(value).encode('utf-8')
+        return json.dumps(value).encode()
 
 
 class Oauth2AuthorizeResponse(BaseModel):
@@ -40,7 +48,22 @@ class Oauth2AuthorizeResponse(BaseModel):
         result: dict[str, Any] = {}
 
         if isinstance(value, str):
-            result = json.loads(base64.b64decode(value).decode('utf-8'))
+            try:
+                result = jwt.decode(
+                    value,
+                    config.web.cookie_secret,
+                    algorithms=['HS256'],
+                )['context']
+            except jwt.ExpiredSignatureError:
+                raise HTTPException(
+                    status_code=400,
+                    detail='State expired',
+                )
+            except jwt.PyJWTError:
+                raise HTTPException(
+                    status_code=400,
+                    detail='Invalid state',
+                )
 
         return result
 

@@ -6,3 +6,6 @@ class TProvider(StrEnum):
     youtube = 'youtube'
     spotify = 'spotify'
     discord = 'discord'
+
+
+provider_scopes: dict[TProvider, str] = {}

@@ -10,9 +10,16 @@ from twitchAPI.twitch import TwitchUser
 from tbot2.auth_backend import create_token_str
 from tbot2.channel import (
     ChannelOAuthProviderRequest,
+    ChannelScope,
     save_channel_oauth_provider,
 )
-from tbot2.common import Oauth2TokenResponse, TAccessLevel, TokenData, TProvider
+from tbot2.common import (
+    Oauth2TokenResponse,
+    TAccessLevel,
+    TokenData,
+    TProvider,
+    provider_scopes,
+)
 from tbot2.common.schemas.oauth2_client_schemas import (
     Oauth2AuthorizeParams,
     Oauth2AuthorizeResponse,
@@ -30,12 +37,20 @@ twitch_oauth_client = AsyncClient(
 
 router = APIRouter()
 
-SCOPE_SIGN_IN = 'openid user:read:email'
-SCOPE_CONNECT = 'channel_editor bits:read clips:edit moderation:read channel:moderate channel:edit:commercial channel:manage:polls channel:manage:predictions channel:manage:redemptions channel:manage:videos channel:manage:broadcast channel:read:goals channel:read:hype_train channel:read:polls channel:read:predictions channel:read:redemptions channel:read:subscriptions channel:bot moderator:manage:banned_users moderator:read:chatters channel:read:vips moderator:manage:chat_messages moderator:manage:chat_settings moderator:manage:announcements chat:edit chat:read moderator:read:followers user:bot'
+SCOPE_OPENID = 'openid user:read:email'
+provider_scopes[TProvider.twitch] = (
+    'channel_editor bits:read moderation:read channel:moderate channel:edit:commercial '
+    'channel:manage:polls channel:manage:predictions channel:manage:redemptions channel:manage:videos '
+    'channel:manage:broadcast channel:read:goals channel:read:hype_train channel:read:polls '
+    'channel:read:predictions channel:read:redemptions channel:read:subscriptions channel:bot '
+    'moderator:manage:banned_users moderator:read:chatters channel:read:vips moderator:manage:chat_messages '
+    'moderator:manage:chat_settings moderator:manage:announcements chat:edit chat:read '
+    'moderator:read:followers user:bot'
+)
 
 
 @router.get('/twitch/sign-in')
-async def twitch_sign_in(request: Request):
+async def twitch_sign_in_route(request: Request):
     return RedirectResponse(
         url='https://id.twitch.tv/oauth2/authorize?'
         + parse.urlencode(
@@ -43,7 +58,7 @@ async def twitch_sign_in(request: Request):
                 client_id=config.twitch.client_id,
                 response_type='code',
                 redirect_uri=str(request_url_for(request, 'twitch_auth_route')),
-                scope=SCOPE_SIGN_IN,
+                scope=SCOPE_OPENID,
                 state={
                     'mode': 'sign_in',
                 },
@@ -52,23 +67,25 @@ async def twitch_sign_in(request: Request):
     )
 
 
-@router.get('/channels/{channel_id}/twitch/connect')
-async def twitch_connect(
+@router.get('/channels/{channel_id}/twitch/connect-url')
+async def get_twitch_connect_url(
     channel_id: UUID,
     request: Request,
-    token_data: Annotated[TokenData, Security(authenticated)],
+    token_data: Annotated[
+        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+    ],
 ):
     await token_data.channel_has_access(
         channel_id=channel_id, access_level=TAccessLevel.OWNER
     )
-    return RedirectResponse(
+    return dict(
         url='https://id.twitch.tv/oauth2/authorize?'
         + parse.urlencode(
             Oauth2AuthorizeParams(
                 client_id=config.twitch.client_id,
                 response_type='code',
                 redirect_uri=str(request_url_for(request, 'twitch_auth_route')),
-                scope=SCOPE_CONNECT,
+                scope=provider_scopes[TProvider.twitch],
                 state={
                     'channel_id': str(channel_id),
                     'mode': 'connect',
@@ -127,7 +144,7 @@ async def twitch_auth_route(
                     access_token=response.access_token,
                     refresh_token=response.refresh_token,
                     expires_in=response.expires_in,
-                    scope=SCOPE_SIGN_IN,
+                    scope=SCOPE_OPENID,
                     name=twitch_user.display_name,
                     provider_user_id=twitch_user.id,
                 ),
@@ -144,7 +161,7 @@ async def twitch_auth_route(
                 access_token=response.access_token,
                 refresh_token=response.refresh_token,
                 expires_in=response.expires_in,
-                scope=SCOPE_CONNECT,
+                scope=provider_scopes[TProvider.twitch],
                 name=twitch_user.display_name,
                 provider_user_id=twitch_user.id,
             ),

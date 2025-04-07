@@ -2,9 +2,9 @@ from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import StringConstraints
+from pydantic import StringConstraints, computed_field
 
-from tbot2.common import BaseRequestSchema, BaseSchema, TProvider
+from tbot2.common import BaseRequestSchema, BaseSchema, TProvider, provider_scopes
 
 
 class ChannelOAuthProvider(BaseSchema):
@@ -21,8 +21,16 @@ class ChannelOAuthProvider(BaseSchema):
 
 class ChannelProvider(BaseSchema):
     id: UUID
+    channel_id: UUID
     provider: TProvider
     name: str | None
+    scope: str | None
+
+    @computed_field
+    def scope_needed(self) -> bool:
+        required_scopes = set(provider_scopes.get(self.provider, '').split(' '))
+        scopes: set[str] = set(self.scope.split(' ')) if self.scope else set()
+        return bool(required_scopes - scopes)
 
 
 class ChannelOAuthProviderRequest(BaseRequestSchema):

@@ -23,7 +23,21 @@ async def get_channel_oauth_provider(
         channel_oauth_provider = await session.scalar(
             sa.select(MChannelOAuthProvider).where(
                 MChannelOAuthProvider.channel_id == channel_id,
-                MChannelOAuthProvider.provider == provider.value,
+                MChannelOAuthProvider.provider == provider,
+            )
+        )
+        if channel_oauth_provider:
+            return ChannelOAuthProvider.model_validate(channel_oauth_provider)
+
+
+async def get_channel_oauth_provider_by_id(
+    *, channel_id: UUID, provider_id: UUID, session: AsyncSession | None = None
+) -> ChannelOAuthProvider | None:
+    async with get_session(session) as session:
+        channel_oauth_provider = await session.scalar(
+            sa.select(MChannelOAuthProvider).where(
+                MChannelOAuthProvider.channel_id == channel_id,
+                MChannelOAuthProvider.id == provider_id,
             )
         )
         if channel_oauth_provider:
@@ -65,7 +79,7 @@ async def save_channel_oauth_provider(
             sa.update(MChannelOAuthProvider)
             .where(
                 MChannelOAuthProvider.channel_id == channel_id,
-                MChannelOAuthProvider.provider == provider.value,
+                MChannelOAuthProvider.provider == provider,
             )
             .values(**data_)
         )
@@ -76,7 +90,7 @@ async def save_channel_oauth_provider(
                 sa.insert(MChannelOAuthProvider).values(
                     id=id,
                     channel_id=channel_id,
-                    provider=provider.value,
+                    provider=provider,
                     **data_,
                 )
             )

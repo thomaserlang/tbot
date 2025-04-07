@@ -12,6 +12,7 @@ from .schemas.oauth2_client_schemas import Oauth2TokenResponse as Oauth2TokenRes
 from .schemas.token_data_schema import TokenData as TokenData
 from .types.access_level_type import TAccessLevel as TAccessLevel
 from .types.provider_type import TProvider as TProvider
+from .types.provider_type import provider_scopes as provider_scopes
 from .types.scope_type import TScope as TScope
 from .utils.convert_to_points import convert_to_points as convert_to_points
 from .utils.datetime_now import datetime_now as datetime_now

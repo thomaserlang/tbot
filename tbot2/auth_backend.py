@@ -1,4 +1,3 @@
-import base64
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -35,7 +34,7 @@ class AuthBackend(AuthenticationBackend):
 
         try:
             payload = jwt.decode(
-                base64.b64decode(credentials),
+                credentials,
                 config.web.cookie_secret,
                 algorithms=['HS256'],
             )
@@ -50,5 +49,4 @@ async def create_token_str(token_data: TokenData):
         'context': token_data.model_dump_json(),
         'exp': datetime.now(tz=timezone.utc) + timedelta(hours=12),
     }
-    token = jwt.encode(payload, config.web.cookie_secret, algorithm='HS256')
-    return base64.b64encode(token.encode()).decode()
+    return jwt.encode(payload, config.web.cookie_secret, algorithm='HS256')
