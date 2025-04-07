@@ -144,7 +144,7 @@ async def twitch_auth_route(
                 access_token=response.access_token,
                 refresh_token=response.refresh_token,
                 expires_in=response.expires_in,
-                scope=SCOPE_SIGN_IN,
+                scope=SCOPE_CONNECT,
                 name=twitch_user.display_name,
                 provider_user_id=twitch_user.id,
             ),
