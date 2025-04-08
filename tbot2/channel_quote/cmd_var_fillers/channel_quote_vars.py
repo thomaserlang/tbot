@@ -1,4 +1,10 @@
-from tbot2.channel_command import TCommand, TMessageVars, fills_vars
+from tbot2.channel_command import (
+    CommandError,
+    CommandSyntaxError,
+    TCommand,
+    TMessageVars,
+    fills_vars,
+)
 from tbot2.common import ChatMessage
 
 from ..actions.channel_quote_actions import (
@@ -17,7 +23,7 @@ from ..schemas.channel_quote_request_schemas import (
 @fills_vars(provider='all', vars=('quote.add',))
 async def quote_add(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
     if len(command.args) == 0:
-        raise ValueError(f'Syntax error, use !{command.name} <your quote>')
+        raise CommandSyntaxError(f'Syntax error, use !{command.name} <your quote>')
 
     quote = await create_channel_quote(
         channel_id=chat_message.channel_id,
@@ -34,14 +40,16 @@ async def quote_add(chat_message: ChatMessage, command: TCommand, vars: TMessage
 @fills_vars(provider='all', vars=('quote.edit',))
 async def quote_edit(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
     if len(command.args) < 2 or not command.args[0].isdigit():
-        raise ValueError(f'Syntax error, use !{command.name} <number> <new text>')
+        raise CommandSyntaxError(
+            f'Syntax error, use !{command.name} <number> <new text>'
+        )
 
     quote = await get_channel_quote_by_number(
         channel_id=chat_message.channel_id,
         number=int(command.args[0]),
     )
     if not quote:
-        raise ValueError(f'Unknown quote with number: {command.args[0]}')
+        raise CommandSyntaxError(f'Unknown quote with number: {command.args[0]}')
 
     quote = await update_channel_quote(
         quote_id=quote.id,
@@ -53,16 +61,18 @@ async def quote_edit(chat_message: ChatMessage, command: TCommand, vars: TMessag
 
 
 @fills_vars(provider='all', vars=('quote.delete',))
-async def quote_delete(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
+async def quote_delete(
+    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+):
     if len(command.args) != 1 or not command.args[0].isdigit():
-        raise ValueError(f'Syntax error, use !{command.name} <number>')
+        raise CommandSyntaxError(f'Syntax error, use !{command.name} <number>')
 
     quote = await get_channel_quote_by_number(
         channel_id=chat_message.channel_id,
         number=int(command.args[0]),
     )
     if not quote:
-        raise ValueError(f'Unknown quote with number: {command.args[0]}')
+        raise CommandError(f'Unknown quote with number: {command.args[0]}')
 
     await delete_channel_quote(
         quote_id=quote.id,
@@ -87,20 +97,20 @@ async def quote_get(
 ):
     if len(command.args) > 0:
         if not command.args[0].isdigit():
-            raise ValueError(f'Syntax error, use !{command.name} <number>')
+            raise CommandSyntaxError(f'Syntax error, use !{command.name} <number>')
 
         quote = await get_channel_quote_by_number(
             channel_id=chat_message.channel_id,
             number=int(command.args[0]),
         )
         if not quote:
-            raise ValueError(f'Unknown quote with number: {command.args[0]}')
+            raise CommandError(f'Unknown quote with number: {command.args[0]}')
     else:
         quote = await get_random_channel_quote(
             channel_id=chat_message.channel_id,
         )
         if not quote:
-            raise ValueError('No quotes available')
+            raise CommandError('No quotes available')
 
     vars['quote.message'].value = quote.message
     vars['quote.number'].value = str(quote.number)

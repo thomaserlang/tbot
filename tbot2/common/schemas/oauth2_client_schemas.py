@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any
 
 import jwt
@@ -26,7 +26,7 @@ class Oauth2AuthorizeParams(BaseModel):
     def serialize_state(self, value: dict[str, Any]):
         payload: dict[str, Any] = {
             'context': value,
-            'exp': datetime.now(tz=timezone.utc) + timedelta(minutes=5),
+            'exp': datetime.now(tz=UTC) + timedelta(minutes=5),
         }
         return jwt.encode(payload, config.web.cookie_secret, algorithm='HS256')
 
@@ -58,12 +58,12 @@ class Oauth2AuthorizeResponse(BaseModel):
                 raise HTTPException(
                     status_code=400,
                     detail='State expired',
-                )
+                ) from None
             except jwt.PyJWTError:
                 raise HTTPException(
                     status_code=400,
                     detail='Invalid state',
-                )
+                ) from None
 
         return result
 

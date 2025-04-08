@@ -2,6 +2,7 @@ from random import randint
 
 from tbot2.common import ChatMessage
 
+from ..exceptions import CommandSyntaxError
 from ..types import TCommand, TMessageVars
 from ..var_filler import fills_vars
 
@@ -10,7 +11,9 @@ from ..var_filler import fills_vars
     provider='all',
     vars=('randint',),
 )
-async def randint_vars(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
+async def randint_vars(
+    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+):
     from_ = 1
     to = 100
 
@@ -28,6 +31,6 @@ async def randint_vars(chat_message: ChatMessage, command: TCommand, vars: TMess
             from_ = num_args[1]
 
     if to <= from_:
-        raise ValueError('First argument must be lower than the second')
+        raise CommandSyntaxError('First argument must be lower than the second')
 
     vars['randint'].value = randint(from_, to)

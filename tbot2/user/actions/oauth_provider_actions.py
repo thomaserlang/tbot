@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -12,7 +11,8 @@ from tbot2.channel import (
     create_channel,
     set_channel_user_access_level,
 )
-from tbot2.common import TAccessLevel, TokenData, TProvider, TScope
+from tbot2.channel_command import CommandError
+from tbot2.common import TAccessLevel, TokenData, TProvider, TScope, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.oauth_provider_model import MUserOAuthProvider
@@ -90,7 +90,7 @@ async def get_or_create_user(
         else:
             user = await get_user(user_id=p.user_id, session=session)
             if not user:
-                raise ValueError('User not found')
+                raise CommandError('User not found')
             return GetOrCreateUserResult(
                 user=user,
                 channel=None,
@@ -115,7 +115,7 @@ async def create_user_oauth_provider(
             await session.execute(
                 sa.insert(MUserOAuthProvider.__table__).values(  # type: ignore
                     id=provider_id,
-                    created_at=datetime.now(tz=timezone.utc),
+                    created_at=datetime_now(),
                     user_id=user_id,
                     provider=provider.value,
                     provider_user_id=provider_user_id,
@@ -136,7 +136,7 @@ async def create_user_oauth_provider(
             if p:
                 raise ValueError(
                     f"OAuth provider '{provider}' already connected for this user"
-                )
+                ) from None
 
             p = await get_oauth_provider_by_provider_user_id(
                 provider=provider,
@@ -146,7 +146,7 @@ async def create_user_oauth_provider(
             if p:
                 raise ValueError(
                     f'This {provider} account is already connected to a different user'
-                )
+                ) from None
 
             raise
 

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -8,6 +8,18 @@ from tbot2.contexts import AsyncSession, get_session
 
 from ..models.command_model import MCommand
 from ..schemas.command_schemas import Command, CommandCreate, CommandUpdate
+
+
+async def get_commands(
+    *,
+    channel_id: UUID,
+    session: AsyncSession | None = None,
+) -> list[Command]:
+    async with get_session(session) as session:
+        commands = await session.scalars(
+            sa.select(MCommand).where(MCommand.channel_id == channel_id)
+        )
+        return [Command.model_validate(cmd) for cmd in commands]
 
 
 async def get_command(
@@ -35,8 +47,8 @@ async def create_command(
             sa.insert(MCommand).values(
                 id=command_id,
                 channel_id=channel_id,
-                created_at=datetime.now(tz=timezone.utc),
-                updated_at=datetime.now(tz=timezone.utc),
+                created_at=datetime.now(tz=UTC),
+                updated_at=datetime.now(tz=UTC),
                 **data.model_dump(),
             )
         )
@@ -58,7 +70,7 @@ async def update_command(
             sa.update(MCommand)
             .where(MCommand.id == command_id)
             .values(
-                updated_at=datetime.now(tz=timezone.utc),
+                updated_at=datetime.now(tz=UTC),
                 **data.model_dump(exclude_unset=True),
             )
         )

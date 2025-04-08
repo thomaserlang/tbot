@@ -1,16 +1,10 @@
 import re
-from typing import Literal, Sequence
+from collections.abc import Sequence
+from typing import Literal
 
 from tbot2.common import ChatMessage, TProvider, split
 
 from .types import TCommand, TFillerType, TFillVars, TMessageVar
-
-__all__ = [
-    'fills_vars',
-    'fill_message',
-    'fill_from_dict',
-]
-
 
 var_fillers: dict[str, TFillerType] = {}
 filler_vars: dict[TFillerType, TFillVars] = {}

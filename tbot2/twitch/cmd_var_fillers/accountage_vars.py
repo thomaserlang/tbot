@@ -1,6 +1,6 @@
 import humanize.time
 
-from tbot2.channel_command import TCommand, TMessageVars, VarFillError, fills_vars
+from tbot2.channel_command import CommandError, TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage, TProvider, datetime_now
 
 from ..actions.twitch_lookup_users_action import lookup_twitch_users
@@ -33,6 +33,6 @@ async def twitch_accountage(chat_message: ChatMessage, command: TCommand):
     )
 
     if not users:
-        raise VarFillError('Unknown user')
+        raise CommandError('Unknown user')
 
     return users[0].created_at

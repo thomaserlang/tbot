@@ -13,7 +13,6 @@ dependencies = [
     "httpx[http2]==0.28.1",
     "httpx_auth==0.23.1",
     "authlib==1.4.0",
-    "click==8.1.8",
     "uvicorn==0.34.0",
     "honcho==2.0.0",
     "arq==0.26.3",
@@ -27,6 +26,7 @@ dependencies = [
     "PyMySQL==1.1.1",
     "more_itertools==10.6.0",
     "async-lru==2.0.5",
+    "asyncclick>=8.1.8",
 ]
 
 [project.optional-dependencies]
@@ -45,7 +45,7 @@ requires = ["flit_core>=3.2,<4"]
 quote-style = "single"
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F", "I"]
+select = ["E", "F", "UP", "B", "I"]
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"

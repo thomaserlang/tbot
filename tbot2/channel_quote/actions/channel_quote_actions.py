@@ -1,9 +1,10 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 import sqlalchemy as sa
 from uuid6 import uuid7
 
+from tbot2.common import datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.channel_quote_model import MChannelQuote
@@ -83,7 +84,7 @@ async def create_channel_quote(
             sa.insert(MChannelQuote.__table__).values(  # type: ignore
                 id=uuid,
                 channel_id=channel_id,
-                created_at=datetime.now(tz=timezone.utc),
+                created_at=datetime.now(tz=UTC),
                 number=number + 1,
                 **data.model_dump(),
             )
@@ -107,7 +108,7 @@ async def update_channel_quote(
             sa.update(MChannelQuote.__table__)  # type: ignore
             .where(MChannelQuote.id == quote_id)
             .values(
-                updated_at=datetime.now(tz=timezone.utc),
+                updated_at=datetime_now,
                 **data.model_dump(exclude_unset=True, exclude_defaults=True),
             )
         )

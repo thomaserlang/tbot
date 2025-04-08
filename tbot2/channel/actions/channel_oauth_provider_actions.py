@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -59,6 +59,19 @@ async def get_channel_oauth_providers(
         ]
 
 
+async def get_channels_providers(
+    *, provider: TProvider, session: AsyncSession | None = None
+):
+    async with get_session(session) as session:
+        providers = await session.stream_scalars(
+            sa.select(MChannelOAuthProvider).where(
+                MChannelOAuthProvider.provider == provider,
+            )
+        )
+        async for p in providers:
+            yield ChannelOAuthProvider.model_validate(p)
+
+
 async def save_channel_oauth_provider(
     *,
     channel_id: UUID,
@@ -71,7 +84,7 @@ async def save_channel_oauth_provider(
         if 'expires_in' in data_:
             data_.pop('expires_in')
             if not data.expires_at and data.expires_in:
-                data_['expires_at'] = datetime.now(tz=timezone.utc) + timedelta(
+                data_['expires_at'] = datetime.now(tz=UTC) + timedelta(
                     seconds=data.expires_in
                 )
 

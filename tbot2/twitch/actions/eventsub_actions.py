@@ -2,23 +2,37 @@ import logging
 from urllib.parse import urljoin
 from uuid import UUID
 
+from tbot2.channel import get_channel_oauth_provider, get_channels_providers
+from tbot2.common import TProvider
 from tbot2.config_settings import config
-from tbot2.twitch.twitch_http_client import get_twitch_pagination, twitch_app_client
 
 from ..schemas.eventsub_notification_schema import (
     EventSubRegistration,
     EventSubSubscription,
 )
+from ..twitch_http_client import (
+    get_twitch_pagination_yield,
+    twitch_app_client,
+)
 
 
-async def register_channel_eventsubs(
+async def register_eventsubs(
     channel_id: UUID,
-    twitch_channel_id: str,
-    twitch_bot_user_id: str,
 ):
+    provider = await get_channel_oauth_provider(
+        channel_id=channel_id,
+        provider=TProvider.twitch,
+    )
+    if not provider:
+        logging.error(
+            f'Failed to register eventsub for channel {channel_id}: '
+            'no oauth provider found'
+        )
+        return
+
     registrations = get_eventsub_registrations(
-        twitch_channel_id=twitch_channel_id,
-        twitch_bot_user_id=twitch_bot_user_id,
+        twitch_channel_id=provider.provider_user_id or '',
+        twitch_bot_user_id=provider.provider_user_id or '',
     )
     for registration in registrations:
         try:
@@ -62,14 +76,14 @@ async def _register_eventsub(
                     str(
                         config.twitch.eventsub_callback_base_url or config.web.base_url
                     ),
-                    f'/twitch/eventsub/{registration.event_type}?channel_id={channel_id}',
+                    f'/api/2/twitch/eventsub/{registration.event_type}?channel_id={channel_id}',
                 ),
                 'secret': config.twitch.eventsub_secret,
             },
         },
     )
     response.raise_for_status()
-    return EventSubSubscription.model_validate_json(response.json())
+    return EventSubSubscription.model_validate(response.json()['data'][0])
 
 
 async def delete_eventsub_registration(event_id: str):
@@ -94,13 +108,13 @@ async def get_eventsubs(
         params=params,
     )
     response.raise_for_status()
-    return await get_twitch_pagination(response, schema=EventSubSubscription)
+    return get_twitch_pagination_yield(response, EventSubSubscription)
 
 
 async def unregister_all_eventsubs():
-    eventsubs = await get_eventsubs()
-    for eventsub in eventsubs:
+    async for eventsub in await get_eventsubs():
         try:
+            logging.info(f'Deleting eventsub registration {eventsub.id}')
             await delete_eventsub_registration(eventsub.id)
         except Exception as e:
             logging.error(f'Failed to delete eventsub registration {eventsub.id}: {e}')
@@ -109,10 +123,10 @@ async def unregister_all_eventsubs():
 async def unregister_channel_eventsubs(
     channel_id: UUID,
 ):
-    eventsubs = await get_eventsubs()
-    for eventsub in eventsubs:
+    async for eventsub in await get_eventsubs():
         if str(channel_id) in eventsub.transport.callback:
             try:
+                logging.info(f'Deleting eventsub registration {eventsub.id}')
                 await delete_eventsub_registration(eventsub.id)
             except Exception as e:
                 logging.info(
@@ -120,7 +134,7 @@ async def unregister_channel_eventsubs(
                 )
 
 
-if __name__ == '__main__':
-    import asyncio
-
-    asyncio.run(unregister_all_eventsubs())
+async def register_all_eventsubs():
+    async for provider in get_channels_providers(provider=TProvider.twitch):
+        logging.info(f'Registering eventsub for channel {provider.channel_id}')
+        await register_eventsubs(channel_id=provider.channel_id)

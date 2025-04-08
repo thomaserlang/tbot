@@ -3,6 +3,7 @@ from httpx import AsyncClient
 from tbot2.common import ChatMessage
 from tbot2.config_settings import config
 
+from ..exceptions import CommandError, CommandSyntaxError
 from ..types import TCommand, TMessageVars
 from ..var_filler import fills_vars
 
@@ -23,7 +24,9 @@ weather_client = AsyncClient(base_url='https://api.openweathermap.org/data/2.5')
         'weather.wind_speed',
     ),
 )
-async def weather_vars(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
+async def weather_vars(
+    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+):
     if not config.openweathermap_apikey:
         raise ValueError('`openweathermap_apikey` is missing in the config')
 
@@ -34,7 +37,7 @@ async def weather_vars(chat_message: ChatMessage, command: TCommand, vars: TMess
     )
 
     if not city:
-        raise ValueError(f'Use !{command.name} <city>')
+        raise CommandSyntaxError(f'Use !{command.name} <city>')
 
     units = vars['weather.units'].args[0] if vars['weather.units'].args else 'metric'
 
@@ -45,7 +48,7 @@ async def weather_vars(chat_message: ChatMessage, command: TCommand, vars: TMess
     }
     response = await weather_client.get('/weather', params=params)
     if response.status_code >= 400:
-        raise ValueError('Error fetching weather data')
+        raise CommandError('Error fetching weather data')
 
     data = response.json()
     vars['weather.description'].value = (

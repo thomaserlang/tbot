@@ -1,2 +1,4 @@
-class VarFillError(Exception):
-    pass
+class CommandError(Exception): ...
+
+
+class CommandSyntaxError(CommandError): ...

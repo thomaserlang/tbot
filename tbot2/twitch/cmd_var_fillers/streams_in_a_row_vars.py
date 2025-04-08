@@ -1,4 +1,4 @@
-from tbot2.channel_command import TCommand, TMessageVars, fills_vars
+from tbot2.channel_command import CommandError, TCommand, TMessageVars, fills_vars
 from tbot2.channel_viewer_stats import get_channel_viewer_stats
 from tbot2.common import ChatMessage, TProvider, safe_username
 
@@ -25,7 +25,7 @@ async def streams_in_a_row_vars(
             login=safe_username(command.args[0]),
         )
         if not chatter:
-            raise ValueError('User not found.')
+            raise CommandError('User not found.')
         for_viewer_id = chatter.id
 
     stats = await get_channel_viewer_stats(
@@ -41,4 +41,5 @@ async def streams_in_a_row_vars(
     )
     vars[
         'user.streams_row_text'
-    ].value = f'{chat_message.chatter_display_name} has been here for {stats.streams_row} in a row'
+    ].value = f'{chat_message.chatter_display_name} has been here for '
+    '{stats.streams_row} in a row'

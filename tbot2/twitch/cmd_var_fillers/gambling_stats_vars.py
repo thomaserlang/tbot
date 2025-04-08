@@ -1,4 +1,4 @@
-from tbot2.channel_command import TCommand, TMessageVars, fills_vars
+from tbot2.channel_command import CommandError, TCommand, TMessageVars, fills_vars
 from tbot2.channel_gambling import get_chatter_gambling_stats
 from tbot2.common import ChatMessage, TProvider, safe_username
 
@@ -28,7 +28,7 @@ async def gambling_stats(
             login=safe_username(command.args[0]),
         )
         if not chatter:
-            raise ValueError('User not found.')
+            raise CommandError('User not found.')
         for_chatter_id = chatter.id
 
     stats = await get_chatter_gambling_stats(

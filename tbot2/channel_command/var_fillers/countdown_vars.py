@@ -1,11 +1,11 @@
-from datetime import timezone
+from datetime import UTC
 
 import humanize
 from dateutil.parser import parse
 
 from tbot2.common import ChatMessage, datetime_now
 
-from ..exceptions import VarFillError
+from ..exceptions import CommandError
 from ..types import TCommand, TMessageVars
 from ..var_filler import fills_vars
 
@@ -17,10 +17,11 @@ async def countdown_vars(
     try:
         dt = parse(' '.join(vars['countdown'].args))
         if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
+            dt = dt.replace(tzinfo=UTC)
 
         vars['countdown'].value = humanize.precisedelta(datetime_now() - dt)
-    except ValueError:
-        raise VarFillError(
-            f'Invalid date format: "{" ".join(vars["countdown"].args)}". Use ISO 8601 format.'
-        )
+    except ValueError as e:
+        raise CommandError(
+            f'Invalid date format: "{" ".join(vars["countdown"].args)}". '
+            'Use ISO 8601 format.'
+        ) from e

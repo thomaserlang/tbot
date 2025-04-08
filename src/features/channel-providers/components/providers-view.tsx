@@ -28,7 +28,7 @@ export function ProvidersView({ providers }: Props) {
                                 provider.scope_needed && (
                                     <Badge
                                         size="xs"
-                                        color="red"
+                                        color="orange"
                                         title="Extra scope required"
                                     >
                                         1

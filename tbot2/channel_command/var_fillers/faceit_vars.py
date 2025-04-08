@@ -3,7 +3,7 @@ from httpx import AsyncClient
 from tbot2.common import ChatMessage
 from tbot2.config_settings import config
 
-from ..exceptions import VarFillError
+from ..exceptions import CommandError
 from ..types import TCommand, TMessageVars
 from ..var_filler import fills_vars
 
@@ -29,7 +29,7 @@ async def faceit_elo_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
 ):
     if not vars['faceit.username'].args:
-        raise VarFillError('{faceit.username <username>} is missing')
+        raise CommandError('{faceit.username <username>} is missing')
 
     elos = (
         (1, '1'),
@@ -47,14 +47,14 @@ async def faceit_elo_vars(
     username = vars['faceit.username'].args[0]
     response = await faceit_client.get('/players', params={'nickname': username})
     if response.status_code == 404:
-        raise VarFillError(
+        raise CommandError(
             f'Unknow user on Faceit "{username}" (usernames are case sensitive)'
         )
     elif response.status_code >= 400:
-        raise VarFillError(f'Faceit error: {response.text}')
+        raise CommandError(f'Faceit error: {response.text}')
     data = response.json()
     if 'cs2' not in data['games']:
-        raise VarFillError('The user does not have cs2 in their Faceit profile')
+        raise CommandError('The user does not have cs2 in their Faceit profile')
 
     next_level_points = 0
     next_level = 'unknown'

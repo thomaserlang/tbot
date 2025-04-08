@@ -50,7 +50,8 @@ class TwitchUserOAuth(Auth):
             )
             if not provider:
                 raise ValueError(
-                    f'Channel {channel_id} needs to grant the bot access in the dashboard'
+                    f'Channel {channel_id} needs to grant the bot access in the'
+                    'dashboard'
                 )
             request.headers['Authorization'] = f'Bearer {provider.access_token}'
 
@@ -63,7 +64,8 @@ class TwitchUserOAuth(Auth):
                 )
                 if not provider:
                     raise ValueError(
-                        f'Channel {channel_id} needs to grant the bot access in the dashboard'
+                        f'Channel {channel_id} needs to grant the bot access in the '
+                        'dashboard'
                     )
                 request.headers['Authorization'] = f'Bearer {provider.access_token}'
 
@@ -149,3 +151,44 @@ async def get_twitch_pagination(
         raise ValueError(
             f'Invalid schema type: {schema}. Must be either BaseModel or TwitchObject.'
         )
+
+
+async def get_twitch_pagination_yield(
+    response: Response,
+    schema: type[T],
+) -> typing.AsyncGenerator[T]:
+    data = response.json()
+    for item in data['data']:
+        if issubclass(schema, TwitchObject):
+            yield schema(**item)
+        elif issubclass(schema, BaseModel):
+            yield schema.model_validate(item)
+        else:
+            raise ValueError(
+                f'Invalid schema type: {schema}. Must be either BaseModel or '
+                'TwitchObject.'
+            )
+
+    pagination = data.get('pagination')
+    while pagination:
+        response = await twitch_user_client.get(
+            response.url.path.replace('/helix', ''),
+            params={
+                **response.url.params,
+                'after': pagination['cursor'],
+            },
+        )
+        response.raise_for_status()
+        data = response.json()
+        for item in data['data']:
+            if issubclass(schema, TwitchObject):
+                yield schema(**item)
+            elif issubclass(schema, BaseModel):
+                yield schema.model_validate(item)
+            else:
+                raise ValueError(
+                    f'Invalid schema type: {schema}. Must be either BaseModel or '
+                    'TwitchObject.'
+                )
+
+        pagination = data.get('pagination')

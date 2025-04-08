@@ -23,7 +23,7 @@ class TTestUser:
 
 
 async def user_signin(
-    client: AsyncClient,
+    client: AsyncClient | None,
     scopes: list[str | TScope],
 ):
     user = await create_user(
@@ -50,7 +50,8 @@ async def user_signin(
             user_id=user.id,
         )
     )
-    client.headers.update({'Authorization': f'Bearer {token_str}'})
+    if client:
+        client.headers.update({'Authorization': f'Bearer {token_str}'})
     return TTestUser(
         user=user,
         channel=channel,

@@ -20,7 +20,7 @@ export function ProviderView({ provider }: Props) {
         <div>
             {provider.scope_needed && (
                 <Button
-                    color="green"
+                    color="orange"
                     loading={connectUrl.isPending}
                     onClick={() => {
                         connectUrl.mutate({
@@ -29,7 +29,7 @@ export function ProviderView({ provider }: Props) {
                         })
                     }}
                 >
-                    Reconnect
+                    Reconnect needed
                 </Button>
             )}
         </div>

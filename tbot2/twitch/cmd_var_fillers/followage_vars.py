@@ -1,6 +1,6 @@
 import humanize.time
 
-from tbot2.channel_command import TCommand, TMessageVars, VarFillError, fills_vars
+from tbot2.channel_command import CommandError, TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage, TProvider, datetime_now
 
 from ..actions.twitch_channel_follower_action import twitch_channel_follower
@@ -37,7 +37,7 @@ async def twitch_followed_at(chat_message: ChatMessage, command: TCommand):
             logins=[command.args[0]],
         )
         if not user:
-            raise VarFillError(f'User {command.args[0]} not found.')
+            raise CommandError(f'User {command.args[0]} not found.')
         user_id = user[0].id
         display_name = user[0].display_name
 
@@ -47,6 +47,6 @@ async def twitch_followed_at(chat_message: ChatMessage, command: TCommand):
         broadcaster_id=chat_message.provider_id,
     )
     if not follower:
-        raise VarFillError(f'{display_name} is not following.')
+        raise CommandError(f'{display_name} is not following.')
 
     return follower.followed_at

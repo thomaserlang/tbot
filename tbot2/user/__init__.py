@@ -13,6 +13,7 @@ from .actions.oauth_provider_actions import (
 from .actions.oauth_provider_actions import (
     get_oauth_providers_by_user as get_oauth_providers_by_user,
 )
+from .actions.oauth_provider_actions import get_or_create_user as get_or_create_user
 from .actions.oauth_provider_actions import (
     get_user_oauth_provider as get_user_oauth_provider,
 )

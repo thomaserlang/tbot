@@ -48,7 +48,7 @@ async def points_ranking_vars(
             user_ids=[r['chatter_id'] for r in ranks],
         )
 
-        for rank, user in zip(ranks, users):
+        for rank, user in zip(ranks, users, strict=True):
             rank['user'] = user.display_name if user else 'Unknown'
 
         vars['points_ranking'].value = ', '.join(

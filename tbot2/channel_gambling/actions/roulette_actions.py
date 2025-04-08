@@ -1,7 +1,7 @@
 import random
 from uuid import UUID
 
-from tbot2.channel_command import fill_from_dict
+from tbot2.channel_command import CommandSyntaxError, fill_from_dict
 from tbot2.channel_points import get_channel_point_settings, get_points, inc_points
 from tbot2.common import TProvider, convert_to_points
 
@@ -31,11 +31,13 @@ async def roulette(
     bet = convert_to_points(bet, points.points)
 
     if bet < settings.min_bet:
-        raise ValueError(f'Bet is too low, minimum is {settings.min_bet}')
+        raise CommandSyntaxError(f'Bet is too low, minimum is {settings.min_bet}')
     if settings.max_bet and bet > settings.max_bet:
-        raise ValueError(f'Bet is too high, maximum is {settings.max_bet}')
+        raise CommandSyntaxError(f'Bet is too high, maximum is {settings.max_bet}')
     if bet > points.points:
-        raise ValueError(f'Not enough {point_settings.points_name} to bet {bet}')
+        raise CommandSyntaxError(
+            f'Not enough {point_settings.points_name} to bet {bet}'
+        )
 
     won = random_int() < settings.win_chance
     new_points = await inc_points(

@@ -1,6 +1,7 @@
+from contextlib import asynccontextmanager
 from pathlib import Path
 
-import click
+import asyncclick as click
 import uvicorn
 
 from tbot2.config_settings import config
@@ -27,12 +28,9 @@ def api():
 @cli.command()
 @click.option('--revision', '-r', help='revision, default head', default='head')
 def upgrade(revision: str):
-    import logging
-
     from alembic import command
     from alembic.config import Config
 
-    logging.error(Path(__file__).parent / 'alembic.ini')
     cfg = Config(Path(__file__).parent / 'alembic.ini')
     cfg.set_main_option('script_location', 'tbot2:migrations')
     cfg.set_main_option(
@@ -40,6 +38,31 @@ def upgrade(revision: str):
         f'mariadb+pymysql://{config.mysql.user}:{config.mysql.password}@{config.mysql.host}:{config.mysql.port}/{config.mysql.database}',
     )
     command.upgrade(cfg, revision)
+
+
+@asynccontextmanager
+async def db():
+    from tbot2.database import database
+
+    await database.setup()
+    yield
+    await database.close()
+
+
+@cli.command()
+async def twitch_eventsub_unregister_all():
+    from tbot2.twitch import unregister_all_eventsubs
+
+    async with db():
+        await unregister_all_eventsubs()
+
+
+@cli.command()
+async def twitch_eventsub_register_all():
+    from tbot2.twitch import register_all_eventsubs
+
+    async with db():
+        await register_all_eventsubs()
 
 
 def main():

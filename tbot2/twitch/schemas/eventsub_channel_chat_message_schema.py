@@ -19,7 +19,7 @@ class ChannelChatMessageMessage(BaseModel):
     fragments: list[TwitchMessageFragment]
 
 
-class ChannelChatMessage(BaseModel):
+class EventChannelChatMessage(BaseModel):
     broadcaster_user_id: str
     broadcaster_user_login: str
     broadcaster_user_name: str

@@ -1,4 +1,4 @@
-from tbot2.channel_command import TCommand, TMessageVars, fills_vars
+from tbot2.channel_command import CommandError, TCommand, TMessageVars, fills_vars
 from tbot2.channel_points import (
     get_points_rank,
 )
@@ -24,7 +24,7 @@ async def chatter_point_vars(
             login=safe_username(command.args[0]),
         )
         if not chatter:
-            raise ValueError('User not found.')
+            raise CommandError('User not found.')
         for_chatter_id = chatter.id
 
     points_rank = await get_points_rank(
@@ -34,7 +34,7 @@ async def chatter_point_vars(
     )
 
     if not points_rank:
-        raise ValueError('No data on user.')
+        raise CommandError('No data on user.')
 
     vars['points'].value = points_rank.points
     vars['points_rank'].value = points_rank.rank

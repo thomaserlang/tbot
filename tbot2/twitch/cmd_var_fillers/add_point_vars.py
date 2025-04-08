@@ -1,4 +1,10 @@
-from tbot2.channel_command import TCommand, TMessageVars, fills_vars
+from tbot2.channel_command import (
+    CommandError,
+    CommandSyntaxError,
+    TCommand,
+    TMessageVars,
+    fills_vars,
+)
 from tbot2.channel_points import get_channel_point_settings, inc_bulk_points, inc_points
 from tbot2.common import ChatMessage, TProvider, safe_username
 from tbot2.twitch import get_twitch_chatters, lookup_twitch_user
@@ -9,12 +15,12 @@ async def add_points_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
 ):
     if len(command.args) != 2:
-        raise ValueError(f'Syntax: !{command.name} <user> <points>')
+        raise CommandSyntaxError(f'Syntax: !{command.name} <user> <points>')
 
     try:
         points = int(command.args[1])
     except ValueError:
-        raise ValueError(f'Syntax: !{command.name} <user> <points>')
+        raise CommandSyntaxError(f'Syntax: !{command.name} <user> <points>') from None
 
     settings = await get_channel_point_settings(channel_id=chat_message.channel_id)
 
@@ -37,7 +43,7 @@ async def add_points_vars(
             channel_id=chat_message.channel_id, login=safe_username(command.args[0])
         )
         if not give_to_user:
-            raise ValueError('User not found.')
+            raise CommandError('User not found.')
         points = await inc_points(
             channel_id=chat_message.channel_id,
             provider=chat_message.provider,
@@ -46,4 +52,5 @@ async def add_points_vars(
         )
         vars[
             'add_points'
-        ].value = f'{give_to_user.display_name} now has {points.points} {settings.points_name}.'
+        ].value = f'{give_to_user.display_name} now has {points.points} '
+        '{settings.points_name}.'
