@@ -1,7 +1,7 @@
 import shlex
 import sys
 from dataclasses import dataclass
-from re import IGNORECASE, search
+from re import IGNORECASE, escape, search
 from uuid import UUID
 
 from async_lru import alru_cache
@@ -77,7 +77,7 @@ def check_pattern_match(chat_message: ChatMessage, pattern: str) -> bool:
     if pattern.startswith('re:'):
         if search(
             pattern[3:],
-            chat_message.message_without_fragments(),
+            chat_message.message,
             flags=IGNORECASE,
         ):
             return True
@@ -86,8 +86,8 @@ def check_pattern_match(chat_message: ChatMessage, pattern: str) -> bool:
         if all(
             [
                 search(
-                    rf'\b{s}\b',
-                    chat_message.message_without_fragments(),
+                    rf'\b{escape(s)}\b',
+                    chat_message.message,
                     flags=IGNORECASE,
                 )
                 for s in split
