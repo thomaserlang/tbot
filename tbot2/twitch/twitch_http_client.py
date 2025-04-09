@@ -41,9 +41,9 @@ class TwitchUserOAuth(Auth):
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
         async with self._async_lock:
-            channel_id: UUID = UUID(request.headers.get(TBOT_CHANNEL_ID_HEADER))
-            if not channel_id:
+            if not request.headers.get(TBOT_CHANNEL_ID_HEADER):
                 raise ValueError(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
+            channel_id: UUID = UUID(request.headers[TBOT_CHANNEL_ID_HEADER])
             provider = await get_channel_oauth_provider(
                 channel_id=channel_id,
                 provider=TProvider.twitch,
@@ -59,7 +59,7 @@ class TwitchUserOAuth(Auth):
 
         if response.status_code == 401:
             async with self._async_lock:
-                provider = await self._refresh_token(
+                access_token = await self._refresh_token(
                     channel_id=channel_id, refresh_token=provider.refresh_token or ''
                 )
                 if not provider:
@@ -67,7 +67,7 @@ class TwitchUserOAuth(Auth):
                         f'Channel {channel_id} needs to grant the bot access in the '
                         'dashboard'
                     )
-                request.headers['Authorization'] = f'Bearer {provider.access_token}'
+                request.headers['Authorization'] = f'Bearer {access_token}'
 
             yield request
 
@@ -93,7 +93,7 @@ class TwitchUserOAuth(Auth):
                     expires_in=data['expires_in'],
                 ),
             )
-            return data['access_token']
+            return str(data['access_token'])
 
 
 twitch_app_client = AsyncClient(

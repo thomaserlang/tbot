@@ -1,1 +1,2 @@
 TBOT_CHANNEL_ID_HEADER = 'X-TBot-Channel-Id'
+APP_TITLE = 'HEIMRA'

@@ -25,6 +25,7 @@ class ChatFilterBaseSettings(BaseSchema):
 class FilterMatchResult:
     filter: 'ChatFilterBase'
     matched: bool = False
+    action: Literal['warning', 'timeout'] | None = None
     sub_id: Annotated[UUID | None, Doc('Used e.g. for which banned term matched')] = (
         None
     )

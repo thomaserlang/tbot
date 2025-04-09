@@ -23,11 +23,11 @@ discriminator = Discriminator(
 )
 
 FilterTypesUnion = Annotated[
-    Union[tuple(ChatFilterBase.__subclasses__())], discriminator
+    Union[tuple(ChatFilterBase.__subclasses__())], discriminator  # noqa: UP007
 ]
 FilterTypeCreateUnion = Annotated[
-    Union[tuple(ChatFilterBaseCreate.__subclasses__())], discriminator
+    Union[tuple(ChatFilterBaseCreate.__subclasses__())], discriminator  # noqa: UP007
 ]
 FilterTypeUpdateUnion = Annotated[
-    Union[tuple(ChatFilterBaseUpdate.__subclasses__())], discriminator
+    Union[tuple(ChatFilterBaseUpdate.__subclasses__())], discriminator  # noqa: UP007
 ]

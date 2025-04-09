@@ -1,15 +1,18 @@
+import asyncio
 import logging
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request
 
-from tbot2.channel_command import handle_message
-from tbot2.chatlog.actions.chatlog_action import create_chatlog
-from tbot2.common import TProvider
-from tbot2.common.schemas.chat_message_schema import ChatMessage
+from tbot2.channel_chat_filters import matches_filter
+from tbot2.channel_command import TCommand, fill_message, handle_message_response
+from tbot2.chatlog import create_chatlog
+from tbot2.common import ChatMessage, TProvider
 from tbot2.database import database
 
+from ..actions.twitch_ban_user_actions import twitch_ban_user
+from ..actions.twitch_delete_message_actions import twitch_delete_message
 from ..actions.twitch_send_message_actions import twitch_send_message
 from ..schemas.eventsub_channel_chat_message_schema import (
     EventChannelChatMessage,
@@ -32,7 +35,6 @@ async def channel_chat_message_route(
     request: Request,
     channel_id: UUID,
 ):
-
     if headers.message_type != 'notification':
         return
 
@@ -47,7 +49,7 @@ async def channel_chat_message_route(
     ):
         return
 
-    data = ChatMessage(
+    chat_message = ChatMessage(
         type='message',
         channel_id=channel_id,
         chatter_id=data.event.chatter_user_id,
@@ -64,22 +66,57 @@ async def channel_chat_message_route(
     )
 
     try:
-        response = await handle_message(
-            chat_message=data,
+        response = await handle_message_response(
+            chat_message=chat_message,
         )
         if response:
             await twitch_send_message(
-                broadcaster_id=data.provider_id,
-                sender_id=data.provider_id,
+                channel_id=chat_message.channel_id,
                 message=response.response,
-                reply_parent_message_id=data.msg_id,
+                reply_parent_message_id=chat_message.msg_id,
+            )
+    except Exception as e:
+        logging.exception(e)
+
+    await asyncio.gather(
+        handle_filter_message(chat_message=chat_message),
+        create_chatlog(data=chat_message),
+        database.redis.publish(  # type: ignore
+            f'tbot:live_chat:{chat_message.channel_id}', data.model_dump_json()
+        ),
+    )
+
+
+async def handle_filter_message(
+    chat_message: ChatMessage,
+):
+    try:
+        match = await matches_filter(chat_message=chat_message)
+        if not match:
+            return
+        if match.action == 'warning':
+            if match.filter.warning_message:
+                await twitch_send_message(
+                    channel_id=chat_message.channel_id,
+                    message=await fill_message(
+                        response_message=match.filter.warning_message,
+                        chat_message=chat_message,
+                        command=TCommand(name='warning', args=[]),
+                    ),
+                    reply_parent_message_id=chat_message.msg_id,
+                )
+            await twitch_delete_message(
+                channel_id=chat_message.channel_id,
+                message_id=chat_message.msg_id,
+            )
+
+        elif match.action == 'timeout':
+            await twitch_ban_user(
+                channel_id=chat_message.channel_id,
+                twitch_user_id=chat_message.chatter_id,
+                duration=match.filter.timeout_duration,
+                reason=match.filter.timeout_message,
             )
 
     except Exception as e:
-        logging.error(f'Failed to handle message: {e}')
-
-    await create_chatlog(data=data)
-
-    await database.redis.publish(  # type: ignore
-        f'tbot:live_chat:{data.channel_id}', data.model_dump_json()
-    )
+        logging.exception(e)

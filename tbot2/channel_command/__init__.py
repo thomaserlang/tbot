@@ -2,7 +2,9 @@ from .actions.command_actions import create_command as create_command
 from .actions.command_actions import get_command as get_command
 from .actions.command_actions import get_commands as get_commands
 from .actions.command_actions import update_command as update_command
-from .actions.command_handle_message_actions import handle_message as handle_message
+from .actions.command_handle_message_actions import (
+    handle_message as handle_message_response,
+)
 from .exceptions import CommandError as CommandError
 from .exceptions import CommandSyntaxError as CommandSyntaxError
 from .schemas.command_schemas import Command as Command
