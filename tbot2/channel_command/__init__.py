@@ -3,7 +3,7 @@ from .actions.command_actions import get_command as get_command
 from .actions.command_actions import get_commands as get_commands
 from .actions.command_actions import update_command as update_command
 from .actions.command_handle_message_actions import (
-    handle_message as handle_message_response,
+    handle_message_response as handle_message_response,
 )
 from .exceptions import CommandError as CommandError
 from .exceptions import CommandSyntaxError as CommandSyntaxError

@@ -18,7 +18,7 @@ class MessageResponse:
     response: str
 
 
-async def handle_message(
+async def handle_message_response(
     chat_message: ChatMessage,
     session: AsyncSession | None = None,
 ) -> MessageResponse | None:
