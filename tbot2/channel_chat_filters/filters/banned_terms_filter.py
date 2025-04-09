@@ -1,4 +1,3 @@
-import shlex
 import sys
 from re import IGNORECASE, search
 from typing import Literal
@@ -6,7 +5,7 @@ from uuid import UUID
 
 from async_lru import alru_cache
 
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessage, check_pattern_match
 
 from ..actions.banned_term_actions import get_banned_terms as _get_banned_terms
 from ..schemas.chat_filter_schema import (
@@ -38,9 +37,7 @@ class ChatFilterBannedTerms(ChatFilterBase):
     async def check_message(self, message: ChatMessage) -> FilterMatchResult:
         banned_terms = await get_banned_terms(filter_id=self.id)
         for term in banned_terms:
-            if (term.type == TBannedTermType.regex) or (
-                term.text.startswith('re:')  # Backwards compatibility
-            ):
+            if term.type == TBannedTermType.regex:
                 if search(
                     term.text if not term.text.startswith('re:') else term.text[3:],
                     message.message_without_fragments(),
@@ -48,21 +45,7 @@ class ChatFilterBannedTerms(ChatFilterBase):
                 ):
                     return FilterMatchResult(filter=self, matched=True, sub_id=term.id)
             elif term.type == TBannedTermType.phrase:
-                split = (
-                    term.text.split(' ')
-                    if '"' not in term.text
-                    else shlex.split(term.text)
-                )
-                if all(
-                    [
-                        search(
-                            rf'\b{s}\b',
-                            message.message_without_fragments(),
-                            flags=IGNORECASE,
-                        )
-                        for s in split
-                    ]
-                ):
+                if check_pattern_match(message.message_without_fragments(), term.text):
                     return FilterMatchResult(filter=self, matched=True, sub_id=term.id)
         return FilterMatchResult(filter=self, matched=False)
 

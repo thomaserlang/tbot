@@ -1,12 +1,10 @@
-import shlex
 import sys
 from dataclasses import dataclass
-from re import IGNORECASE, escape, search
 from uuid import UUID
 
 from async_lru import alru_cache
 
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessage, check_pattern_match
 from tbot2.contexts import AsyncSession
 
 from ..types import TCommand
@@ -51,7 +49,7 @@ async def handle_message(
                 return MessageResponse(response=response, command=command)
         else:
             for pattern in command.patterns:
-                if check_pattern_match(chat_message, pattern):
+                if check_pattern_match(chat_message.message, pattern):
                     response = await fill_message(
                         response_message=command.response,
                         command=TCommand(
@@ -71,27 +69,3 @@ async def get_cached_commands(channel_id: UUID, session: AsyncSession | None = N
         channel_id=channel_id,
         session=session,
     )
-
-
-def check_pattern_match(chat_message: ChatMessage, pattern: str) -> bool:
-    if pattern.startswith('re:'):
-        if search(
-            pattern[3:],
-            chat_message.message,
-            flags=IGNORECASE,
-        ):
-            return True
-    else:
-        split = pattern.split(' ') if '"' not in pattern else shlex.split(pattern)
-        if all(
-            [
-                search(
-                    rf'\b{escape(s)}\b',
-                    chat_message.message,
-                    flags=IGNORECASE,
-                )
-                for s in split
-            ]
-        ):
-            return True
-    return False
