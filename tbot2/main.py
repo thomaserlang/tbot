@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
@@ -11,6 +11,7 @@ from tbot2.channel_quote.router import channel_quotes_router
 from tbot2.channel_timer.router import channel_timer_router
 from tbot2.config_settings import config
 from tbot2.database import database
+from tbot2.dependecies import PlainResponse
 from tbot2.spotify.router import spotify_router
 from tbot2.twitch.router import twitch_router
 from tbot2.user.router import user_router
@@ -32,6 +33,15 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
+
+
+@app.exception_handler(PlainResponse)
+async def plain_response_handler(_: Request, exc: PlainResponse):
+    return Response(
+        content=exc.content,
+        status_code=exc.status_code,
+    )
+
 
 app.include_router(twitch_router, prefix='/api/2')
 app.include_router(channel_quotes_router, prefix='/api/2')

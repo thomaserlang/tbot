@@ -8,6 +8,15 @@ from fastapi.security import (
 
 from tbot2.common import TokenData
 
+
+class PlainResponse(Exception):
+    """Used if early return in nedded in a dependency."""
+
+    def __init__(self, status_code: int, content: str):
+        self.status_code = status_code
+        self.content = content
+
+
 oauth2_scheme = OAuth2(auto_error=False)
 
 

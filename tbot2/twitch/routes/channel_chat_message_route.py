@@ -2,7 +2,7 @@ import logging
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Request
 
 from tbot2.channel_command import handle_message
 from tbot2.chatlog.actions.chatlog_action import create_chatlog
@@ -32,8 +32,6 @@ async def channel_chat_message_route(
     request: Request,
     channel_id: UUID,
 ):
-    if headers.message_type == 'webhook_callback_verification':
-        return Response(status_code=200, content=(await request.json())['challenge'])
 
     if headers.message_type != 'notification':
         return
