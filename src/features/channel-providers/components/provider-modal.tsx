@@ -30,8 +30,10 @@ export function ProviderModal({ channelId, providerId, onClose }: Props) {
             }
         >
             {isLoading && <PageLoader />}
+
             {error && <ErrorBox errorObj={error} />}
-            {data && <ProviderView provider={data} />}
+
+            {data && <ProviderView provider={data} onDeleted={onClose} />}
         </Modal>
     )
 }

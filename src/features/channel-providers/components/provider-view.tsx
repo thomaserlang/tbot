@@ -5,12 +5,13 @@ import { ButtonAction } from './button-action'
 
 interface Props {
     provider: ChannelProvider
+    onDeleted?: () => void
 }
 
-export function ProviderView({ provider }: Props) {
+export function ProviderView({ provider, onDeleted }: Props) {
     return (
         <Flex gap="1rem" direction="column">
-            <ButtonAction provider={provider} />
+            <ButtonAction provider={provider} onDeleted={onDeleted} />
 
             {provider.provider == 'twitch' && (
                 <Flex gap="0.25rem" direction="column">
