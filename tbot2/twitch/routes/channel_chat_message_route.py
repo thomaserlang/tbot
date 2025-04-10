@@ -13,7 +13,7 @@ from tbot2.database import database
 
 from ..actions.twitch_ban_user_actions import twitch_ban_user
 from ..actions.twitch_delete_message_actions import twitch_delete_message
-from ..actions.twitch_send_message_actions import twitch_send_message
+from ..actions.twitch_send_message_actions import twitch_bot_send_message
 from ..schemas.eventsub_channel_chat_message_schema import (
     EventChannelChatMessage,
 )
@@ -70,8 +70,9 @@ async def channel_chat_message_route(
             chat_message=chat_message,
         )
         if response:
-            await twitch_send_message(
+            await twitch_bot_send_message(
                 channel_id=chat_message.channel_id,
+                broadcaster_id=chat_message.provider_id,
                 message=response.response,
                 reply_parent_message_id=chat_message.msg_id,
             )
@@ -96,8 +97,9 @@ async def handle_filter_message(
             return
         if match.action == 'warning':
             if match.filter.warning_message:
-                await twitch_send_message(
+                await twitch_bot_send_message(
                     channel_id=chat_message.channel_id,
+                    broadcaster_id=chat_message.provider_id,
                     message=await fill_message(
                         response_message=match.filter.warning_message,
                         chat_message=chat_message,
@@ -107,12 +109,14 @@ async def handle_filter_message(
                 )
             await twitch_delete_message(
                 channel_id=chat_message.channel_id,
+                broadcaster_id=chat_message.provider_id,
                 message_id=chat_message.msg_id,
             )
 
         elif match.action == 'timeout':
             await twitch_ban_user(
                 channel_id=chat_message.channel_id,
+                broadcaster_id=chat_message.provider_id,
                 twitch_user_id=chat_message.chatter_id,
                 duration=match.filter.timeout_duration,
                 reason=match.filter.timeout_message,

@@ -21,6 +21,12 @@ from .actions.twitch_lookup_users_action import (
 from .actions.twitch_lookup_users_action import (
     lookup_twitch_users as lookup_twitch_users,
 )
+from .actions.twitch_mod_user_actions import (
+    twitch_add_channel_moderator as twitch_add_channel_moderator,
+)
+from .actions.twitch_mod_user_actions import (
+    twitch_remove_channel_moderator as twitch_remove_channel_moderator,
+)
 from .actions.twitch_send_message_actions import (
-    twitch_send_message as twitch_send_message,
+    twitch_bot_send_message as twitch_bot_send_message,
 )

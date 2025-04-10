@@ -1,0 +1,80 @@
+import { toastError, toastSuccess } from '@/utils/toast'
+import { Button, Flex } from '@mantine/core'
+import {
+    useDisconnectProviderBot,
+    useGetProviderConnectBotUrl,
+} from '../provider.api'
+import { ChannelProvider } from '../provider.types'
+
+interface Props {
+    provider: ChannelProvider
+}
+
+export function BotButtonAction({ provider }: Props) {
+    const connectBotUrl = useGetProviderConnectBotUrl({
+        onSuccess: ({ url }) => {
+            window.location.href = url
+        },
+        onError: (error) => {
+            toastError(error)
+        },
+    })
+
+    const disconnectBotUrl = useDisconnectProviderBot({
+        onSuccess: () => {
+            toastSuccess('Bot disconnected')
+        },
+        onError: (error) => {
+            toastError(error)
+        },
+    })
+
+    return (
+        <Flex gap="1rem">
+            {provider.bot_provider && (
+                <Button
+                    color="red"
+                    loading={disconnectBotUrl.isPending}
+                    onClick={() => {
+                        disconnectBotUrl.mutate({
+                            channelId: provider.channel_id,
+                            providerId: provider.id,
+                        })
+                    }}
+                >
+                    Disconnect bot {provider.bot_provider.name}
+                </Button>
+            )}
+
+            {!provider.bot_provider && (
+                <Button
+                    color="blue"
+                    loading={connectBotUrl.isPending}
+                    onClick={() => {
+                        connectBotUrl.mutate({
+                            channelId: provider.channel_id,
+                            provider: provider.provider,
+                        })
+                    }}
+                >
+                    Connect bot
+                </Button>
+            )}
+
+            {provider.bot_provider?.scope_needed && (
+                <Button
+                    color="orange"
+                    loading={connectBotUrl.isPending}
+                    onClick={() => {
+                        connectBotUrl.mutate({
+                            channelId: provider.channel_id,
+                            provider: provider.provider,
+                        })
+                    }}
+                >
+                    Reconnect needed
+                </Button>
+            )}
+        </Flex>
+    )
+}

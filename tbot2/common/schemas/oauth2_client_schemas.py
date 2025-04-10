@@ -21,6 +21,7 @@ class Oauth2AuthorizeParams(BaseModel):
     scope: Annotated[str, StringConstraints(min_length=1)]
     state: dict[str, Any] = {}
     claims: dict[str, str] | None = None
+    force_verify: bool = False
 
     @field_serializer('state')
     def serialize_state(self, value: dict[str, Any]):
@@ -30,10 +31,14 @@ class Oauth2AuthorizeParams(BaseModel):
         }
         return jwt.encode(payload, config.web.cookie_secret, algorithm='HS256')
 
+    @field_serializer('force_verify')
+    def validate_force_verify(self, value: bool):
+        return 'true' if value else 'false'
+
     @field_serializer('claims')
     def serialize_claims(self, value: dict[str, str] | None):
         if value is None:
-            return None
+            return ''
 
         return json.dumps(value).encode()
 

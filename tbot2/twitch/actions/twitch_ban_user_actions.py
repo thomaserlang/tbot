@@ -1,21 +1,22 @@
 from uuid import UUID
 
-from tbot2.channel import get_channel_oauth_provider
+from tbot2.channel import get_channel_bot_provider
 from tbot2.common import TProvider
 from tbot2.constants import APP_TITLE, TBOT_CHANNEL_ID_HEADER
 
-from ..twitch_http_client import twitch_user_client
+from ..twitch_http_client import twitch_bot_client
 
 
 async def twitch_ban_user(
     channel_id: UUID,
+    broadcaster_id: str,
     twitch_user_id: str,
     duration: int | None = None,
     reason: str | None = None,
 ):
-    provider = await get_channel_oauth_provider(
-        channel_id=channel_id,
+    provider = await get_channel_bot_provider(
         provider=TProvider.twitch,
+        channel_id=channel_id,
     )
     if not provider:
         raise ValueError(
@@ -32,14 +33,15 @@ async def twitch_ban_user(
         data['data']['duration'] = duration
     data['data']['reason'] = (reason or '') + f' [{APP_TITLE}]'
 
-    response = await twitch_user_client.post(
+    response = await twitch_bot_client.post(
         url='/moderation/bans',
         params={
-            'broadcaster_id': provider.provider_user_id or '',
+            'broadcaster_id': broadcaster_id,
             'moderator_id': provider.provider_user_id or '',
         },
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
+            'Authorization': f'Bearer {provider.access_token}',
         },
         json=data,
     )

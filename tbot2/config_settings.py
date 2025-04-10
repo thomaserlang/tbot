@@ -1,6 +1,7 @@
 import os
 import sys
 from typing import Literal
+from uuid import UUID
 
 from pydantic import AnyHttpUrl, BaseModel
 from yaml_settings_pydantic import BaseYamlSettings, YamlSettingsConfigDict
@@ -179,6 +180,7 @@ class ConfigSettings(BaseYamlSettings):
     lol_apikey: str | None = None
     tft_apikey: str | None = None
     rtmp_keys: list[str] = []
+    global_admin_user_ids: set[UUID] = set()
 
 
 try:

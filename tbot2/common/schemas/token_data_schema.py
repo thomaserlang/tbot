@@ -4,6 +4,8 @@ from fastapi import HTTPException
 from pydantic import BaseModel
 from starlette.authentication import BaseUser
 
+from tbot2.config_settings import config
+
 from ..types.access_level_type import TAccessLevel
 from ..types.scope_type import TScope
 
@@ -34,3 +36,6 @@ class TokenData(BaseUser, BaseModel):
 
     def has_any_scope(self, scopes: list[TScope]) -> bool:
         return any(scope in self.scopes for scope in scopes)
+
+    async def is_global_admin(self) -> bool:
+        return self.user_id in config.global_admin_user_ids

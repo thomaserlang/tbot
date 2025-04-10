@@ -8,4 +8,5 @@ class TProvider(StrEnum):
     discord = 'discord'
 
 
-provider_scopes: dict[TProvider, str] = {}
+channel_provider_scopes: dict[TProvider, str] = {}
+bot_provider_scopes: dict[TProvider, str] = {}

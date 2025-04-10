@@ -13,6 +13,7 @@ from ..models.channel_oauth_provider_model import (
 from ..schemas.channel_oauth_provider_schema import (
     ChannelOAuthProvider,
     ChannelOAuthProviderRequest,
+    ChannelProvider,
 )
 
 
@@ -69,7 +70,7 @@ async def get_channels_providers(
             )
         )
         async for p in providers:
-            yield ChannelOAuthProvider.model_validate(p)
+            yield ChannelProvider.model_validate(p)
 
 
 async def save_channel_oauth_provider(
@@ -108,3 +109,17 @@ async def save_channel_oauth_provider(
                 )
             )
         return True
+
+
+async def delete_channel_oauth_provider(
+    *, channel_id: UUID, channel_provider_id: UUID, session: AsyncSession | None = None
+) -> bool:
+    async with get_session(session) as session:
+        result = await session.execute(
+            sa.delete(MChannelOAuthProvider).where(
+                MChannelOAuthProvider.channel_id == channel_id,
+                MChannelOAuthProvider.id == channel_provider_id,
+            )
+        )
+        return result.rowcount > 0
+

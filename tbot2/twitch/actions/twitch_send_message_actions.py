@@ -1,26 +1,27 @@
 from uuid import UUID
 
-from tbot2.channel import get_channel_oauth_provider
+from tbot2.channel import get_channel_bot_provider
 from tbot2.common import TProvider
 
 from ..twitch_http_client import twitch_app_client
 
 
-async def twitch_send_message(
+async def twitch_bot_send_message(
     channel_id: UUID,
+    broadcaster_id: str,
     message: str,
     reply_parent_message_id: str | None = None,
 ):
-    provider = await get_channel_oauth_provider(
-        channel_id=channel_id,
+    provider = await get_channel_bot_provider(
         provider=TProvider.twitch,
+        channel_id=channel_id,
     )
     if not provider:
         raise ValueError(
             f'Failed to send message in channel {channel_id}: no provider found'
         )
     data = {
-        'broadcaster_id': provider.provider_user_id or '',
+        'broadcaster_id': broadcaster_id,
         'sender_id': provider.provider_user_id or '',
         'message': message,
     }

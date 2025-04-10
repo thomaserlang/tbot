@@ -27,6 +27,7 @@ export function Component() {
 
                 {data && <ProvidersView providers={data} />}
             </Flex>
+
             {providerId && (
                 <ProviderModal
                     channelId={channel.id}

@@ -25,7 +25,8 @@ export function ProvidersView({ providers }: Props) {
                             size="xs"
                             variant="outline"
                             rightSection={
-                                provider.scope_needed && (
+                                provider.scope_needed ||
+                                (provider.bot_provider?.scope_needed && (
                                     <Badge
                                         size="xs"
                                         color="orange"
@@ -33,7 +34,7 @@ export function ProvidersView({ providers }: Props) {
                                     >
                                         1
                                     </Badge>
-                                )
+                                ))
                             }
                             onClick={() => {
                                 navigate(

@@ -10,4 +10,13 @@ export interface ChannelProvider {
     provider: Provider
     name: string | null
     scope_needed: boolean
+    bot_provider: BotProvider | null
+}
+
+export interface BotProvider {
+    id: string
+    name: string | null
+    provider_user_id: string | null
+    scope: string | null
+    scope_needed: boolean
 }

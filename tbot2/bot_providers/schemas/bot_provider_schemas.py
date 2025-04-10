@@ -4,49 +4,43 @@ from uuid import UUID
 
 from pydantic import StringConstraints, computed_field
 
-from tbot2.bot_providers import BotProvider, BotProviderPublic
-from tbot2.common import (
-    BaseRequestSchema,
-    BaseSchema,
-    TProvider,
-    channel_provider_scopes,
-)
+from tbot2.common import BaseRequestSchema, BaseSchema, TProvider, bot_provider_scopes
 
 
-class ChannelOAuthProvider(BaseSchema):
+class BotProvider(BaseSchema):
     id: UUID
-    channel_id: UUID
     provider: TProvider
-    provider_user_id: str | None
+    provider_user_id: str
     access_token: str | None
     refresh_token: str | None
     expires_at: datetime | None
     scope: str | None
     name: str | None
-    bot_provider_id: UUID | None
-    bot_provider: BotProvider | None
-
-
-class ChannelProvider(BaseSchema):
-    id: UUID
-    channel_id: UUID
-    provider: TProvider
-    name: str | None
-    scope: str | None
-    bot_provider_id: UUID | None
-    bot_provider: BotProviderPublic | None
 
     @computed_field
     def scope_needed(self) -> bool:
-        required_scopes = set(channel_provider_scopes.get(self.provider, '').split(' '))
+        required_scopes = set(bot_provider_scopes.get(self.provider, '').split(' '))
         scopes: set[str] = set(self.scope.split(' ')) if self.scope else set()
         return bool(required_scopes - scopes)
 
 
-class ChannelOAuthProviderRequest(BaseRequestSchema):
-    provider_user_id: (
-        Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
-    ) = None
+class BotProviderPublic(BaseSchema):
+    id: UUID
+    provider: TProvider
+    provider_user_id: str | None
+    scope: str | None
+    name: str | None
+
+    @computed_field
+    def scope_needed(self) -> bool:
+        required_scopes = set(bot_provider_scopes.get(self.provider, '').split(' '))
+        scopes: set[str] = set(self.scope.split(' ')) if self.scope else set()
+        return bool(required_scopes - scopes)
+
+
+class BotProviderRequest(BaseRequestSchema):
+    provider: TProvider
+    provider_user_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     access_token: (
         Annotated[str, StringConstraints(min_length=1, max_length=2000)] | None
     ) = None
@@ -59,4 +53,4 @@ class ChannelOAuthProviderRequest(BaseRequestSchema):
         None
     )
     name: Annotated[str, StringConstraints(min_length=1, max_length=255)] | None = None
-    bot_provider_id: UUID | None = None
+    system_default: bool | None = None
