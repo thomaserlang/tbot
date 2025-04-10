@@ -33,11 +33,11 @@ export function ButtonAction({ provider, onDeleted }: Props) {
             {provider.scope_needed && (
                 <Button
                     color="orange"
-                    loading={deleteProvider.isPending}
+                    loading={connectUrl.isPending}
                     onClick={() => {
-                        deleteProvider.mutate({
+                        connectUrl.mutate({
                             channelId: provider.channel_id,
-                            providerId: provider.id,
+                            provider: provider.provider,
                         })
                     }}
                 >
@@ -47,11 +47,11 @@ export function ButtonAction({ provider, onDeleted }: Props) {
 
             <Button
                 color="red"
-                loading={connectUrl.isPending}
+                loading={deleteProvider.isPending}
                 onClick={() => {
-                    connectUrl.mutate({
+                    deleteProvider.mutate({
                         channelId: provider.channel_id,
-                        provider: provider.provider,
+                        providerId: provider.id,
                     })
                 }}
             >

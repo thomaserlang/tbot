@@ -47,11 +47,9 @@ class TwitchUserOAuth(Auth):
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
         async with self._async_lock:
-            if not (
-                channel_id := UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER, None))
-            ):
+            channel_id = UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER, None))
+            if not channel_id:
                 raise ValueError(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
-            channel_id = UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER))
             provider = await get_channel_oauth_provider(
                 channel_id=channel_id,
                 provider=TProvider.twitch,
@@ -112,7 +110,8 @@ class TwitchBotOAuth(Auth):
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
         provider: BotProvider | None = None
-        if not (channel_id := UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER, None))):
+        channel_id = UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER, None))
+        if not channel_id:
             raise ValueError(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
 
         async with self._async_lock:

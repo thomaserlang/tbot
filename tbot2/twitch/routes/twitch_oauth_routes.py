@@ -35,6 +35,7 @@ from tbot2.common.utils.request_url_for import request_url_for
 from tbot2.config_settings import config
 from tbot2.dependecies import authenticated
 from tbot2.twitch.actions.twitch_mod_user_actions import twitch_add_channel_moderator
+from tbot2.twitch.twitch_http_client import get_channel_oauth_provider
 from tbot2.user import UserCreate, get_or_create_user
 
 from ..actions.eventsub_actions import register_eventsubs
@@ -79,6 +80,7 @@ channel_provider_scopes[TProvider.twitch] = ' '.join(
         'moderator:read:followers',
         'bits:read',
         'channel:bot',
+        'channel:manage:moderators',
     }
 )
 
@@ -294,6 +296,16 @@ async def twitch_auth_route(
                 bot_provider_id=bot_provider.id,
             ),
         )
+        provider = await get_channel_oauth_provider(
+            channel_id=channel_id,
+            provider=TProvider.twitch,
+        )
+        if provider:
+            await twitch_add_channel_moderator(
+                channel_id=channel_id,
+                twitch_user_id=twitch_user.id,
+                broadcaster_id=provider.provider_user_id or '',
+            )
         return RedirectResponse(f'/channels/{params.state["channel_id"]}/providers')
 
     elif params.state['mode'] == 'connect_bot_system_default':
