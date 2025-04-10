@@ -1,5 +1,6 @@
 import { toastError, toastSuccess } from '@/utils/toast'
-import { Button, Flex } from '@mantine/core'
+import { Button, Flex, Text } from '@mantine/core'
+import { openConfirmModal } from '@mantine/modals'
 import { useDeleteProvider, useGetProviderConnectUrl } from '../provider.api'
 import { ChannelProvider } from '../provider.types'
 
@@ -49,13 +50,25 @@ export function ButtonAction({ provider, onDeleted }: Props) {
                 color="red"
                 loading={deleteProvider.isPending}
                 onClick={() => {
-                    deleteProvider.mutate({
-                        channelId: provider.channel_id,
-                        providerId: provider.id,
+                    openConfirmModal({
+                        title: 'Delete provider',
+                        children: (
+                            <Text>
+                                Are you sure you want to delete this provider?
+                            </Text>
+                        ),
+                        confirmProps: { color: 'red' },
+                        labels: { confirm: 'Delete', cancel: 'Cancel' },
+                        onConfirm: () => {
+                            deleteProvider.mutate({
+                                channelId: provider.channel_id,
+                                providerId: provider.id,
+                            })
+                        },
                     })
                 }}
             >
-                Disconnect
+                Delete
             </Button>
         </Flex>
     )

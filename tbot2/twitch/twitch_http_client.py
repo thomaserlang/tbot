@@ -88,7 +88,8 @@ class TwitchUserOAuth(Auth):
                     'client_secret': config.twitch.client_secret,
                 },
             )
-            response.raise_for_status()
+            if response.status_code >= 400:
+                ValueError(f'{response.status_code} {response.text}')
             data = response.json()
             await save_channel_oauth_provider(
                 channel_id=channel_id,
@@ -158,7 +159,8 @@ class TwitchBotOAuth(Auth):
                     'client_secret': config.twitch.client_secret,
                 },
             )
-            response.raise_for_status()
+            if response.status_code >= 400:
+                ValueError(f'{response.status_code} {response.text}')
             data = response.json()
             await save_bot_provider(
                 data=BotProviderRequest(
@@ -223,7 +225,8 @@ async def get_twitch_pagination(
                 'after': pagination['cursor'],
             },
         )
-        response.raise_for_status()
+        if response.status_code >= 400:
+            ValueError(f'{response.status_code} {response.text}')
         data = response.json()
         all_data.extend(data['data'])
         pagination = data.get('pagination')
@@ -263,7 +266,8 @@ async def get_twitch_pagination_yield(
                 'after': pagination['cursor'],
             },
         )
-        response.raise_for_status()
+        if response.status_code >= 400:
+            raise ValueError(f'{response.status_code} {response.text}')
         data = response.json()
         for item in data['data']:
             if issubclass(schema, TwitchObject):

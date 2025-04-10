@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 
 from tbot2.channel import get_channel_bot_provider
@@ -33,5 +34,9 @@ async def twitch_delete_message(
             'Authorization': f'Bearer {bot_provider.access_token}',
         },
     )
-    response.raise_for_status()
+    if response.status_code >= 400:
+        logging.error(
+            f'twitch_delete_message: {response.status_code} {response.text}'
+        )
+        return False
     return True

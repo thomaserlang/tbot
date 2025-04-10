@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 
 from tbot2.channel import get_channel_bot_provider
@@ -45,5 +46,9 @@ async def twitch_ban_user(
         },
         json=data,
     )
-    response.raise_for_status()
+    if response.status_code >= 400:
+        logging.error(
+            f'twitch_ban_user: {response.status_code} {response.text}'
+        )
+        return False
     return True

@@ -31,7 +31,8 @@ class SpotifyOAuth(Auth):
             )
             if not provider:
                 raise ValueError(
-                    f'Channel {channel_id} needs to grant the bot access in the dashboard'
+                    f'Channel {channel_id} needs to grant the bot '
+                    'access in the dashboard'
                 )
             request.headers['Authorization'] = f'Bearer {provider.access_token}'
 
@@ -44,7 +45,8 @@ class SpotifyOAuth(Auth):
                 )
                 if not provider:
                     raise ValueError(
-                        f'Channel {channel_id} needs to grant the bot access in the dashboard'
+                        f'Channel {channel_id} needs to grant the bot '
+                        'access in the dashboard'
                     )
                 request.headers['Authorization'] = f'Bearer {provider.access_token}'
 
@@ -61,7 +63,8 @@ class SpotifyOAuth(Auth):
                     'client_secret': config.twitch.client_secret,
                 },
             )
-            response.raise_for_status()
+            if response.status_code >= 400:
+                raise ValueError(f'{response.status_code} {response.text}')
             data = response.json()
             await save_channel_oauth_provider(
                 channel_id=channel_id,

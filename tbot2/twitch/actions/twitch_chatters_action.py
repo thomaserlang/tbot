@@ -20,6 +20,6 @@ async def get_twitch_chatters(channel_id: UUID, broadcaster_id: str):
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
-    response.raise_for_status()
-
+    if response.status_code >= 400:
+        raise ValueError(f'{response.status_code} {response.text}')
     return await get_twitch_pagination(response, schema=Chatter)

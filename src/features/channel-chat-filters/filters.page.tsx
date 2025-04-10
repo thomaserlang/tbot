@@ -1,7 +1,7 @@
 import { Container, Flex, Title } from '@mantine/core'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCurrentChannel } from '../channel/current-channel.provider'
-import { CreateFilterButton } from './components/filter-add-button'
+import { AddFilterButton } from './components/filter-add-button'
 import { EditFilterModal } from './components/filter-edit-modal'
 import { FiltersView } from './components/filters-view'
 import { ChatFilterId } from './filter.types'
@@ -22,7 +22,7 @@ export function Component() {
                     <Flex>
                         <Title order={2}>Chat Filters</Title>
 
-                        <CreateFilterButton
+                        <AddFilterButton
                             channelId={channel.id}
                             onCreated={(filter) => {
                                 navigate(

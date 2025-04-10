@@ -3,6 +3,7 @@ import { PageLoader } from '@/components/page-loader'
 import { Container, Flex, Title } from '@mantine/core'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCurrentChannel } from '../channel/current-channel.provider'
+import { AddProviderButton } from './components/add-provider-button'
 import { ProviderModal } from './components/provider-modal'
 import { ProvidersView } from './components/providers-view'
 import { ChannelProviderId } from './provider.types'
@@ -19,7 +20,10 @@ export function Component() {
     return (
         <Container>
             <Flex direction="column" gap="1rem">
-                <Title order={2}>Providers</Title>
+                <Flex>
+                    <Title order={2}>Providers</Title>
+                    <AddProviderButton channelId={channel.id} />
+                </Flex>
 
                 {isLoading && <PageLoader />}
 

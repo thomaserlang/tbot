@@ -82,7 +82,8 @@ async def _register_eventsub(
             },
         },
     )
-    response.raise_for_status()
+    if response.status_code >= 400:
+        raise ValueError(f'{response.status_code} {response.text}')
     return EventSubSubscription.model_validate(response.json()['data'][0])
 
 
@@ -90,7 +91,11 @@ async def delete_eventsub_registration(event_id: str):
     response = await twitch_app_client.delete(
         url=f'/eventsub/subscriptions?id={event_id}'
     )
-    response.raise_for_status()
+    if response.status_code >= 400:
+        logging.error(
+            f'delete_eventsub_registration: {response.status_code} {response.text}'
+        )
+        return False
     return True
 
 
@@ -107,7 +112,8 @@ async def get_eventsubs(
         url='/eventsub/subscriptions',
         params=params,
     )
-    response.raise_for_status()
+    if response.status_code >= 400:
+        raise ValueError(f'{response.status_code} {response.text}')
     return get_twitch_pagination_yield(response, EventSubSubscription)
 
 

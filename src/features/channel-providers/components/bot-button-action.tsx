@@ -1,5 +1,6 @@
 import { toastError, toastSuccess } from '@/utils/toast'
-import { Button, Flex } from '@mantine/core'
+import { Button, Flex, Text } from '@mantine/core'
+import { openConfirmModal } from '@mantine/modals'
 import {
     useDisconnectProviderBot,
     useGetProviderConnectBotUrl,
@@ -36,9 +37,24 @@ export function BotButtonAction({ provider }: Props) {
                     color="red"
                     loading={disconnectBotUrl.isPending}
                     onClick={() => {
-                        disconnectBotUrl.mutate({
-                            channelId: provider.channel_id,
-                            providerId: provider.id,
+                        openConfirmModal({
+                            title: 'Disconnect bot',
+                            children: (
+                                <Text>
+                                    Are you sure you want to disconnect the bot?
+                                </Text>
+                            ),
+                            confirmProps: { color: 'red' },
+                            labels: {
+                                confirm: 'Disconnect',
+                                cancel: 'Cancel',
+                            },
+                            onConfirm: () => {
+                                disconnectBotUrl.mutate({
+                                    channelId: provider.channel_id,
+                                    providerId: provider.id,
+                                })
+                            },
                         })
                     }}
                 >

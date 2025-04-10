@@ -18,7 +18,8 @@ async def twitch_channel_follower(channel_id: UUID, user_id: str, broadcaster_id
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
-    response.raise_for_status()
+    if response.status_code >= 400:
+        raise ValueError(f'{response.status_code} {response.text}')
     data = response.json()
     if not data['data']:
         return

@@ -13,15 +13,15 @@ async def get_spotify_currently_playing(
     *,
     channel_id: UUID,
 ):
-    repsonse = await spotify_client.get(
+    response = await spotify_client.get(
         '/me/player/currently-playing',
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
-    repsonse.raise_for_status()
-
-    data = SpotifyCurrentlyPlaying.model_validate(repsonse.json())
+    if response.status_code >= 400:
+        raise ValueError(f'{response.status_code} {response.text}')
+    data = SpotifyCurrentlyPlaying.model_validate(response.json())
     return data
 
 
@@ -29,14 +29,16 @@ async def get_spotify_recently_played(
     *,
     channel_id: UUID,
 ):
-    repsonse = await spotify_client.get(
+    response = await spotify_client.get(
         '/me/player/recently-played',
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
-    repsonse.raise_for_status()
-    data = SpotifyCursorPaging.model_validate(repsonse.json())
+    if response.status_code >= 400:
+        raise ValueError(f'{response.status_code} {response.text}')
+
+    data = SpotifyCursorPaging.model_validate(response.json())
     return data.items
 
 
@@ -47,6 +49,7 @@ async def get_spotify_playlist(*, channel_id: UUID, playlist_url: str):
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
-    response.raise_for_status()
+    if response.status_code >= 400:
+        raise ValueError(f'{response.status_code} {response.text}')
     data = SpotifyPlaylist.model_validate(response.json())
     return data

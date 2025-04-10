@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 
 from tbot2.channel import get_channel_bot_provider
@@ -31,6 +32,10 @@ async def twitch_bot_send_message(
     response = await twitch_app_client.post(
         url='/chat/messages',
         json=data,
-    )
-    response.raise_for_status()
+    )    
+    if response.status_code >= 400:
+        logging.error(
+            f'twitch_bot_send_message: {response.status_code} {response.text}'
+        )
+        return False
     return True

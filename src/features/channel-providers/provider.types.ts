@@ -20,3 +20,8 @@ export interface BotProvider {
     scope: string | null
     scope_needed: boolean
 }
+
+export const channelProviderLabels: { [provider: string | Provider]: string } =
+    {
+        twitch: 'Twitch',
+    } as const

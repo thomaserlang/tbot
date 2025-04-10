@@ -19,6 +19,9 @@ from tbot2.channel import (
     save_channel_oauth_provider,
 )
 from tbot2.common import (
+    Oauth2AuthorizeParams,
+    Oauth2AuthorizeResponse,
+    Oauth2TokenParams,
     Oauth2TokenResponse,
     TAccessLevel,
     TokenData,
@@ -26,19 +29,14 @@ from tbot2.common import (
     bot_provider_scopes,
     channel_provider_scopes,
 )
-from tbot2.common.schemas.oauth2_client_schemas import (
-    Oauth2AuthorizeParams,
-    Oauth2AuthorizeResponse,
-    Oauth2TokenParams,
-)
 from tbot2.common.utils.request_url_for import request_url_for
 from tbot2.config_settings import config
 from tbot2.dependecies import authenticated
-from tbot2.twitch.actions.twitch_mod_user_actions import twitch_add_channel_moderator
-from tbot2.twitch.twitch_http_client import get_channel_oauth_provider
 from tbot2.user import UserCreate, get_or_create_user
 
 from ..actions.eventsub_actions import register_eventsubs
+from ..actions.twitch_mod_user_actions import twitch_add_channel_moderator
+from ..twitch_http_client import get_channel_oauth_provider
 
 twitch_oauth_client = AsyncClient(
     http2=True,

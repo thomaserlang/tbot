@@ -1,24 +1,25 @@
 import { ChannelId } from '@/features/channel'
+import { Provider } from '@/types/provider.type'
 import { toastError } from '@/utils/toast'
 import { Button, Menu } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
-import { ChatFilter, registeredFilters } from '../filter-registry'
-import { useCreateChatFilter } from '../filter.api'
+import { useGetProviderConnectUrl } from '../provider.api'
+import { channelProviderLabels } from '../provider.types'
 
 interface Props {
     channelId: ChannelId
-    onCreated?: (filter: ChatFilter) => void
 }
 
-export function AddFilterButton({ channelId, onCreated }: Props) {
-    const add = useCreateChatFilter({
-        onSuccess: (data) => {
-            onCreated?.(data)
+export function AddProviderButton({ channelId }: Props) {
+    const add = useGetProviderConnectUrl({
+        onSuccess: ({ url }) => {
+            window.location.href = url
         },
         onError: (error) => {
             toastError(error)
         },
     })
+
     return (
         <Menu width={200}>
             <Menu.Target>
@@ -28,24 +29,22 @@ export function AddFilterButton({ channelId, onCreated }: Props) {
                     loading={add.isPending}
                     leftSection={<IconPlus size={14} />}
                 >
-                    Add Filter
+                    Add Provider
                 </Button>
             </Menu.Target>
 
             <Menu.Dropdown>
-                {Object.values(registeredFilters).map((filterType) => (
+                {Object.keys(channelProviderLabels).map((t) => (
                     <Menu.Item
-                        key={filterType.type}
+                        key={t}
                         onClick={() => {
                             add.mutate({
                                 channelId,
-                                data: {
-                                    type: filterType.type,
-                                },
+                                provider: t as Provider,
                             })
                         }}
                     >
-                        {filterType.name}
+                        {channelProviderLabels[t]}
                     </Menu.Item>
                 ))}
             </Menu.Dropdown>
