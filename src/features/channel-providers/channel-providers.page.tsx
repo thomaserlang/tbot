@@ -1,5 +1,6 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
+import { useDocumentTitle } from '@/utils/document-title'
 import { Container, Flex, Title } from '@mantine/core'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCurrentChannel } from '../channel/current-channel.provider'
@@ -16,6 +17,7 @@ export function Component() {
         channelId: channel.id,
     })
     const navigate = useNavigate()
+    useDocumentTitle(`Channel Providers - ${channel.display_name}`)
 
     return (
         <Container>

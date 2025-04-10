@@ -1,5 +1,6 @@
 import { ErrorBox } from '@/components/error-box'
 import { useCurrentChannel } from '@/features/channel'
+import { useDocumentTitle } from '@/utils/document-title'
 import { Container, Flex, Title } from '@mantine/core'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CommandId } from './command.types'
@@ -13,6 +14,8 @@ export function Component() {
     const data = useGetCommands(channel.id)
     const { commandId } = useParams<{ commandId?: CommandId }>()
     const navigate = useNavigate()
+
+    useDocumentTitle(`Channel Commands - ${channel.display_name}`)
 
     return (
         <>
@@ -41,6 +44,7 @@ export function Component() {
                     )}
                 </Flex>
             </Container>
+
             {commandId && (
                 <EditCommandModal
                     channelId={channel.id}

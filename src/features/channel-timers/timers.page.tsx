@@ -1,5 +1,6 @@
 import { ErrorBox } from '@/components/error-box'
 import { useCurrentChannel } from '@/features/channel'
+import { useDocumentTitle } from '@/utils/document-title'
 import { Container, Flex, Title } from '@mantine/core'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CreatetimerButton } from './components/timer-create-button'
@@ -13,6 +14,8 @@ export function Component() {
     const data = useGetTimers(channel.id)
     const { timerId } = useParams<{ timerId?: TimerId }>()
     const navigate = useNavigate()
+
+    useDocumentTitle(`Channel Timers - ${channel.display_name}`)
 
     return (
         <>

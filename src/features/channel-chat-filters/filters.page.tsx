@@ -1,3 +1,4 @@
+import { useDocumentTitle } from '@/utils/document-title'
 import { Container, Flex, Title } from '@mantine/core'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCurrentChannel } from '../channel/current-channel.provider'
@@ -10,6 +11,8 @@ export function Component() {
     const channel = useCurrentChannel()
     const { filterId } = useParams<{ filterId?: ChatFilterId }>()
     const navigate = useNavigate()
+
+    useDocumentTitle(`Channel Filters - ${channel.display_name}`)
 
     return (
         <>
