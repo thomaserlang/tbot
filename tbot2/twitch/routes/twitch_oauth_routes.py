@@ -2,7 +2,7 @@ from typing import Annotated
 from urllib import parse
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Query, Request, Security
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Security
 from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
 from twitchAPI.twitch import TwitchUser
@@ -20,6 +20,7 @@ from tbot2.channel import (
     save_channel_oauth_provider,
 )
 from tbot2.common import (
+    ConnectUrl,
     Oauth2AuthorizeParams,
     Oauth2AuthorizeResponse,
     Oauth2TokenParams,
@@ -30,6 +31,7 @@ from tbot2.common import (
     bot_provider_scopes,
     channel_provider_scopes,
 )
+from tbot2.common.schemas.connect_url_schema import RedirectUrl
 from tbot2.common.utils.request_url_for import request_url_for
 from tbot2.config_settings import config
 from tbot2.dependecies import authenticated
@@ -84,8 +86,11 @@ channel_provider_scopes[TProvider.twitch] = ' '.join(
 
 
 @router.get('/twitch/sign-in')
-async def twitch_sign_in_route(request: Request):
-    return RedirectResponse(
+async def twitch_sign_in_route(
+    request: Request,
+    redirect_to: Annotated[RedirectUrl, Depends()],
+) -> ConnectUrl:
+    return ConnectUrl(
         url='https://id.twitch.tv/oauth2/authorize?'
         + parse.urlencode(
             Oauth2AuthorizeParams(
@@ -95,6 +100,7 @@ async def twitch_sign_in_route(request: Request):
                 scope=SCOPE_OPENID,
                 state={
                     'mode': 'sign_in',
+                    'redirect_to': redirect_to.redirect_to,
                 },
             ).model_dump()
         )
@@ -108,11 +114,12 @@ async def get_twitch_connect_url_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
     ],
-):
+    redirect_to: Annotated[RedirectUrl, Depends()],
+) -> ConnectUrl:
     await token_data.channel_has_access(
         channel_id=channel_id, access_level=TAccessLevel.OWNER
     )
-    return dict(
+    return ConnectUrl(
         url='https://id.twitch.tv/oauth2/authorize?'
         + parse.urlencode(
             Oauth2AuthorizeParams(
@@ -124,6 +131,7 @@ async def get_twitch_connect_url_route(
                 state={
                     'channel_id': str(channel_id),
                     'mode': 'connect',
+                    'redirect_to': redirect_to.redirect_to,
                 },
             ).model_dump()
         )
@@ -137,11 +145,12 @@ async def get_twitch_connect_bot_url_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
     ],
-):
+    redirect_to: Annotated[RedirectUrl, Depends()],
+) -> ConnectUrl:
     await token_data.channel_has_access(
         channel_id=channel_id, access_level=TAccessLevel.OWNER
     )
-    return dict(
+    return ConnectUrl(
         url='https://id.twitch.tv/oauth2/authorize?'
         + parse.urlencode(
             Oauth2AuthorizeParams(
@@ -153,6 +162,7 @@ async def get_twitch_connect_bot_url_route(
                 state={
                     'channel_id': str(channel_id),
                     'mode': 'connect_bot',
+                    'redirect_to': redirect_to.redirect_to,
                 },
             ).model_dump()
         )
@@ -163,13 +173,14 @@ async def get_twitch_connect_bot_url_route(
 async def get_twitch_system_provider_bot_connect_url_route(
     request: Request,
     token_data: Annotated[TokenData, Security(authenticated, scopes=[])],
-):
+    redirect_to: Annotated[RedirectUrl, Depends()],
+) -> ConnectUrl:
     if not await token_data.is_global_admin():
         raise HTTPException(
             status_code=403,
             detail='Access denied',
         )
-    return dict(
+    return ConnectUrl(
         url='https://id.twitch.tv/oauth2/authorize?'
         + parse.urlencode(
             Oauth2AuthorizeParams(
@@ -179,7 +190,8 @@ async def get_twitch_system_provider_bot_connect_url_route(
                 scope=bot_provider_scopes[TProvider.twitch],
                 force_verify=True,
                 state={
-                    'mode': 'connect_bot_system_default',
+                    'mode': 'connect_system_provider_bot',
+                    'redirect_to': redirect_to.redirect_to,
                 },
             ).model_dump()
         )
@@ -190,7 +202,7 @@ async def get_twitch_system_provider_bot_connect_url_route(
 async def twitch_auth_route(
     request: Request,
     params: Annotated[Oauth2AuthorizeResponse, Query()],
-):
+) -> RedirectResponse:
     r = await twitch_oauth_client.post(
         url='https://id.twitch.tv/oauth2/token',
         params=Oauth2TokenParams(
@@ -272,8 +284,6 @@ async def twitch_auth_route(
             channel_id=channel_id,
         )
 
-        return RedirectResponse(f'/channels/{params.state["channel_id"]}/providers')
-
     elif params.state['mode'] == 'connect_bot':
         channel_id = UUID(params.state['channel_id'])
         bot_provider = await save_bot_provider(
@@ -304,9 +314,8 @@ async def twitch_auth_route(
                 twitch_user_id=twitch_user.id,
                 broadcaster_id=provider.provider_user_id or '',
             )
-        return RedirectResponse(f'/channels/{params.state["channel_id"]}/providers')
 
-    elif params.state['mode'] == 'connect_bot_system_default':
+    elif params.state['mode'] == 'connect_system_provider_bot':
         await save_bot_provider(
             data=BotProviderRequest(
                 provider=TProvider.twitch,
@@ -319,10 +328,11 @@ async def twitch_auth_route(
                 system_default=True,
             ),
         )
-        return RedirectResponse('/admin/system-provider-bots')
 
     else:
         raise HTTPException(
             status_code=400,
             detail=f'Invalid state mode: {params.state["mode"]}',
         )
+
+    return RedirectResponse(params.state['redirect_to'])

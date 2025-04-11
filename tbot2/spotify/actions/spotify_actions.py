@@ -1,12 +1,13 @@
 from uuid import UUID
 
+from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.spotify.schemas.spotify_schema import (
     SpotifyCurrentlyPlaying,
     SpotifyCursorPaging,
     SpotifyPlaylist,
 )
 
-from ..spotify_http_client import TBOT_CHANNEL_ID_HEADER, spotify_client
+from ..spotify_http_client import spotify_client
 
 
 async def get_spotify_currently_playing(

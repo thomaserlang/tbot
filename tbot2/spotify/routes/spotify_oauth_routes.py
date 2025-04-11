@@ -2,15 +2,17 @@ from typing import Annotated
 from urllib import parse
 from uuid import UUID
 
-from fastapi import Depends, HTTPException, Request, Security
+from fastapi import APIRouter, Depends, HTTPException, Request, Security
 from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
 
 from tbot2.channel import (
     ChannelOAuthProviderRequest,
+    ChannelScope,
     save_channel_oauth_provider,
 )
 from tbot2.common import (
+    ConnectUrl,
     Oauth2AuthorizeParams,
     Oauth2AuthorizeResponse,
     Oauth2TokenParams,
@@ -18,11 +20,12 @@ from tbot2.common import (
     TAccessLevel,
     TokenData,
     TProvider,
+    channel_provider_scopes,
 )
+from tbot2.common.schemas.connect_url_schema import RedirectUrl
 from tbot2.common.utils.request_url_for import request_url_for
 from tbot2.config_settings import config
 from tbot2.dependecies import authenticated
-from tbot2.twitch.router import APIRouter
 
 router = APIRouter()
 
@@ -30,29 +33,40 @@ spotify_oauth_client = AsyncClient(
     http2=True,
 )
 
-SCOPE = 'playlist-read-private user-read-recently-played user-read-currently-playing'
+channel_provider_scopes[TProvider.spotify] = ' '.join(
+    {
+        'playlist-read-private',
+        'user-read-recently-played',
+        'user-read-currently-playing',
+    }
+)
 
 
-@router.get('/channels/{channel_id}/spotify/connect')
+@router.get('/channels/{channel_id}/spotify/connect-url')
 async def spotify_connect_route(
     request: Request,
     channel_id: UUID,
-    token_data: Annotated[TokenData, Security(authenticated)],
-):
+    token_data: Annotated[
+        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+    ],
+    redirect_to: Annotated[RedirectUrl, Depends()],
+) -> ConnectUrl:
     await token_data.channel_has_access(
         channel_id=channel_id, access_level=TAccessLevel.ADMIN
     )
-    return RedirectResponse(
+    return ConnectUrl(
         url='https://accounts.spotify.com/authorize?'
         + parse.urlencode(
             Oauth2AuthorizeParams(
                 client_id=config.spotify.client_id,
                 response_type='code',
                 redirect_uri=str(request_url_for(request, 'spotify_auth_route')),
-                scope=SCOPE,
+                scope=channel_provider_scopes[TProvider.spotify],
+                force_verify=True,
                 state={
                     'channel_id': str(channel_id),
                     'mode': 'connect',
+                    'redirect_to': redirect_to.redirect_to,
                 },
             ).model_dump()
         )
@@ -63,12 +77,12 @@ async def spotify_connect_route(
 async def spotify_auth_route(
     request: Request,
     params: Annotated[Oauth2AuthorizeResponse, Depends()],
-):
+) -> RedirectResponse:
     response = await spotify_oauth_client.post(
         url='https://accounts.spotify.com/api/token',
         params=Oauth2TokenParams(
-            client_id=config.twitch.client_id,
-            client_secret=config.twitch.client_secret,
+            client_id=config.spotify.client_id,
+            client_secret=config.spotify.client_secret,
             redirect_uri=str(request_url_for(request, 'spotify_auth_route')),
             code=params.code,
         ).model_dump(),
@@ -86,6 +100,8 @@ async def spotify_auth_route(
             access_token=oauth_response.access_token,
             refresh_token=oauth_response.refresh_token,
             expires_in=oauth_response.expires_in,
-            scope=SCOPE,
+            scope=channel_provider_scopes[TProvider.spotify],
         ),
     )
+
+    return RedirectResponse(url=params.state['redirect_to'])
