@@ -13,6 +13,7 @@ from tbot2.common.utils.oauth_auth import (
     ChannelProviderOAuth,
 )
 from tbot2.config_settings import config
+from tbot2.exceptions import ErrorMessage
 
 
 class TwitchOauth2ClientCredentials(OAuth2ClientCredentials):
@@ -95,7 +96,7 @@ async def get_twitch_pagination(
             },
         )
         if response.status_code >= 400:
-            ValueError(f'{response.status_code} {response.text}')
+            ErrorMessage(f'{response.status_code} {response.text}')
         data = response.json()
         all_data.extend(data['data'])
         pagination = data.get('pagination')
@@ -105,7 +106,7 @@ async def get_twitch_pagination(
     elif issubclass(schema, BaseModel):
         return [schema.model_validate(item) for item in all_data]
     else:
-        raise ValueError(
+        raise Exception(
             f'Invalid schema type: {schema}. Must be either BaseModel or TwitchObject.'
         )
 
@@ -121,7 +122,7 @@ async def get_twitch_pagination_yield(
         elif issubclass(schema, BaseModel):
             yield schema.model_validate(item)
         else:
-            raise ValueError(
+            raise Exception(
                 f'Invalid schema type: {schema}. Must be either BaseModel or '
                 'TwitchObject.'
             )
@@ -136,7 +137,7 @@ async def get_twitch_pagination_yield(
             },
         )
         if response.status_code >= 400:
-            raise ValueError(f'{response.status_code} {response.text}')
+            raise ErrorMessage(f'{response.status_code} {response.text}')
         data = response.json()
         for item in data['data']:
             if issubclass(schema, TwitchObject):
@@ -144,7 +145,7 @@ async def get_twitch_pagination_yield(
             elif issubclass(schema, BaseModel):
                 yield schema.model_validate(item)
             else:
-                raise ValueError(
+                raise Exception(
                     f'Invalid schema type: {schema}. Must be either BaseModel or '
                     'TwitchObject.'
                 )

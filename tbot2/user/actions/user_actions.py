@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -52,7 +52,7 @@ async def create_user(
             result = await session.execute(
                 sa.insert(MUser).values(
                     id=user_id,
-                    created_at=datetime.now(tz=timezone.utc),
+                    created_at=datetime.now(tz=UTC),
                     **data.model_dump(),
                 )
             )
@@ -61,18 +61,18 @@ async def create_user(
                 raise ValueError('User could not be created')
 
             return user
-        except IntegrityError:
+        except IntegrityError as e:
             result = await session.scalar(
                 sa.select(MUser.id).where(MUser.username == data.username)
             )
             if result:
-                raise ValueError(f"Username '{data.username}' already exists")
+                raise ValueError(f"Username '{data.username}' already exists") from e
 
             result = await session.scalar(
                 sa.select(MUser.id).where(MUser.email == data.email)
             )
             if result:
-                raise ValueError(f"Email '{data.email}' already exists")
+                raise ValueError(f"Email '{data.email}' already exists") from e
 
             raise
 
@@ -86,7 +86,7 @@ async def update_user(
                 sa.update(MUser)
                 .where(MUser.id == user_id)
                 .values(
-                    updated_at=datetime.now(tz=timezone.utc),
+                    updated_at=datetime.now(tz=UTC),
                     **data.model_dump(exclude_defaults=True),
                 )
             )
@@ -94,21 +94,23 @@ async def update_user(
             if not user:
                 raise ValueError('User could not be updated')
             return user
-        except IntegrityError:
+        except IntegrityError as e:
             if data.username:
                 user = await get_user_by_username(
                     username=data.username, session=session
                 )
                 if user:
-                    raise ValueError(f"Username '{data.username}' already exists")
+                    raise ValueError(
+                        f"Username '{data.username}' already exists"
+                    ) from e
 
             if data.email:
                 user = await get_user_by_email(email=data.email, session=session)
                 if user:
-                    raise ValueError(f"Email '{data.email}' already exists")
+                    raise ValueError(f"Email '{data.email}' already exists") from e
 
             user = await get_user(user_id=user_id, session=session)
             if not user:
-                raise ValueError('User could not be updated')
+                raise ValueError('User could not be updated') from e
 
             raise

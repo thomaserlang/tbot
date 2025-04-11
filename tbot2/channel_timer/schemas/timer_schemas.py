@@ -81,7 +81,8 @@ class TimerUpdate(BaseRequestSchema):
     )
     @classmethod
     def check_not_none(
-        cls, value: str | int | bool | TProvider | TimerPickMode | TimerActiveMode
+        cls,
+        value: None | str | int | bool | TProvider | TimerPickMode | TimerActiveMode,
     ) -> str | int | bool | TProvider | TimerPickMode | TimerActiveMode:
         if value is None:
             raise ValueError('Cannot be None')

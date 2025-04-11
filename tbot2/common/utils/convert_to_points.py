@@ -1,3 +1,6 @@
+from tbot2.exceptions import ErrorMessage
+
+
 def convert_to_points(points_str: str | int, user_points: int):
     if isinstance(points_str, str):
         if points_str.isdigit():
@@ -9,8 +12,8 @@ def convert_to_points(points_str: str | int, user_points: int):
         elif points_str.endswith('%'):
             try:
                 points_str = int(points_str[:-1]) * user_points // 100
-            except ValueError:
-                raise ValueError(f'Invalid points: {points_str}')
+            except ValueError as e:
+                raise ErrorMessage(f'Invalid points: {points_str}') from e
         else:
-            raise ValueError(f'Invalid points: {points_str}')
+            raise ErrorMessage(f'Invalid points: {points_str}')
     return int(points_str)

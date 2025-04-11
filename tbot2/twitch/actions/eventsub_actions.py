@@ -5,6 +5,7 @@ from uuid import UUID
 from tbot2.channel import get_channel_oauth_provider, get_channels_providers
 from tbot2.common import TProvider
 from tbot2.config_settings import config
+from tbot2.exceptions import ErrorMessage
 
 from ..schemas.eventsub_notification_schema import (
     EventSubRegistration,
@@ -83,7 +84,7 @@ async def _register_eventsub(
         },
     )
     if response.status_code >= 400:
-        raise ValueError(f'{response.status_code} {response.text}')
+        raise ErrorMessage(f'{response.status_code} {response.text}')
     return EventSubSubscription.model_validate(response.json()['data'][0])
 
 
@@ -113,7 +114,7 @@ async def get_eventsubs(
         params=params,
     )
     if response.status_code >= 400:
-        raise ValueError(f'{response.status_code} {response.text}')
+        raise ErrorMessage(f'{response.status_code} {response.text}')
     return get_twitch_pagination_yield(response, EventSubSubscription)
 
 

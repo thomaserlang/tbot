@@ -18,7 +18,7 @@ async def get_chatter_gambling_stats(
     provider: TProvider,
     chatter_id: str,
     session: AsyncSession | None = None,
-):
+) -> ChatterGamblingStats:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MChatterGamblingStats).where(
@@ -42,7 +42,7 @@ async def inc_chatter_gambling_stats(
     provider: TProvider,
     chatter_id: str,
     data: ChatterGamblingStatsUpdate,
-):
+) -> ChatterGamblingStats:
     async with get_session() as session:
         data_ = data.model_dump(exclude_unset=True)
         result = await session.execute(

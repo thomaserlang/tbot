@@ -10,7 +10,7 @@ async def create_permit(
     provider: TProvider,
     chatter_id: str,
     seconds: int = 60,
-):
+) -> None:
     await database.redis.set(
         f'tbot:permit:{channel_id}:{provider.value}:{chatter_id}',
         '1',

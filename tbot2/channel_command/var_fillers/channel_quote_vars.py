@@ -1,23 +1,17 @@
-from tbot2.channel_command import (
-    CommandError,
-    CommandSyntaxError,
-    TCommand,
-    TMessageVars,
-    fills_vars,
-)
-from tbot2.common import ChatMessage
-
-from ..actions.channel_quote_actions import (
+from tbot2.channel_quote import (
+    ChannelQuoteCreate,
+    ChannelQuoteUpdate,
     create_channel_quote,
     delete_channel_quote,
     get_channel_quote_by_number,
     get_random_channel_quote,
     update_channel_quote,
 )
-from ..schemas.channel_quote_request_schemas import (
-    ChannelQuoteCreate,
-    ChannelQuoteUpdate,
-)
+from tbot2.common import ChatMessage
+
+from ..exceptions import CommandError, CommandSyntaxError
+from ..types import TCommand, TMessageVars
+from ..var_filler import fills_vars
 
 
 @fills_vars(provider='all', vars=('quote.add',))

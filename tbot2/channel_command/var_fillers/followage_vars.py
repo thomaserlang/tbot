@@ -1,12 +1,11 @@
 import humanize.time
 
-from tbot2.channel_command import CommandError, TCommand, TMessageVars, fills_vars
 from tbot2.common import ChatMessage, TProvider, datetime_now
+from tbot2.twitch import lookup_twitch_users, twitch_channel_follower
 
-from ..actions.twitch_channel_follower_action import twitch_channel_follower
-from ..actions.twitch_lookup_users_action import (
-    lookup_twitch_users,
-)
+from ..exceptions import CommandError
+from ..types import TCommand, TMessageVars
+from ..var_filler import fills_vars
 
 
 @fills_vars(

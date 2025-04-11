@@ -29,7 +29,8 @@ export function CommandsTable({ data, onEditClick }: Props) {
 
                     render: (row) => (
                         <Anchor size="sm" onClick={() => onEditClick?.(row)}>
-                            {row.cmds.join(', ')} {row.patterns?.join(', ')}
+                            {row.cmds.map((cmd) => `!${cmd}`).join(', ')}
+                            {!row.cmds && row.patterns?.join(', ')}
                         </Anchor>
                     ),
                 },

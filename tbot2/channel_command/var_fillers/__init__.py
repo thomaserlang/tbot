@@ -1,12 +1,21 @@
-from tbot2.channel_gambling import cmd_var_fillers as cmd_var_fillers
-from tbot2.channel_quote import cmd_var_fillers as cmd_var_fillers  # noqa: F811
-from tbot2.twitch import cmd_var_fillers as cmd_var_fillers  # noqa: F811
-
+from . import accountage_vars as accountage_vars
+from . import add_point_vars as add_point_vars
+from . import channel_quote_vars as channel_quote_vars
 from . import countdown_vars as countdown_vars
 from . import faceit_vars as faceit_vars
+from . import followage_vars as followage_vars
+from . import gambling_stats_vars as gambling_stats_vars
+from . import give_points_vars as give_points_vars
+from . import permit_manager_var as permit_manager_var
 from . import points_name_vars as points_name_vars
+from . import points_ranking_vars as points_ranking_vars
+from . import points_vars as points_vars
 from . import randint_vars as randint_vars
+from . import roulette_vars as roulette_vars
 from . import sender_vars as sender_vars
+from . import slots_vars as slots_vars
 from . import spotify_vars as spotify_vars
+from . import streams_in_a_row_vars as streams_in_a_row_vars
+from . import time_vars as time_vars
 from . import user_vars as user_vars
 from . import weather_vars as weather_vars

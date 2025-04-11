@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -21,7 +21,7 @@ async def set_channel_viewer_watched_stream(
     viewer_id: str,
     stream_id: str,
     session: AsyncSession | None = None,
-):
+) -> None:
     """
     Used when a viewer is detected as watching a stream.
     Updates the amount of streams they have watched and increments their in a row count.
@@ -40,11 +40,11 @@ async def set_channel_viewer_watched_stream(
             streams=stats.streams + 1,
             streams_row=stats.streams_row + 1,
             last_stream_id=stream_id,
-            last_stream_at=datetime.now(tz=timezone.utc),
+            last_stream_at=datetime.now(tz=UTC),
         )
         if stats.streams_row + 1 > stats.streams_row_peak:
             data.streams_row_peak = stats.streams_row + 1
-            data.streams_row_peak_date = datetime.now(tz=timezone.utc).date()
+            data.streams_row_peak_date = datetime.now(tz=UTC).date()
 
         await update_channel_viewer_stats(
             channel_id=channel_id,
@@ -61,7 +61,7 @@ async def get_channel_viewer_stats(
     provider: str,
     viewer_id: str,
     session: AsyncSession | None = None,
-):
+) -> ChannelViewerStats:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MChannelViewerStats).where(
@@ -87,7 +87,7 @@ async def update_channel_viewer_stats(
     viewer_id: str,
     data: ChannelViewerStatsUpdate,
     session: AsyncSession | None = None,
-):
+) -> None:
     async with get_session(session) as session:
         result = await session.execute(
             sa.update(MChannelViewerStats)

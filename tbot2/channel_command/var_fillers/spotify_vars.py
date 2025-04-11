@@ -1,4 +1,5 @@
 from tbot2.common import ChatMessage
+from tbot2.exceptions import ErrorMessage
 from tbot2.spotify import (
     get_spotify_currently_playing,
     get_spotify_playlist,
@@ -26,8 +27,8 @@ async def spotify_vars(
         playing = await get_spotify_currently_playing(
             channel_id=chat_message.channel_id,
         )
-    except Exception as e:
-        raise CommandError('Spotify is unavailable') from e
+    except ErrorMessage as e:
+        raise CommandError(e) from e
 
     if not playing.is_playing or not playing.item:
         raise CommandError('Spotify is not playing')
@@ -35,7 +36,7 @@ async def spotify_vars(
     vars['spotify.song_name'].value = playing.item.name
     vars['spotify.song_artists'].value = ', '.join(a.name for a in playing.item.artists)
     vars['spotify.song_progress'].value = '{}:{:02d}'.format(
-        *divmod(round(playing.progress_ms or 0 / 1000), 60)
+        *divmod(round((playing.progress_ms or 0) / 1000), 60)
     )
     vars['spotify.song_duration'].value = '{}:{:02d}'.format(
         *divmod(round(playing.item.duration_ms / 1000), 60)
@@ -56,8 +57,8 @@ async def spotify_playlist_vars(
         playing = await get_spotify_currently_playing(
             channel_id=chat_message.channel_id,
         )
-    except Exception as e:
-        raise CommandError('Spotify is unavailable') from e
+    except ValueError as e:
+        raise ErrorMessage(e) from e
 
     if not playing.is_playing:
         raise CommandError('Spotify is not playing')
@@ -68,13 +69,16 @@ async def spotify_playlist_vars(
     if not playing.context.href:
         raise CommandError('No playlist found')
 
+    if not playing.context.type == 'playlist':
+        raise CommandError('Is currently not playing a playlist')
+
     try:
         playlist = await get_spotify_playlist(
             channel_id=chat_message.channel_id,
             playlist_url=playing.context.href,
         )
-    except Exception as e:
-        raise CommandError('Failed to get playlist') from e
+    except ErrorMessage as e:
+        raise CommandError(e) from e
 
     vars['spotify.playlist_name'].value = playlist.name
     vars['spotify.playlist_url'].value = playlist.external_urls.spotify
@@ -94,7 +98,7 @@ async def spotify_prev_song_vars(
         played = await get_spotify_recently_played(
             channel_id=chat_message.channel_id,
         )
-    except Exception as e:
+    except ErrorMessage as e:
         raise CommandError('Spotify is unavailable') from e
 
     if not played:

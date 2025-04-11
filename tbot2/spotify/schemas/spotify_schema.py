@@ -64,7 +64,6 @@ class SpotifyItem(SpotifyBaseModel):
     external_urls: SpotifyExternalUrls
     href: str
     id: str
-    is_playable: bool
     linked_from: dict[str, Any] | None = None
     restrictions: SpotifyRestrictions | None = None
     name: str
@@ -107,9 +106,7 @@ class SpotifyActions(SpotifyBaseModel):
 
 
 class SpotifyCurrentlyPlaying(SpotifyBaseModel):
-    device: SpotifyDevice
-    repeat_state: str
-    shuffle_state: bool
+    device: SpotifyDevice | None = None
     context: SpotifyContext | None = None
     timestamp: int
     progress_ms: int | None = None

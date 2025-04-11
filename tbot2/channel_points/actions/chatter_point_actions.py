@@ -16,7 +16,7 @@ async def get_points(
     provider: TProvider,
     chatter_id: str,
     session: AsyncSession | None = None,
-):
+) -> ChatterPoints:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MChatterPoints).where(
@@ -41,7 +41,7 @@ async def get_points_rank(
     provider: TProvider,
     chatter_id: str,
     session: AsyncSession | None = None,
-):
+) -> ChatterPointsRank | None:
     async with get_session(session) as session:
         sub_rank = (
             sa.select(
@@ -85,7 +85,7 @@ async def inc_points(
     chatter_id: str,
     points: int,
     session: AsyncSession | None = None,
-):
+) -> ChatterPoints:
     async with get_session(session) as session:
         result = await session.execute(
             sa.update(MChatterPoints)
@@ -128,7 +128,7 @@ async def inc_bulk_points(
     chatter_ids: list[str],
     points: int,
     session: AsyncSession | None = None,
-):
+) -> None:
     async with get_session(session) as session:
         await session.execute(
             insert(MChatterPoints)

@@ -1,4 +1,4 @@
-import pytz  # type: ignore[import]
+import pytz
 
 from tbot2.common import ChatMessage, datetime_now
 

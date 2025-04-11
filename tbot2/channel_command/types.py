@@ -1,6 +1,6 @@
+from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Awaitable, Callable, Sequence
 
 from tbot2.common import ChatMessage, TProvider, TScope
 

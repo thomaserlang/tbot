@@ -4,11 +4,12 @@ from uuid import UUID
 
 from async_lru import alru_cache
 
+from tbot2.channel_command.exceptions import CommandError
 from tbot2.common import ChatMessage, check_pattern_match
 from tbot2.contexts import AsyncSession
 
+from ..fill_message import fill_message
 from ..types import TCommand
-from ..var_filler import fill_message
 from .command_actions import Command, get_commands
 
 
@@ -36,20 +37,31 @@ async def handle_message_response(
             continue
 
         if chat_message.message.startswith('!'):
-            cmd = chat_message.message[1:].lower()
-            if cmd in command.cmds:
+            args = chat_message.message[1:].split(' ')
+            cmd = args.pop(0).lower()
+            if cmd not in command.cmds:
+                continue
+            try:
                 response = await fill_message(
                     response_message=command.response,
                     command=TCommand(
                         name=cmd,
-                        args=chat_message.message[len(cmd) + 1 :].strip().split(' '),
+                        args=args,
                     ),
                     chat_message=chat_message,
                 )
                 return MessageResponse(response=response, command=command)
+            except CommandError as e:
+                return MessageResponse(
+                    response=str(e),
+                    command=command,
+                )
+
         else:
             for pattern in command.patterns:
-                if check_pattern_match(chat_message.message, pattern):
+                if not check_pattern_match(chat_message.message, pattern):
+                    continue
+                try:
                     response = await fill_message(
                         response_message=command.response,
                         command=TCommand(
@@ -59,7 +71,11 @@ async def handle_message_response(
                         chat_message=chat_message,
                     )
                     return MessageResponse(response=response, command=command)
-
+                except CommandError as e:
+                    return MessageResponse(
+                        response=str(e),
+                        command=command,
+                    )
     return None
 
 

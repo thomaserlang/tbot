@@ -17,7 +17,7 @@ async def get_channel_point_settings(
     *,
     channel_id: UUID,
     session: AsyncSession | None = None,
-):
+) -> ChannelPointSettings:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MChannelPointSettings).where(
@@ -36,7 +36,7 @@ async def update_channel_point_settings(
     channel_id: UUID,
     data: ChannelPointSettingsUpdate,
     session: AsyncSession | None = None,
-):
+) -> ChannelPointSettings:
     async with get_session(session) as session:
         data_ = data.model_dump(exclude_unset=True)
         result = await session.execute(

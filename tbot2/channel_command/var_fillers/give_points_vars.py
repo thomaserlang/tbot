@@ -1,15 +1,16 @@
-from tbot2.channel_command import (
-    CommandError,
-    CommandSyntaxError,
-    TCommand,
-    TMessageVars,
-    fills_vars,
-)
 from tbot2.channel_points import get_channel_point_settings, get_points, inc_points
-from tbot2.common import ChatMessage, TProvider, convert_to_points, safe_username
+from tbot2.common import (
+    ChatMessage,
+    TProvider,
+    convert_to_points,
+    safe_username,
+)
 from tbot2.contexts import get_session
+from tbot2.twitch import lookup_twitch_user
 
-from ..actions.twitch_lookup_users_action import lookup_twitch_user
+from ..exceptions import CommandError, CommandSyntaxError
+from ..types import TCommand, TMessageVars
+from ..var_filler import fills_vars
 
 
 @fills_vars(provider=TProvider.twitch, vars=('give_points',))

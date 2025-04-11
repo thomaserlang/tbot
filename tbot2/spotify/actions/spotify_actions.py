@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.exceptions import ErrorMessage
 from tbot2.spotify.schemas.spotify_schema import (
     SpotifyCurrentlyPlaying,
     SpotifyCursorPaging,
@@ -21,7 +22,8 @@ async def get_spotify_currently_playing(
         },
     )
     if response.status_code >= 400:
-        raise ValueError(f'{response.status_code} {response.text}')
+        raise ErrorMessage(f'{response.status_code} {response.text}')
+
     data = SpotifyCurrentlyPlaying.model_validate(response.json())
     return data
 
@@ -37,7 +39,7 @@ async def get_spotify_recently_played(
         },
     )
     if response.status_code >= 400:
-        raise ValueError(f'{response.status_code} {response.text}')
+        raise ErrorMessage(f'{response.status_code} {response.text}')
 
     data = SpotifyCursorPaging.model_validate(response.json())
     return data.items
@@ -51,6 +53,6 @@ async def get_spotify_playlist(*, channel_id: UUID, playlist_url: str):
         },
     )
     if response.status_code >= 400:
-        raise ValueError(f'{response.status_code} {response.text}')
+        raise ErrorMessage(f'{response.status_code} {response.text}')
     data = SpotifyPlaylist.model_validate(response.json())
     return data

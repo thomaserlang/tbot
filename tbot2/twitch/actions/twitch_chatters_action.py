@@ -3,6 +3,7 @@ from uuid import UUID
 from twitchAPI.twitch import Chatter
 
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.exceptions import ErrorMessage
 
 from ..actions.twitch_channel_follower_action import twitch_user_client
 from ..twitch_http_client import get_twitch_pagination
@@ -21,5 +22,5 @@ async def get_twitch_chatters(channel_id: UUID, broadcaster_id: str):
         },
     )
     if response.status_code >= 400:
-        raise ValueError(f'{response.status_code} {response.text}')
+        raise ErrorMessage(f'{response.status_code} {response.text}')
     return await get_twitch_pagination(response, schema=Chatter)

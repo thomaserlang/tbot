@@ -4,6 +4,7 @@ from twitchAPI.twitch import TwitchUser
 
 from tbot2.common import safe_username
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.exceptions import ErrorMessage
 
 from ..twitch_http_client import twitch_app_client
 
@@ -11,9 +12,14 @@ from ..twitch_http_client import twitch_app_client
 async def lookup_twitch_users(
     *,
     channel_id: UUID,
-    logins: list[str] = [],
-    user_ids: list[str] = [],
+    logins: list[str] | None = None,
+    user_ids: list[str] | None = None,
 ) -> list[TwitchUser]:
+    if not logins:
+        logins = []
+    if not user_ids:
+        user_ids = []
+
     response = await twitch_app_client.get(
         '/users',
         params={
@@ -25,7 +31,7 @@ async def lookup_twitch_users(
         },
     )
     if response.status_code >= 400:
-        raise ValueError(f'{response.status_code} {response.text}')
+        raise ErrorMessage(f'{response.status_code} {response.text}')
     data = response.json()
     if not data['data']:
         return []
@@ -39,9 +45,9 @@ async def lookup_twitch_user(
     user_id: str | None = None,
 ):
     if not login and not user_id:
-        raise ValueError('login or user_id must be provided')
+        raise Exception('login or user_id must be provided')
     if login and user_id:
-        raise ValueError('login and user_id cannot both be provided')
+        raise Exception('login and user_id cannot both be provided')
     data = await lookup_twitch_users(
         channel_id=channel_id,
         logins=[login] if login else [],

@@ -17,7 +17,9 @@ from tbot2.channel import (
     save_channel_oauth_provider,
 )
 from tbot2.common import TProvider
+from tbot2.config_settings import config
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.exceptions import ErrorMessage
 
 
 class ChannelProviderOAuth(Auth):
@@ -36,7 +38,7 @@ class ChannelProviderOAuth(Auth):
         provider: ChannelOAuthProvider | None = None
         channel_id = UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER, None))
         if not channel_id:
-            raise ValueError(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
+            raise Exception(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
 
         async with self._async_lock:
             if not request.headers.get('Authorization'):
@@ -45,9 +47,11 @@ class ChannelProviderOAuth(Auth):
                     provider=self.provider,
                 )
                 if not provider:
-                    raise ValueError(
-                        f'Channel {channel_id} needs to grant the bot access in the'
-                        'dashboard'
+                    raise ErrorMessage(
+                        _get_missing_provider_message(
+                            channel_uuid=channel_id,
+                            provider=self.provider,
+                        )
                     )
                 request.headers['Authorization'] = f'Bearer {provider.access_token}'
 
@@ -61,9 +65,11 @@ class ChannelProviderOAuth(Auth):
                         provider=self.provider,
                     )
                     if not provider:
-                        raise ValueError(
-                            f'No {self.provider} bot provider found for '
-                            f'channel {channel_id}'
+                        raise ErrorMessage(
+                            _get_missing_provider_message(
+                                channel_uuid=channel_id,
+                                provider=self.provider,
+                            )
                         )
                 access_token = await self._refresh_token(
                     channel_id=channel_id, refresh_token=provider.refresh_token or ''
@@ -84,14 +90,18 @@ class ChannelProviderOAuth(Auth):
                 },
             )
             if response.status_code >= 400:
-                ValueError(f'{response.status_code} {response.text}')
+                ErrorMessage(f'{response.status_code} {response.text}')
             data = response.json()
+
             await save_channel_oauth_provider(
                 channel_id=channel_id,
                 provider=self.provider,
                 data=ChannelOAuthProviderRequest(
                     access_token=data['access_token'],
-                    refresh_token=data['refresh_token'],
+                    # For e.g. spotify they do not give a new refresh token
+                    refresh_token=data['refresh_token']
+                    if 'refresh_token' in data
+                    else refresh_token,
                     expires_in=data['expires_in'],
                 ),
             )
@@ -114,7 +124,7 @@ class ChannelProviderBotOAuth(Auth):
         provider: BotProvider | None = None
         channel_id = UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER, None))
         if not channel_id:
-            raise ValueError(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
+            raise Exception(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
 
         async with self._async_lock:
             if not request.headers.get('Authorization'):
@@ -123,9 +133,11 @@ class ChannelProviderBotOAuth(Auth):
                     provider=self.provider,
                 )
                 if not provider:
-                    raise ValueError(
-                        f'No {self.provider} bot provider found for '
-                        f'channel {channel_id}'
+                    raise ErrorMessage(
+                        _get_missing_provider_message(
+                            channel_uuid=channel_id,
+                            provider=self.provider,
+                        )
                     )
                 request.headers['Authorization'] = f'Bearer {provider.access_token}'
 
@@ -139,9 +151,11 @@ class ChannelProviderBotOAuth(Auth):
                         provider=self.provider,
                     )
                     if not provider:
-                        raise ValueError(
-                            f'No {self.provider} bot provider found for '
-                            f'channel {channel_id}'
+                        raise ErrorMessage(
+                            _get_missing_provider_message(
+                                channel_uuid=channel_id,
+                                provider=self.provider,
+                            )
                         )
                 access_token = await self._refresh_token(
                     provider_user_id=provider.provider_user_id,
@@ -151,7 +165,7 @@ class ChannelProviderBotOAuth(Auth):
 
             yield request
 
-    async def _refresh_token(self, provider_user_id: str, refresh_token: str):
+    async def _refresh_token(self, provider_user_id: str, refresh_token: str) -> str:
         async with AsyncClient() as client:
             response = await client.post(
                 self.token_url,
@@ -163,7 +177,7 @@ class ChannelProviderBotOAuth(Auth):
                 },
             )
             if response.status_code >= 400:
-                ValueError(f'{response.status_code} {response.text}')
+                ErrorMessage(f'{response.status_code} {response.text}')
             data = response.json()
             await save_bot_provider(
                 data=BotProviderRequest(
@@ -175,3 +189,10 @@ class ChannelProviderBotOAuth(Auth):
                 ),
             )
             return str(data['access_token'])
+
+
+def _get_missing_provider_message(channel_uuid: UUID, provider: TProvider):
+    return (
+        f'{provider} must be added as a provider: '
+        f'{config.web.base_url}channels/{channel_uuid}/providers'
+    )
