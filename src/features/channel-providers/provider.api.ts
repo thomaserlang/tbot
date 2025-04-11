@@ -3,6 +3,7 @@ import { queryClient } from '@/queryclient'
 import { Provider } from '@/types/provider.type'
 import { api } from '@/utils/api'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { useLocation } from 'react-router-dom'
 import { ChannelProvider, ChannelProviderId } from './provider.types'
 import { getProvidersQueryKey } from './providers.api'
 
@@ -88,6 +89,7 @@ export function useGetProviderConnectUrl({
     onSuccess?: (data: ConnectURL) => void
     onError?: (error: unknown) => void
 } = {}) {
+    const location = useLocation()
     return useMutation({
         mutationFn: async ({
             channelId,
@@ -97,7 +99,12 @@ export function useGetProviderConnectUrl({
             provider: Provider
         }) => {
             const r = await api.get<ConnectURL>(
-                `/api/2/channels/${channelId}/${provider}/connect-url`
+                `/api/2/channels/${channelId}/${provider}/connect-url`,
+                {
+                    params: {
+                        redirect_to: location.pathname + location.search,
+                    },
+                }
             )
             return r.data
         },
@@ -113,6 +120,7 @@ export function useGetProviderConnectBotUrl({
     onSuccess?: (data: ConnectURL) => void
     onError?: (error: unknown) => void
 } = {}) {
+    const location = useLocation()
     return useMutation({
         mutationFn: async ({
             channelId,
@@ -122,7 +130,12 @@ export function useGetProviderConnectBotUrl({
             provider: Provider
         }) => {
             const r = await api.get<ConnectURL>(
-                `/api/2/channels/${channelId}/${provider}/connect-bot-url`
+                `/api/2/channels/${channelId}/${provider}/connect-bot-url`,
+                {
+                    params: {
+                        redirect_to: location.pathname + location.search,
+                    },
+                }
             )
             return r.data
         },

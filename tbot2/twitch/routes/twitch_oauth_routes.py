@@ -254,7 +254,7 @@ async def twitch_auth_route(
             )
 
         token = await create_token_str(result.token_data)
-        return RedirectResponse(f'/sign-in/success#{token}')
+        return RedirectResponse(params.state['redirect_to'] + f'#access_token={token}')
 
     elif params.state['mode'] == 'connect':
         channel_id = UUID(params.state['channel_id'])
@@ -334,5 +334,7 @@ async def twitch_auth_route(
             status_code=400,
             detail=f'Invalid state mode: {params.state["mode"]}',
         )
+    import logging
 
+    logging.error(params.state['redirect_to'])
     return RedirectResponse(params.state['redirect_to'])

@@ -143,6 +143,11 @@ export const router = createBrowserRouter([
                 </Container>
             )
         },
+        element: (
+            <QueryParamProvider adapter={ReactRouter6Adapter}>
+                <Outlet />
+            </QueryParamProvider>
+        ),
         children: [
             {
                 path: '',
@@ -150,11 +155,7 @@ export const router = createBrowserRouter([
                     {
                         element: (
                             <CurrentUserProvider>
-                                <QueryParamProvider
-                                    adapter={ReactRouter6Adapter}
-                                >
-                                    <Outlet />
-                                </QueryParamProvider>
+                                <Outlet />
                             </CurrentUserProvider>
                         ),
                         ErrorBoundary: () => {

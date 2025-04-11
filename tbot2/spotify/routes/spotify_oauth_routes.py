@@ -96,6 +96,16 @@ async def spotify_auth_route(
 
     oauth_response = Oauth2TokenResponse.model_validate(response.json())
 
+    r = await client.get(
+        url='https://api.spotify.com/v1/me',
+        headers={
+            'Authorization': f'Bearer {oauth_response.access_token}',
+        },
+    )
+    if r.status_code >= 400:
+        raise HTTPException(status_code=r.status_code, detail=r.text)
+    user_info = r.json()
+
     await save_channel_oauth_provider(
         channel_id=UUID(params.state['channel_id']),
         provider=TProvider.spotify,
@@ -104,6 +114,7 @@ async def spotify_auth_route(
             refresh_token=oauth_response.refresh_token,
             expires_in=oauth_response.expires_in,
             scope=channel_provider_scopes[TProvider.spotify],
+            name=user_info['id'],
         ),
     )
 

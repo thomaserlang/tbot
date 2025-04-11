@@ -3,6 +3,7 @@ import { queryClient } from '@/queryclient'
 import { Provider } from '@/types/provider.type'
 import { api } from '@/utils/api'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { useLocation } from 'react-router-dom'
 import { getSystemProviderBotsQueryKey } from './provider-bots.api'
 
 export function getSystemProviderBotQueryKey(provider: Provider) {
@@ -73,10 +74,16 @@ export function useGetSystemProviderBotConnectUrl({
     onSuccess?: (data: ConnectURL) => void
     onError?: (error: unknown) => void
 } = {}) {
+    const location = useLocation()
     return useMutation({
         mutationFn: async ({ provider }: { provider: Provider }) => {
             const r = await api.get<ConnectURL>(
-                `/api/2/${provider}/system-provider-bot-connect-url`
+                `/api/2/${provider}/system-provider-bot-connect-url`,
+                {
+                    params: {
+                        redirect_to: location.pathname + location.search,
+                    },
+                }
             )
             return r.data
         },
