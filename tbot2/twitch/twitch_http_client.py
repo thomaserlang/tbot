@@ -1,28 +1,18 @@
-import asyncio
 import sys
 import typing
-from uuid import UUID
 
-from httpx import AsyncClient, Auth, Request, Response
+from httpx import AsyncClient, Response
 from httpx_auth import OAuth2ClientCredentials
 from pydantic import BaseModel
 from twitchAPI.object.base import TwitchObject
 from twitchAPI.twitch import Twitch
 
-from tbot2.bot_providers import (
-    BotProvider,
-    BotProviderRequest,
-    save_bot_provider,
-)
-from tbot2.channel import (
-    ChannelOAuthProviderRequest,
-    get_channel_bot_provider,
-    get_channel_oauth_provider,
-    save_channel_oauth_provider,
-)
 from tbot2.common import TProvider
+from tbot2.common.utils.oauth_auth import (
+    ChannelProviderBotOAuth,
+    ChannelProviderOAuth,
+)
 from tbot2.config_settings import config
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
 
 class TwitchOauth2ClientCredentials(OAuth2ClientCredentials):
@@ -39,141 +29,6 @@ class TwitchOauth2ClientCredentials(OAuth2ClientCredentials):
         }
 
 
-class TwitchUserOAuth(Auth):
-    def __init__(self):
-        self._async_lock = asyncio.Lock()
-
-    async def async_auth_flow(
-        self, request: Request
-    ) -> typing.AsyncGenerator[Request, Response]:
-        async with self._async_lock:
-            channel_id = UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER, None))
-            if not channel_id:
-                raise ValueError(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
-            provider = await get_channel_oauth_provider(
-                channel_id=channel_id,
-                provider=TProvider.twitch,
-            )
-            if not provider:
-                raise ValueError(
-                    f'Channel {channel_id} needs to grant the bot access in the'
-                    'dashboard'
-                )
-            request.headers['Authorization'] = f'Bearer {provider.access_token}'
-
-        response = yield request
-
-        if response.status_code == 401:
-            async with self._async_lock:
-                access_token = await self._refresh_token(
-                    channel_id=channel_id, refresh_token=provider.refresh_token or ''
-                )
-                if not provider:
-                    raise ValueError(
-                        f'Channel {channel_id} needs to grant the bot access in the '
-                        'dashboard'
-                    )
-                request.headers['Authorization'] = f'Bearer {access_token}'
-
-            yield request
-
-    async def _refresh_token(self, channel_id: UUID, refresh_token: str):
-        async with AsyncClient() as client:
-            response = await client.post(
-                'https://id.twitch.tv/oauth2/token',
-                data={
-                    'grant_type': 'refresh_token',
-                    'refresh_token': refresh_token,
-                    'client_id': config.twitch.client_id,
-                    'client_secret': config.twitch.client_secret,
-                },
-            )
-            if response.status_code >= 400:
-                ValueError(f'{response.status_code} {response.text}')
-            data = response.json()
-            await save_channel_oauth_provider(
-                channel_id=channel_id,
-                provider=TProvider.twitch,
-                data=ChannelOAuthProviderRequest(
-                    access_token=data['access_token'],
-                    refresh_token=data['refresh_token'],
-                    expires_in=data['expires_in'],
-                ),
-            )
-            return str(data['access_token'])
-
-
-class TwitchBotOAuth(Auth):
-    def __init__(self):
-        self._async_lock = asyncio.Lock()
-
-    async def async_auth_flow(
-        self, request: Request
-    ) -> typing.AsyncGenerator[Request, Response]:
-        provider: BotProvider | None = None
-        channel_id = UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER, None))
-        if not channel_id:
-            raise ValueError(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
-
-        async with self._async_lock:
-            if not request.headers.get('Authorization'):
-                provider = await get_channel_bot_provider(
-                    channel_id=channel_id,
-                    provider=TProvider.twitch,
-                )
-                if not provider:
-                    raise ValueError(
-                        f'No Twitch bot provider found for channel {channel_id}'
-                    )
-                request.headers['Authorization'] = f'Bearer {provider.access_token}'
-
-        response = yield request
-
-        if response.status_code == 401:
-            async with self._async_lock:
-                if not provider:
-                    provider = await get_channel_bot_provider(
-                        channel_id=channel_id,
-                        provider=TProvider.twitch,
-                    )
-                    if not provider:
-                        raise ValueError(
-                            f'No Twitch bot provider found for channel {channel_id}'
-                        )
-                access_token = await self._refresh_token(
-                    provider_user_id=provider.provider_user_id,
-                    refresh_token=provider.refresh_token or '',
-                )
-                request.headers['Authorization'] = f'Bearer {access_token}'
-
-            yield request
-
-    async def _refresh_token(self, provider_user_id: str, refresh_token: str):
-        async with AsyncClient() as client:
-            response = await client.post(
-                'https://id.twitch.tv/oauth2/token',
-                data={
-                    'grant_type': 'refresh_token',
-                    'refresh_token': refresh_token,
-                    'client_id': config.twitch.client_id,
-                    'client_secret': config.twitch.client_secret,
-                },
-            )
-            if response.status_code >= 400:
-                ValueError(f'{response.status_code} {response.text}')
-            data = response.json()
-            await save_bot_provider(
-                data=BotProviderRequest(
-                    provider=TProvider.twitch,
-                    provider_user_id=provider_user_id,
-                    access_token=data['access_token'],
-                    refresh_token=data['refresh_token'],
-                    expires_in=data['expires_in'],
-                ),
-            )
-            return str(data['access_token'])
-
-
 twitch_app_client = AsyncClient(
     base_url='https://api.twitch.tv/helix',
     headers={
@@ -188,7 +43,14 @@ twitch_user_client = AsyncClient(
     headers={
         'Client-ID': config.twitch.client_id,
     },
-    auth=TwitchUserOAuth() if 'pytest' not in sys.modules else None,
+    auth=ChannelProviderOAuth(
+        provider=TProvider.twitch,
+        token_url='https://id.twitch.tv/oauth2/token',
+        client_id=config.twitch.client_id,
+        client_secret=config.twitch.client_secret,
+    )
+    if 'pytest' not in sys.modules
+    else None,
     http2=True,
 )
 
@@ -197,7 +59,14 @@ twitch_bot_client = AsyncClient(
     headers={
         'Client-ID': config.twitch.client_id,
     },
-    auth=TwitchBotOAuth() if 'pytest' not in sys.modules else None,
+    auth=ChannelProviderBotOAuth(
+        provider=TProvider.twitch,
+        token_url='https://id.twitch.tv/oauth2/token',
+        client_id=config.twitch.client_id,
+        client_secret=config.twitch.client_secret,
+    )
+    if 'pytest' not in sys.modules
+    else None,
     http2=True,
 )
 

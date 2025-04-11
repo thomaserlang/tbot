@@ -16,6 +16,7 @@ from tbot2.bot_providers import (
 from tbot2.channel import (
     ChannelOAuthProviderRequest,
     ChannelScope,
+    get_channel_oauth_provider,
     save_channel_oauth_provider,
 )
 from tbot2.common import (
@@ -36,7 +37,6 @@ from tbot2.user import UserCreate, get_or_create_user
 
 from ..actions.eventsub_actions import register_eventsubs
 from ..actions.twitch_mod_user_actions import twitch_add_channel_moderator
-from ..twitch_http_client import get_channel_oauth_provider
 
 twitch_oauth_client = AsyncClient(
     http2=True,

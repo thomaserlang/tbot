@@ -1,3 +1,4 @@
+from collections.abc import AsyncGenerator
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
@@ -62,7 +63,7 @@ async def get_channel_oauth_providers(
 
 async def get_channels_providers(
     *, provider: TProvider, session: AsyncSession | None = None
-):
+) -> AsyncGenerator[ChannelProvider]:
     async with get_session(session) as session:
         providers = await session.stream_scalars(
             sa.select(MChannelOAuthProvider).where(
@@ -79,7 +80,7 @@ async def save_channel_oauth_provider(
     provider: TProvider,
     data: ChannelOAuthProviderRequest,
     session: AsyncSession | None = None,
-):
+) -> bool:
     async with get_session(session) as session:
         data_ = data.model_dump(exclude_unset=True)
         if 'expires_in' in data_:
@@ -122,4 +123,3 @@ async def delete_channel_oauth_provider(
             )
         )
         return result.rowcount > 0
-
