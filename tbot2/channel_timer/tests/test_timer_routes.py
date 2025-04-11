@@ -22,7 +22,7 @@ async def test_timer_routes(
     created_timer = response.json()
     assert created_timer['name'] == 'Test timer'
     assert created_timer['messages'] == ['Test message']
-    assert created_timer['next_run'] is not None
+    assert created_timer['next_run_at'] is not None
 
     # Test getting all timers for a channel
     response = await client.get(f'/api/2/channels/{user.channel.id}/timers')
@@ -53,7 +53,7 @@ async def test_timer_routes(
     assert updated_timer['interval'] == 5
     assert updated_timer['messages'] == ['Updated message']
     assert updated_timer['id'] == created_timer['id']
-    assert updated_timer['next_run'] != created_timer['next_run']
+    assert updated_timer['next_run_at'] != created_timer['next_run_at']
 
     # Test deleting a timer
     response = await client.delete(
