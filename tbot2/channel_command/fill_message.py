@@ -9,7 +9,7 @@ from .var_filler import filler_vars, var_filler_registery
 
 async def fill_message(
     *, response_message: str, command: TCommand, chat_message: ChatMessage
-):
+) -> str:
     """
     Handle exceptions:
         - CommandError
@@ -37,7 +37,7 @@ async def fill_message(
     return _fill_response(response_message, parsed_vars)
 
 
-def _parse_vars(message: str):
+def _parse_vars(message: str) -> list[TMessageVar]:
     matched: list[str] = re.findall(
         r'\{([a-z0-9]+[ ]?.*?)\}', message, flags=re.IGNORECASE
     )
@@ -55,7 +55,7 @@ def _parse_vars(message: str):
     return vars
 
 
-def _fill_response(message: str, values: list[TMessageVar]):
+def _fill_response(message: str, values: list[TMessageVar]) -> str:
     for var in values:
         if var.value is not None:
             message = message.replace('{' + var.match_raw + '}', str(var.value))

@@ -4,6 +4,8 @@ from uuid import UUID
 
 from async_lru import alru_cache
 
+from tbot2.bot_providers import BotProvider
+from tbot2.channel import get_channel_bot_provider
 from tbot2.common import ChatMessage, check_pattern_match
 from tbot2.contexts import AsyncSession
 
@@ -17,6 +19,7 @@ from .command_actions import Command, get_commands
 class MessageResponse:
     command: Command
     response: str
+    bot_provider: BotProvider | None = None
 
 
 async def handle_message_response(
@@ -28,6 +31,11 @@ async def handle_message_response(
         session=session,
     )
 
+    # Bail early if there are not patterns or cmd to match
+    has_patters = any(command.patterns for command in commands)
+    if not has_patters and not chat_message.message.startswith('!'):
+        return None
+
     for command in commands:
         if command.enabled is False:
             continue
@@ -36,46 +44,75 @@ async def handle_message_response(
         if command.provider != 'all' and command.provider != chat_message.provider:
             continue
 
-        if chat_message.message.startswith('!'):
-            args = chat_message.message[1:].split(' ')
-            cmd = args.pop(0).lower()
-            if cmd not in command.cmds:
-                continue
-            try:
-                response = await fill_message(
-                    response_message=command.response,
-                    command=TCommand(
-                        name=cmd,
-                        args=args,
-                    ),
-                    chat_message=chat_message,
-                )
-                return MessageResponse(response=response, command=command)
-            except CommandError as e:
-                return MessageResponse(
-                    response=str(e),
-                    command=command,
-                )
+        if response := await _matches_command(chat_message, command):
+            response.bot_provider = await get_channel_bot_provider(
+                provider=chat_message.provider,
+                channel_id=chat_message.channel_id,
+            )
+            if response.bot_provider:
+                # Check that the bot is not replying to itself
+                # causing an infinite loop
+                if response.bot_provider.provider_user_id == chat_message.chatter_id:
+                    return None
+            return response
 
-        else:
-            for pattern in command.patterns:
-                if not check_pattern_match(chat_message.message, pattern):
-                    continue
-                try:
-                    response = await fill_message(
-                        response_message=command.response,
-                        command=TCommand(
-                            name='pattern',
-                            args=[],
-                        ),
-                        chat_message=chat_message,
-                    )
-                    return MessageResponse(response=response, command=command)
-                except CommandError as e:
-                    return MessageResponse(
-                        response=str(e),
-                        command=command,
-                    )
+    return None
+
+
+async def _matches_command(
+    chat_message: ChatMessage, command: Command
+) -> MessageResponse | None:
+    if chat_message.message.startswith('!'):
+        return await _matches_cmd(chat_message, command)
+
+    return await _matches_pattern(chat_message, command)
+
+
+async def _matches_cmd(
+    chat_message: ChatMessage, command: Command
+) -> MessageResponse | None:
+    args = chat_message.message[1:].split(' ')
+    cmd = args.pop(0).lower()
+    if cmd not in command.cmds:
+        return None
+    try:
+        response = await fill_message(
+            response_message=command.response,
+            command=TCommand(
+                name=cmd,
+                args=args,
+            ),
+            chat_message=chat_message,
+        )
+        return MessageResponse(response=response, command=command)
+    except CommandError as e:
+        return MessageResponse(
+            response=str(e),
+            command=command,
+        )
+
+
+async def _matches_pattern(
+    chat_message: ChatMessage, command: Command
+) -> MessageResponse | None:
+    for pattern in command.patterns:
+        if not check_pattern_match(chat_message.message, pattern):
+            continue
+        try:
+            response = await fill_message(
+                response_message=command.response,
+                command=TCommand(
+                    name='pattern',
+                    args=[],
+                ),
+                chat_message=chat_message,
+            )
+            return MessageResponse(response=response, command=command)
+        except CommandError as e:
+            return MessageResponse(
+                response=str(e),
+                command=command,
+            )
     return None
 
 

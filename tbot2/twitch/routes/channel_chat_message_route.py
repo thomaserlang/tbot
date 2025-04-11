@@ -67,15 +67,15 @@ async def channel_chat_message_route(
     )
 
     try:
-        response = await handle_message_response(
+        if response := await handle_message_response(
             chat_message=chat_message,
-        )
-        if response:
+        ):
             await twitch_bot_send_message(
                 channel_id=chat_message.channel_id,
                 broadcaster_id=chat_message.provider_id,
                 message=response.response,
                 reply_parent_message_id=chat_message.msg_id,
+                bot_provider=response.bot_provider,
             )
     except Exception as e:
         logging.exception(e)
