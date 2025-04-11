@@ -51,7 +51,7 @@ async def save_bot_provider(
     *,
     data: BotProviderRequest,
     session: AsyncSession | None = None,
-):
+) -> BotProvider:
     async with get_session(session) as session:
         data_ = data.model_dump(exclude_unset=True)
         if 'expires_in' in data_:

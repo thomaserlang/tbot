@@ -1,5 +1,5 @@
 import base64
-from typing import Any, Type, TypeVar, overload
+from typing import Any, TypeVar, overload
 
 import sqlalchemy as sa
 from pydantic import BaseModel
@@ -17,7 +17,7 @@ _TP = TypeVar('_TP', bound=tuple[Any, ...])
 async def page_cursor(
     query: sa.Select[_TP],
     page_query: PageCursorQuery,
-    response_model: Type[T],
+    response_model: type[T],
     session: AsyncSession | None = None,
     count_total: bool = True,
 ) -> PageCursor[T]: ...
@@ -38,7 +38,7 @@ async def page_cursor(
     response_model: Any | None = None,
     session: AsyncSession | None = None,
     count_total: bool = True,
-):
+) -> PageCursor[Any]:
     async with get_session(session) as session:
         page = await select_page(
             s=session,

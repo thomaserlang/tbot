@@ -159,8 +159,8 @@ async def get_twitch_connect_bot_url_route(
     )
 
 
-@router.get('/twitch/connect-bot-system-default-url')
-async def get_twitch_connect_bot_system_default_url_route(
+@router.get('/twitch/system-provider-bot-connect-url')
+async def get_twitch_system_provider_bot_connect_url_route(
     request: Request,
     token_data: Annotated[TokenData, Security(authenticated, scopes=[])],
 ):
@@ -319,6 +319,7 @@ async def twitch_auth_route(
                 system_default=True,
             ),
         )
+        return RedirectResponse('/admin/system-provider-bots')
 
     else:
         raise HTTPException(

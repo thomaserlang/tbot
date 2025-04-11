@@ -4,12 +4,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from tbot2.auth_backend import AuthBackend
+from tbot2.bot_providers.router import bot_provider_routes
 from tbot2.channel.router import channel_router
 from tbot2.channel_chat_filters.router import chat_filter_router
 from tbot2.channel_command.router import command_router
 from tbot2.channel_quote.router import channel_quotes_router
 from tbot2.channel_timer.router import channel_timer_router
 from tbot2.config_settings import config
+from tbot2.constants import APP_TITLE
 from tbot2.database import database
 from tbot2.dependecies import PlainResponse
 from tbot2.spotify.router import spotify_router
@@ -24,7 +26,7 @@ async def lifespan(app: FastAPI):
     await database.close()
 
 
-app = FastAPI(title='TBOT API', version='2.0', lifespan=lifespan)
+app = FastAPI(title=f'{APP_TITLE} API', version='2.0', lifespan=lifespan)
 app.add_middleware(AuthenticationMiddleware, backend=AuthBackend())
 app.add_middleware(
     CORSMiddleware,
@@ -51,3 +53,4 @@ app.include_router(user_router, prefix='/api/2')
 app.include_router(spotify_router, prefix='/api/2')
 app.include_router(channel_router, prefix='/api/2')
 app.include_router(channel_timer_router, prefix='/api/2')
+app.include_router(bot_provider_routes, prefix='/api/2')

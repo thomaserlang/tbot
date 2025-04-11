@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 from typing import Any
 
 import jwt
@@ -6,7 +6,7 @@ from fastapi.security.utils import get_authorization_scheme_param
 from starlette.authentication import AuthCredentials, AuthenticationBackend
 from starlette.requests import HTTPConnection
 
-from tbot2.common import TokenData
+from tbot2.common import TokenData, datetime_now
 from tbot2.config_settings import config
 
 
@@ -26,7 +26,9 @@ class AuthBackend(AuthenticationBackend):
 
     """
 
-    async def authenticate(self, conn: HTTPConnection):
+    async def authenticate(
+        self, conn: HTTPConnection
+    ) -> tuple[AuthCredentials, TokenData] | None:
         authorization = conn.headers.get('Authorization')
         scheme, credentials = get_authorization_scheme_param(authorization)
         if not authorization or scheme.lower() != 'bearer':
@@ -44,9 +46,9 @@ class AuthBackend(AuthenticationBackend):
             return None
 
 
-async def create_token_str(token_data: TokenData):
+async def create_token_str(token_data: TokenData) -> str:
     payload: dict[str, Any] = {
         'context': token_data.model_dump_json(),
-        'exp': datetime.now(tz=timezone.utc) + timedelta(hours=12),
+        'exp': datetime_now() + timedelta(hours=12),
     }
     return jwt.encode(payload, config.web.cookie_secret, algorithm='HS256')

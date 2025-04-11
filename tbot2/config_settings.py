@@ -180,7 +180,7 @@ class ConfigSettings(BaseYamlSettings):
     lol_apikey: str | None = None
     tft_apikey: str | None = None
     rtmp_keys: list[str] = []
-    global_admin_user_ids: set[UUID] = set()
+    global_admins: set[UUID] = set()
 
 
 try:

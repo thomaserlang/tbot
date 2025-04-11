@@ -10,7 +10,7 @@ async def twitch_add_channel_moderator(
     channel_id: UUID,
     broadcaster_id: str,
     twitch_user_id: str,
-):
+) -> bool:
     response = await twitch_user_client.post(
         url='/moderation/moderators',
         params={
@@ -33,7 +33,7 @@ async def twitch_remove_channel_moderator(
     channel_id: UUID,
     broadcaster_id: str,
     twitch_user_id: str,
-):
+) -> bool:
     response = await twitch_user_client.post(
         url='/moderation/moderators',
         params={

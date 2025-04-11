@@ -38,4 +38,4 @@ class TokenData(BaseUser, BaseModel):
         return any(scope in self.scopes for scope in scopes)
 
     async def is_global_admin(self) -> bool:
-        return self.user_id in config.global_admin_user_ids
+        return self.user_id in config.global_admins

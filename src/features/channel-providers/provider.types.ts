@@ -1,6 +1,7 @@
+import { ChannelId } from '@/features/channel/types'
+import { ProviderBot } from '@/features/provider-bot/provider-bot.types'
 import { Provider } from '@/types/provider.type'
 import { Branded } from '@/utils/brand'
-import { ChannelId } from '../channel/types'
 
 export type ChannelProviderId = Branded<string, 'ChannelProviderId'>
 
@@ -10,15 +11,7 @@ export interface ChannelProvider {
     provider: Provider
     name: string | null
     scope_needed: boolean
-    bot_provider: BotProvider | null
-}
-
-export interface BotProvider {
-    id: string
-    name: string | null
-    provider_user_id: string | null
-    scope: string | null
-    scope_needed: boolean
+    bot_provider: ProviderBot | null
 }
 
 export const channelProviderLabels: { [provider: string | Provider]: string } =
