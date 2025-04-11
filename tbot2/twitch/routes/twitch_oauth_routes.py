@@ -85,7 +85,7 @@ channel_provider_scopes[TProvider.twitch] = ' '.join(
 )
 
 
-@router.get('/twitch/sign-in')
+@router.get('/twitch/sign-in-url')
 async def twitch_sign_in_route(
     request: Request,
     redirect_to: Annotated[RedirectUrl, Depends()],
