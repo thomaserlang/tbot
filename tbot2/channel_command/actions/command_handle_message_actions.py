@@ -4,10 +4,10 @@ from uuid import UUID
 
 from async_lru import alru_cache
 
-from tbot2.channel_command.exceptions import CommandError
 from tbot2.common import ChatMessage, check_pattern_match
 from tbot2.contexts import AsyncSession
 
+from ..exceptions import CommandError
 from ..fill_message import fill_message
 from ..types import TCommand
 from .command_actions import Command, get_commands
