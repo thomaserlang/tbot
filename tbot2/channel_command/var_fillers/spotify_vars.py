@@ -30,7 +30,7 @@ async def spotify_vars(
     except ErrorMessage as e:
         raise CommandError(e) from e
 
-    if not playing.is_playing or not playing.item:
+    if not playing or not playing.is_playing or not playing.item:
         raise CommandError('Spotify is not playing')
 
     vars['spotify.song_name'].value = playing.item.name
@@ -60,7 +60,7 @@ async def spotify_playlist_vars(
     except ValueError as e:
         raise ErrorMessage(e) from e
 
-    if not playing.is_playing:
+    if not playing or not playing.is_playing:
         raise CommandError('Spotify is not playing')
 
     if not playing.context:
