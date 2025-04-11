@@ -2,7 +2,7 @@ from typing import Annotated
 from urllib import parse
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Security
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Security
 from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
 
@@ -29,7 +29,7 @@ from tbot2.dependecies import authenticated
 
 router = APIRouter()
 
-spotify_oauth_client = AsyncClient(
+client = AsyncClient(
     http2=True,
 )
 
@@ -76,9 +76,9 @@ async def spotify_connect_route(
 @router.get('/spotify/auth', status_code=204)
 async def spotify_auth_route(
     request: Request,
-    params: Annotated[Oauth2AuthorizeResponse, Depends()],
+    params: Annotated[Oauth2AuthorizeResponse, Query()],
 ) -> RedirectResponse:
-    response = await spotify_oauth_client.post(
+    response = await client.post(
         url='https://accounts.spotify.com/api/token',
         params=Oauth2TokenParams(
             client_id=config.spotify.client_id,
@@ -86,6 +86,9 @@ async def spotify_auth_route(
             redirect_uri=str(request_url_for(request, 'spotify_auth_route')),
             code=params.code,
         ).model_dump(),
+        headers={
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
     )
 
     if response.status_code >= 400:

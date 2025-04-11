@@ -17,4 +17,5 @@ export interface ChannelProvider {
 export const channelProviderLabels: { [provider: string | Provider]: string } =
     {
         twitch: 'Twitch',
+        spotify: 'Spotify',
     } as const

@@ -45,7 +45,7 @@ class Oauth2AuthorizeParams(BaseModel):
 
 class Oauth2AuthorizeResponse(BaseModel):
     code: Annotated[str, StringConstraints(min_length=1)]
-    scope: Annotated[str, StringConstraints(min_length=1)]
+    scope: Annotated[str, StringConstraints(min_length=0)] = ''
     state: dict[str, Any]
 
     @field_validator('state', mode='before')
@@ -84,6 +84,5 @@ class Oauth2TokenParams(BaseModel):
 class Oauth2TokenResponse(BaseModel):
     access_token: Annotated[str, StringConstraints(min_length=1)]
     refresh_token: Annotated[str, StringConstraints(min_length=1)]
-    scope: list[Annotated[str, StringConstraints(min_length=1)]]
     token_type: Annotated[str, StringConstraints(min_length=1)]
     expires_in: int

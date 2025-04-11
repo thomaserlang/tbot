@@ -40,7 +40,7 @@ from tbot2.user import UserCreate, get_or_create_user
 from ..actions.eventsub_actions import register_eventsubs
 from ..actions.twitch_mod_user_actions import twitch_add_channel_moderator
 
-twitch_oauth_client = AsyncClient(
+client = AsyncClient(
     http2=True,
 )
 
@@ -203,7 +203,7 @@ async def twitch_auth_route(
     request: Request,
     params: Annotated[Oauth2AuthorizeResponse, Query()],
 ) -> RedirectResponse:
-    r = await twitch_oauth_client.post(
+    r = await client.post(
         url='https://id.twitch.tv/oauth2/token',
         params=Oauth2TokenParams(
             client_id=config.twitch.client_id,
@@ -220,7 +220,7 @@ async def twitch_auth_route(
 
     response = Oauth2TokenResponse.model_validate(r.json())
 
-    r = await twitch_oauth_client.get(
+    r = await client.get(
         url='https://api.twitch.tv/helix/users',
         headers={
             'Client-ID': config.twitch.client_id,
