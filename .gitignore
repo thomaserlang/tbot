@@ -59,8 +59,6 @@ docs/_build/
 
 *.swp
 *.orig
-.vscode/settings.json
-.vscode/launch.json
 
 .env
 
