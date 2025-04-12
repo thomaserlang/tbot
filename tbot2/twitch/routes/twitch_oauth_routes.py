@@ -55,6 +55,7 @@ bot_provider_scopes[TProvider.twitch] = ' '.join(
         'moderator:manage:announcements',
         'moderator:manage:chat_messages',
         'moderator:manage:banned_users',
+        'moderator:manage:warnings',
         'channel:moderate',
     }
 )

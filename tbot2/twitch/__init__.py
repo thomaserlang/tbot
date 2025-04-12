@@ -33,3 +33,6 @@ from .actions.twitch_mod_user_actions import (
 from .actions.twitch_send_message_actions import (
     twitch_bot_send_message as twitch_bot_send_message,
 )
+from .actions.twitch_warn_chat_user_action import (
+    twitch_warn_chat_user as twitch_warn_chat_user,
+)

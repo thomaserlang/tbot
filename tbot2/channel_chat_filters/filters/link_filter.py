@@ -28,7 +28,7 @@ class ChatFilterLinkCreate(ChatFilterBaseCreate):
     type: Literal['link']
     name: ChatFilterName = 'Link Filter'
     warning_message: ChatFilterWarningMessage = (
-        'You are not permitted to post links [warning]'
+        'You are not permitted to post links'
     )
     timeout_message: ChatFilterTimeoutMessage = 'You are not permitted to post links'
 

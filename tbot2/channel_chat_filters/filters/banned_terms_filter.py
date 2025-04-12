@@ -23,7 +23,7 @@ from ..types import TBannedTermType
 class ChatFilterBannedTermsCreate(ChatFilterBaseCreate):
     type: Literal['banned_terms']
     name: ChatFilterName = 'Banned Terms Filter'
-    warning_message: ChatFilterWarningMessage = 'Banned word [warning]'
+    warning_message: ChatFilterWarningMessage = 'Banned word'
     timeout_message: ChatFilterTimeoutMessage = 'Banned word'
 
 

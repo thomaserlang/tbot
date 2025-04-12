@@ -11,6 +11,7 @@ from tbot2.channel_command.fill_message import fill_message
 from tbot2.chatlog import create_chatlog
 from tbot2.common import ChatMessage, TProvider
 from tbot2.database import database
+from tbot2.twitch import twitch_warn_chat_user
 
 from ..actions.twitch_ban_user_actions import twitch_ban_user
 from ..actions.twitch_delete_message_actions import twitch_delete_message
@@ -97,25 +98,22 @@ async def handle_filter_message(
         if not match:
             return
         if match.action == 'warning':
-            if match.filter.warning_message:
-                try:
-                    await twitch_bot_send_message(
-                        channel_id=chat_message.channel_id,
-                        broadcaster_id=chat_message.provider_id,
-                        message=await fill_message(
-                            response_message=match.filter.warning_message,
-                            chat_message=chat_message,
-                            command=TCommand(name='warning', args=[]),
-                        ),
-                        reply_parent_message_id=chat_message.msg_id,
-                    )
-                except CommandError as e:
-                    logging.warning(f'Warning message failed: {e}')
             await twitch_delete_message(
                 channel_id=chat_message.channel_id,
                 broadcaster_id=chat_message.provider_id,
                 message_id=chat_message.msg_id,
             )
+            if match.filter.warning_message:
+                await twitch_warn_chat_user(
+                    channel_id=chat_message.channel_id,
+                    broadcaster_id=chat_message.provider_id,
+                    twitch_user_id=chat_message.chatter_id,
+                    reason=await fill_message(
+                        response_message=match.filter.warning_message,
+                        chat_message=chat_message,
+                        command=TCommand(name='warning', args=[]),
+                    ),
+                )
 
         elif match.action == 'timeout':
             timeout_message = ''

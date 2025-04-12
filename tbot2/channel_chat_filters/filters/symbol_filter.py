@@ -25,7 +25,7 @@ class ChatFilterSymbolCreate(ChatFilterBaseCreate):
     type: Literal['symbol']
     name: ChatFilterName = 'Symbol Filter'
     warning_message: ChatFilterWarningMessage = (
-        'Your message contained too many symbols [warning]'
+        'Your message contained too many symbols'
     )
     timeout_message: ChatFilterTimeoutMessage = (
         'Your message contained too many symbols'

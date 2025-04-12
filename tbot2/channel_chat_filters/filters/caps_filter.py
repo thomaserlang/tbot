@@ -25,7 +25,7 @@ class ChatFilterCapsSettings(ChatFilterBaseSettings):
 class ChatFilterCapsCreate(ChatFilterBaseCreate):
     type: Literal['caps']
     name: ChatFilterName = 'Caps Filter'
-    warning_message: ChatFilterWarningMessage = 'Please stop using all caps [warning]'
+    warning_message: ChatFilterWarningMessage = 'Please stop using all caps'
     timeout_message: ChatFilterTimeoutMessage = 'Please stop using all caps'
     settings: ChatFilterCapsSettings = ChatFilterCapsSettings()
 

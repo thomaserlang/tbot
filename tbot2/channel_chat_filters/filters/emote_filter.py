@@ -23,7 +23,7 @@ class ChatFilterEmoteSettings(ChatFilterBaseSettings):
 class ChatFilterEmoteCreate(ChatFilterBaseCreate):
     type: Literal['emote']
     name: ChatFilterName = 'Emote Filter'
-    warning_message: ChatFilterWarningMessage = 'Chill with the emotes [warning]'
+    warning_message: ChatFilterWarningMessage = 'Chill with the emotes'
     timeout_message: ChatFilterTimeoutMessage = 'Chill with the emotes'
     settings: ChatFilterEmoteSettings = ChatFilterEmoteSettings()
 

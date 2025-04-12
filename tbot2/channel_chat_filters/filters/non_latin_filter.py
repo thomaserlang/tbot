@@ -25,7 +25,7 @@ class ChatFilterNonLatinSettings(ChatFilterBaseSettings):
 class ChatFilterNonLatinCreate(ChatFilterBaseCreate):
     type: Literal['non_latin']
     name: ChatFilterName = 'Non-latin Filter'
-    warning_message: ChatFilterWarningMessage = 'Please use latin letters [warning]'
+    warning_message: ChatFilterWarningMessage = 'Please use latin letters'
     timeout_message: ChatFilterTimeoutMessage = 'Please use latin letters'
 
     settings: ChatFilterNonLatinSettings = ChatFilterNonLatinSettings()

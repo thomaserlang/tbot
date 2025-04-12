@@ -23,7 +23,7 @@ class ChatFilterParagraphSettings(ChatFilterBaseSettings):
 class ChatFilterParagraphCreate(ChatFilterBaseCreate):
     type: Literal['paragraph']
     name: ChatFilterName = 'Paragraph Filter'
-    warning_message: ChatFilterWarningMessage = 'Your message was too long [warning]'
+    warning_message: ChatFilterWarningMessage = 'Your message was too long'
     timeout_message: ChatFilterTimeoutMessage = 'Your message was too long'
     settings: ChatFilterParagraphSettings = ChatFilterParagraphSettings()
 
