@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from tbot2.model_base import Base
 
 
-class MChannelViewerStats(Base):
+class MChannelStream(Base):
     __tablename__ = 'channel_streams'
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 

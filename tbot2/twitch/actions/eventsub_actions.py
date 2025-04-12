@@ -3,7 +3,11 @@ from collections.abc import AsyncGenerator
 from urllib.parse import urljoin
 from uuid import UUID
 
-from tbot2.channel import get_channel_oauth_provider, get_channels_providers
+from tbot2.channel import (
+    get_channel_bot_provider,
+    get_channel_oauth_provider,
+    get_channels_providers,
+)
 from tbot2.common import TProvider
 from tbot2.config_settings import config
 from tbot2.exceptions import ErrorMessage
@@ -32,9 +36,23 @@ async def register_eventsubs(
         )
         return
 
+    bot_provider = provider.bot_provider
+
+    if not bot_provider:
+        bot_provider = await get_channel_bot_provider(
+            channel_id=channel_id,
+            provider=TProvider.twitch,
+        )
+        if not bot_provider:
+            logging.error(
+                f'Failed to register eventsub for channel {channel_id}: '
+                'no bot provider found'
+            )
+            return
+
     registrations = get_eventsub_registrations(
-        twitch_channel_id=provider.provider_user_id or '',
-        twitch_bot_user_id=provider.provider_user_id or '',
+        broadcaster_user_id=provider.provider_user_id or '',
+        twitch_bot_user_id=bot_provider.provider_user_id or '',
     )
     for registration in registrations:
         try:
@@ -47,7 +65,7 @@ async def register_eventsubs(
 
 
 def get_eventsub_registrations(
-    twitch_channel_id: str,
+    broadcaster_user_id: str,
     twitch_bot_user_id: str,
 ) -> list[EventSubRegistration]:
     return [
@@ -55,10 +73,24 @@ def get_eventsub_registrations(
             event_type='channel.chat.message',
             version='1',
             condition={
-                'broadcaster_user_id': twitch_channel_id,
+                'broadcaster_user_id': broadcaster_user_id,
                 'user_id': twitch_bot_user_id,
             },
-        )
+        ),
+        EventSubRegistration(
+            event_type='stream.online',
+            version='1',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+            },
+        ),
+        EventSubRegistration(
+            event_type='stream.offline',
+            version='1',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+            },
+        ),
     ]
 
 

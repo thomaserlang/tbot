@@ -1,11 +1,13 @@
 import hashlib
 import hmac
+import logging
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request
 
 from tbot2.config_settings import config
 from tbot2.dependecies import PlainResponse
+from tbot2.twitch.schemas.eventsub_notification_schema import EventSubNotification
 
 from ..schemas.eventsub_headers import EventSubHeaders
 
@@ -34,5 +36,20 @@ async def validate_twitch_webhook_signature(
         raise PlainResponse(
             status_code=200, content=(await request.json())['challenge']
         )
+
+    if headers.message_type == 'revocation':
+        revocation = EventSubNotification.model_validate_json(await request.body())  # type: ignore
+        logging.info(
+            f'Revocation: {revocation.subscription.type}',
+            extra=revocation.subscription.condition,
+        )
+        raise PlainResponse(status_code=200, content='Roger')
+
+    if headers.message_type != 'notification':
+        logging.error(
+            'Unknown message type: %s',
+            headers.message_type,
+        )
+        raise PlainResponse(status_code=200, content='Roger')
 
     return headers

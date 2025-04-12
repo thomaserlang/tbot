@@ -32,14 +32,11 @@ router = APIRouter()
     '/twitch/eventsub/channel.chat.message',
     status_code=204,
 )
-async def channel_chat_message_route(
+async def channel_chat_message_event_route(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],
     request: Request,
     channel_id: UUID,
 ) -> None:
-    if headers.message_type != 'notification':
-        return
-
     data = EventSubNotification[EventChannelChatMessage].model_validate_json(
         await request.body()
     )

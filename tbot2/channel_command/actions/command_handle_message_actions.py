@@ -6,12 +6,13 @@ from async_lru import alru_cache
 
 from tbot2.bot_providers import BotProvider
 from tbot2.channel import get_channel_bot_provider
+from tbot2.channel_stats import get_current_channel_provider_stream
 from tbot2.common import ChatMessage, check_pattern_match
-from tbot2.contexts import AsyncSession
+from tbot2.contexts import AsyncSession, get_session
 
 from ..exceptions import CommandError
 from ..fill_message import fill_message
-from ..types import TCommand
+from ..types import TCommand, TCommandActiveMode
 from .command_actions import Command, get_commands
 
 
@@ -26,37 +27,67 @@ async def handle_message_response(
     chat_message: ChatMessage,
     session: AsyncSession | None = None,
 ) -> MessageResponse | None:
-    commands = await get_cached_commands(
-        channel_id=chat_message.channel_id,
-        session=session,
-    )
+    async with get_session(session) as session:
+        commands = await get_cached_commands(
+            channel_id=chat_message.channel_id,
+            session=session,
+        )
 
-    # Bail early if there are no patterns or cmds to match
-    has_patters = any(command.patterns for command in commands)
-    if not has_patters and not chat_message.message.startswith('!'):
-        return None
+        # Bail early if there are no patterns or cmds to match
+        has_patters = any(command.patterns for command in commands)
+        if not has_patters and not chat_message.message.startswith('!'):
+            return None
 
-    for command in commands:
-        if command.enabled is False:
-            continue
-        if command.access_level > chat_message.access_level:
-            continue
-        if command.provider != 'all' and command.provider != chat_message.provider:
-            continue
+        for command in commands:
+            if command.enabled is False:
+                continue
+            if command.access_level > chat_message.access_level:
+                continue
+            if command.provider != 'all' and command.provider != chat_message.provider:
+                continue
+            if not await _check_active_mode(
+                command=command,
+                chat_message=chat_message,
+                session=session,
+            ):
+                continue
 
-        if response := await _matches_command(chat_message, command):
-            response.bot_provider = await get_channel_bot_provider(
-                provider=chat_message.provider,
-                channel_id=chat_message.channel_id,
-            )
-            if response.bot_provider:
-                # Check that the bot is not replying to itself
-                # causing an infinite loop
-                if response.bot_provider.provider_user_id == chat_message.chatter_id:
-                    return None
-            return response
+            if response := await _matches_command(chat_message, command):
+                response.bot_provider = await get_channel_bot_provider(
+                    provider=chat_message.provider,
+                    channel_id=chat_message.channel_id,
+                    session=session,
+                )
+                if response.bot_provider:
+                    # Check that the bot is not replying to itself
+                    # causing an infinite loop
+                    if (
+                        response.bot_provider.provider_user_id
+                        == chat_message.chatter_id
+                    ):
+                        return None
+                return response
 
     return None
+
+
+async def _check_active_mode(
+    command: Command,
+    chat_message: ChatMessage,
+    session: AsyncSession,
+) -> bool:
+    if command.active_mode == TCommandActiveMode.ALWAYS:
+        return True
+    stream = await get_current_channel_provider_stream(
+        channel_id=chat_message.channel_id,
+        provider=chat_message.provider,
+        session=session,
+    )
+    if command.active_mode == TCommandActiveMode.OFFLINE and stream:
+        return False
+    if command.active_mode == TCommandActiveMode.ONLINE and not stream:
+        return False
+    return True
 
 
 async def _matches_command(

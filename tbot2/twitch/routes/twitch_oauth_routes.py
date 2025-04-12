@@ -51,6 +51,7 @@ bot_provider_scopes[TProvider.twitch] = ' '.join(
     {
         'user:bot',
         'user:write:chat',
+        'user:read:chat',
         'moderator:manage:automod',
         'moderator:manage:announcements',
         'moderator:manage:chat_messages',

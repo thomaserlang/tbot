@@ -131,6 +131,10 @@ def upgrade() -> None:
             'provider_stream_id',
             name='provider_streams_uq',
         ),
+        sa.Index(
+            'ix_channel_id_provider_ended_at', 'channel_id', 'provider', 'ended_at'
+        ),
+        sa.Index('ix_ended_at', 'ended_at'),
     )
 
     op.execute(
