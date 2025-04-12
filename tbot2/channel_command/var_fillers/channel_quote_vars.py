@@ -15,7 +15,9 @@ from ..var_filler import fills_vars
 
 
 @fills_vars(provider='all', vars=('quote.add',))
-async def quote_add(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
+async def quote_add(
+    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+) -> None:
     if len(command.args) == 0:
         raise CommandSyntaxError(f'Syntax error, use !{command.name} <your quote>')
 
@@ -32,7 +34,9 @@ async def quote_add(chat_message: ChatMessage, command: TCommand, vars: TMessage
 
 
 @fills_vars(provider='all', vars=('quote.edit',))
-async def quote_edit(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
+async def quote_edit(
+    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+) -> None:
     if len(command.args) < 2 or not command.args[0].isdigit():
         raise CommandSyntaxError(
             f'Syntax error, use !{command.name} <number> <new text>'
@@ -57,7 +61,7 @@ async def quote_edit(chat_message: ChatMessage, command: TCommand, vars: TMessag
 @fills_vars(provider='all', vars=('quote.delete',))
 async def quote_delete(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     if len(command.args) != 1 or not command.args[0].isdigit():
         raise CommandSyntaxError(f'Syntax error, use !{command.name} <number>')
 
@@ -88,7 +92,7 @@ async def quote_get(
     chat_message: ChatMessage,
     command: TCommand,
     vars: TMessageVars,
-):
+) -> None:
     if len(command.args) > 0:
         if not command.args[0].isdigit():
             raise CommandSyntaxError(f'Syntax error, use !{command.name} <number>')

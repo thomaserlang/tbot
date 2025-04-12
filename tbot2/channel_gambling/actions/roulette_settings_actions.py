@@ -12,7 +12,7 @@ async def get_roulette_settings(
     *,
     channel_id: UUID,
     session: AsyncSession | None = None,
-):
+) -> RouletteSettings:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MRouletteSettings).where(
@@ -23,10 +23,14 @@ async def get_roulette_settings(
             return RouletteSettings(
                 channel_id=channel_id,
                 win_chance=45,
-                win_message='@{user}, You won {bet} {points_name} and now have {points} {points_name}',
-                lose_message='@{user}, You lost {bet} {points_name} and now have {points} {points_name}',
-                allin_win_message='@{user}, You won {bet} {points_name} and now have {points} {points_name}',
-                allin_lose_message='@{user}, You lost {bet} {points_name} and now have {points} {points_name}',
+                win_message='@{user}, You won {bet} {points_name} and '
+                'now have {points} {points_name}',
+                lose_message='@{user}, You lost {bet} {points_name} and '
+                'now have {points} {points_name}',
+                allin_win_message='@{user}, You won {bet} {points_name} and '
+                'now have {points} {points_name}',
+                allin_lose_message='@{user}, You lost {bet} {points_name} and '
+                'now have {points} {points_name}',
                 min_bet=5,
                 max_bet=0,
             )
@@ -38,7 +42,7 @@ async def update_roulette_settings(
     channel_id: UUID,
     data: RouletteSettingsUpdate,
     session: AsyncSession | None = None,
-):
+) -> RouletteSettings:
     async with get_session(session) as session:
         data_ = data.model_dump(exclude_unset=True)
         result = await session.execute(

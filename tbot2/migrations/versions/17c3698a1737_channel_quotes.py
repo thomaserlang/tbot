@@ -6,7 +6,7 @@ Create Date: 2025-03-08 13:14:54.025629
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
@@ -14,9 +14,9 @@ from uuid6 import uuid7
 
 # revision identifiers, used by Alembic.
 revision: str = '17c3698a1737'
-down_revision: Union[str, None] = 'e80a9d0cf87b'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = 'e80a9d0cf87b'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -60,7 +60,8 @@ def upgrade() -> None:
                     created_by_display_name, message, number, created_at, updated_at
                 )
                 VALUES (:id, :channel_id, :provider, :created_by_chatter_id,
-                    :created_by_display_name, :message, :number, :created_at, :updated_at
+                    :created_by_display_name, :message, :number, :created_at, 
+                    :updated_at
                 """),
             {
                 'id': uuid7(),

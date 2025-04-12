@@ -1,3 +1,4 @@
+import sys
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -9,6 +10,7 @@ from tbot2.model_base import Base
 
 class MChatlog(Base):
     __tablename__ = 'chatlogs'
+    __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     id: Mapped[int] = mapped_column(sa.Integer, primary_key=True, autoincrement=True)
     type: Mapped[str] = mapped_column(sa.String(100))

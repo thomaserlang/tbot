@@ -6,15 +6,15 @@ Create Date: 2024-11-07 21:49:36.509925
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = 'dba3882e4560'
-down_revision: Union[str, None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -189,8 +189,10 @@ def upgrade() -> None:
             `word_count` int(11) DEFAULT 0,
             `msg_id` varchar(36) DEFAULT NULL,
             PRIMARY KEY (`id`),
-            KEY `ix_twitch_chatlog_channel_id_type_user_id_created_at` (`channel_id`, `type`, `user_id`, `created_at`),
-            KEY `ix_twitch_chatlog_channel_id_type_created_at` (`channel_id`, `type`, `created_at`)
+            KEY `ix_twitch_chatlog_channel_id_type_user_id_created_at` 
+               (`channel_id`, `type`, `user_id`, `created_at`),
+            KEY `ix_twitch_chatlog_channel_id_type_created_at` 
+               (`channel_id`, `type`, `created_at`)
         )
     """)
 
@@ -294,7 +296,8 @@ def upgrade() -> None:
             `filter_id` int(10) unsigned NOT NULL,
             `banned_words` varchar(1000) DEFAULT NULL,
             PRIMARY KEY (`id`),
-            KEY `ix_twitch_filter_banned_words_channel_id_filter_id` (`channel_id`, `filter_id`)
+            KEY `ix_twitch_filter_banned_words_channel_id_filter_id` 
+               (`channel_id`, `filter_id`)
         )
     """)
 

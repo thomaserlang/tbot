@@ -9,7 +9,7 @@ from ..actions.twitch_channel_follower_action import twitch_user_client
 from ..twitch_http_client import get_twitch_pagination
 
 
-async def get_twitch_chatters(channel_id: UUID, broadcaster_id: str):
+async def get_twitch_chatters(channel_id: UUID, broadcaster_id: str) -> list[Chatter]:
     response = await twitch_user_client.get(
         '/chat/chatters',
         params={

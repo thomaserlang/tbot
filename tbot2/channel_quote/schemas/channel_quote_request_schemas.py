@@ -1,9 +1,11 @@
 from typing import Annotated
 
-from pydantic import BaseModel, StringConstraints, field_validator
+from pydantic import StringConstraints, field_validator
+
+from tbot2.common import BaseRequestSchema
 
 
-class ChannelQuoteCreate(BaseModel):
+class ChannelQuoteCreate(BaseRequestSchema):
     message: Annotated[str, StringConstraints(min_length=1, max_length=500)]
     provider: Annotated[str, StringConstraints(min_length=0, max_length=36)]
     created_by_chatter_id: Annotated[
@@ -14,7 +16,7 @@ class ChannelQuoteCreate(BaseModel):
     ]
 
 
-class ChannelQuoteUpdate(BaseModel):
+class ChannelQuoteUpdate(BaseRequestSchema):
     message: Annotated[str, StringConstraints(min_length=1, max_length=500)] | None = (
         None
     )
@@ -34,7 +36,7 @@ class ChannelQuoteUpdate(BaseModel):
         'created_by_chatter_id',
         'created_by_display_name',
     )
-    def check_not_none(cls, v: str | None):
+    def check_not_none(cls, v: str | None) -> str:
         if v is None:
             raise ValueError('Field cannot be None')
         return v

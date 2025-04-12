@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from tbot2.common import BaseSchema
 
 
-class SlotsResult(BaseModel):
+class SlotsResult(BaseSchema):
     won: bool
     bet: int
     points: int

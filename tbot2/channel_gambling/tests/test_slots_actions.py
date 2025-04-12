@@ -6,14 +6,15 @@ from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_gambling import slots
 from tbot2.channel_points import inc_points
 from tbot2.common import TProvider
+from tbot2.exceptions import ErrorMessage
 from tbot2.testbase import run_file
 
 
 @pytest.mark.asyncio
-async def test_roulette_actions(db: None):
+async def test_roulette_actions(db: None) -> None:
     channel = await create_channel(data=ChannelCreate(display_name='test'))
 
-    with pytest.raises(ValueError, match='Not enough points to bet'):
+    with pytest.raises(ErrorMessage, match='Not enough points to bet 100'):
         await slots(
             channel_id=channel.id,
             provider=TProvider.twitch,
@@ -28,7 +29,7 @@ async def test_roulette_actions(db: None):
         points=100,
     )
 
-    with pytest.raises(ValueError, match='Bet is too low, minimum is 5'):
+    with pytest.raises(ErrorMessage, match='Bet is too low, minimum is 5'):
         await slots(
             channel_id=channel.id,
             provider=TProvider.twitch,
@@ -36,7 +37,7 @@ async def test_roulette_actions(db: None):
             bet=4,
         )
 
-    with pytest.raises(ValueError, match='Invalid points: invalid'):
+    with pytest.raises(ErrorMessage, match='Invalid points: invalid'):
         await slots(
             channel_id=channel.id,
             provider=TProvider.twitch,
@@ -44,7 +45,7 @@ async def test_roulette_actions(db: None):
             bet='invalid',
         )
 
-    with pytest.raises(ValueError, match='Not enough points to bet'):
+    with pytest.raises(ErrorMessage, match='Not enough points to bet'):
         await slots(
             channel_id=channel.id,
             provider=TProvider.twitch,
@@ -52,7 +53,7 @@ async def test_roulette_actions(db: None):
             bet='101%',
         )
 
-    def mock_win_random_choices(emotes: list[str]):
+    def mock_win_random_choices(emotes: list[str]) -> list[str]:
         return ['emote1', 'emote1', 'emote1']
 
     with patch(
@@ -81,7 +82,7 @@ async def test_roulette_actions(db: None):
         assert 'you WON 7200 points' in result.message
         assert result.points == 8100
 
-    def mock_lose_random_choices(emotes: list[str]):
+    def mock_lose_random_choices(emotes: list[str]) -> list[str]:
         return ['emote1', 'emote2', 'emote3']
 
     with patch(

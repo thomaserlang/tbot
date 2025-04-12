@@ -11,7 +11,7 @@ from tbot2.testbase import run_file
 
 
 @pytest.mark.asyncio
-async def test_chatter_gambling_stats(db: None):
+async def test_chatter_gambling_stats(db: None) -> None:
     channel = await create_channel(data=ChannelCreate(display_name='test'))
 
     stats = await get_chatter_gambling_stats(

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pytest_mock import MockFixture
@@ -6,15 +6,15 @@ from twitchAPI.twitch import ChannelFollower, TwitchUser
 from uuid6 import uuid7
 
 from tbot2.channel_command import TCommand, TMessageVar
+from tbot2.channel_command.var_fillers.followage_vars import followage_vars
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
-from tbot2.twitch.cmd_var_fillers.followage_vars import followage_vars
 
 
 @pytest.mark.asyncio
-async def test_followage_vars(mocker: MockFixture):
+async def test_followage_vars(mocker: MockFixture) -> None:
     twitch_channel_follower = mocker.patch(
-        'tbot2.twitch.cmd_var_fillers.followage_vars.twitch_channel_follower'
+        'tbot2.channel_command.var_fillers.followage_vars.twitch_channel_follower'
     )
     twitch_channel_follower.return_value = ChannelFollower(
         from_id='1234',
@@ -35,14 +35,14 @@ async def test_followage_vars(mocker: MockFixture):
     }
 
     mock_datetime = mocker.patch(
-        'tbot2.twitch.cmd_var_fillers.followage_vars.datetime_now'
+        'tbot2.channel_command.var_fillers.followage_vars.datetime_now'
     )
-    mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=timezone.utc)
+    mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=UTC)
 
     await followage_vars(
         chat_message=ChatMessage(  # type: ignore
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=uuid7(),
@@ -62,7 +62,7 @@ async def test_followage_vars(mocker: MockFixture):
 
     # Followage of another user
     lookup_twitch_users = mocker.patch(
-        'tbot2.twitch.cmd_var_fillers.followage_vars.lookup_twitch_users'
+        'tbot2.channel_command.var_fillers.followage_vars.lookup_twitch_users'
     )
     lookup_twitch_users.return_value = [
         TwitchUser(
@@ -82,7 +82,7 @@ async def test_followage_vars(mocker: MockFixture):
     await followage_vars(
         chat_message=ChatMessage(  # type: ignore
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=uuid7(),

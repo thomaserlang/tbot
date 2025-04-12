@@ -10,7 +10,7 @@ from ..var_filler import fills_vars
 @fills_vars(provider='all', vars=('gamble_roulette',))
 async def roulette_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     try:
         result = await roulette(
             channel_id=chat_message.channel_id,

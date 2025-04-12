@@ -8,7 +8,7 @@ from tbot2.testbase import run_file, user_signin
 
 
 @pytest.mark.asyncio
-async def test_handle_message(db: None):
+async def test_handle_message(db: None) -> None:
     user = await user_signin(client=None, scopes=[])
 
     cmd = await create_command(

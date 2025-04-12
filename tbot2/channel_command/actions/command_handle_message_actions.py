@@ -117,7 +117,9 @@ async def _matches_pattern(
 
 
 @alru_cache(ttl=2, maxsize=1000 if 'pytest' not in sys.modules else 0)
-async def get_cached_commands(channel_id: UUID, session: AsyncSession | None = None):
+async def get_cached_commands(
+    channel_id: UUID, session: AsyncSession | None = None
+) -> list[Command]:
     return await get_commands(
         channel_id=channel_id,
         session=session,

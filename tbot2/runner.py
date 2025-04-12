@@ -1,3 +1,4 @@
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -8,12 +9,12 @@ from tbot2.config_settings import config
 
 
 @click.group()
-def cli():
+def cli() -> None:
     pass
 
 
 @cli.command()
-def api():
+def api() -> None:
     uvicorn.run(
         'tbot2.main:app',
         host='0.0.0.0',
@@ -27,7 +28,7 @@ def api():
 
 @cli.command()
 @click.option('--revision', '-r', help='revision, default head', default='head')
-def upgrade(revision: str):
+def upgrade(revision: str) -> None:
     from alembic import command
     from alembic.config import Config
 
@@ -41,7 +42,7 @@ def upgrade(revision: str):
 
 
 @asynccontextmanager
-async def db():
+async def db() -> AsyncGenerator[None]:
     from tbot2.database import database
 
     await database.setup()
@@ -50,7 +51,7 @@ async def db():
 
 
 @cli.command()
-async def twitch_eventsub_unregister_all():
+async def twitch_eventsub_unregister_all() -> None:
     from tbot2.twitch import unregister_all_eventsubs
 
     async with db():
@@ -58,14 +59,14 @@ async def twitch_eventsub_unregister_all():
 
 
 @cli.command()
-async def twitch_eventsub_register_all():
+async def twitch_eventsub_register_all() -> None:
     from tbot2.twitch import register_all_eventsubs
 
     async with db():
         await register_all_eventsubs()
 
 
-def main():
+def main() -> None:
     cli()
 
 

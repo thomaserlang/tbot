@@ -54,7 +54,7 @@ async def disconnect_channel_bot_provider(
     channel_provider_id: UUID,
     channel_id: UUID,
     session: AsyncSession | None = None,
-):
+) -> None:
     async with get_session(session) as session:
         provider = await get_channel_oauth_provider_by_id(
             channel_id=channel_id,

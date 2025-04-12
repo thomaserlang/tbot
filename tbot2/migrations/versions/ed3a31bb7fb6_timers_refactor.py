@@ -6,16 +6,16 @@ Create Date: 2025-04-04 19:28:41.440782
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = 'ed3a31bb7fb6'
-down_revision: Union[str, None] = 'f14045abd0ec'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = 'f14045abd0ec'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -45,7 +45,9 @@ def upgrade() -> None:
     )
 
     op.execute("""
-        INSERT INTO channel_timers (id, channel_id, name, messages, `interval`, enabled, created_at, updated_at, last_message_index, pick_mode, active_mode, next_run_at)
+        INSERT INTO channel_timers (id, channel_id, name, messages, `interval`, enabled,
+                created_at, updated_at, last_message_index, pick_mode, 
+               active_mode, next_run_at)
         SELECT 
             uuid_v7(), 
             c.id as channel_id, 

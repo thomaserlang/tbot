@@ -24,17 +24,12 @@ router = APIRouter()
 @router.get(
     '/channels/{channel_id}/timers',
     name='Get Channel Timers',
-    responses={
-        200: {
-            'model': PageCursor[Timer],
-        },
-    },
 )
 async def get_timers_route(
     channel_id: UUID,
     page_query: Annotated[PageCursorQuery, Depends()],
     token_data: Annotated[TokenData, Security(authenticated, scopes=[TimerScope.READ])],
-):
+) -> PageCursor[Timer]:
     await token_data.channel_has_access(
         channel_id=channel_id, access_level=TAccessLevel.MOD
     )
@@ -57,17 +52,12 @@ async def get_timers_route(
 @router.get(
     '/channels/{channel_id}/timers/{timer_id}',
     name='Get Channel Timer',
-    responses={
-        200: {
-            'model': Timer,
-        },
-    },
 )
 async def get_timer_route(
     channel_id: UUID,
     timer_id: UUID,
     token_data: Annotated[TokenData, Security(authenticated, scopes=[TimerScope.READ])],
-):
+) -> Timer:
     await token_data.channel_has_access(
         channel_id=channel_id, access_level=TAccessLevel.MOD
     )
@@ -83,11 +73,6 @@ async def get_timer_route(
 @router.post(
     '/channels/{channel_id}/timers',
     name='Create Channel Timer',
-    responses={
-        201: {
-            'model': Timer,
-        },
-    },
     status_code=201,
 )
 async def create_timer_route(
@@ -96,7 +81,7 @@ async def create_timer_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TimerScope.WRITE])
     ],
-):
+) -> Timer:
     await token_data.channel_has_access(
         channel_id=channel_id, access_level=TAccessLevel.MOD
     )
@@ -110,11 +95,6 @@ async def create_timer_route(
 @router.put(
     '/channels/{channel_id}/timers/{timer_id}',
     name='Update Channel Timer',
-    responses={
-        200: {
-            'model': Timer,
-        },
-    },
 )
 async def update_timer_route(
     channel_id: UUID,
@@ -123,7 +103,7 @@ async def update_timer_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TimerScope.WRITE])
     ],
-):
+) -> Timer:
     await token_data.channel_has_access(
         channel_id=channel_id, access_level=TAccessLevel.MOD
     )
@@ -151,7 +131,7 @@ async def delete_timer_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TimerScope.WRITE])
     ],
-):
+) -> None:
     await token_data.channel_has_access(
         channel_id=channel_id, access_level=TAccessLevel.MOD
     )

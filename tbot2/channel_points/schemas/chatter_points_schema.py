@@ -1,13 +1,9 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from tbot2.common import BaseSchema
 
 
-class ChatterPoints(BaseModel):
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
-
+class ChatterPoints(BaseSchema):
     channel_id: UUID
     chatter_id: str
     provider: str

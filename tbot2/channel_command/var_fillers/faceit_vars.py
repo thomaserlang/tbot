@@ -27,7 +27,7 @@ faceit_client = AsyncClient(
 )
 async def faceit_elo_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     if not vars['faceit.username'].args:
         raise CommandError('{faceit.username <username>} is missing')
 

@@ -6,7 +6,7 @@ from tbot2.testbase import run_file
 
 
 @pytest.mark.asyncio
-async def test_get_twitch_chatters(db: None, httpx_mock: HTTPXMock):
+async def test_get_twitch_chatters(db: None, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         url='https://api.twitch.tv/helix/chat/chatters?broadcaster_id=123&moderator_id=123&first=1000',
         json={

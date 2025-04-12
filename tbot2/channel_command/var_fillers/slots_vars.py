@@ -8,7 +8,9 @@ from ..var_filler import fills_vars
 
 
 @fills_vars(provider='all', vars=('gamble_slots',))
-async def slots_vars(chat_message: ChatMessage, command: TCommand, vars: TMessageVars):
+async def slots_vars(
+    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+) -> None:
     try:
         result = await slots(
             channel_id=chat_message.channel_id,

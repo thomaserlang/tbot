@@ -13,7 +13,7 @@ from ..var_filler import fills_vars
 @fills_vars(provider='all', vars=('countdown',))
 async def countdown_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     try:
         dt = parse(' '.join(vars['countdown'].args))
         if dt.tzinfo is None:

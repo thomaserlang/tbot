@@ -17,7 +17,7 @@ async def slots(
     provider: TProvider,
     chatter_id: str,
     bet: int | str,
-):
+) -> SlotsResult:
     point_settings = await get_channel_point_settings(channel_id=channel_id)
     settings = await get_slots_settings(channel_id=channel_id)
     points = await get_points(
@@ -73,5 +73,5 @@ async def slots(
     )
 
 
-def random_choices(emotes: list[str]):
+def random_choices(emotes: list[str]) -> list[str]:
     return random.choices(emotes, k=3)

@@ -1,4 +1,5 @@
 import logging
+from collections.abc import AsyncGenerator
 from urllib.parse import urljoin
 from uuid import UUID
 
@@ -19,7 +20,7 @@ from ..twitch_http_client import (
 
 async def register_eventsubs(
     channel_id: UUID,
-):
+) -> None:
     provider = await get_channel_oauth_provider(
         channel_id=channel_id,
         provider=TProvider.twitch,
@@ -48,7 +49,7 @@ async def register_eventsubs(
 def get_eventsub_registrations(
     twitch_channel_id: str,
     twitch_bot_user_id: str,
-):
+) -> list[EventSubRegistration]:
     return [
         EventSubRegistration(
             event_type='channel.chat.message',
@@ -64,7 +65,7 @@ def get_eventsub_registrations(
 async def _register_eventsub(
     registration: EventSubRegistration,
     channel_id: UUID,
-):
+) -> EventSubSubscription:
     response = await twitch_app_client.post(
         url='/eventsub/subscriptions',
         json={
@@ -88,7 +89,7 @@ async def _register_eventsub(
     return EventSubSubscription.model_validate(response.json()['data'][0])
 
 
-async def delete_eventsub_registration(event_id: str):
+async def delete_eventsub_registration(event_id: str) -> bool:
     response = await twitch_app_client.delete(
         url=f'/eventsub/subscriptions?id={event_id}'
     )
@@ -103,7 +104,7 @@ async def delete_eventsub_registration(event_id: str):
 async def get_eventsubs(
     type: str | None = None,
     status: str | None = None,
-):
+) -> AsyncGenerator[EventSubSubscription]:
     params: dict[str, str] = {}
     if type:
         params['type'] = type
@@ -118,7 +119,7 @@ async def get_eventsubs(
     return get_twitch_pagination_yield(response, EventSubSubscription)
 
 
-async def unregister_all_eventsubs():
+async def unregister_all_eventsubs() -> None:
     async for eventsub in await get_eventsubs():
         try:
             logging.info(f'Deleting eventsub registration {eventsub.id}')
@@ -129,7 +130,7 @@ async def unregister_all_eventsubs():
 
 async def unregister_channel_eventsubs(
     channel_id: UUID,
-):
+) -> None:
     async for eventsub in await get_eventsubs():
         if str(channel_id) in eventsub.transport.callback:
             try:
@@ -141,7 +142,7 @@ async def unregister_channel_eventsubs(
                 )
 
 
-async def register_all_eventsubs():
+async def register_all_eventsubs() -> None:
     async for provider in get_channels_providers(provider=TProvider.twitch):
         logging.info(f'Registering eventsub for channel {provider.channel_id}')
         await register_eventsubs(channel_id=provider.channel_id)

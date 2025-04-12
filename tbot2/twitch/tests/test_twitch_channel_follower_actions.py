@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pytest_httpx import HTTPXMock
@@ -9,7 +9,7 @@ from tbot2.twitch.actions.twitch_channel_follower_action import twitch_channel_f
 
 
 @pytest.mark.asyncio
-async def test_twitch_channel_follower(db: None, httpx_mock: HTTPXMock):
+async def test_twitch_channel_follower(db: None, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         url='https://api.twitch.tv/helix/channels/followers?broadcaster_id=141981764&user_id=11111',
         json={
@@ -42,7 +42,7 @@ async def test_twitch_channel_follower(db: None, httpx_mock: HTTPXMock):
         22,
         22,
         8,
-        tzinfo=timezone.utc,
+        tzinfo=UTC,
     )
 
 

@@ -43,7 +43,7 @@ async def lookup_twitch_user(
     channel_id: UUID,
     login: str | None = None,
     user_id: str | None = None,
-):
+) -> TwitchUser | None:
     if not login and not user_id:
         raise Exception('login or user_id must be provided')
     if login and user_id:

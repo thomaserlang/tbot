@@ -15,7 +15,7 @@ from tbot2.testbase import run_file, user_signin
 
 
 @pytest.mark.asyncio
-async def test_bot_provider_actions(client: AsyncClient):
+async def test_bot_provider_actions(client: AsyncClient) -> None:
     user = await user_signin(client=client, scopes=[])
 
     system_bot_provider = await save_bot_provider(

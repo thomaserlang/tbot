@@ -7,7 +7,7 @@ from tbot2.channel_chat_filters.actions.warning_actions import give_warning, has
 from tbot2.common import ChatMessage
 
 from ..schemas.chat_filter_schema import FilterMatchResult
-from .chat_filter_actions import get_chat_filters
+from .chat_filter_actions import ChatFilterBase, get_chat_filters
 from .permit_actions import has_permit
 
 
@@ -46,5 +46,5 @@ async def matches_filter(chat_message: ChatMessage) -> FilterMatchResult | None:
 
 
 @alru_cache(ttl=1, maxsize=1000 if 'pytest' not in sys.modules else 0)
-async def get_channel_filters_cached(channel_id: UUID):
+async def get_channel_filters_cached(channel_id: UUID) -> list[ChatFilterBase]:
     return await get_chat_filters(channel_id)

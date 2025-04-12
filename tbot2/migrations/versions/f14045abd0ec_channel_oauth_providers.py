@@ -42,8 +42,10 @@ def upgrade() -> None:
 
     op.execute("""
         insert into channel_oauth_providers
-            (id, channel_id, provider, provider_user_id, access_token, refresh_token, name, scope)
-        select uuid_v7(), c.id, 'twitch', t.channel_id, t.twitch_token, t.twitch_refresh_token, t.name, t.twitch_scope
+            (id, channel_id, provider, provider_user_id, access_token, refresh_token, 
+               name, scope)
+        select uuid_v7(), c.id, 'twitch', t.channel_id, t.twitch_token, 
+               t.twitch_refresh_token, t.name, t.twitch_scope
         from twitch_channels t, channels c 
         where c.twitch_id = t.channel_id
     """)
@@ -63,7 +65,8 @@ def upgrade() -> None:
     op.execute("""
         insert into channel_oauth_providers
             (id, channel_id, provider, name, access_token, refresh_token)
-        select uuid_v7(), s.channel_id, 'spotify', s.name, s.access_token, s.refresh_token
+        select uuid_v7(), s.channel_id, 'spotify', s.name, s.access_token, 
+               s.refresh_token
         from spotify_oauth s
     """)
 

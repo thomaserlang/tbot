@@ -1,7 +1,7 @@
 from tbot2.exceptions import ErrorMessage
 
 
-def convert_to_points(points_str: str | int, user_points: int):
+def convert_to_points(points_str: str | int, user_points: int) -> int:
     if isinstance(points_str, str):
         if points_str.isdigit():
             points_str = int(points_str)

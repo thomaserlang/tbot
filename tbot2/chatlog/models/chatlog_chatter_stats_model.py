@@ -1,3 +1,4 @@
+import sys
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -9,6 +10,7 @@ from tbot2.model_base import Base
 
 class MChatlogChatterStats(Base):
     __tablename__ = 'chatlog_chatter_stats'
+    __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     channel_id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)
     provider: Mapped[TProvider] = mapped_column(sa.String(50), primary_key=True)  # noqa: F821

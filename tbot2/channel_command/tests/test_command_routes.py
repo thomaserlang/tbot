@@ -5,7 +5,7 @@ from tbot2.testbase import AsyncClient, run_file, user_signin
 
 
 @pytest.mark.asyncio
-async def test_command_routes(client: AsyncClient):
+async def test_command_routes(client: AsyncClient) -> None:
     user = await user_signin(
         client=client, scopes=[TCommandScope.READ, TCommandScope.WRITE]
     )
@@ -13,12 +13,12 @@ async def test_command_routes(client: AsyncClient):
     r = await client.post(
         f'/api/2/channels/{user.channel.id}/commands',
         json={
-            'cmd': 'test',
+            'cmds': ['test'],
             'response': 'test response',
         },
     )
     assert r.status_code == 201
-    assert r.json()['cmd'] == 'test'
+    assert 'test' in r.json()['cmds']
     assert r.json()['response'] == 'test response'
 
 

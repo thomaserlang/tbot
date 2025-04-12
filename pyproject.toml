@@ -47,7 +47,8 @@ requires = ["flit_core>=3.2,<4"]
 quote-style = "single"
 
 [tool.ruff.lint]
-select = ["E", "F", "UP", "B", "I"]
+select = ["E", "F", "UP", "B", "I", "FAST", "ANN"]
+ignore = ['ANN401']
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"

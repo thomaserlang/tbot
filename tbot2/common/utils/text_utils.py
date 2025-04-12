@@ -124,5 +124,5 @@ def strip_message_symbols(message: str) -> str:
     return message.translate(_trans_punctuation)
 
 
-def safe_username(user: str):
+def safe_username(user: str) -> str:
     return re.sub('[^a-zA-Z0-9_]', '', user)[:100]

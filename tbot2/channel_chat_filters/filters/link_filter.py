@@ -7,7 +7,12 @@ from async_lru import alru_cache
 
 from tbot2.common import ChatMessage
 
-from ..actions.link_allow_actions import get_link_allowlist as _get_link_allowlist
+from ..actions.link_allow_actions import (
+    LinkAllow,
+)
+from ..actions.link_allow_actions import (
+    get_link_allowlist as get_link_allowlist,
+)
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
     ChatFilterBaseCreate,
@@ -22,7 +27,9 @@ from ..schemas.chat_filter_schema import (
 class ChatFilterLinkCreate(ChatFilterBaseCreate):
     type: Literal['link']
     name: ChatFilterName = 'Link Filter'
-    warning_message: ChatFilterWarningMessage = 'You are not permitted to post links [warning]'
+    warning_message: ChatFilterWarningMessage = (
+        'You are not permitted to post links [warning]'
+    )
     timeout_message: ChatFilterTimeoutMessage = 'You are not permitted to post links'
 
 
@@ -37,7 +44,7 @@ class ChatFilterLink(ChatFilterBase):
         matches = RE_URL.findall(message.message_without_fragments())
         if not matches:
             return FilterMatchResult(filter=self, matched=False)
-        allowlist = await get_link_allowlist(filter_id=self.id)
+        allowlist = await get_link_allowlist_cached(filter_id=self.id)
         for match in matches:
             for allow in allowlist:
                 if match[2] in allow.url:
@@ -46,10 +53,10 @@ class ChatFilterLink(ChatFilterBase):
 
 
 @alru_cache(ttl=1, maxsize=1000 if 'pytest' not in sys.modules else 0)
-async def get_link_allowlist(
+async def get_link_allowlist_cached(
     filter_id: UUID,
-):
-    return await _get_link_allowlist(filter_id)
+) -> list[LinkAllow]:
+    return await get_link_allowlist(filter_id)
 
 
 RE_URL = re.compile(

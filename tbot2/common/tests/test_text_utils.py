@@ -6,7 +6,7 @@ from tbot2.common.utils.text_utils import (
 from tbot2.testbase import run_file
 
 
-def test_check_pattern_match():
+def test_check_pattern_match() -> None:
     assert check_pattern_match(
         message='test123',
         pattern='test123',
@@ -66,7 +66,7 @@ def test_check_pattern_match():
     )
 
 
-def test_collaps_message_letter_repeat():
+def test_collaps_message_letter_repeat() -> None:
     assert collaps_message_letter_repeat('helllo') == 'hello'
     assert collaps_message_letter_repeat('helllo world') == 'hello world'
     assert (

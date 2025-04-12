@@ -6,7 +6,7 @@ Create Date: 2024-12-14 18:56:38.860866
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
@@ -14,9 +14,9 @@ from sqlalchemy.dialects.mysql import INTEGER
 
 # revision identifiers, used by Alembic.
 revision: str = 'b1b200f61564'
-down_revision: Union[str, None] = 'a96a1d4bfa03'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = 'a96a1d4bfa03'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -36,7 +36,8 @@ def upgrade() -> None:
         ),
     )
     op.execute(
-        'UPDATE channel_point_settings SET channel_id = (SELECT id FROM channels WHERE twitch_id = channel_point_settings.provider_id)'
+        'UPDATE channel_point_settings SET channel_id = (SELECT id FROM channels '
+        'WHERE twitch_id = channel_point_settings.provider_id)'
     )
     op.alter_column(
         'channel_point_settings',
@@ -91,7 +92,8 @@ def upgrade() -> None:
         ),
     )
     op.execute(
-        'UPDATE channel_gambling_roulette_settings SET channel_id = (SELECT id FROM channels WHERE twitch_id = channel_gambling_roulette_settings.provider_id)'
+        'UPDATE channel_gambling_roulette_settings SET channel_id = (SELECT id FROM '
+        'channels WHERE twitch_id = channel_gambling_roulette_settings.provider_id)'
     )
     op.alter_column(
         'channel_gambling_roulette_settings',
@@ -138,7 +140,8 @@ def upgrade() -> None:
         ),
     )
     op.execute(
-        'UPDATE channel_gambling_slots_settings SET channel_id = (SELECT id FROM channels WHERE twitch_id = channel_gambling_slots_settings.provider_id)'
+        'UPDATE channel_gambling_slots_settings SET channel_id = (SELECT id FROM '
+        'channels WHERE twitch_id = channel_gambling_slots_settings.provider_id)'
     )
     op.alter_column(
         'channel_gambling_slots_settings',
@@ -197,7 +200,8 @@ def upgrade() -> None:
         ),
     )
     op.execute(
-        'UPDATE channel_chatter_gambling_stats SET channel_id = (SELECT id FROM channels WHERE twitch_id = channel_chatter_gambling_stats.provider_id)'
+        'UPDATE channel_chatter_gambling_stats SET channel_id = (SELECT id FROM '
+        'channels WHERE twitch_id = channel_chatter_gambling_stats.provider_id)'
     )
     op.alter_column(
         'channel_chatter_gambling_stats',
@@ -262,7 +266,8 @@ def upgrade() -> None:
         ),
     )
     op.execute(
-        'UPDATE channel_chatter_points SET channel_id = (SELECT id FROM channels WHERE twitch_id = channel_chatter_points.provider_id)'
+        'UPDATE channel_chatter_points SET channel_id = (SELECT id FROM channels '
+        'WHERE twitch_id = channel_chatter_points.provider_id)'
     )
     op.alter_column(
         'channel_chatter_points',

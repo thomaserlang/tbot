@@ -19,7 +19,7 @@ async def get_random_channel_quote(
     *,
     channel_id: UUID,
     session: AsyncSession | None = None,
-):
+) -> ChannelQuote | None:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MChannelQuote)
@@ -37,7 +37,7 @@ async def get_channel_quote_by_number(
     channel_id: UUID,
     number: int,
     session: AsyncSession | None = None,
-):
+) -> ChannelQuote | None:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MChannelQuote).where(
@@ -54,7 +54,7 @@ async def get_channel_quote(
     *,
     quote_id: UUID,
     session: AsyncSession | None = None,
-):
+) -> ChannelQuote | None:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MChannelQuote).where(MChannelQuote.id == quote_id)
@@ -69,7 +69,7 @@ async def create_channel_quote(
     channel_id: UUID,
     data: ChannelQuoteCreate,
     session: AsyncSession | None = None,
-):
+) -> ChannelQuote:
     async with get_session(session) as session:
         number = await session.scalar(
             sa.select(sa.func.count(MChannelQuote.id)).where(
@@ -102,14 +102,14 @@ async def update_channel_quote(
     quote_id: UUID,
     data: ChannelQuoteUpdate,
     session: AsyncSession | None = None,
-):
+) -> ChannelQuote:
     async with get_session(session) as session:
         result = await session.execute(
             sa.update(MChannelQuote.__table__)  # type: ignore
             .where(MChannelQuote.id == quote_id)
             .values(
-                updated_at=datetime_now,
-                **data.model_dump(exclude_unset=True, exclude_defaults=True),
+                updated_at=datetime_now(),
+                **data.model_dump(exclude_unset=True),
             )
         )
 
@@ -126,7 +126,7 @@ async def delete_channel_quote(
     *,
     quote_id: UUID,
     session: AsyncSession | None = None,
-):
+) -> bool:
     async with get_session(session) as session:
         quote = await get_channel_quote(quote_id=quote_id, session=session)
         if not quote:

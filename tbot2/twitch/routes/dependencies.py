@@ -13,7 +13,7 @@ from ..schemas.eventsub_headers import EventSubHeaders
 async def validate_twitch_webhook_signature(
     headers: Annotated[EventSubHeaders, Depends()],
     request: Request,
-):
+) -> EventSubHeaders:
     message = (
         headers.message_id
         + headers.message_timestamp_raw

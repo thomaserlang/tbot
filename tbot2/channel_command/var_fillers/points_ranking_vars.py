@@ -18,7 +18,7 @@ from ..var_filler import fills_vars
 )
 async def points_ranking_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     async with get_session() as session:
         result = await session.execute(
             sa.select(

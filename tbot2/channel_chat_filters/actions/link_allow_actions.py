@@ -18,7 +18,7 @@ from ..schemas.link_allow_schema import (
 async def get_link_allow(
     link_id: UUID,
     session: AsyncSession | None = None,
-):
+) -> LinkAllow | None:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MChatFilterLinkAllowlist).where(

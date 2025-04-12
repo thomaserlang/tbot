@@ -24,11 +24,6 @@ router = APIRouter()
 @router.get(
     '/channels/{channel_id}/commands',
     name='Get Commands',
-    responses={
-        200: {
-            'model': PageCursor[Command],
-        }
-    },
 )
 async def get_commands_route(
     channel_id: UUID,
@@ -36,7 +31,7 @@ async def get_commands_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TCommandScope.READ])
     ],
-):
+) -> PageCursor[Command]:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -58,11 +53,6 @@ async def get_commands_route(
 @router.get(
     '/channels/{channel_id}/commands/{command_id}',
     name='Get Command',
-    responses={
-        200: {
-            'model': Command,
-        }
-    },
 )
 async def get_command_route(
     channel_id: UUID,
@@ -70,7 +60,7 @@ async def get_command_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TCommandScope.READ])
     ],
-):
+) -> Command:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -87,11 +77,6 @@ async def get_command_route(
 @router.post(
     '/channels/{channel_id}/commands',
     name='Create Command',
-    responses={
-        201: {
-            'model': Command,
-        }
-    },
     status_code=201,
 )
 async def create_command_route(
@@ -100,7 +85,7 @@ async def create_command_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TCommandScope.WRITE])
     ],
-):
+) -> Command:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -115,11 +100,6 @@ async def create_command_route(
 @router.put(
     '/channels/{channel_id}/commands/{command_id}',
     name='Update Command',
-    responses={
-        200: {
-            'model': Command,
-        }
-    },
 )
 async def update_command_route(
     channel_id: UUID,
@@ -128,7 +108,7 @@ async def update_command_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TCommandScope.WRITE])
     ],
-):
+) -> Command:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -157,7 +137,7 @@ async def delete_command_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TCommandScope.WRITE])
     ],
-):
+) -> None:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,

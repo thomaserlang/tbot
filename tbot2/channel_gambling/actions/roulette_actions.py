@@ -22,7 +22,7 @@ async def roulette(
     provider: TProvider,
     chatter_id: str,
     bet: int | str,
-):
+) -> RouletteResult:
     point_settings = await get_channel_point_settings(channel_id=channel_id)
     settings = await get_roulette_settings(channel_id=channel_id)
     points = await get_points(
@@ -76,5 +76,5 @@ async def roulette(
     )
 
 
-def random_int():
+def random_int() -> int:
     return random.randint(1, 100)

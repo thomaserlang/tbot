@@ -19,7 +19,7 @@ filterwarnings('ignore', module=r'aiomysql')
 
 
 class Database:
-    def __init__(self):
+    def __init__(self) -> None:
         self.engine: AsyncEngine
         self.session: async_sessionmaker[AsyncSession]
         self.redis: redis.Redis
@@ -27,7 +27,7 @@ class Database:
         self._test_setup = False
         self._conn: AsyncConnection
 
-    async def setup(self):
+    async def setup(self) -> None:
         database_url = sa.URL.create(
             drivername=config.mysql.drivername,
             username=config.mysql.user,
@@ -63,7 +63,7 @@ class Database:
             default_queue_name=config.redis.queue_name,
         )
 
-    async def setup_test(self):
+    async def setup_test(self) -> None:
         config.redis.db = 15
         config.mysql.database = 'tbot-testdb'
 
@@ -79,7 +79,8 @@ class Database:
             with engine.begin() as conn:
                 conn.execute(
                     sa.text(
-                        'CREATE SCHEMA IF NOT EXISTS `tbot-testdb` DEFAULT CHARACTER SET utf8mb4;'
+                        'CREATE SCHEMA IF NOT EXISTS `tbot-testdb` '
+                        'DEFAULT CHARACTER SET utf8mb4;'
                     )
                 )
             from alembic import command
@@ -104,11 +105,11 @@ class Database:
 
         await self.redis.flushdb()  # type: ignore
 
-    async def close(self):
+    async def close(self) -> None:
         await self.engine.dispose()
         await self.redis.aclose()
 
-    async def close_test(self):
+    async def close_test(self) -> None:
         await self.trans.rollback()
         await self._conn.close()
         await self.close()

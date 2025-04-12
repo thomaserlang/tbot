@@ -12,7 +12,7 @@ async def twitch_delete_message(
     channel_id: UUID,
     broadcaster_id: str,
     message_id: str,
-):
+) -> bool:
     bot_provider = await get_channel_bot_provider(
         provider=TProvider.twitch,
         channel_id=channel_id,

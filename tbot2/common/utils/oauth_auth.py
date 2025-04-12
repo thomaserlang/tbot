@@ -25,7 +25,7 @@ from tbot2.exceptions import ErrorMessage
 class ChannelProviderOAuth(Auth):
     def __init__(
         self, token_url: str, client_id: str, client_secret: str, provider: TProvider
-    ):
+    ) -> None:
         self.token_url = token_url
         self.client_id = client_id
         self.client_secret = client_secret
@@ -78,7 +78,7 @@ class ChannelProviderOAuth(Auth):
 
             yield request
 
-    async def _refresh_token(self, channel_id: UUID, refresh_token: str):
+    async def _refresh_token(self, channel_id: UUID, refresh_token: str) -> str:
         async with AsyncClient() as client:
             response = await client.post(
                 self.token_url,
@@ -111,7 +111,7 @@ class ChannelProviderOAuth(Auth):
 class ChannelProviderBotOAuth(Auth):
     def __init__(
         self, token_url: str, client_id: str, client_secret: str, provider: TProvider
-    ):
+    ) -> None:
         self.token_url = token_url
         self.client_id = client_id
         self.client_secret = client_secret
@@ -191,7 +191,7 @@ class ChannelProviderBotOAuth(Auth):
             return str(data['access_token'])
 
 
-def _get_missing_provider_message(channel_uuid: UUID, provider: TProvider):
+def _get_missing_provider_message(channel_uuid: UUID, provider: TProvider) -> str:
     return (
         f'{provider} must be added as a provider: '
         f'{config.web.base_url}channels/{channel_uuid}/providers'

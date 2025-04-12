@@ -32,4 +32,5 @@ class MChannelOAuthProvider(Base):
     bot_provider: Mapped[MBotProvider] = sa.orm.relationship(
         'MBotProvider',
         lazy=False,
+        viewonly=True,
     )

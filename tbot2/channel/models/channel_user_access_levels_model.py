@@ -1,3 +1,4 @@
+import sys
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -9,6 +10,7 @@ from tbot2.model_base import Base
 
 class MChannelUserAccessLevel(Base):
     __tablename__ = 'channel_user_access_levels'
+    __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True, default=uuid7)
     channel_id: Mapped[UUID] = mapped_column(
@@ -22,4 +24,3 @@ class MChannelUserAccessLevel(Base):
         nullable=False,
     )
     access_level: Mapped[int] = mapped_column(sa.SmallInteger, nullable=False)
-    

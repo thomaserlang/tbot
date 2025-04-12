@@ -24,7 +24,7 @@ class Oauth2AuthorizeParams(BaseModel):
     force_verify: bool = False
 
     @field_serializer('state')
-    def serialize_state(self, value: dict[str, Any]):
+    def serialize_state(self, value: dict[str, Any]) -> str:
         payload: dict[str, Any] = {
             'context': value,
             'exp': datetime.now(tz=UTC) + timedelta(minutes=5),
@@ -32,15 +32,15 @@ class Oauth2AuthorizeParams(BaseModel):
         return jwt.encode(payload, config.web.cookie_secret, algorithm='HS256')
 
     @field_serializer('force_verify')
-    def validate_force_verify(self, value: bool):
+    def validate_force_verify(self, value: bool) -> str:
         return 'true' if value else 'false'
 
     @field_serializer('claims')
-    def serialize_claims(self, value: dict[str, str] | None):
+    def serialize_claims(self, value: dict[str, str] | None) -> str:
         if value is None:
             return ''
 
-        return json.dumps(value).encode()
+        return json.dumps(value)
 
 
 class Oauth2AuthorizeResponse(BaseModel):
@@ -49,7 +49,7 @@ class Oauth2AuthorizeResponse(BaseModel):
     state: dict[str, Any]
 
     @field_validator('state', mode='before')
-    def validate_state(cls, value: str | dict[str, Any]):
+    def validate_state(cls, value: str | dict[str, Any]) -> dict[str, Any]:
         result: dict[str, Any] = {}
 
         if isinstance(value, str):

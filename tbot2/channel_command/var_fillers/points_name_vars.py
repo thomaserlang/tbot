@@ -13,7 +13,7 @@ from ..var_filler import fills_vars
 )
 async def points_name_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     settings = await get_channel_point_settings(channel_id=chat_message.channel_id)
 
     vars['points_name'].value = settings.points_name

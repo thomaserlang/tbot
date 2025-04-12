@@ -23,14 +23,13 @@ router = APIRouter()
 @router.get(
     '/channels/{channel_id}/providers',
     name='Get Channel Providers',
-    response_model=list[ChannelProvider],
 )
 async def get_channel_providers_route(
     channel_id: UUID,
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_READ])
     ],
-):
+) -> list[ChannelProvider]:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
@@ -38,18 +37,11 @@ async def get_channel_providers_route(
     providers = await get_channel_oauth_providers(
         channel_id=channel_id,
     )
-    return providers
+    return [ChannelProvider.model_validate(provider) for provider in providers]
 
 
 @router.get(
     '/channels/{channel_id}/providers/{channel_provider_id}',
-    name='Get Channel Provider',
-    responses={
-        200: {
-            'model': ChannelProvider,
-        },
-    },
-    response_model=ChannelProvider,
 )
 async def get_channel_provider_route(
     channel_id: UUID,
@@ -57,7 +49,7 @@ async def get_channel_provider_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_READ])
     ],
-):
+) -> ChannelProvider:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
@@ -73,7 +65,7 @@ async def get_channel_provider_route(
             detail='Channel provider not found',
         )
 
-    return provider
+    return ChannelProvider.model_validate(provider)
 
 
 @router.delete(
@@ -87,7 +79,7 @@ async def delete_channel_provider_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
     ],
-):
+) -> None:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
@@ -110,7 +102,7 @@ async def disconnect_channel_provider_bot_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
     ],
-):
+) -> None:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,

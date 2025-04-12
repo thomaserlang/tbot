@@ -17,7 +17,7 @@ from tbot2.exceptions import ErrorMessage
 
 
 class TwitchOauth2ClientCredentials(OAuth2ClientCredentials):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(  # type: ignore
             token_url='https://id.twitch.tv/oauth2/token',
             client_id=config.twitch.client_id,

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import sqlalchemy as sa
 from sqlalchemy.dialects.mysql import insert
@@ -14,7 +14,7 @@ from ..models.chatlog_model import MChatlog
 async def create_chatlog(
     data: ChatMessage,
     session: AsyncSession | None = None,
-):
+) -> bool:
     async with get_session(session) as session:
         await session.execute(
             sa.insert(MChatlog.__table__).values(  # type: ignore
@@ -30,10 +30,12 @@ async def create_chatlog(
                 chatter_id=data.chatter_id,
                 chat_messages=1,
             )
-            .on_duplicate_key_update(chat_messages=MChatlogChatterStats.chat_messages + 1)
+            .on_duplicate_key_update(
+                chat_messages=MChatlogChatterStats.chat_messages + 1
+            )
         )
 
-        last_seen_at = datetime.now(tz=timezone.utc)
+        last_seen_at = datetime.now(tz=UTC)
         await session.execute(
             insert(MChatlogChatters.__table__)  # type: ignore
             .values(

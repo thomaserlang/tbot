@@ -1,3 +1,5 @@
+from collections.abc import AsyncGenerator
+
 from fastapi import FastAPI, Request, Response
 from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,7 +22,7 @@ from tbot2.user.router import user_router
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     await database.setup()
     yield
     await database.close()
@@ -38,7 +40,7 @@ app.add_middleware(
 
 
 @app.exception_handler(PlainResponse)
-async def plain_response_handler(_: Request, exc: PlainResponse):
+async def plain_response_handler(_: Request, exc: PlainResponse) -> Response:
     return Response(
         content=exc.content,
         status_code=exc.status_code,

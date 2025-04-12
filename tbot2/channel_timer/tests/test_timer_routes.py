@@ -8,7 +8,7 @@ from tbot2.testbase import run_file, user_signin
 @pytest.mark.asyncio
 async def test_timer_routes(
     client: AsyncClient,
-):
+) -> None:
     user = await user_signin(client, scopes=TimerScope.get_all_scopes())
 
     response = await client.post(

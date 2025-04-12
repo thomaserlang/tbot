@@ -3,10 +3,10 @@ from typing import Annotated, Literal
 from uuid import UUID
 
 from fastapi import Body
-from pydantic import BaseModel, Field, StringConstraints, field_validator
+from pydantic import Field, StringConstraints, field_validator
 from typing_extensions import Doc
 
-from tbot2.common import BaseSchema, TAccessLevel, TProvider
+from tbot2.common import BaseRequestSchema, BaseSchema, TAccessLevel, TProvider
 
 from ..types import TCommandActiveMode
 
@@ -72,7 +72,7 @@ GroupName = Annotated[
 ]
 
 
-class CommandCreate(BaseModel):
+class CommandCreate(BaseSchema):
     cmds: Cmds = []
     patterns: Patterns = []
     response: Response
@@ -92,7 +92,7 @@ class CommandCreate(BaseModel):
     provider: Literal['all'] | TProvider = 'all'
 
 
-class CommandUpdate(BaseModel):
+class CommandUpdate(BaseRequestSchema):
     cmds: Cmds | None = None
     patterns: Patterns | None = None
     response: Response | None = None
@@ -107,7 +107,9 @@ class CommandUpdate(BaseModel):
         Annotated[
             TAccessLevel,
             Body(
-                description=f'{" - ".join([f"{e.value}: {e.name}" for e in TAccessLevel])}'
+                description=f'{
+                    " - ".join([f"{e.value}: {e.name}" for e in TAccessLevel])
+                }'
             ),
         ]
         | None
@@ -128,7 +130,9 @@ class CommandUpdate(BaseModel):
         'access_level',
         'provider',
     )
-    def check_none(cls, value: str | bool | Cmds | Patterns | None):
+    def check_none(
+        cls, value: str | bool | Cmds | Patterns | None
+    ) -> str | bool | Cmds | Patterns:
         if value is None:
             raise ValueError('Value cannot be None')
         return value

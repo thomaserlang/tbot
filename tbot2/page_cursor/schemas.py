@@ -1,7 +1,6 @@
-from typing import Any, Generic, TypeVar
+from typing import Annotated, Any, Generic, TypeVar
 
 from pydantic import BaseModel, Field
-from typing_extensions import Annotated
 
 T = TypeVar('T')
 

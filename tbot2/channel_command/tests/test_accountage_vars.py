@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pytest_mock import MockFixture
@@ -6,15 +6,15 @@ from twitchAPI.twitch import TwitchUser
 from uuid6 import uuid7
 
 from tbot2.channel_command import TCommand, TMessageVar
+from tbot2.channel_command.var_fillers.accountage_vars import accountage_vars
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
-from tbot2.twitch.cmd_var_fillers import accountage_vars
 
 
 @pytest.mark.asyncio
-async def test_accountage_vars(mocker: MockFixture):
+async def test_accountage_vars(mocker: MockFixture) -> None:
     lookup_twitch_users = mocker.patch(
-        'tbot2.twitch.cmd_var_fillers.accountage_vars.lookup_twitch_users'
+        'tbot2.channel_command.var_fillers.accountage_vars.lookup_twitch_users'
     )
     lookup_twitch_users.return_value = [
         TwitchUser(
@@ -42,16 +42,16 @@ async def test_accountage_vars(mocker: MockFixture):
     }
 
     mock_datetime = mocker.patch(
-        'tbot2.twitch.cmd_var_fillers.accountage_vars.datetime_now'
+        'tbot2.channel_command.var_fillers.accountage_vars.datetime_now'
     )
-    mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=timezone.utc)
+    mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=UTC)
 
     channel_id = uuid7()
 
-    await accountage_vars.accountage_vars(
+    await accountage_vars(
         chat_message=ChatMessage(  # type: ignore
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=channel_id,
@@ -85,10 +85,10 @@ async def test_accountage_vars(mocker: MockFixture):
         )
     ]
 
-    await accountage_vars.accountage_vars(
+    await accountage_vars(
         chat_message=ChatMessage(  # type: ignore
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=channel_id,

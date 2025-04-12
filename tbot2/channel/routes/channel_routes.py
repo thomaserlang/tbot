@@ -20,16 +20,11 @@ router = APIRouter()
 @router.get(
     '/channels/{channel_id}',
     name='Get Channel',
-    responses={
-        200: {
-            'model': Channel,
-        },
-    },
 )
 async def get_channel_route(
     channel_id: UUID,
     token_data: Annotated[TokenData, Security(authenticated)],
-):
+) -> Channel:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -48,17 +43,12 @@ async def get_channel_route(
 @router.get(
     '/channels',
     name='Get Channels',
-    responses={
-        200: {
-            'model': PageCursor[Channel],
-        },
-    },
 )
 async def get_channels_route(
     token_data: Annotated[TokenData, Security(authenticated)],
     page_query: Annotated[PageCursorQuery, Depends()],
     name: str | None = None,
-):
+) -> PageCursor[Channel]:
     stmt = (
         sa.select(MChannel)
         .where(

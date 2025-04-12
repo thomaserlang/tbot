@@ -12,7 +12,7 @@ from tbot2.common import TokenData
 class PlainResponse(Exception):
     """Used if early return in nedded in a dependency."""
 
-    def __init__(self, status_code: int, content: str):
+    def __init__(self, status_code: int, content: str) -> None:
         self.status_code = status_code
         self.content = content
 
@@ -32,7 +32,7 @@ async def get_token_data(
 async def authenticated(
     security_scopes: SecurityScopes,
     token_data: Annotated[TokenData, Depends(get_token_data)],
-):
+) -> TokenData:
     """
     Usage: token_data: Annotated[TokenData, Security(authenticated, scopes=['SCOPE'])]
     """

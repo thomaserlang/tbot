@@ -6,7 +6,7 @@ from tbot2.testbase import run_file
 
 
 @pytest.mark.asyncio
-async def test_twitch_lookup_users(db: None, httpx_mock: HTTPXMock):
+async def test_twitch_lookup_users(db: None, httpx_mock: HTTPXMock) -> None:
     httpx_mock.add_response(
         url='https://api.twitch.tv/helix/users?login=twitchdev',
         json={
@@ -17,7 +17,8 @@ async def test_twitch_lookup_users(db: None, httpx_mock: HTTPXMock):
                     'display_name': 'TwitchDev',
                     'type': '',
                     'broadcaster_type': 'partner',
-                    'description': 'Supporting third-party developers building Twitch integrations from chatbots to game integrations.',
+                    'description': 'Supporting third-party developers building Twitch '
+                                   'integrations from chatbots to game integrations.',
                     'profile_image_url': 'https://static-cdn.jtvnw.net/jtv_user_pictures/8a6381c7-d0c0-4576-b179-38bd5ce1d6af-profile_image-300x300.png',
                     'offline_image_url': 'https://static-cdn.jtvnw.net/jtv_user_pictures/3f13ab61-ec78-4fe6-8481-8682cb3b0ac2-channel_offline_image-1920x1080.png',
                     'view_count': 5980557,

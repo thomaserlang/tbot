@@ -1,23 +1,24 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
 from tbot2.channel import ChannelCreate, create_channel
-from tbot2.channel_command import TCommand, fill_message
+from tbot2.channel_command import TCommand
+from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_quote import cmd_var_fillers as cmd_var_fillers
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
 
 
 @pytest.mark.asyncio
-async def test_gambling_stats_vars(db: None):
+async def test_gambling_stats_vars(db: None) -> None:
     channel = await create_channel(data=ChannelCreate(display_name='test'))
 
     message = await fill_message(
         response_message=('{quote.add}'),
         chat_message=ChatMessage(
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=channel.id,
@@ -35,7 +36,7 @@ async def test_gambling_stats_vars(db: None):
         response_message=('{quote.edit}'),
         chat_message=ChatMessage(
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=channel.id,
@@ -53,7 +54,7 @@ async def test_gambling_stats_vars(db: None):
         response_message=('{quote.message} ({quote.number})'),
         chat_message=ChatMessage(
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=channel.id,
@@ -71,7 +72,7 @@ async def test_gambling_stats_vars(db: None):
         response_message=('{quote.delete}'),
         chat_message=ChatMessage(
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=channel.id,

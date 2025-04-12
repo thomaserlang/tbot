@@ -6,16 +6,16 @@ Create Date: 2025-03-15 14:24:37.875777
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = '189219e5576e'
-down_revision: Union[str, None] = 'd8a6ec05016f'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = 'd8a6ec05016f'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -41,9 +41,13 @@ def upgrade() -> None:
     )
     op.execute(
         """
-        INSERT INTO channel_viewer_stats (channel_id, provider, viewer_id, streams, streams_row, streams_row_peak, streams_row_peak_date, last_stream_id, last_stream_at)
-        SELECT c.id, "twitch", user_id, streams, streams_row, streams_row_peak, streams_row_peak_date, last_viewed_stream_id, last_viewed_stream_date
-        FROM twitch_user_stats, channels c where c.twitch_id = twitch_user_stats.channel_id
+        INSERT INTO channel_viewer_stats (channel_id, provider, viewer_id, streams, 
+            streams_row, streams_row_peak, streams_row_peak_date, 
+                last_stream_id, last_stream_at)
+        SELECT c.id, "twitch", user_id, streams, streams_row, streams_row_peak, 
+            streams_row_peak_date, last_viewed_stream_id, last_viewed_stream_date
+        FROM twitch_user_stats, channels c where 
+            c.twitch_id = twitch_user_stats.channel_id
         """
     )
     op.drop_table('twitch_user_stats')
@@ -70,9 +74,11 @@ def upgrade() -> None:
     )
     op.execute(
         """
-        INSERT INTO channel_stream_viewer_watchtime (channel_id, provider, stream_id, viewer_id, watchtime)
+        INSERT INTO channel_stream_viewer_watchtime (channel_id, provider, stream_id, 
+            viewer_id, watchtime)
         SELECT c.id, "twitch", stream_id, user_id, time
-        FROM twitch_stream_watchtime, channels c where c.twitch_id = twitch_stream_watchtime.channel_id
+        FROM twitch_stream_watchtime, channels c where c.twitch_id = 
+            twitch_stream_watchtime.channel_id
         """
     )
     op.drop_table('twitch_stream_watchtime')
@@ -124,9 +130,12 @@ def upgrade() -> None:
 
     op.execute(
         """
-        INSERT INTO channel_provider_streams (id, channel_stream_id, channel_id, provider, provider_stream_id, started_at, ended_at)
-        SELECT UUID_v7(), s.id, c.id, "twitch", stream_id, s.started_at, s.started_at + INTERVAL uptime MINUTE
-        FROM twitch_streams, channels c, channel_streams s where c.twitch_id = twitch_streams.channel_id and 
+        INSERT INTO channel_provider_streams (id, channel_stream_id, channel_id, 
+            provider, provider_stream_id, started_at, ended_at)
+        SELECT UUID_v7(), s.id, c.id, "twitch", stream_id, s.started_at, 
+            s.started_at + INTERVAL uptime MINUTE
+        FROM twitch_streams, channels c, channel_streams s where 
+            c.twitch_id = twitch_streams.channel_id and 
             s.channel_id = c.id and s.started_at = twitch_streams.started_at
             and s.started_at = twitch_streams.started_at
         """

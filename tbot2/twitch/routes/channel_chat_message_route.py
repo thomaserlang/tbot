@@ -35,7 +35,7 @@ async def channel_chat_message_route(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],
     request: Request,
     channel_id: UUID,
-):
+) -> None:
     if headers.message_type != 'notification':
         return
 
@@ -91,7 +91,7 @@ async def channel_chat_message_route(
 
 async def handle_filter_message(
     chat_message: ChatMessage,
-):
+) -> None:
     try:
         match = await matches_filter(chat_message=chat_message)
         if not match:

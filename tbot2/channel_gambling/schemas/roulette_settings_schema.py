@@ -1,10 +1,12 @@
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import ConfigDict, Field, StringConstraints
+
+from tbot2.common import BaseRequestSchema, BaseSchema
 
 
-class RouletteSettingsUpdate(BaseModel):
+class RouletteSettingsUpdate(BaseRequestSchema):
     win_chance: Annotated[int, Field(ge=0, le=100)] = 45
     win_message: Annotated[str, StringConstraints(min_length=1, max_length=250)] = (
         '@{user}, You won {bet} {points_name} and now have {points} {points_name}'
@@ -22,7 +24,7 @@ class RouletteSettingsUpdate(BaseModel):
     max_bet: Annotated[int, Field(ge=0)] = 0
 
 
-class RouletteSettings(BaseModel):
+class RouletteSettings(BaseSchema):
     model_config = ConfigDict(
         from_attributes=True,
     )

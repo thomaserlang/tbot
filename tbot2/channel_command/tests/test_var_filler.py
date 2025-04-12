@@ -11,14 +11,14 @@ from tbot2.testbase import run_file
 @fills_vars(provider='all', vars=('test', 'test2', 'test3'))
 async def fill_test_var(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     vars['test'].value = vars['test'].args[0]
     vars['test2'].value = 'bla bla bla 123'
     vars['test3'].value = 'test_value2'
 
 
 @pytest.mark.asyncio
-async def test_var_filler():
+async def test_var_filler() -> None:
     text = await fill_message(
         response_message='Test: {test "Test value"} - {test2}',
         chat_message=ChatMessage(

@@ -28,7 +28,7 @@ router = APIRouter()
         }
     },
 )
-async def get_chat_filters_route(
+async def get_chat_filters_route(  # noqa: ANN201
     channel_id: UUID,
     token_data: Annotated[
         TokenData,
@@ -54,7 +54,7 @@ async def get_chat_filters_route(
         }
     },
 )
-async def get_chat_filter_route(
+async def get_chat_filter_route(  # noqa: ANN201
     channel_id: UUID,
     filter_id: UUID,
     token_data: Annotated[
@@ -87,7 +87,7 @@ async def get_chat_filter_route(
     },
     status_code=201,
 )
-async def create_chat_filter_route(
+async def create_chat_filter_route(  # noqa: ANN201
     channel_id: UUID,
     data: FilterTypeCreateUnion,  # type: ignore
     token_data: Annotated[
@@ -116,7 +116,7 @@ async def create_chat_filter_route(
         }
     },
 )
-async def update_chat_filter_route(
+async def update_chat_filter_route(  # noqa: ANN201
     channel_id: UUID,
     filter_id: UUID,
     data: FilterTypeUpdateUnion,  # type: ignore
@@ -162,7 +162,7 @@ async def delete_chat_filter_route(
         TokenData,
         Security(authenticated, scopes=[TChatFilterScope.WRITE]),
     ],
-):
+) -> None:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,

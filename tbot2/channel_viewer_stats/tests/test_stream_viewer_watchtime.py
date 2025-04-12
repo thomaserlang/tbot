@@ -10,7 +10,7 @@ from tbot2.testbase import run_file
 
 
 @pytest.mark.asyncio
-async def test_stream_viewer_watchtime(db: None):
+async def test_stream_viewer_watchtime(db: None) -> None:
     channel = await create_channel(
         data=ChannelCreate(
             display_name='Test Channel',

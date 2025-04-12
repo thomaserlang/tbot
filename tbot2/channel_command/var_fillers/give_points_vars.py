@@ -16,7 +16,7 @@ from ..var_filler import fills_vars
 @fills_vars(provider=TProvider.twitch, vars=('give_points',))
 async def give_points_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     if len(command.args) != 2:
         raise CommandSyntaxError(f'Syntax: !{command.name} <user> <points>')
 

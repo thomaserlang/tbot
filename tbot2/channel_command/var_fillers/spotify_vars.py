@@ -22,7 +22,7 @@ from ..var_filler import fills_vars
 )
 async def spotify_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     try:
         playing = await get_spotify_currently_playing(
             channel_id=chat_message.channel_id,
@@ -52,7 +52,7 @@ async def spotify_vars(
 )
 async def spotify_playlist_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     try:
         playing = await get_spotify_currently_playing(
             channel_id=chat_message.channel_id,
@@ -93,7 +93,7 @@ async def spotify_playlist_vars(
 )
 async def spotify_prev_song_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     try:
         played = await get_spotify_recently_played(
             channel_id=chat_message.channel_id,

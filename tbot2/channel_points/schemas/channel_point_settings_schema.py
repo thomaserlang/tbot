@@ -1,10 +1,12 @@
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import ConfigDict, Field, StringConstraints
+
+from tbot2.common import BaseRequestSchema, BaseSchema
 
 
-class ChannelPointSettingsUpdate(BaseModel):
+class ChannelPointSettingsUpdate(BaseRequestSchema):
     enabled: bool = True
     points_name: Annotated[str, StringConstraints(min_length=1, max_length=45)] = (
         'points'
@@ -16,7 +18,7 @@ class ChannelPointSettingsUpdate(BaseModel):
     ignore_users: list[str] = []
 
 
-class ChannelPointSettings(BaseModel):
+class ChannelPointSettings(BaseSchema):
     model_config = ConfigDict(
         from_attributes=True,
     )

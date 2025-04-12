@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Annotated
 from uuid import UUID
 
@@ -33,11 +33,6 @@ router = APIRouter()
 @router.get(
     '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms',
     name='Get Banned Terms',
-    responses={
-        200: {
-            'model': PageCursor[BannedTerm],
-        },
-    },
 )
 async def get_banned_terms_route(
     channel_id: UUID,
@@ -46,7 +41,7 @@ async def get_banned_terms_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChatFilterScope.READ])
     ],
-):
+) -> PageCursor[BannedTerm]:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -78,11 +73,6 @@ async def get_banned_terms_route(
 @router.get(
     '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms/{banned_term_id}',
     name='Get Banned Term',
-    responses={
-        200: {
-            'model': BannedTerm,
-        },
-    },
 )
 async def get_banned_term_route(
     channel_id: UUID,
@@ -91,7 +81,7 @@ async def get_banned_term_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChatFilterScope.READ])
     ],
-):
+) -> BannedTerm:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -115,11 +105,6 @@ async def get_banned_term_route(
 @router.post(
     '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms',
     name='Create Banned Term',
-    responses={
-        201: {
-            'model': BannedTerm,
-        },
-    },
     status_code=201,
 )
 async def create_banned_term_route(
@@ -129,7 +114,7 @@ async def create_banned_term_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChatFilterScope.WRITE])
     ],
-):
+) -> BannedTerm:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -151,11 +136,6 @@ async def create_banned_term_route(
 @router.put(
     '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms/{banned_term_id}',
     name='Update Banned Term',
-    responses={
-        200: {
-            'model': BannedTerm,
-        },
-    },
 )
 async def update_banned_term_route(
     channel_id: UUID,
@@ -165,7 +145,7 @@ async def update_banned_term_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChatFilterScope.WRITE])
     ],
-):
+) -> BannedTerm:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -202,7 +182,7 @@ async def delete_banned_term_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChatFilterScope.WRITE])
     ],
-):
+) -> None:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -221,11 +201,6 @@ async def delete_banned_term_route(
 @router.post(
     '/channels/{channel_id}/chat-filters/{filter_id}/banned-terms/test',
     name='Test Banned Term',
-    responses={
-        200: {
-            'model': FilterMatchResult,
-        },
-    },
 )
 async def banned_term_test_route(
     channel_id: UUID,
@@ -234,7 +209,7 @@ async def banned_term_test_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChatFilterScope.WRITE])
     ],
-):
+) -> FilterMatchResult:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -249,7 +224,7 @@ async def banned_term_test_route(
     result = await filter.check_message(
         message=ChatMessage(
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='test',
             channel_id=channel_id,

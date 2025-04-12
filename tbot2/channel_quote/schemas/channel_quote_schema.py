@@ -1,14 +1,10 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from tbot2.common import BaseSchema
 
 
-class ChannelQuote(BaseModel):
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
-
+class ChannelQuote(BaseSchema):
     id: UUID
     channel_id: UUID
     number: int

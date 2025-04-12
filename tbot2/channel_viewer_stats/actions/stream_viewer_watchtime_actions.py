@@ -21,7 +21,7 @@ async def get_stream_viewer_watchtime(
     stream_id: str,
     viewer_id: str,
     session: AsyncSession | None = None,
-):
+) -> StreamViewerWatchtime | None:
     async with get_session(session) as session:
         result = await session.scalar(
             sa.select(MStreamViewerWatchtime).where(
@@ -43,7 +43,7 @@ async def inc_stream_viewer_watchtime(
     viewer_ids: set[str],
     watchtime: int,
     session: AsyncSession | None = None,
-):
+) -> None:
     """
     Bulk update the watchtime of viewers of a stream.
     This will in turn also update the channel viewer stats for each viewer.

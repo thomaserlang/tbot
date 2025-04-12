@@ -1,23 +1,23 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pytest_mock import MockFixture
 
 from tbot2.channel import ChannelCreate, create_channel
-from tbot2.channel_command import TCommand, fill_message
+from tbot2.channel_command import TCommand
+from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_points import inc_points
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
 from tbot2.twitch import TwitchUser
-from tbot2.twitch import cmd_var_fillers as cmd_var_fillers
 
 
 @pytest.mark.asyncio
-async def test_points_ranking_vars(db: None, mocker: MockFixture):
+async def test_points_ranking_vars(db: None, mocker: MockFixture) -> None:
     channel = await create_channel(data=ChannelCreate(display_name='test'))
 
     lookup_twitch_users = mocker.patch(
-        'tbot2.twitch.cmd_var_fillers.points_ranking_vars.lookup_twitch_users'
+        'tbot2.channel_command.var_fillers.points_ranking_vars.lookup_twitch_users'
     )
     lookup_twitch_users.return_value = [
         TwitchUser(
@@ -121,7 +121,7 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture):
         response_message=('Points ranking: {points_ranking}'),
         chat_message=ChatMessage(
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=channel.id,
@@ -135,9 +135,11 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture):
     )
 
     assert message == (
-        'Points ranking: 1. Test Chatter5 (500), 2. Test Chatter4 (400), 3. Test Chatter3 (300), '
+        'Points ranking: 1. Test Chatter5 (500), 2. Test Chatter4 (400), '
+        '3. Test Chatter3 (300), '
         '4. Test Chatter2 (200), 5. Test Chatter (100)'
     )
+
 
 if __name__ == '__main__':
     run_file(__file__)

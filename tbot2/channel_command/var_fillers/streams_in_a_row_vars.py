@@ -19,7 +19,7 @@ from ..var_filler import fills_vars
 )
 async def streams_in_a_row_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     for_viewer_id = chat_message.chatter_id
     if len(command.args) > 0:
         chatter = await lookup_twitch_user(

@@ -65,7 +65,7 @@ def parse_obj_as(type: type[T], obj: Any) -> T:
     return adapter.validate_python(obj)
 
 
-def run_file(file_: str):
+def run_file(file_: str) -> None:
     import subprocess
 
     subprocess.call(['pytest', '--tb=short', str(file_)])

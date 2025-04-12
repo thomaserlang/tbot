@@ -27,11 +27,6 @@ router = APIRouter()
 @router.get(
     '/channels/{channel_id}/quotes',
     name='Get Channel Quotes',
-    responses={
-        200: {
-            'model': PageCursor[ChannelQuote],
-        },
-    },
 )
 async def get_channel_quotes_route(
     channel_id: UUID,
@@ -39,7 +34,7 @@ async def get_channel_quotes_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.READ])
     ],
-):
+) -> PageCursor[ChannelQuote]:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -63,11 +58,6 @@ async def get_channel_quotes_route(
 @router.get(
     '/channels/{channel_id}/quotes/{quote_id}',
     name='Get Channel Quote',
-    responses={
-        200: {
-            'model': ChannelQuote,
-        },
-    },
 )
 async def get_channel_quote_route(
     channel_id: UUID,
@@ -75,7 +65,7 @@ async def get_channel_quote_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.READ])
     ],
-):
+) -> ChannelQuote:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -95,11 +85,6 @@ async def get_channel_quote_route(
 @router.get(
     '/channels/{channel_id}/quotes/number/{number}',
     name='Get Channel Quote By Number',
-    responses={
-        200: {
-            'model': ChannelQuote,
-        },
-    },
 )
 async def get_channel_quote_by_number_route(
     channel_id: UUID,
@@ -107,7 +92,7 @@ async def get_channel_quote_by_number_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.READ])
     ],
-):
+) -> ChannelQuote:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -128,11 +113,6 @@ async def get_channel_quote_by_number_route(
 @router.post(
     '/channels/{channel_id}/quotes',
     name='Create Channel Quote',
-    responses={
-        201: {
-            'model': ChannelQuote,
-        },
-    },
     status_code=201,
 )
 async def create_channel_quote_route(
@@ -141,7 +121,7 @@ async def create_channel_quote_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.WRITE])
     ],
-):
+) -> ChannelQuote:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -157,11 +137,6 @@ async def create_channel_quote_route(
 @router.put(
     '/channels/{channel_id}/quotes/{quote_id}',
     name='Update Channel Quote',
-    responses={
-        200: {
-            'model': ChannelQuoteUpdate,
-        },
-    },
 )
 async def update_channel_quote_route(
     channel_id: UUID,
@@ -170,7 +145,7 @@ async def update_channel_quote_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.WRITE])
     ],
-):
+) -> ChannelQuote:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -208,7 +183,7 @@ async def delete_channel_quote_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[TChannelQuoteScope.WRITE])
     ],
-):
+) -> None:
     await token_data.channel_has_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,

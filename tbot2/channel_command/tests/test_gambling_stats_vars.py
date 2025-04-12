@@ -1,20 +1,20 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
 from tbot2.channel import ChannelCreate, create_channel
-from tbot2.channel_command import TCommand, fill_message
+from tbot2.channel_command import TCommand
+from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_gambling import (
     ChatterGamblingStatsUpdate,
     inc_chatter_gambling_stats,
 )
 from tbot2.common import ChatMessage, TProvider
 from tbot2.testbase import run_file
-from tbot2.twitch import cmd_var_fillers as cmd_var_fillers
 
 
 @pytest.mark.asyncio
-async def test_gambling_stats_vars(db: None):
+async def test_gambling_stats_vars(db: None) -> None:
     channel = await create_channel(data=ChannelCreate(display_name='test'))
 
     await inc_chatter_gambling_stats(
@@ -26,12 +26,14 @@ async def test_gambling_stats_vars(db: None):
 
     message = await fill_message(
         response_message=(
-            'Slots: {gambling_stats.slots_wins} wins, {gambling_stats.slots_loses} loses, '
-            '{gambling_stats.slots_total_games} total games, {gambling_stats.slots_win_percent} win percent'
+            'Slots: {gambling_stats.slots_wins} wins, '
+            '{gambling_stats.slots_loses} loses, '
+            '{gambling_stats.slots_total_games} total games, '
+            '{gambling_stats.slots_win_percent} win percent'
         ),
         chat_message=ChatMessage(
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=channel.id,
@@ -48,12 +50,14 @@ async def test_gambling_stats_vars(db: None):
 
     message = await fill_message(
         response_message=(
-            'Roulette: {gambling_stats.roulette_wins} wins, {gambling_stats.roulette_loses} loses, '
-            '{gambling_stats.roulette_total_games} total games, {gambling_stats.roulette_win_percent} win percent'
+            'Roulette: {gambling_stats.roulette_wins} wins, '
+            '{gambling_stats.roulette_loses} loses, '
+            '{gambling_stats.roulette_total_games} total games, '
+            '{gambling_stats.roulette_win_percent} win percent'
         ),
         chat_message=ChatMessage(
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             provider=TProvider.twitch,
             provider_id='1234',
             channel_id=channel.id,

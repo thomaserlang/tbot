@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -11,11 +11,11 @@ from tbot2.testbase import run_file
 
 
 @pytest.mark.asyncio
-async def test_create_chatlog(db: Any):
+async def test_create_chatlog(db: Any) -> None:
     t = await create_chatlog(
         data=ChatMessage(
             type='message',
-            created_at=datetime.now(tz=timezone.utc),
+            created_at=datetime.now(tz=UTC),
             channel_id=uuid7(),
             chatter_id='test',
             chatter_name='test',

@@ -6,7 +6,7 @@ Create Date: 2024-11-08 16:24:50.409107
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
@@ -14,9 +14,9 @@ from uuid6 import uuid7
 
 # revision identifiers, used by Alembic.
 revision: str = 'a96a1d4bfa03'
-down_revision: Union[str, None] = 'cdb4011c1026'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = 'cdb4011c1026'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -34,14 +34,18 @@ def upgrade() -> None:
     conn = op.get_bind()
     query = conn.execute(
         sa.text(
-            'SELECT channel_id, name, active, created_at, muted, chatlog_enabled FROM twitch_channels'
+            'SELECT channel_id, name, active, created_at, muted, chatlog_enabled '
+            'FROM twitch_channels'
         )
     )
     results = query.fetchall()
     for result in results:
         conn.execute(
             sa.text(
-                'INSERT INTO channels (id, display_name, twitch_id, created_at, bot_active, bot_muted, bot_chatlog_enabled) VALUES (:id, :display_name, :twitch_id, :created_at, :bot_active, :bot_muted, :bot_chatlog_enabled)'
+                'INSERT INTO channels (id, display_name, twitch_id, created_at, '
+                'bot_active, bot_muted, bot_chatlog_enabled) VALUES (:id, \
+                    :display_name, :twitch_id, :created_at, :bot_active, :bot_muted, '
+                ':bot_chatlog_enabled)'
             ),
             {
                 'id': uuid7(),
@@ -85,7 +89,8 @@ def upgrade() -> None:
     )
     op.add_column('chatlogs', sa.Column('channel_id', sa.UUID, nullable=True))
     op.execute(
-        'UPDATE chatlogs SET channel_id = (SELECT id FROM channels WHERE twitch_id = chatlogs.provider_id)'
+        'UPDATE chatlogs SET channel_id = (SELECT id FROM channels WHERE twitch_id = '
+        'chatlogs.provider_id)'
     )
     op.alter_column(
         'chatlogs',
@@ -111,7 +116,8 @@ def upgrade() -> None:
         'chatlog_chatter_stats', sa.Column('channel_id', sa.UUID, nullable=True)
     )
     op.execute(
-        'UPDATE chatlog_chatter_stats SET channel_id = (SELECT id FROM channels WHERE twitch_id = chatlog_chatter_stats.provider_id)'
+        'UPDATE chatlog_chatter_stats SET channel_id = (SELECT id FROM channels WHERE '
+        'twitch_id = chatlog_chatter_stats.provider_id)'
     )
 
     op.drop_constraint(

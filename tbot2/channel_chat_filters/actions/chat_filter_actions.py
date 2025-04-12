@@ -75,7 +75,7 @@ async def update_chat_filter(
     filter_id: UUID,
     data: ChatFilterBaseUpdate,
     session: AsyncSession | None = None,
-):
+) -> ChatFilterBase:
     async with get_session(session) as session:
         data_ = data.model_dump(exclude_unset=True)
         data_.pop('type', None)
@@ -105,7 +105,7 @@ async def update_chat_filter(
 async def delete_chat_filter(
     filter_id: UUID,
     session: AsyncSession | None = None,
-):
+) -> bool:
     async with get_session(session) as session:
         await session.execute(
             sa.delete(

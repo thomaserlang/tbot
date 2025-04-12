@@ -4,7 +4,7 @@ from subprocess import list2cmdline
 from honcho.manager import Manager  # type: ignore
 
 
-def main():
+def main() -> None:
     path = os.path.dirname(os.path.realpath(__file__))
 
     start = [

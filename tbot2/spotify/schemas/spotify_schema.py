@@ -1,10 +1,9 @@
 from typing import Any, Generic, TypeVar
 
-from pydantic import BaseModel, ConfigDict
+from tbot2.common import BaseSchema
 
 
-class SpotifyBaseModel(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+class SpotifyBaseModel(BaseSchema): ...
 
 
 class SpotifyExternalUrls(SpotifyBaseModel):

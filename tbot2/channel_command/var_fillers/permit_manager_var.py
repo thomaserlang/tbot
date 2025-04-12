@@ -13,7 +13,7 @@ from ..var_filler import fills_vars
 )
 async def permit_manager_var(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     if len(command.args) != 1:
         raise CommandSyntaxError(f'Syntax: !{command.name} <user>')
     chatter = await lookup_twitch_user(

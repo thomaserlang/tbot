@@ -6,16 +6,16 @@ Create Date: 2025-03-16 18:01:07.146292
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = '0264fe26cc59'
-down_revision: Union[str, None] = 'fbdb194d24b3'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = 'fbdb194d24b3'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -65,7 +65,8 @@ def upgrade() -> None:
     """)
 
     op.execute("""
-        INSERT INTO user_oauth_providers (id, user_id, provider, provider_user_id, created_at)
+        INSERT INTO user_oauth_providers (id, user_id, provider, 
+               provider_user_id, created_at)
         SELECT 
             uuid_v7(), 
             u.id as user_id,

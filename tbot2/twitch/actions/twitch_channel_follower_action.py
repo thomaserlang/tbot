@@ -8,7 +8,9 @@ from tbot2.exceptions import ErrorMessage
 from ..twitch_http_client import twitch_user_client
 
 
-async def twitch_channel_follower(channel_id: UUID, user_id: str, broadcaster_id: str):
+async def twitch_channel_follower(
+    channel_id: UUID, user_id: str, broadcaster_id: str
+) -> ChannelFollower | None:
     response = await twitch_user_client.get(
         '/channels/followers',
         params={

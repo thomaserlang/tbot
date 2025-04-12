@@ -6,7 +6,7 @@ from tbot2.database import database
 
 async def give_warning(
     *, channel_id: UUID, provider: TProvider, chatter_id: str, warning_duration: int
-):
+) -> None:
     await database.redis.set(
         f'tbot:warning:{channel_id}:{provider.value}:{chatter_id}',
         '1',

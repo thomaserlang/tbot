@@ -8,7 +8,7 @@ from tbot2.testbase import run_file, user_signin
 @pytest.mark.asyncio
 async def test_filter_routes(
     client: AsyncClient,
-):
+) -> None:
     user = await user_signin(
         client, scopes=[TChatFilterScope.READ, TChatFilterScope.WRITE]
     )

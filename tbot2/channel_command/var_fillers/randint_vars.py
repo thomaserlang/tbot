@@ -13,7 +13,7 @@ from ..var_filler import fills_vars
 )
 async def randint_vars(
     chat_message: ChatMessage, command: TCommand, vars: TMessageVars
-):
+) -> None:
     from_ = 1
     to = 100
 

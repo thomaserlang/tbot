@@ -1,20 +1,16 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from tbot2.common import BaseRequestSchema, BaseSchema
 
 
-class ChatterGamblingStatsUpdate(BaseModel):
+class ChatterGamblingStatsUpdate(BaseRequestSchema):
     slots_wins: int = 0
     slots_losses: int = 0
     roulette_wins: int = 0
     roulette_losses: int = 0
 
 
-class ChatterGamblingStats(BaseModel):
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
-
+class ChatterGamblingStats(BaseSchema):
     channel_id: UUID
     chatter_id: str
     provider: str

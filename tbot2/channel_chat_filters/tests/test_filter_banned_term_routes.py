@@ -8,7 +8,7 @@ from tbot2.testbase import run_file, user_signin
 @pytest.mark.asyncio
 async def test_filter_routes(
     client: AsyncClient,
-):
+) -> None:
     user = await user_signin(
         client, scopes=[TChatFilterScope.READ, TChatFilterScope.WRITE]
     )
@@ -26,19 +26,19 @@ async def test_filter_routes(
     assert data['warning_enabled'] is False
 
     r = await client.post(
-        f'/api/2/channels/{user.channel.id}/filters/{filter_id}/banned-terms',
+        f'/api/2/channels/{user.channel.id}/chat-filters/{filter_id}/banned-terms',
         json={
             'type': 'regex',
             'text': 'test',
         },
     )
-    assert r.status_code == 200, r.text
+    assert r.status_code == 201, r.text
     data = r.json()
     assert data['type'] == 'regex'
     assert data['text'] == 'test'
 
     r = await client.get(
-        f'/api/2/channels/{user.channel.id}/filters/{filter_id}/banned-terms',
+        f'/api/2/channels/{user.channel.id}/chat-filters/{filter_id}/banned-terms',
     )
     assert r.status_code == 200, r.text
     data = r.json()
@@ -48,13 +48,13 @@ async def test_filter_routes(
     assert data['records'][0]['text'] == 'test'
 
     r = await client.get(
-        f'/api/2/channels/{user.channel.id}/filters/{filter_id}/banned-terms/{term_id}',
+        f'/api/2/channels/{user.channel.id}/chat-filters/{filter_id}/banned-terms/{term_id}',
     )
     assert r.status_code == 200, r.text
     data = r.json()
 
     r = await client.put(
-        f'/api/2/channels/{user.channel.id}/filters/{filter_id}/banned-terms/{term_id}',
+        f'/api/2/channels/{user.channel.id}/chat-filters/{filter_id}/banned-terms/{term_id}',
         json={
             'type': 'phrase',
             'text': 'test2',
@@ -66,7 +66,7 @@ async def test_filter_routes(
     assert data['text'] == 'test2'
 
     r = await client.post(
-        f'/api/2/channels/{user.channel.id}/filters/{filter_id}/banned-terms/test',
+        f'/api/2/channels/{user.channel.id}/chat-filters/{filter_id}/banned-terms/test',
         json={
             'message': 'test',
         },
@@ -76,7 +76,7 @@ async def test_filter_routes(
     assert data['matched'] is False
 
     r = await client.post(
-        f'/api/2/channels/{user.channel.id}/filters/{filter_id}/banned-terms/test',
+        f'/api/2/channels/{user.channel.id}/chat-filters/{filter_id}/banned-terms/test',
         json={
             'message': 'test2',
         },
@@ -87,18 +87,18 @@ async def test_filter_routes(
     assert data['sub_id'] == term_id
 
     r = await client.post(
-        f'/api/2/channels/{user.channel.id}/filters/{filter_id}/banned-terms',
+        f'/api/2/channels/{user.channel.id}/chat-filters/{filter_id}/banned-terms',
         json={
             'type': 'regex',
             'text': '[0-9]+',
         },
     )
-    assert r.status_code == 200, r.text
+    assert r.status_code == 201, r.text
     data = r.json()
     term_id = data['id']
 
     r = await client.post(
-        f'/api/2/channels/{user.channel.id}/filters/{filter_id}/banned-terms/test',
+        f'/api/2/channels/{user.channel.id}/chat-filters/{filter_id}/banned-terms/test',
         json={
             'message': '123',
         },
@@ -109,12 +109,12 @@ async def test_filter_routes(
     assert data['sub_id'] == term_id
 
     r = await client.delete(
-        f'/api/2/channels/{user.channel.id}/filters/{filter_id}/banned-terms/{term_id}',
+        f'/api/2/channels/{user.channel.id}/chat-filters/{filter_id}/banned-terms/{term_id}',
     )
     assert r.status_code == 204, r.text
 
     r = await client.get(
-        f'/api/2/channels/{user.channel.id}/filters/{filter_id}/banned-terms',
+        f'/api/2/channels/{user.channel.id}/chat-filters/{filter_id}/banned-terms',
     )
     assert r.status_code == 200, r.text
     data = r.json()

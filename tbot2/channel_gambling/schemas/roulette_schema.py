@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from tbot2.common import BaseSchema
 
 
-class RouletteResult(BaseModel):
+class RouletteResult(BaseSchema):
     won: bool
     bet: int
     points: int

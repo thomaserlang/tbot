@@ -1,5 +1,6 @@
 import os
 import sys
+from pathlib import Path
 from typing import Literal
 from uuid import UUID
 
@@ -120,35 +121,38 @@ class ConfigRedisModel(BaseModel):
     queue_name: str = 'tbot'
 
 
-def get_config_path():
-    path = os.environ.get('TBOT__CONFIG', None) or os.environ.get('TBOT_CONFIG', None)
+def get_config_path() -> Path:
+    path: Path | None = None
+    if os.environ.get('TBOT__CONFIG', None):
+        path = Path(os.environ['TBOT__CONFIG'])
+    if os.environ.get('TBOT_CONFIG', None):
+        path = Path(os.environ['TBOT_CONFIG'])
+
     if not path:
         default_paths = (
-            os.path.abspath(os.path.join(os.path.dirname(__file__), '../tbot.yaml')),
-            '~/tbot.yaml',
-            '/etc/tbot/tbot.yaml',
-            '/etc/tbot.yaml',
-            '/etc/tbot/config.yml',
+            Path(__file__).parent / '../tbot.yaml',
+            Path('~/tbot.yaml'),
+            Path('/etc/tbot/tbot.yaml'),
+            Path('/etc/tbot.yaml'),
+            Path('/etc/tbot/config.yml'),
         )
 
         if 'pytest' in sys.modules:
-            default_paths = (
-                os.path.abspath(
-                    os.path.join(os.path.dirname(__file__), '../tbot_test.yaml')
-                ),
-            )
+            default_paths = (Path(__file__).parent / '../tbot_test.yaml',)
+
         for p in default_paths:
-            p = os.path.expanduser(p)
-            if os.path.isfile(p):
+            if p.exists():
                 path = p
                 break
-    if path:
-        import logging
+    if not path:
+        raise Exception('No config file found')
+    if not path.exists():
+        raise Exception(f'Config file does not exist: {path}')
+    
+    import logging
 
-        logging.basicConfig(level=logging.INFO, format='%(message)s')
-        logging.info(f'Using config: {path}')
-    else:
-        raise Exception('No config file specified')
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logging.info(f'Using config: {path}')
     return path
 
 

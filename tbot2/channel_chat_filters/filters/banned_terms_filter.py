@@ -7,7 +7,7 @@ from async_lru import alru_cache
 
 from tbot2.common import ChatMessage, check_pattern_match
 
-from ..actions.banned_term_actions import get_banned_terms
+from ..actions.banned_term_actions import BannedTerm, get_banned_terms
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
     ChatFilterBaseCreate,
@@ -58,5 +58,5 @@ class ChatFilterBannedTerms(ChatFilterBase):
 
 
 @alru_cache(ttl=1, maxsize=1000 if 'pytest' not in sys.modules else 0)
-async def get_banned_terms_cached(filter_id: UUID):
+async def get_banned_terms_cached(filter_id: UUID) -> list[BannedTerm]:
     return await get_banned_terms(filter_id=filter_id)

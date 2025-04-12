@@ -11,7 +11,7 @@ from tbot2.testbase import run_file
 
 
 @pytest.mark.asyncio
-async def test_point_actions(db: None):
+async def test_point_actions(db: None) -> None:
     channel = await create_channel(data=ChannelCreate(display_name='test'))
 
     await inc_points(
@@ -61,7 +61,7 @@ async def test_point_actions(db: None):
 
 
 @pytest.mark.asyncio
-async def test_inc_bulk_points(db: None):
+async def test_inc_bulk_points(db: None) -> None:
     channel = await create_channel(data=ChannelCreate(display_name='test'))
 
     await inc_bulk_points(

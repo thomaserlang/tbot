@@ -14,7 +14,7 @@ async def twitch_ban_user(
     twitch_user_id: str,
     duration: int | None = None,
     reason: str | None = None,
-):
+) -> bool:
     provider = await get_channel_bot_provider(
         provider=TProvider.twitch,
         channel_id=channel_id,
