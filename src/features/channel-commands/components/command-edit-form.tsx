@@ -65,7 +65,7 @@ export function EditCommandForm({ command, onUpdated }: Props) {
 
                 <Flex>
                     <Button ml="auto" type="submit" loading={update.isPending}>
-                        Update
+                        Save
                     </Button>
                 </Flex>
             </Flex>

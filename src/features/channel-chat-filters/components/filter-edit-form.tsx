@@ -58,7 +58,7 @@ export function EditFilterForm<F extends ChatFilter>({
 
                 <Flex>
                     <Button ml="auto" type="submit" loading={update.isPending}>
-                        Update
+                        Save
                     </Button>
                 </Flex>
             </Flex>

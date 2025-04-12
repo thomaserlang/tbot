@@ -61,7 +61,7 @@ export function CreateTimerForm({ channelId, onCreated }: Props) {
 
                 <Flex>
                     <Button ml="auto" type="submit" loading={create.isPending}>
-                        Create
+                        Save
                     </Button>
                 </Flex>
             </Flex>
