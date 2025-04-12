@@ -31,7 +31,7 @@ async def handle_message_response(
         session=session,
     )
 
-    # Bail early if there are not patterns or cmd to match
+    # Bail early if there are no patterns or cmds to match
     has_patters = any(command.patterns for command in commands)
     if not has_patters and not chat_message.message.startswith('!'):
         return None

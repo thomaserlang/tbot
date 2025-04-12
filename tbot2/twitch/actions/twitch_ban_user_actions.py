@@ -32,7 +32,7 @@ async def twitch_ban_user(
     }
     if duration:
         data['data']['duration'] = duration
-    data['data']['reason'] = (reason or '') + f' [{APP_TITLE}]'
+    data['data']['reason'] = f'{(reason or "")} [{APP_TITLE}]'
 
     response = await twitch_bot_client.post(
         url='/moderation/bans',
@@ -47,8 +47,6 @@ async def twitch_ban_user(
         json=data,
     )
     if response.status_code >= 400:
-        logging.error(
-            f'twitch_ban_user: {response.status_code} {response.text}'
-        )
+        logging.error(f'twitch_ban_user: {response.status_code} {response.text}')
         return False
     return True

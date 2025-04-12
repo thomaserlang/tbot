@@ -17,7 +17,7 @@ T = TypeVar('T')
 
 
 @dataclass(slots=True)
-class TTestUser:
+class TestUser:
     user: User
     channel: Channel
 
@@ -25,7 +25,7 @@ class TTestUser:
 async def user_signin(
     client: AsyncClient | None,
     scopes: list[str | TScope],
-):
+) -> TestUser:
     user = await create_user(
         data=UserCreate(
             email='test@example.net',
@@ -52,7 +52,7 @@ async def user_signin(
     )
     if client:
         client.headers.update({'Authorization': f'Bearer {token_str}'})
-    return TTestUser(
+    return TestUser(
         user=user,
         channel=channel,
     )

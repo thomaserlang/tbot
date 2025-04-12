@@ -45,7 +45,14 @@ class ChatFilterBannedTerms(ChatFilterBase):
                 ):
                     return FilterMatchResult(filter=self, matched=True, sub_id=term.id)
             elif term.type == TBannedTermType.phrase:
-                if check_pattern_match(message.message_without_fragments(), term.text):
+                if check_pattern_match(
+                    message=message.message_without_fragments(),
+                    pattern=term.text,
+                    normalize=True,
+                    strip_symbols=True,
+                    collaps_letters=True,
+                    check_leetspeak=True,
+                ):
                     return FilterMatchResult(filter=self, matched=True, sub_id=term.id)
         return FilterMatchResult(filter=self, matched=False)
 

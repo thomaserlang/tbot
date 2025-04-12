@@ -121,9 +121,9 @@ async def handle_filter_message(
             timeout_message = ''
             try:
                 timeout_message = await fill_message(
-                    response_message=match.filter.warning_message,
+                    response_message=match.filter.timeout_message,
                     chat_message=chat_message,
-                    command=TCommand(name='warning', args=[]),
+                    command=TCommand(name='timeout', args=[]),
                 )
             except CommandError as e:
                 logging.warning(f'Timeout message failed: {e}')

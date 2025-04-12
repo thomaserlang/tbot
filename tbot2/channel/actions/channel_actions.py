@@ -19,7 +19,9 @@ async def get_channel(
             return Channel.model_validate(result)
 
 
-async def create_channel(*, data: ChannelCreate, session: AsyncSession | None = None):
+async def create_channel(
+    *, data: ChannelCreate, session: AsyncSession | None = None
+) -> Channel:
     async with get_session(session) as session:
         data_ = data.model_dump()
         id = uuid7()
@@ -38,7 +40,7 @@ async def update_channel(
     id: UUID,
     data: ChannelUpdate,
     session: AsyncSession | None = None,
-):
+) -> Channel:
     async with get_session(session) as session:
         data_ = data.model_dump(exclude_unset=True)
         await session.execute(
@@ -51,7 +53,7 @@ async def update_channel(
         return channel
 
 
-async def delete_channel(*, id: UUID, session: AsyncSession | None = None):
+async def delete_channel(*, id: UUID, session: AsyncSession | None = None) -> bool:
     async with get_session(session) as session:
         channel = await get_channel(id=id, session=session)
         if not channel:

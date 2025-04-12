@@ -34,7 +34,7 @@ async def set_channel_user_access_level(
     user_id: UUID,
     access_level: TAccessLevel,
     session: AsyncSession | None = None,
-):
+) -> None:
     async with get_session(session) as session:
         result = await session.execute(
             sa.insert(MChannelUserAccessLevel)

@@ -57,6 +57,47 @@ async def test_handle_message(db: None):
     assert response.command.id == cmd.id
     assert response.response == 'Message from: Test User'
 
+    cmd = await create_command(
+        channel_id=user.channel.id,
+        data=CommandCreate(
+            patterns=['bbb?'],
+            response='Message from: {sender}',
+        ),
+    )
+    response = await handle_message_response(
+        chat_message=ChatMessage(
+            type='message',
+            created_at=datetime_now(),
+            message='asd bbb? it',
+            channel_id=user.channel.id,
+            chatter_id=str(uuid7()),
+            chatter_name='test_user',
+            chatter_display_name='Test User',
+            provider=TProvider.twitch,
+            provider_id='123',
+            msg_id='123',
+        ),
+    )
+    assert response is not None
+    assert response.command.id == cmd.id
+    assert response.response == 'Message from: Test User'
+
+    response = await handle_message_response(
+        chat_message=ChatMessage(
+            type='message',
+            created_at=datetime_now(),
+            message='asd bbb it',
+            channel_id=user.channel.id,
+            chatter_id=str(uuid7()),
+            chatter_name='test_user',
+            chatter_display_name='Test User',
+            provider=TProvider.twitch,
+            provider_id='123',
+            msg_id='123',
+        ),
+    )
+    assert response is None
+
 
 if __name__ == '__main__':
     run_file(__file__)
