@@ -1,7 +1,7 @@
 import pytest
 
 from tbot2.channel import ChannelCreate, create_channel
-from tbot2.channel_viewer_stats import (
+from tbot2.channel_stats import (
     get_channel_viewer_stats,
     get_stream_viewer_watchtime,
     inc_stream_viewer_watchtime,

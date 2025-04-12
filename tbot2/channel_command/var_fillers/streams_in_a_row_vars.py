@@ -1,4 +1,4 @@
-from tbot2.channel_viewer_stats import get_channel_viewer_stats
+from tbot2.channel_stats import get_channel_viewer_stats
 from tbot2.common import ChatMessage, TProvider, safe_username
 from tbot2.twitch import lookup_twitch_user
 

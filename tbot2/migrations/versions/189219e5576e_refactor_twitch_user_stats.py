@@ -93,6 +93,11 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column('started_at', sa.DateTime, nullable=False),
+        sa.Index(
+            'ix_channel_streams_channel_id_started_at',
+            'channel_id',
+            'started_at',
+        ),
     )
     op.execute(
         """
