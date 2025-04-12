@@ -22,19 +22,22 @@ async def add_points_vars(
     settings = await get_channel_point_settings(channel_id=chat_message.channel_id)
 
     if command.args[0] == 'all':
-        chatters = await get_twitch_chatters(
+        total_chatters = 0
+        async for chatters in await get_twitch_chatters(
             channel_id=chat_message.channel_id,
             broadcaster_id=chat_message.provider_id,
-        )
-        await inc_bulk_points(
-            channel_id=chat_message.channel_id,
-            provider=chat_message.provider,
-            chatter_ids=[chatter.user_id for chatter in chatters],
-            points=points,
-        )
+        ):
+            await inc_bulk_points(
+                channel_id=chat_message.channel_id,
+                provider=chat_message.provider,
+                chatter_ids=[chatter.user_id for chatter in chatters],
+                points=points,
+            )
+            total_chatters += len(chatters)
         vars[
             'add_points'
-        ].value = f'Gave {points} {settings.points_name} to {len(chatters)} chatters.'
+        ].value = f'Gave {points} {settings.points_name} to {total_chatters} chatters.'
+
     else:
         give_to_user = await lookup_twitch_user(
             channel_id=chat_message.channel_id, login=safe_username(command.args[0])
@@ -47,7 +50,7 @@ async def add_points_vars(
             chatter_id=give_to_user.id,
             points=points,
         )
-        vars[
-            'add_points'
-        ].value = f'{give_to_user.display_name} now has {points.points} '
-        '{settings.points_name}.'
+        vars['add_points'].value = (
+            f'{give_to_user.display_name} now has {points.points} '
+            f'{settings.points_name}.'
+        )

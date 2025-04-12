@@ -1,3 +1,4 @@
+from collections.abc import AsyncGenerator
 from uuid import UUID
 
 from twitchAPI.twitch import Chatter
@@ -6,10 +7,12 @@ from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.exceptions import ErrorMessage
 
 from ..actions.twitch_channel_follower_action import twitch_user_client
-from ..twitch_http_client import get_twitch_pagination
+from ..twitch_http_client import get_twitch_pagination_yield
 
 
-async def get_twitch_chatters(channel_id: UUID, broadcaster_id: str) -> list[Chatter]:
+async def get_twitch_chatters(
+    channel_id: UUID, broadcaster_id: str
+) -> AsyncGenerator[list[Chatter]]:
     response = await twitch_user_client.get(
         '/chat/chatters',
         params={
@@ -23,4 +26,4 @@ async def get_twitch_chatters(channel_id: UUID, broadcaster_id: str) -> list[Cha
     )
     if response.status_code >= 400:
         raise ErrorMessage(f'{response.status_code} {response.text}')
-    return await get_twitch_pagination(response, schema=Chatter)
+    return get_twitch_pagination_yield(response, schema=Chatter)

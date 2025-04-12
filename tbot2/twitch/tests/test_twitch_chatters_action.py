@@ -35,17 +35,21 @@ async def test_get_twitch_chatters(db: None, httpx_mock: HTTPXMock) -> None:
     )
     from tbot2.twitch.actions.twitch_chatters_action import get_twitch_chatters
 
-    chatters = await get_twitch_chatters(
+    i = 0
+    async for chatters in await get_twitch_chatters(
         channel_id=uuid7(),
         broadcaster_id='123',
-    )
-    assert chatters
-    assert chatters[0].user_login == 'smittysmithers'
-    assert chatters[0].user_id == '1'
-    assert chatters[0].user_name == 'smittysmithers'
-    assert chatters[1].user_login == 'smittysmithers2'
-    assert chatters[1].user_id == '2'
-    assert chatters[1].user_name == 'smittysmithers2'
+    ):
+        assert chatters
+        if i == 0:
+            assert chatters[0].user_login == 'smittysmithers'
+            assert chatters[0].user_id == '1'
+            assert chatters[0].user_name == 'smittysmithers'
+        else:
+            assert chatters[0].user_login == 'smittysmithers2'
+            assert chatters[0].user_id == '2'
+            assert chatters[0].user_name == 'smittysmithers2'
+        i += 1
 
 
 if __name__ == '__main__':

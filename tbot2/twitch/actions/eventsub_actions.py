@@ -136,7 +136,7 @@ async def delete_eventsub_registration(event_id: str) -> bool:
 async def get_eventsubs(
     type: str | None = None,
     status: str | None = None,
-) -> AsyncGenerator[EventSubSubscription]:
+) -> AsyncGenerator[list[EventSubSubscription]]:
     params: dict[str, str] = {}
     if type:
         params['type'] = type
@@ -152,19 +152,24 @@ async def get_eventsubs(
 
 
 async def unregister_all_eventsubs() -> None:
-    async for eventsub in await get_eventsubs():
-        try:
-            logging.info(f'Deleting eventsub registration {eventsub.id}')
-            await delete_eventsub_registration(eventsub.id)
-        except Exception as e:
-            logging.error(f'Failed to delete eventsub registration {eventsub.id}: {e}')
+    async for eventsubs in await get_eventsubs():
+        for eventsub in eventsubs:
+            try:
+                logging.info(f'Deleting eventsub registration {eventsub.id}')
+                await delete_eventsub_registration(eventsub.id)
+            except Exception as e:
+                logging.error(
+                    f'Failed to delete eventsub registration {eventsub.id}: {e}'
+                )
 
 
 async def unregister_channel_eventsubs(
     channel_id: UUID,
 ) -> None:
-    async for eventsub in await get_eventsubs():
-        if str(channel_id) in eventsub.transport.callback:
+    async for eventsubs in await get_eventsubs():
+        for eventsub in eventsubs:
+            if str(channel_id) not in eventsub.transport.callback:
+                continue
             try:
                 logging.info(f'Deleting eventsub registration {eventsub.id}')
                 await delete_eventsub_registration(eventsub.id)

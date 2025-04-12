@@ -79,53 +79,19 @@ twitch_client = Twitch(
 T = typing.TypeVar('T')
 
 
-async def get_twitch_pagination(
+async def get_twitch_pagination_yield(
     response: Response,
     schema: type[T],
-) -> list[T]:
+) -> typing.AsyncGenerator[list[T]]:
     data = response.json()
-    all_data: list[dict[str, typing.Any]] = data['data']
-
-    pagination = data.get('pagination')
-    while pagination:
-        response = await twitch_user_client.get(
-            response.url.path.replace('/helix', ''),
-            params={
-                **response.url.params,
-                'after': pagination['cursor'],
-            },
-        )
-        if response.status_code >= 400:
-            ErrorMessage(f'{response.status_code} {response.text}')
-        data = response.json()
-        all_data.extend(data['data'])
-        pagination = data.get('pagination')
-
     if issubclass(schema, TwitchObject):
-        return [schema(**item) for item in all_data]
+        yield [schema(**item) for item in data['data']]
     elif issubclass(schema, BaseModel):
-        return [schema.model_validate(item) for item in all_data]
+        yield [schema.model_validate(item) for item in data['data']]
     else:
         raise Exception(
             f'Invalid schema type: {schema}. Must be either BaseModel or TwitchObject.'
         )
-
-
-async def get_twitch_pagination_yield(
-    response: Response,
-    schema: type[T],
-) -> typing.AsyncGenerator[T]:
-    data = response.json()
-    for item in data['data']:
-        if issubclass(schema, TwitchObject):
-            yield schema(**item)
-        elif issubclass(schema, BaseModel):
-            yield schema.model_validate(item)
-        else:
-            raise Exception(
-                f'Invalid schema type: {schema}. Must be either BaseModel or '
-                'TwitchObject.'
-            )
 
     pagination = data.get('pagination')
     while pagination:
@@ -139,15 +105,14 @@ async def get_twitch_pagination_yield(
         if response.status_code >= 400:
             raise ErrorMessage(f'{response.status_code} {response.text}')
         data = response.json()
-        for item in data['data']:
-            if issubclass(schema, TwitchObject):
-                yield schema(**item)
-            elif issubclass(schema, BaseModel):
-                yield schema.model_validate(item)
-            else:
-                raise Exception(
-                    f'Invalid schema type: {schema}. Must be either BaseModel or '
-                    'TwitchObject.'
-                )
+        if issubclass(schema, TwitchObject):
+            yield [schema(**item) for item in data['data']]
+        elif issubclass(schema, BaseModel):  # type: ignore
+            yield [schema.model_validate(item) for item in data['data']]
+        else:
+            raise Exception(
+                f'Invalid schema type: {schema}. Must be either '
+                'BaseModel or TwitchObject.'
+            )
 
         pagination = data.get('pagination')
