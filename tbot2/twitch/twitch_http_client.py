@@ -7,7 +7,6 @@ from pydantic import BaseModel
 from twitchAPI.object.base import TwitchObject
 from twitchAPI.twitch import Twitch
 
-from tbot2.common import TProvider
 from tbot2.common.utils.oauth_auth import (
     ChannelProviderBotOAuth,
     ChannelProviderOAuth,
@@ -45,7 +44,7 @@ twitch_user_client = AsyncClient(
         'Client-ID': config.twitch.client_id,
     },
     auth=ChannelProviderOAuth(
-        provider=TProvider.twitch,
+        provider='twitch',
         token_url='https://id.twitch.tv/oauth2/token',
         client_id=config.twitch.client_id,
         client_secret=config.twitch.client_secret,
@@ -61,7 +60,7 @@ twitch_bot_client = AsyncClient(
         'Client-ID': config.twitch.client_id,
     },
     auth=ChannelProviderBotOAuth(
-        provider=TProvider.twitch,
+        provider='twitch',
         token_url='https://id.twitch.tv/oauth2/token',
         client_id=config.twitch.client_id,
         client_secret=config.twitch.client_secret,

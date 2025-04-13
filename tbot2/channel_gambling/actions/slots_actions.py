@@ -3,7 +3,7 @@ import random
 from uuid import UUID
 
 from tbot2.channel_points import get_channel_point_settings, get_points, inc_points
-from tbot2.common import TProvider, convert_to_points
+from tbot2.common import Provider, convert_to_points
 from tbot2.common.utils.fill_from_dict import fill_from_dict
 from tbot2.exceptions import ErrorMessage
 
@@ -14,7 +14,7 @@ from ..schemas.slots_schema import SlotsResult
 async def slots(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     chatter_id: str,
     bet: int | str,
 ) -> SlotsResult:

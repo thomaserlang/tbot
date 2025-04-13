@@ -1,7 +1,7 @@
 from enum import StrEnum
 
 
-class TScope(StrEnum):
+class Scope(StrEnum):
     @staticmethod
     def get_all_scopes() -> list[str]:
-        return [x.value for xs in TScope.__subclasses__() for x in xs]
+        return [x.value for xs in Scope.__subclasses__() for x in xs]

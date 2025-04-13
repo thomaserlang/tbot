@@ -12,10 +12,10 @@ from .schemas.oauth2_client_schemas import Oauth2TokenParams as Oauth2TokenParam
 from .schemas.oauth2_client_schemas import Oauth2TokenResponse as Oauth2TokenResponse
 from .schemas.token_data_schema import TokenData as TokenData
 from .types.access_level_type import TAccessLevel as TAccessLevel
-from .types.provider_type import TProvider as TProvider
+from .types.provider_type import Provider as Provider
 from .types.provider_type import bot_provider_scopes as bot_provider_scopes
 from .types.provider_type import channel_provider_scopes as channel_provider_scopes
-from .types.scope_type import TScope as TScope
+from .types.scope_type import Scope as Scope
 from .utils.convert_to_points import convert_to_points as convert_to_points
 from .utils.datetime_now import datetime_now as datetime_now
 from .utils.text_utils import check_pattern_match as check_pattern_match

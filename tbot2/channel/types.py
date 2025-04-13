@@ -1,6 +1,6 @@
-from tbot2.common import TScope
+from tbot2.common import Scope
 
 
-class ChannelScope(TScope):
+class ChannelScope(Scope):
     PROVIDERS_WRITE = 'channel_providers:write'
     PROVIDERS_READ = 'channel_providers:read'

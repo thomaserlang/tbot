@@ -3,7 +3,6 @@ from uuid import UUID
 from loguru import logger
 
 from tbot2.channel import get_channel_bot_provider
-from tbot2.common import TProvider
 from tbot2.constants import APP_TITLE, TBOT_CHANNEL_ID_HEADER
 
 from ..twitch_http_client import twitch_bot_client
@@ -16,7 +15,7 @@ async def twitch_warn_chat_user(
     reason: str | None = None,
 ) -> bool:
     provider = await get_channel_bot_provider(
-        provider=TProvider.twitch,
+        provider='twitch',
         channel_id=channel_id,
     )
     if not provider:

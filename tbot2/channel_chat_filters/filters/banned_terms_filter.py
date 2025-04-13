@@ -17,7 +17,6 @@ from ..schemas.chat_filter_schema import (
     ChatFilterWarningMessage,
     FilterMatchResult,
 )
-from ..types import TBannedTermType
 
 
 class ChatFilterBannedTermsCreate(ChatFilterBaseCreate):
@@ -37,14 +36,14 @@ class ChatFilterBannedTerms(ChatFilterBase):
     async def check_message(self, message: ChatMessage) -> FilterMatchResult:
         banned_terms = await get_banned_terms_cached(filter_id=self.id)
         for term in banned_terms:
-            if term.type == TBannedTermType.regex:
+            if term.type == 'regex':
                 if search(
                     term.text if not term.text.startswith('re:') else term.text[3:],
                     message.message_without_fragments(),
                     flags=IGNORECASE,
                 ):
                     return FilterMatchResult(filter=self, matched=True, sub_id=term.id)
-            elif term.type == TBannedTermType.phrase:
+            elif term.type == 'phrase':
                 if check_pattern_match(
                     message=message.message_without_fragments(),
                     pattern=term.text,

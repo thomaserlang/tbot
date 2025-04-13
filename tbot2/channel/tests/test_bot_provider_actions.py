@@ -10,7 +10,6 @@ from tbot2.channel import (
     get_channel_bot_provider,
     save_channel_oauth_provider,
 )
-from tbot2.common import TProvider
 from tbot2.testbase import run_file, user_signin
 
 
@@ -20,7 +19,7 @@ async def test_bot_provider_actions(client: AsyncClient) -> None:
 
     system_bot_provider = await save_bot_provider(
         data=BotProviderRequest(
-            provider=TProvider.twitch,
+            provider='twitch',
             name='System Bot',
             provider_user_id='1111',
             system_default=True,
@@ -29,7 +28,7 @@ async def test_bot_provider_actions(client: AsyncClient) -> None:
 
     bot_provider = await save_bot_provider(
         data=BotProviderRequest(
-            provider=TProvider.twitch,
+            provider='twitch',
             name='Test Bot',
             provider_user_id='123',
         ),
@@ -37,14 +36,14 @@ async def test_bot_provider_actions(client: AsyncClient) -> None:
 
     await save_bot_provider(
         data=BotProviderRequest(
-            provider=TProvider.twitch,
+            provider='twitch',
             name='Test Bot 2',
             provider_user_id='55555',
         ),
     )
 
     check_bot_provider = await get_channel_bot_provider(
-        provider=TProvider.twitch,
+        provider='twitch',
         channel_id=user.channel.id,
     )
     assert check_bot_provider is not None
@@ -53,7 +52,7 @@ async def test_bot_provider_actions(client: AsyncClient) -> None:
 
     await save_channel_oauth_provider(
         channel_id=user.channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         data=ChannelOAuthProviderRequest(
             provider_user_id='123',
             bot_provider_id=bot_provider.id,
@@ -61,7 +60,7 @@ async def test_bot_provider_actions(client: AsyncClient) -> None:
     )
 
     check_bot_provider = await get_channel_bot_provider(
-        provider=TProvider.twitch,
+        provider='twitch',
         channel_id=user.channel.id,
     )
     assert check_bot_provider is not None

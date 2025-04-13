@@ -1,7 +1,7 @@
 import pytest
 from httpx import AsyncClient
 
-from tbot2.channel_chat_filters import TChatFilterScope
+from tbot2.channel_chat_filters import ChatFilterScope
 from tbot2.testbase import run_file, user_signin
 
 
@@ -10,7 +10,7 @@ async def test_filter_routes(
     client: AsyncClient,
 ) -> None:
     user = await user_signin(
-        client, scopes=[TChatFilterScope.READ, TChatFilterScope.WRITE]
+        client, scopes=[ChatFilterScope.READ, ChatFilterScope.WRITE]
     )
 
     r = await client.post(

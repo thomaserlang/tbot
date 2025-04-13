@@ -8,7 +8,7 @@ from tbot2.bot_providers import BotProvider, BotProviderPublic
 from tbot2.common import (
     BaseRequestSchema,
     BaseSchema,
-    TProvider,
+    Provider,
     channel_provider_scopes,
 )
 
@@ -16,7 +16,7 @@ from tbot2.common import (
 class ChannelOAuthProvider(BaseSchema):
     id: UUID
     channel_id: UUID
-    provider: TProvider
+    provider: Provider
     provider_user_id: str | None
     access_token: str | None
     refresh_token: str | None
@@ -30,7 +30,7 @@ class ChannelOAuthProvider(BaseSchema):
 class ChannelProvider(BaseSchema):
     id: UUID
     channel_id: UUID
-    provider: TProvider
+    provider: Provider
     name: str | None
     scope: str | None
     bot_provider_id: UUID | None

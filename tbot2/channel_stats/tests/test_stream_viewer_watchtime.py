@@ -8,7 +8,7 @@ from tbot2.channel_stats import (
     inc_stream_viewer_watchtime,
 )
 from tbot2.chatlog import ChatterRequest
-from tbot2.common import TProvider, datetime_now
+from tbot2.common import datetime_now
 from tbot2.testbase import run_file
 
 
@@ -21,7 +21,7 @@ async def test_stream_viewer_watchtime(db: None) -> None:
     )
     stream = await create_channel_provider_stream(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         provider_id='123456789',
         provider_stream_id='123456789',
         started_at=datetime_now(),

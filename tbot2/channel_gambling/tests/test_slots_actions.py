@@ -5,7 +5,6 @@ import pytest
 from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_gambling import slots
 from tbot2.channel_points import inc_points
-from tbot2.common import TProvider
 from tbot2.exceptions import ErrorMessage
 from tbot2.testbase import run_file
 
@@ -17,14 +16,14 @@ async def test_roulette_actions(db: None) -> None:
     with pytest.raises(ErrorMessage, match='Not enough points to bet 100'):
         await slots(
             channel_id=channel.id,
-            provider=TProvider.twitch,
+            provider='twitch',
             chatter_id='test_chatter',
             bet=100,
         )
 
     await inc_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='test_chatter',
         points=100,
     )
@@ -32,7 +31,7 @@ async def test_roulette_actions(db: None) -> None:
     with pytest.raises(ErrorMessage, match='Bet is too low, minimum is 5'):
         await slots(
             channel_id=channel.id,
-            provider=TProvider.twitch,
+            provider='twitch',
             chatter_id='test_chatter',
             bet=4,
         )
@@ -40,7 +39,7 @@ async def test_roulette_actions(db: None) -> None:
     with pytest.raises(ErrorMessage, match='Invalid points: invalid'):
         await slots(
             channel_id=channel.id,
-            provider=TProvider.twitch,
+            provider='twitch',
             chatter_id='test_chatter',
             bet='invalid',
         )
@@ -48,7 +47,7 @@ async def test_roulette_actions(db: None) -> None:
     with pytest.raises(ErrorMessage, match='Not enough points to bet'):
         await slots(
             channel_id=channel.id,
-            provider=TProvider.twitch,
+            provider='twitch',
             chatter_id='test_chatter',
             bet='101%',
         )
@@ -62,7 +61,7 @@ async def test_roulette_actions(db: None) -> None:
     ):
         result = await slots(
             channel_id=channel.id,
-            provider=TProvider.twitch,
+            provider='twitch',
             chatter_id='test_chatter',
             bet=100,
         )
@@ -75,7 +74,7 @@ async def test_roulette_actions(db: None) -> None:
     ):
         result = await slots(
             channel_id=channel.id,
-            provider=TProvider.twitch,
+            provider='twitch',
             chatter_id='test_chatter',
             bet='all',
         )
@@ -91,7 +90,7 @@ async def test_roulette_actions(db: None) -> None:
     ):
         result = await slots(
             channel_id=channel.id,
-            provider=TProvider.twitch,
+            provider='twitch',
             chatter_id='test_chatter',
             bet=100,
         )
@@ -104,7 +103,7 @@ async def test_roulette_actions(db: None) -> None:
     ):
         result = await slots(
             channel_id=channel.id,
-            provider=TProvider.twitch,
+            provider='twitch',
             chatter_id='test_chatter',
             bet='all',
         )

@@ -10,7 +10,7 @@ from tbot2.channel_stats import (
     inc_stream_viewer_watchtime,
 )
 from tbot2.chatlog import ChatterRequest
-from tbot2.common import TProvider, datetime_now
+from tbot2.common import datetime_now
 
 from ..actions.twitch_chatters_action import get_twitch_chatters
 
@@ -28,7 +28,7 @@ async def task_update_viewer_streams() -> None:
             sleep_time = CHECK_EVERY
         await asyncio.sleep(sleep_time)
         last_check = datetime_now()
-        streams = await get_live_channels_provider_streams(provider=TProvider.twitch)
+        streams = await get_live_channels_provider_streams(provider='twitch')
         await asyncio.gather(*[update_viewer_stream_data(stream) for stream in streams])
 
 
@@ -46,7 +46,7 @@ async def update_viewer_stream_data(stream: ChannelProviderStream) -> None:
             if point_settings.enabled:
                 await inc_bulk_points(
                     channel_id=stream.channel_id,
-                    provider=TProvider.twitch,
+                    provider='twitch',
                     chatter_ids=[chatter.user_id for chatter in chatters],
                     points=point_settings.points_per_min,
                 )

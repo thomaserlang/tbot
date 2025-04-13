@@ -3,7 +3,6 @@ from uuid import UUID
 from loguru import logger
 
 from tbot2.channel import get_channel_bot_provider
-from tbot2.common import TProvider
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..twitch_http_client import twitch_bot_client
@@ -15,7 +14,7 @@ async def twitch_delete_message(
     message_id: str,
 ) -> bool:
     bot_provider = await get_channel_bot_provider(
-        provider=TProvider.twitch,
+        provider='twitch',
         channel_id=channel_id,
     )
     if not bot_provider:

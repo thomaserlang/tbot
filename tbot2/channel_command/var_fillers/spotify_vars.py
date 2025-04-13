@@ -7,7 +7,7 @@ from tbot2.spotify import (
 )
 
 from ..exceptions import CommandError
-from ..types import TCommand, TMessageVars
+from ..types import MessageVars, TCommand
 from ..var_filler import fills_vars
 
 
@@ -21,7 +21,7 @@ from ..var_filler import fills_vars
     ),
 )
 async def spotify_vars(
-    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
     try:
         playing = await get_spotify_currently_playing(
@@ -51,7 +51,7 @@ async def spotify_vars(
     ),
 )
 async def spotify_playlist_vars(
-    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
     try:
         playing = await get_spotify_currently_playing(
@@ -92,7 +92,7 @@ async def spotify_playlist_vars(
     ),
 )
 async def spotify_prev_song_vars(
-    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
     try:
         played = await get_spotify_recently_played(

@@ -19,7 +19,6 @@ from tbot2.common import (
     Oauth2TokenResponse,
     TAccessLevel,
     TokenData,
-    TProvider,
     channel_provider_scopes,
 )
 from tbot2.common.schemas.connect_url_schema import RedirectUrl
@@ -33,7 +32,7 @@ client = AsyncClient(
     http2=True,
 )
 
-channel_provider_scopes[TProvider.spotify] = ' '.join(
+channel_provider_scopes['spotify'] = ' '.join(
     {
         'playlist-read-private',
         'user-read-recently-played',
@@ -61,7 +60,7 @@ async def spotify_connect_route(
                 client_id=config.spotify.client_id,
                 response_type='code',
                 redirect_uri=str(request_url_for(request, 'spotify_auth_route')),
-                scope=channel_provider_scopes[TProvider.spotify],
+                scope=channel_provider_scopes['spotify'],
                 force_verify=True,
                 state={
                     'channel_id': str(channel_id),
@@ -108,12 +107,12 @@ async def spotify_auth_route(
 
     await save_channel_oauth_provider(
         channel_id=UUID(params.state['channel_id']),
-        provider=TProvider.spotify,
+        provider='spotify',
         data=ChannelOAuthProviderRequest(
             access_token=oauth_response.access_token,
             refresh_token=oauth_response.refresh_token,
             expires_in=oauth_response.expires_in,
-            scope=channel_provider_scopes[TProvider.spotify],
+            scope=channel_provider_scopes['spotify'],
             name=user_info['id'],
         ),
     )

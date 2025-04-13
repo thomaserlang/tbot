@@ -5,7 +5,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
-from tbot2.common import TProvider
+from tbot2.common import Provider
 from tbot2.model_base import Base
 
 
@@ -14,7 +14,7 @@ class MBotProvider(Base):
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)
-    provider: Mapped[TProvider] = mapped_column(sa.String(255), nullable=False)
+    provider: Mapped[Provider] = mapped_column(sa.String(255), nullable=False)
     system_default: Mapped[bool | None] = mapped_column(sa.Boolean(), nullable=True)
     provider_user_id: Mapped[str] = mapped_column(sa.String(255), nullable=False)
     access_token: Mapped[str | None] = mapped_column(sa.String(2000), nullable=True)

@@ -6,7 +6,7 @@ import sqlalchemy as sa
 from fastapi import APIRouter, Security
 
 from tbot2.channel_chat_filters.models.chat_filter_model import MChatFilter
-from tbot2.common import ChatMessage, TAccessLevel, TokenData, TProvider
+from tbot2.common import ChatMessage, TAccessLevel, TokenData
 from tbot2.dependecies import Depends, HTTPException, authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQuery, page_cursor
 
@@ -25,7 +25,7 @@ from ..schemas.banned_term_schema import (
     BannedTermTest,
     BannedTermUpdate,
 )
-from ..types import TChatFilterScope
+from ..types import ChatFilterScope
 
 router = APIRouter()
 
@@ -39,7 +39,7 @@ async def get_banned_terms_route(
     filter_id: UUID,
     page_query: Annotated[PageCursorQuery, Depends()],
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChatFilterScope.READ])
+        TokenData, Security(authenticated, scopes=[ChatFilterScope.READ])
     ],
 ) -> PageCursor[BannedTerm]:
     await token_data.channel_has_access(
@@ -79,7 +79,7 @@ async def get_banned_term_route(
     filter_id: UUID,
     banned_term_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChatFilterScope.READ])
+        TokenData, Security(authenticated, scopes=[ChatFilterScope.READ])
     ],
 ) -> BannedTerm:
     await token_data.channel_has_access(
@@ -112,7 +112,7 @@ async def create_banned_term_route(
     filter_id: UUID,
     data: BannedTermCreate,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChatFilterScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChatFilterScope.WRITE])
     ],
 ) -> BannedTerm:
     await token_data.channel_has_access(
@@ -143,7 +143,7 @@ async def update_banned_term_route(
     banned_term_id: UUID,
     data: BannedTermUpdate,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChatFilterScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChatFilterScope.WRITE])
     ],
 ) -> BannedTerm:
     await token_data.channel_has_access(
@@ -180,7 +180,7 @@ async def delete_banned_term_route(
     filter_id: UUID,
     banned_term_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChatFilterScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChatFilterScope.WRITE])
     ],
 ) -> None:
     await token_data.channel_has_access(
@@ -207,7 +207,7 @@ async def banned_term_test_route(
     filter_id: UUID,
     data: BannedTermTest,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChatFilterScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChatFilterScope.WRITE])
     ],
 ) -> FilterMatchResult:
     await token_data.channel_has_access(
@@ -225,7 +225,7 @@ async def banned_term_test_route(
         message=ChatMessage(
             type='message',
             created_at=datetime.now(tz=UTC),
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='test',
             channel_id=channel_id,
             chatter_id='test',

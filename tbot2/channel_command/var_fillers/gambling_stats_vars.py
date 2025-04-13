@@ -1,14 +1,14 @@
 from tbot2.channel_gambling import get_chatter_gambling_stats
-from tbot2.common import ChatMessage, TProvider, safe_username
+from tbot2.common import ChatMessage, safe_username
 from tbot2.twitch import lookup_twitch_user
 
 from ..exceptions import CommandError
-from ..types import TCommand, TMessageVars
+from ..types import MessageVars, TCommand
 from ..var_filler import fills_vars
 
 
 @fills_vars(
-    provider=TProvider.twitch,
+    provider='twitch',
     vars=(
         'gambling_stats.slots_wins',
         'gambling_stats.slots_loses',
@@ -21,7 +21,7 @@ from ..var_filler import fills_vars
     ),
 )
 async def gambling_stats(
-    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
     for_chatter_id = chat_message.chatter_id
     if len(command.args) > 0:

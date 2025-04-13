@@ -4,7 +4,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from uuid6 import uuid7
 
-from tbot2.common import TProvider, datetime_now
+from tbot2.common import Provider, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..actions.channel_stream_actions import (
@@ -30,7 +30,7 @@ async def get_channel_provider_stream(
 async def get_current_channel_provider_stream(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     provider_id: str | None = None,
     session: AsyncSession | None = None,
 ) -> ChannelProviderStream | None:
@@ -50,7 +50,7 @@ async def get_current_channel_provider_stream(
 async def create_channel_provider_stream(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     provider_id: str,
     provider_stream_id: str,
     started_at: datetime,
@@ -102,7 +102,7 @@ async def create_channel_provider_stream(
 async def end_channel_provider_stream(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     provider_id: str | None = None,
     ended_at: datetime | None = None,
     session: AsyncSession | None = None,
@@ -131,7 +131,7 @@ async def end_channel_provider_stream(
 
 async def get_live_channels_provider_streams(
     *,
-    provider: TProvider,
+    provider: Provider,
     session: AsyncSession | None = None,
 ) -> list[ChannelProviderStream]:
     async with get_session(session) as session:

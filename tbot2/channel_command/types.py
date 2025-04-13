@@ -1,12 +1,12 @@
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
-from enum import StrEnum
+from typing import Literal
 
-from tbot2.common import ChatMessage, TProvider, TScope
+from tbot2.common import ChatMessage, Provider, Scope
 
 
 @dataclass(slots=True)
-class TMessageVar:
+class MessageVar:
     name: str
     match_raw: str
     args: Sequence[str]
@@ -21,21 +21,18 @@ class TCommand:
 
 
 @dataclass(slots=True)
-class TFillVars:
-    provider: str | TProvider
+class FillVars:
+    provider: str | Provider
     vars: Sequence[str]
 
 
-TMessageVars = dict[str, TMessageVar]
-TFillerType = Callable[[ChatMessage, TCommand, TMessageVars], Awaitable[None]]
+MessageVars = dict[str, MessageVar]
+FillerType = Callable[[ChatMessage, TCommand, MessageVars], Awaitable[None]]
 
 
-class TCommandScope(TScope):
+class CommandScope(Scope):
     READ = 'command:read'
     WRITE = 'command:write'
 
 
-class TCommandActiveMode(StrEnum):
-    ALWAYS = 'always'
-    ONLINE = 'online'
-    OFFLINE = 'offline'
+CommandActiveMode = Literal['always', 'online', 'offline']

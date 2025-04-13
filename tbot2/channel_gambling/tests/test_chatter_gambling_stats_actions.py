@@ -6,7 +6,6 @@ from tbot2.channel_gambling import (
     get_chatter_gambling_stats,
     inc_chatter_gambling_stats,
 )
-from tbot2.common import TProvider
 from tbot2.testbase import run_file
 
 
@@ -16,12 +15,12 @@ async def test_chatter_gambling_stats(db: None) -> None:
 
     stats = await get_chatter_gambling_stats(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='test_chatter',
     )
     assert stats.channel_id == channel.id
     assert stats.chatter_id == 'test_chatter'
-    assert stats.provider == TProvider.twitch
+    assert stats.provider == 'twitch'
     assert stats.slots_wins == 0
     assert stats.slots_losses == 0
     assert stats.roulette_wins == 0
@@ -29,7 +28,7 @@ async def test_chatter_gambling_stats(db: None) -> None:
 
     stats = await inc_chatter_gambling_stats(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='test_chatter',
         data=ChatterGamblingStatsUpdate(slots_wins=1, slots_losses=1),
     )

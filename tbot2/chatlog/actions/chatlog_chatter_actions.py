@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from sqlalchemy.dialects.mysql import insert
 
-from tbot2.common import TProvider, datetime_now
+from tbot2.common import Provider, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.chatlog_chatters_model import MChatlogChatters
@@ -9,7 +9,7 @@ from ..schemas.chatlog_chatter_schema import ChatterRequest
 
 
 async def save_chatters(
-    provider: TProvider,
+    provider: Provider,
     chatters: list[ChatterRequest],
     session: AsyncSession | None = None,
 ) -> None:

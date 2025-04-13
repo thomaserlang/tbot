@@ -16,7 +16,7 @@ from tbot2.channel import (
     get_channel_oauth_provider,
     save_channel_oauth_provider,
 )
-from tbot2.common import TProvider
+from tbot2.common import Provider
 from tbot2.config_settings import config
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.exceptions import ErrorMessage
@@ -24,7 +24,7 @@ from tbot2.exceptions import ErrorMessage
 
 class ChannelProviderOAuth(Auth):
     def __init__(
-        self, token_url: str, client_id: str, client_secret: str, provider: TProvider
+        self, token_url: str, client_id: str, client_secret: str, provider: Provider
     ) -> None:
         self.token_url = token_url
         self.client_id = client_id
@@ -110,7 +110,7 @@ class ChannelProviderOAuth(Auth):
 
 class ChannelProviderBotOAuth(Auth):
     def __init__(
-        self, token_url: str, client_id: str, client_secret: str, provider: TProvider
+        self, token_url: str, client_id: str, client_secret: str, provider: Provider
     ) -> None:
         self.token_url = token_url
         self.client_id = client_id
@@ -191,7 +191,7 @@ class ChannelProviderBotOAuth(Auth):
             return str(data['access_token'])
 
 
-def _get_missing_provider_message(channel_uuid: UUID, provider: TProvider) -> str:
+def _get_missing_provider_message(channel_uuid: UUID, provider: Provider) -> str:
     return (
         f'{provider} must be added as a provider: '
         f'{config.web.base_url}channels/{channel_uuid}/providers'

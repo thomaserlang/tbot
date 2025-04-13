@@ -11,7 +11,7 @@ from tbot2.channel_timer.actions.timer_actions import (
     get_timers,
     update_timer_next_run_at,
 )
-from tbot2.common import TProvider, datetime_now
+from tbot2.common import Provider, datetime_now
 from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 
@@ -82,7 +82,7 @@ async def handle_timer(timer: Timer) -> None:
 
 async def is_timer_active(
     timer: Timer,
-    provider: TProvider,
+    provider: Provider,
     session: AsyncSession | None = None,
 ) -> bool:
     async with get_session(session) as session:

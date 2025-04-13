@@ -12,7 +12,7 @@ from tbot2.contexts import AsyncSession, get_session
 
 from ..exceptions import CommandError
 from ..fill_message import fill_message
-from ..types import TCommand, TCommandActiveMode
+from ..types import TCommand
 from .command_actions import Command, get_commands
 
 
@@ -76,16 +76,16 @@ async def _check_active_mode(
     chat_message: ChatMessage,
     session: AsyncSession,
 ) -> bool:
-    if command.active_mode == TCommandActiveMode.ALWAYS:
+    if command.active_mode == 'always':
         return True
     stream = await get_current_channel_provider_stream(
         channel_id=chat_message.channel_id,
         provider=chat_message.provider,
         session=session,
     )
-    if command.active_mode == TCommandActiveMode.OFFLINE and stream:
+    if command.active_mode == 'offline' and stream:
         return False
-    if command.active_mode == TCommandActiveMode.ONLINE and not stream:
+    if command.active_mode == 'online' and not stream:
         return False
     return True
 

@@ -1,12 +1,11 @@
-from enum import StrEnum
+from typing import Literal
 
+Provider = Literal[
+    'twitch',
+    'discord',
+    'youtube',
+    'spotify',
+]
 
-class TProvider(StrEnum):
-    twitch = 'twitch'
-    youtube = 'youtube'
-    spotify = 'spotify'
-    discord = 'discord'
-
-
-channel_provider_scopes: dict[TProvider, str] = {}
-bot_provider_scopes: dict[TProvider, str] = {}
+channel_provider_scopes: dict[Provider, str] = {}
+bot_provider_scopes: dict[Provider, str] = {}

@@ -12,7 +12,7 @@ from tbot2.channel import (
     set_channel_user_access_level,
 )
 from tbot2.channel_command import CommandError
-from tbot2.common import TAccessLevel, TokenData, TProvider, TScope, datetime_now
+from tbot2.common import Provider, Scope, TAccessLevel, TokenData, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.oauth_provider_model import MUserOAuthProvider
@@ -33,7 +33,7 @@ class GetOrCreateUserResult:
 
 async def get_or_create_user(
     *,
-    provider: TProvider,
+    provider: Provider,
     provider_user_id: str,
     data: UserCreate,
     session: AsyncSession | None = None,
@@ -84,7 +84,7 @@ async def get_or_create_user(
                 created=True,
                 token_data=TokenData(
                     user_id=user.id,
-                    scopes=TScope.get_all_scopes(),
+                    scopes=Scope.get_all_scopes(),
                 ),
             )
         else:
@@ -97,7 +97,7 @@ async def get_or_create_user(
                 created=False,
                 token_data=TokenData(
                     user_id=user.id,
-                    scopes=TScope.get_all_scopes(),
+                    scopes=Scope.get_all_scopes(),
                 ),
             )
 
@@ -105,7 +105,7 @@ async def get_or_create_user(
 async def create_user_oauth_provider(
     *,
     user_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     provider_user_id: str,
     session: AsyncSession | None = None,
 ) -> UserOAuthProvider:
@@ -117,7 +117,7 @@ async def create_user_oauth_provider(
                     id=provider_id,
                     created_at=datetime_now(),
                     user_id=user_id,
-                    provider=provider.value,
+                    provider=provider,
                     provider_user_id=provider_user_id,
                 )
             )
@@ -166,13 +166,13 @@ async def get_user_oauth_provider(
 
 
 async def get_oauth_provider_by_user_and_provider(
-    *, user_id: UUID, provider: TProvider, session: AsyncSession | None = None
+    *, user_id: UUID, provider: Provider, session: AsyncSession | None = None
 ) -> UserOAuthProvider | None:
     async with get_session(session) as session:
         p = await session.scalar(
             sa.select(MUserOAuthProvider).where(
                 MUserOAuthProvider.user_id == user_id,
-                MUserOAuthProvider.provider == provider.value,
+                MUserOAuthProvider.provider == provider,
             )
         )
         if not p:
@@ -182,14 +182,14 @@ async def get_oauth_provider_by_user_and_provider(
 
 async def get_oauth_provider_by_provider_user_id(
     *,
-    provider: TProvider,
+    provider: Provider,
     provider_user_id: str,
     session: AsyncSession | None = None,
 ) -> UserOAuthProvider | None:
     async with get_session(session) as session:
         p = await session.scalar(
             sa.select(MUserOAuthProvider).where(
-                MUserOAuthProvider.provider == provider.value,
+                MUserOAuthProvider.provider == provider,
                 MUserOAuthProvider.provider_user_id == provider_user_id,
             )
         )

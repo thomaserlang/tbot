@@ -4,12 +4,12 @@ from uuid import UUID
 
 from pydantic import StringConstraints, computed_field
 
-from tbot2.common import BaseRequestSchema, BaseSchema, TProvider, bot_provider_scopes
+from tbot2.common import BaseRequestSchema, BaseSchema, Provider, bot_provider_scopes
 
 
 class BotProvider(BaseSchema):
     id: UUID
-    provider: TProvider
+    provider: Provider
     provider_user_id: str
     access_token: str | None
     refresh_token: str | None
@@ -26,7 +26,7 @@ class BotProvider(BaseSchema):
 
 class BotProviderPublic(BaseSchema):
     id: UUID
-    provider: TProvider
+    provider: Provider
     provider_user_id: str | None
     scope: str | None
     name: str | None
@@ -39,7 +39,7 @@ class BotProviderPublic(BaseSchema):
 
 
 class BotProviderRequest(BaseRequestSchema):
-    provider: TProvider
+    provider: Provider
     provider_user_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     access_token: (
         Annotated[str, StringConstraints(min_length=1, max_length=2000)] | None

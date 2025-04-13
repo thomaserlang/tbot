@@ -7,7 +7,7 @@ from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_command import TCommand
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_points import inc_points
-from tbot2.common import ChatMessage, TProvider
+from tbot2.common import ChatMessage
 from tbot2.testbase import run_file
 from tbot2.twitch import TwitchUser
 
@@ -84,35 +84,35 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture) -> None:
 
     await inc_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='test_chatter',
         points=100,
     )
 
     await inc_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='test_chatter2',
         points=200,
     )
 
     await inc_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='test_chatter3',
         points=300,
     )
 
     await inc_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='test_chatter4',
         points=400,
     )
 
     await inc_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='test_chatter5',
         points=500,
     )
@@ -122,7 +122,7 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture) -> None:
         chat_message=ChatMessage(
             type='message',
             created_at=datetime.now(tz=UTC),
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='1234',
             channel_id=channel.id,
             chatter_id='test_chatter',

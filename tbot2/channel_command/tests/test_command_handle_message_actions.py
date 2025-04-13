@@ -3,7 +3,7 @@ from uuid6 import uuid7
 
 from tbot2.channel_command import CommandCreate, create_command, handle_message_response
 from tbot2.channel_command import var_fillers as var_fillers
-from tbot2.common import ChatMessage, TProvider, datetime_now
+from tbot2.common import ChatMessage, datetime_now
 from tbot2.testbase import run_file, user_signin
 
 
@@ -29,7 +29,7 @@ async def test_handle_message(db: None) -> None:
             chatter_id=str(uuid7()),
             chatter_name='test_user',
             chatter_display_name='Test User',
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='123',
             msg_id='123',
         ),
@@ -48,7 +48,7 @@ async def test_handle_message(db: None) -> None:
             chatter_id=str(uuid7()),
             chatter_name='test_user',
             chatter_display_name='Test User',
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='123',
             msg_id='123',
         ),
@@ -73,7 +73,7 @@ async def test_handle_message(db: None) -> None:
             chatter_id=str(uuid7()),
             chatter_name='test_user',
             chatter_display_name='Test User',
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='123',
             msg_id='123',
         ),
@@ -91,7 +91,7 @@ async def test_handle_message(db: None) -> None:
             chatter_id=str(uuid7()),
             chatter_name='test_user',
             chatter_display_name='Test User',
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='123',
             msg_id='123',
         ),

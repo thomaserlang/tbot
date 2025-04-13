@@ -13,7 +13,6 @@ from tbot2.channel import (
     on_delete_channel_oauth_provider,
     on_disconnect_channel_bot_provider,
 )
-from tbot2.common import TProvider
 from tbot2.config_settings import config
 from tbot2.exceptions import ErrorMessage
 
@@ -34,7 +33,7 @@ async def register_channel_eventsubs(
     logger.info(f'Registering eventsub for channel {channel_id}')
     provider = await get_channel_oauth_provider(
         channel_id=channel_id,
-        provider=TProvider.twitch,
+        provider='twitch',
     )
     if not provider:
         logger.error(
@@ -48,7 +47,7 @@ async def register_channel_eventsubs(
     if not bot_provider:
         bot_provider = await get_channel_bot_provider(
             channel_id=channel_id,
-            provider=TProvider.twitch,
+            provider='twitch',
         )
         if not bot_provider:
             logger.error(
@@ -203,7 +202,7 @@ async def register_all_eventsubs(
     event_type: str | None = None,
 ) -> None:
     logger.info(f'Registering {event_type or "all"} eventsub registrations')
-    async for provider in get_channels_providers(provider=TProvider.twitch):
+    async for provider in get_channels_providers(provider='twitch'):
         logger.info(f'Registering eventsub for channel {provider.channel_id}')
         await register_channel_eventsubs(
             channel_id=provider.channel_id, event_type=event_type
@@ -230,7 +229,7 @@ async def handle_disconnect_channel_bot_provider(
     channel_id: UUID,
     bot_provider: BotProvider,
 ) -> None:
-    if bot_provider.provider != TProvider.twitch:
+    if bot_provider.provider != 'twitch':
         return
     await refresh_channel_eventsubs(
         channel_id=channel_id, event_type='channel.chat.message'
@@ -241,7 +240,7 @@ async def handle_disconnect_channel_bot_provider(
 async def handle_delete_channel_oauth_provider(
     channel_provider: ChannelOAuthProvider,
 ) -> None:
-    if channel_provider.provider != TProvider.twitch:
+    if channel_provider.provider != 'twitch':
         return
     await unregister_channel_eventsubs(
         channel_id=channel_provider.channel_id,

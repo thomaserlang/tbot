@@ -5,7 +5,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from uuid6 import uuid7
 
-from tbot2.common import TProvider
+from tbot2.common import Provider
 from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 
@@ -20,7 +20,7 @@ from ..schemas.channel_oauth_provider_schema import (
 
 
 async def get_channel_oauth_provider(
-    *, channel_id: UUID, provider: TProvider, session: AsyncSession | None = None
+    *, channel_id: UUID, provider: Provider, session: AsyncSession | None = None
 ) -> ChannelOAuthProvider | None:
     async with get_session(session) as session:
         channel_oauth_provider = await session.scalar(
@@ -63,7 +63,7 @@ async def get_channel_oauth_providers(
 
 
 async def get_channels_providers(
-    *, provider: TProvider, session: AsyncSession | None = None
+    *, provider: Provider, session: AsyncSession | None = None
 ) -> AsyncGenerator[ChannelProvider]:
     async with get_session(session) as session:
         providers = await session.stream_scalars(
@@ -78,7 +78,7 @@ async def get_channels_providers(
 async def save_channel_oauth_provider(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     data: ChannelOAuthProviderRequest,
     session: AsyncSession | None = None,
 ) -> bool:

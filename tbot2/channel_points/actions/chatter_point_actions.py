@@ -3,7 +3,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from sqlalchemy.dialects.mysql import insert
 
-from tbot2.common import TProvider
+from tbot2.common import Provider
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.chatter_points_model import MChatterPoints
@@ -13,7 +13,7 @@ from ..schemas.chatter_points_schema import ChatterPoints, ChatterPointsRank
 async def get_points(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     chatter_id: str,
     session: AsyncSession | None = None,
 ) -> ChatterPoints:
@@ -38,7 +38,7 @@ async def get_points(
 async def get_points_rank(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     chatter_id: str,
     session: AsyncSession | None = None,
 ) -> ChatterPointsRank | None:
@@ -65,7 +65,7 @@ async def get_points_rank(
                     sub_rank.c.rank,
                 ).where(
                     MChatterPoints.channel_id == channel_id,
-                    MChatterPoints.provider == provider.value,
+                    MChatterPoints.provider == provider,
                     MChatterPoints.chatter_id == chatter_id,
                     sub_rank.c.chatter_id == MChatterPoints.chatter_id,
                 )
@@ -81,7 +81,7 @@ async def get_points_rank(
 async def inc_points(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     chatter_id: str,
     points: int,
     session: AsyncSession | None = None,
@@ -124,7 +124,7 @@ async def inc_points(
 async def inc_bulk_points(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     chatter_ids: list[str],
     points: int,
     session: AsyncSession | None = None,

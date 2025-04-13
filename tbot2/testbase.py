@@ -10,7 +10,7 @@ from tbot2.channel import (
     create_channel,
     set_channel_user_access_level,
 )
-from tbot2.common import TAccessLevel, TokenData, TScope
+from tbot2.common import Scope, TAccessLevel, TokenData
 from tbot2.user import User, UserCreate, create_user
 
 T = TypeVar('T')
@@ -24,7 +24,7 @@ class TestUser:
 
 async def user_signin(
     client: AsyncClient | None,
-    scopes: list[str | TScope],
+    scopes: list[str | Scope],
 ) -> TestUser:
     user = await create_user(
         data=UserCreate(

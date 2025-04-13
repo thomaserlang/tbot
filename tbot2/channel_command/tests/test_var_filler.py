@@ -1,16 +1,16 @@
 import pytest
 from uuid6 import uuid7
 
-from tbot2.channel_command import TCommand, TMessageVars, fills_vars
+from tbot2.channel_command import MessageVars, TCommand, fills_vars
 from tbot2.channel_command.fill_message import fill_message
-from tbot2.common import TProvider, datetime_now
+from tbot2.common import datetime_now
 from tbot2.common.schemas.chat_message_schema import ChatMessage
 from tbot2.testbase import run_file
 
 
 @fills_vars(provider='all', vars=('test', 'test2', 'test3'))
 async def fill_test_var(
-    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
     vars['test'].value = vars['test'].args[0]
     vars['test2'].value = 'bla bla bla 123'
@@ -29,7 +29,7 @@ async def test_var_filler() -> None:
             chatter_id=str(uuid7()),
             chatter_name='test_user',
             chatter_display_name='Test User',
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='123',
             msg_id='123',
         ),

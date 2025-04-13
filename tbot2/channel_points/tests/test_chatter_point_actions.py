@@ -6,7 +6,6 @@ from tbot2.channel_points.actions.chatter_point_actions import (
     inc_bulk_points,
     inc_points,
 )
-from tbot2.common import TProvider
 from tbot2.testbase import run_file
 
 
@@ -16,21 +15,21 @@ async def test_point_actions(db: None) -> None:
 
     await inc_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='123',
         points=10,
     )
 
     points = await get_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='123',
     )
     assert points.points == 10
 
     points = await inc_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='123',
         points=10,
     )
@@ -38,7 +37,7 @@ async def test_point_actions(db: None) -> None:
 
     points = await inc_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='123',
         points=-5,
     )
@@ -46,14 +45,14 @@ async def test_point_actions(db: None) -> None:
 
     points = await get_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='123',
     )
     assert points.points == 15
 
     points = await inc_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='123',
         points=-1000,
     )
@@ -66,21 +65,21 @@ async def test_inc_bulk_points(db: None) -> None:
 
     await inc_bulk_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_ids=['1', '2'],
         points=10,
     )
 
     points = await get_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='1',
     )
     assert points.points == 10
 
     points = await get_points(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='2',
     )
     assert points.points == 10

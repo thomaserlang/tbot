@@ -6,7 +6,7 @@ from uuid6 import uuid7
 
 from tbot2.channel_command import TCommand
 from tbot2.channel_command.fill_message import fill_message
-from tbot2.common import ChatMessage, TProvider
+from tbot2.common import ChatMessage
 from tbot2.testbase import run_file
 
 
@@ -27,7 +27,7 @@ async def test_countdown(mocker: MockFixture) -> None:
             chatter_id=str(uuid7()),
             chatter_name='test_user',
             chatter_display_name='Test User',
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='123',
             msg_id='123',
         ),
@@ -45,7 +45,7 @@ async def test_countdown(mocker: MockFixture) -> None:
             chatter_id=str(uuid7()),
             chatter_name='test_user',
             chatter_display_name='Test User',
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='123',
             msg_id='123',
         ),

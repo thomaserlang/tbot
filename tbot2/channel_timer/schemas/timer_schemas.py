@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import Field, StringConstraints, field_validator
 
-from tbot2.common import BaseRequestSchema, BaseSchema, TProvider
+from tbot2.common import BaseRequestSchema, BaseSchema, Provider
 
 from ..types import TimerActiveMode, TimerPickMode
 
@@ -17,7 +17,7 @@ class Timer(BaseSchema):
     interval: Annotated[int, Field(description='Minutes')]
     enabled: bool
     next_run_at: datetime
-    provider: Literal['all'] | TProvider
+    provider: Literal['all'] | Provider
     pick_mode: TimerPickMode
     active_mode: TimerActiveMode
     last_message_index: int | None
@@ -49,7 +49,7 @@ class TimerCreate(BaseRequestSchema):
     messages: Messages
     interval: Annotated[int, Field(ge=1, description='Minutes')] = 30
     enabled: bool = True
-    provider: Literal['all'] | TProvider = 'all'
+    provider: Literal['all'] | Provider = 'all'
     pick_mode: TimerPickMode = 'order'
     active_mode: TimerActiveMode = 'always'
 
@@ -66,7 +66,7 @@ class TimerUpdate(BaseRequestSchema):
     messages: Messages | None = None
     interval: Annotated[int, Field(ge=1, description='Minutes')] | None = None
     enabled: bool | None = None
-    provider: Literal['all'] | TProvider | None = None
+    provider: Literal['all'] | Provider | None = None
     pick_mode: TimerPickMode | None = None
     active_mode: TimerActiveMode | None = None
 
@@ -82,8 +82,8 @@ class TimerUpdate(BaseRequestSchema):
     @classmethod
     def check_not_none(
         cls,
-        value: None | str | int | bool | TProvider | TimerPickMode | TimerActiveMode,
-    ) -> str | int | bool | TProvider | TimerPickMode | TimerActiveMode:
+        value: None | str | int | bool | Provider | TimerPickMode | TimerActiveMode,
+    ) -> str | int | bool | Provider | TimerPickMode | TimerActiveMode:
         if value is None:
             raise ValueError('Cannot be None')
         return value

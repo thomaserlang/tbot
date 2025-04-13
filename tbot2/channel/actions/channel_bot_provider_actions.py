@@ -4,7 +4,7 @@ from uuid import UUID
 import sqlalchemy as sa
 
 from tbot2.bot_providers import BotProvider, MBotProvider, delete_bot_provider
-from tbot2.common import TProvider
+from tbot2.common import Provider
 from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 
@@ -18,7 +18,7 @@ from ..schemas.channel_oauth_provider_schema import ChannelOAuthProviderRequest
 
 async def get_channel_bot_provider(
     *,
-    provider: TProvider,
+    provider: Provider,
     channel_id: UUID,
     session: AsyncSession | None = None,
 ) -> BotProvider | None:

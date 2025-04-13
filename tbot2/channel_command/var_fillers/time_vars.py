@@ -3,7 +3,7 @@ import pytz
 from tbot2.common import ChatMessage, datetime_now
 
 from ..exceptions import CommandError
-from ..types import TCommand, TMessageVars
+from ..types import MessageVars, TCommand
 from ..var_filler import fills_vars
 
 
@@ -12,7 +12,7 @@ from ..var_filler import fills_vars
     vars=('time',),
 )
 async def time_vars(
-    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
     if not vars['time'].args:
         raise CommandError(

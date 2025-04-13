@@ -5,9 +5,9 @@ from pytest_mock import MockFixture
 from twitchAPI.twitch import ChannelFollower, TwitchUser
 from uuid6 import uuid7
 
-from tbot2.channel_command import TCommand, TMessageVar
+from tbot2.channel_command import MessageVar, TCommand
 from tbot2.channel_command.var_fillers.followage_vars import followage_vars
-from tbot2.common import ChatMessage, TProvider
+from tbot2.common import ChatMessage
 from tbot2.testbase import run_file
 
 
@@ -25,11 +25,11 @@ async def test_followage_vars(mocker: MockFixture) -> None:
     )
 
     vars = {
-        'followage': TMessageVar(name='followage', match_raw='followage', args=[]),
-        'followage_date': TMessageVar(
+        'followage': MessageVar(name='followage', match_raw='followage', args=[]),
+        'followage_date': MessageVar(
             name='followage_date', match_raw='followage_date', args=[]
         ),
-        'followage_datetime': TMessageVar(
+        'followage_datetime': MessageVar(
             name='followage_datetime', match_raw='followage_datetime', args=[]
         ),
     }
@@ -43,7 +43,7 @@ async def test_followage_vars(mocker: MockFixture) -> None:
         chat_message=ChatMessage(  # type: ignore
             type='message',
             created_at=datetime.now(tz=UTC),
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='1234',
             channel_id=uuid7(),
             chatter_id='1234',
@@ -83,7 +83,7 @@ async def test_followage_vars(mocker: MockFixture) -> None:
         chat_message=ChatMessage(  # type: ignore
             type='message',
             created_at=datetime.now(tz=UTC),
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='1234',
             channel_id=uuid7(),
             chatter_id='1234',

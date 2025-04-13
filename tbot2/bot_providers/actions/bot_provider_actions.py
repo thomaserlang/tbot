@@ -4,7 +4,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from uuid6 import uuid7
 
-from tbot2.common import TProvider, datetime_now
+from tbot2.common import Provider, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.bot_provider_model import MBotProvider
@@ -16,7 +16,7 @@ from ..schemas.bot_provider_schemas import (
 
 async def get_bot_provider_by_provider_user_id(
     *,
-    provider: TProvider,
+    provider: Provider,
     provider_user_id: str,
     session: AsyncSession | None = None,
 ) -> BotProvider | None:
@@ -33,7 +33,7 @@ async def get_bot_provider_by_provider_user_id(
 
 async def get_system_bot_provider(
     *,
-    provider: TProvider,
+    provider: Provider,
     session: AsyncSession | None = None,
 ) -> BotProvider | None:
     async with get_session(session) as session:

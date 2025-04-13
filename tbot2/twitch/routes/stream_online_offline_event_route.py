@@ -7,7 +7,6 @@ from tbot2.channel_stats import (
     create_channel_provider_stream,
     end_channel_provider_stream,
 )
-from tbot2.common import TProvider
 
 from ..schemas.eventsub_headers import EventSubHeaders
 from ..schemas.eventsub_notification_schema import (
@@ -39,7 +38,7 @@ async def stream_online_event_route(
 
     await create_channel_provider_stream(
         channel_id=channel_id,
-        provider=TProvider.twitch,
+        provider='twitch',
         provider_id=data.event.broadcaster_user_id,
         provider_stream_id=data.event.id,
         started_at=data.event.started_at,
@@ -60,6 +59,6 @@ async def stream_offline_event_route(
     )
     await end_channel_provider_stream(
         channel_id=channel_id,
-        provider=TProvider.twitch,
+        provider='twitch',
         provider_id=data.event.broadcaster_user_id,
     )

@@ -9,8 +9,8 @@ from tbot2.common import (
     BaseRequestSchema,
     BaseSchema,
     ChatMessage,
+    Provider,
     TAccessLevel,
-    TProvider,
 )
 
 
@@ -35,7 +35,7 @@ class ChatFilterBase(BaseSchema):
     id: UUID
     channel_id: UUID
     name: str
-    provider: Literal['all'] | TProvider
+    provider: Literal['all'] | Provider
     enabled: bool
     exclude_access_level: TAccessLevel
     warning_enabled: bool
@@ -60,7 +60,7 @@ ChatFilterTimeoutMessage = Annotated[
 class ChatFilterBaseCreate(BaseRequestSchema):
     name: ChatFilterName
     enabled: bool = True
-    provider: Literal['all'] | TProvider = 'all'
+    provider: Literal['all'] | Provider = 'all'
     exclude_access_level: TAccessLevel = TAccessLevel.MOD
     warning_enabled: bool = False
     warning_message: ChatFilterWarningMessage = ''
@@ -72,7 +72,7 @@ class ChatFilterBaseCreate(BaseRequestSchema):
 class ChatFilterBaseUpdate(BaseRequestSchema):
     name: ChatFilterName | None = None
     enabled: bool | None = None
-    provider: Literal['all'] | TProvider = 'all'
+    provider: Literal['all'] | Provider = 'all'
     exclude_access_level: TAccessLevel | None = None
     warning_enabled: bool | None = None
     warning_message: ChatFilterWarningMessage | None = None

@@ -14,7 +14,7 @@ from ..actions.chat_filter_actions import (
     update_chat_filter,
 )
 from ..filters import FilterTypeCreateUnion, FilterTypesUnion, FilterTypeUpdateUnion
-from ..types import TChatFilterScope
+from ..types import ChatFilterScope
 
 router = APIRouter()
 
@@ -32,7 +32,7 @@ async def get_chat_filters_route(  # noqa: ANN201
     channel_id: UUID,
     token_data: Annotated[
         TokenData,
-        Security(authenticated, scopes=[TChatFilterScope.READ]),
+        Security(authenticated, scopes=[ChatFilterScope.READ]),
     ],
 ):
     await token_data.channel_has_access(
@@ -59,7 +59,7 @@ async def get_chat_filter_route(  # noqa: ANN201
     filter_id: UUID,
     token_data: Annotated[
         TokenData,
-        Security(authenticated, scopes=[TChatFilterScope.READ]),
+        Security(authenticated, scopes=[ChatFilterScope.READ]),
     ],
 ):
     await token_data.channel_has_access(
@@ -92,7 +92,7 @@ async def create_chat_filter_route(  # noqa: ANN201
     data: FilterTypeCreateUnion,  # type: ignore
     token_data: Annotated[
         TokenData,
-        Security(authenticated, scopes=[TChatFilterScope.WRITE]),
+        Security(authenticated, scopes=[ChatFilterScope.WRITE]),
     ],
 ):
     await token_data.channel_has_access(
@@ -122,7 +122,7 @@ async def update_chat_filter_route(  # noqa: ANN201
     data: FilterTypeUpdateUnion,  # type: ignore
     token_data: Annotated[
         TokenData,
-        Security(authenticated, scopes=[TChatFilterScope.WRITE]),
+        Security(authenticated, scopes=[ChatFilterScope.WRITE]),
     ],
 ):
     await token_data.channel_has_access(
@@ -160,7 +160,7 @@ async def delete_chat_filter_route(
     filter_id: UUID,
     token_data: Annotated[
         TokenData,
-        Security(authenticated, scopes=[TChatFilterScope.WRITE]),
+        Security(authenticated, scopes=[ChatFilterScope.WRITE]),
     ],
 ) -> None:
     await token_data.channel_has_access(

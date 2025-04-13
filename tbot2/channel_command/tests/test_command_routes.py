@@ -1,13 +1,13 @@
 import pytest
 
-from tbot2.channel_command import TCommandScope
+from tbot2.channel_command import CommandScope
 from tbot2.testbase import AsyncClient, run_file, user_signin
 
 
 @pytest.mark.asyncio
 async def test_command_routes(client: AsyncClient) -> None:
     user = await user_signin(
-        client=client, scopes=[TCommandScope.READ, TCommandScope.WRITE]
+        client=client, scopes=[CommandScope.READ, CommandScope.WRITE]
     )
 
     r = await client.post(

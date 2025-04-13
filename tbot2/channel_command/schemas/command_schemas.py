@@ -6,9 +6,9 @@ from fastapi import Body
 from pydantic import Field, StringConstraints, field_validator
 from typing_extensions import Doc
 
-from tbot2.common import BaseRequestSchema, BaseSchema, TAccessLevel, TProvider
+from tbot2.common import BaseRequestSchema, BaseSchema, Provider, TAccessLevel
 
-from ..types import TCommandActiveMode
+from ..types import CommandActiveMode
 
 
 class Command(BaseSchema):
@@ -21,7 +21,7 @@ class Command(BaseSchema):
     global_cooldown: int
     chatter_cooldown: int
     mod_cooldown: int
-    active_mode: TCommandActiveMode
+    active_mode: CommandActiveMode
     enabled: bool
     public: bool
     access_level: Annotated[
@@ -29,7 +29,7 @@ class Command(BaseSchema):
     ]
     created_at: datetime
     updated_at: datetime | None = None
-    provider: Literal['all'] | TProvider
+    provider: Literal['all'] | Provider
 
 
 Cmds = Annotated[
@@ -80,7 +80,7 @@ class CommandCreate(BaseSchema):
     global_cooldown: Annotated[int, Field(ge=0, le=2147483647)] = 0
     chatter_cooldown: Annotated[int, Field(ge=0, le=2147483647)] = 0
     mod_cooldown: Annotated[int, Field(ge=0, le=2147483647)] = 0
-    active_mode: TCommandActiveMode = TCommandActiveMode.ALWAYS
+    active_mode: CommandActiveMode = 'always'
     enabled: bool = True
     public: bool = True
     access_level: Annotated[
@@ -89,7 +89,7 @@ class CommandCreate(BaseSchema):
             description=f'{" - ".join([f"{e.value}: {e.name}" for e in TAccessLevel])}'
         ),
     ] = TAccessLevel.PUBLIC
-    provider: Literal['all'] | TProvider = 'all'
+    provider: Literal['all'] | Provider = 'all'
 
 
 class CommandUpdate(BaseRequestSchema):
@@ -100,7 +100,7 @@ class CommandUpdate(BaseRequestSchema):
     global_cooldown: Annotated[int, Field(ge=0, le=2147483647)] | None = None
     chatter_cooldown: Annotated[int, Field(ge=0, le=2147483647)] | None = None
     mod_cooldown: Annotated[int, Field(ge=0, le=2147483647)] | None = None
-    active_mode: TCommandActiveMode | None = None
+    active_mode: CommandActiveMode | None = None
     enabled: bool | None = None
     public: bool | None = None
     access_level: (
@@ -114,7 +114,7 @@ class CommandUpdate(BaseRequestSchema):
         ]
         | None
     ) = None
-    provider: Literal['all'] | TProvider | None = None
+    provider: Literal['all'] | Provider | None = None
 
     @field_validator(
         'cmds',

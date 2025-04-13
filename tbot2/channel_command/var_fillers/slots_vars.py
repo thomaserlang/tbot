@@ -3,13 +3,13 @@ from tbot2.common import ChatMessage
 from tbot2.exceptions import ErrorMessage
 
 from ..exceptions import CommandSyntaxError
-from ..types import TCommand, TMessageVars
+from ..types import MessageVars, TCommand
 from ..var_filler import fills_vars
 
 
 @fills_vars(provider='all', vars=('gamble_slots',))
 async def slots_vars(
-    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
     try:
         result = await slots(

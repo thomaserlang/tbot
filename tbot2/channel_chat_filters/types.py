@@ -1,13 +1,11 @@
-from enum import StrEnum
+from typing import Literal
 
-from tbot2.common import TScope
+from tbot2.common import Scope
 
 
-class TChatFilterScope(TScope):
+class ChatFilterScope(Scope):
     READ = 'chat_filter:read'
     WRITE = 'chat_filter:write'
 
 
-class TBannedTermType(StrEnum):
-    phrase = 'phrase'
-    regex = 'regex'
+BannedTermType = Literal['phrase', 'regex']

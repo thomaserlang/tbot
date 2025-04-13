@@ -2,7 +2,7 @@ from uuid import UUID
 
 import sqlalchemy as sa
 
-from tbot2.common import TProvider
+from tbot2.common import Provider
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.chatter_gambling_stats_model import MChatterGamblingStats
@@ -15,7 +15,7 @@ from ..schemas.chatter_gambling_stats_schema import (
 async def get_chatter_gambling_stats(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     chatter_id: str,
     session: AsyncSession | None = None,
 ) -> ChatterGamblingStats:
@@ -39,7 +39,7 @@ async def get_chatter_gambling_stats(
 async def inc_chatter_gambling_stats(
     *,
     channel_id: UUID,
-    provider: TProvider,
+    provider: Provider,
     chatter_id: str,
     data: ChatterGamblingStatsUpdate,
 ) -> ChatterGamblingStats:

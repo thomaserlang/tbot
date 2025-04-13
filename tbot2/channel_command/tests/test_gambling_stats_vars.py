@@ -9,7 +9,7 @@ from tbot2.channel_gambling import (
     ChatterGamblingStatsUpdate,
     inc_chatter_gambling_stats,
 )
-from tbot2.common import ChatMessage, TProvider
+from tbot2.common import ChatMessage
 from tbot2.testbase import run_file
 
 
@@ -19,7 +19,7 @@ async def test_gambling_stats_vars(db: None) -> None:
 
     await inc_chatter_gambling_stats(
         channel_id=channel.id,
-        provider=TProvider.twitch,
+        provider='twitch',
         chatter_id='test_chatter',
         data=ChatterGamblingStatsUpdate(slots_wins=1, slots_losses=1),
     )
@@ -34,7 +34,7 @@ async def test_gambling_stats_vars(db: None) -> None:
         chat_message=ChatMessage(
             type='message',
             created_at=datetime.now(tz=UTC),
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='1234',
             channel_id=channel.id,
             chatter_id='test_chatter',
@@ -58,7 +58,7 @@ async def test_gambling_stats_vars(db: None) -> None:
         chat_message=ChatMessage(
             type='message',
             created_at=datetime.now(tz=UTC),
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_id='1234',
             channel_id=channel.id,
             chatter_id='test_chatter',

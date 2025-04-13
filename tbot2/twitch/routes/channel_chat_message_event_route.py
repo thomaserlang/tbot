@@ -9,7 +9,7 @@ from tbot2.channel_chat_filters import matches_filter
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.chatlog import create_chatlog
-from tbot2.common import ChatMessage, TProvider
+from tbot2.common import ChatMessage
 from tbot2.database import database
 from tbot2.twitch import twitch_warn_chat_user
 
@@ -58,7 +58,7 @@ async def channel_chat_message_event_route(
         created_at=headers.message_timestamp,
         message=data.event.message.text,
         msg_id=data.event.message_id,
-        provider=TProvider.twitch,
+        provider='twitch',
         provider_id=data.event.broadcaster_user_id,
         twitch_fragments=data.event.message.fragments,
         twitch_badges=data.event.badges,

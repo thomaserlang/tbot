@@ -7,7 +7,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 from uuid6 import uuid7
 
-from tbot2.common import TProvider
+from tbot2.common import Provider
 from tbot2.model_base import Base
 
 from ..schemas.timer_schemas import TimerActiveMode, TimerPickMode
@@ -28,7 +28,7 @@ class MChannelTimer(Base):
     interval: Mapped[int] = mapped_column(sa.SmallInteger(), nullable=False)
     enabled: Mapped[bool] = mapped_column(sa.Boolean(), nullable=False, default=True)
     next_run_at: Mapped[datetime] = mapped_column(sa.DateTime(), nullable=False)
-    provider: Mapped[Literal['all'] | TProvider] = mapped_column(
+    provider: Mapped[Literal['all'] | Provider] = mapped_column(
         sa.String(50), nullable=False, server_default='all'
     )
     pick_mode: Mapped[TimerPickMode] = mapped_column(

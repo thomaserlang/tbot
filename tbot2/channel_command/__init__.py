@@ -10,9 +10,10 @@ from .exceptions import CommandSyntaxError as CommandSyntaxError
 from .schemas.command_schemas import Command as Command
 from .schemas.command_schemas import CommandCreate as CommandCreate
 from .schemas.command_schemas import CommandUpdate as CommandUpdate
+from .types import CommandActiveMode as CommandActiveMode
+from .types import CommandScope as CommandScope
+from .types import FillerType as FillerType
+from .types import MessageVar as MessageVar
+from .types import MessageVars as MessageVars
 from .types import TCommand as TCommand
-from .types import TCommandScope as TCommandScope
-from .types import TFillerType as TFillerType
-from .types import TMessageVar as TMessageVar
-from .types import TMessageVars as TMessageVars
 from .var_filler import fills_vars as fills_vars

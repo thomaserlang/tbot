@@ -1,6 +1,6 @@
 from typing import Literal
 
-from tbot2.common import TScope
+from tbot2.common import Scope
 
 TimerPickMode = Literal[
     'order',
@@ -14,6 +14,6 @@ TimerActiveMode = Literal[
 ]
 
 
-class TimerScope(TScope):
+class TimerScope(Scope):
     READ = 'channel_timer:read'
     WRITE = 'channel_timer:write'

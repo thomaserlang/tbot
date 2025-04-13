@@ -16,7 +16,7 @@ from ..actions.command_actions import (
 )
 from ..models.command_model import MCommand
 from ..schemas.command_schemas import Command, CommandCreate, CommandUpdate
-from ..types import TCommandScope
+from ..types import CommandScope
 
 router = APIRouter()
 
@@ -29,7 +29,7 @@ async def get_commands_route(
     channel_id: UUID,
     page_query: Annotated[PageCursorQuery, Depends()],
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TCommandScope.READ])
+        TokenData, Security(authenticated, scopes=[CommandScope.READ])
     ],
 ) -> PageCursor[Command]:
     await token_data.channel_has_access(
@@ -58,7 +58,7 @@ async def get_command_route(
     channel_id: UUID,
     command_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TCommandScope.READ])
+        TokenData, Security(authenticated, scopes=[CommandScope.READ])
     ],
 ) -> Command:
     await token_data.channel_has_access(
@@ -83,7 +83,7 @@ async def create_command_route(
     channel_id: UUID,
     data: CommandCreate,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TCommandScope.WRITE])
+        TokenData, Security(authenticated, scopes=[CommandScope.WRITE])
     ],
 ) -> Command:
     await token_data.channel_has_access(
@@ -106,7 +106,7 @@ async def update_command_route(
     command_id: UUID,
     data: CommandUpdate,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TCommandScope.WRITE])
+        TokenData, Security(authenticated, scopes=[CommandScope.WRITE])
     ],
 ) -> Command:
     await token_data.channel_has_access(
@@ -135,7 +135,7 @@ async def delete_command_route(
     channel_id: UUID,
     command_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TCommandScope.WRITE])
+        TokenData, Security(authenticated, scopes=[CommandScope.WRITE])
     ],
 ) -> None:
     await token_data.channel_has_access(

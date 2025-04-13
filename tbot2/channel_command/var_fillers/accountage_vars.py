@@ -1,19 +1,19 @@
 import humanize.time
 
-from tbot2.common import ChatMessage, TProvider, datetime_now
+from tbot2.common import ChatMessage, datetime_now
 from tbot2.twitch import lookup_twitch_users
 
 from ..exceptions import CommandError
-from ..types import TCommand, TMessageVars
+from ..types import MessageVars, TCommand
 from ..var_filler import fills_vars
 
 
 @fills_vars(
-    provider=TProvider.twitch,
+    provider='twitch',
     vars=('accountage', 'accountage_date', 'accountage_datetime'),
 )
 async def accountage_vars(
-    chat_message: ChatMessage, command: TCommand, vars: TMessageVars
+    chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
     users = await lookup_twitch_users(
         channel_id=chat_message.channel_id,

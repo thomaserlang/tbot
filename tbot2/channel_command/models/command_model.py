@@ -9,7 +9,7 @@ from uuid6 import uuid7
 from tbot2.common import TAccessLevel
 from tbot2.model_base import Base
 
-from ..types import TCommandActiveMode
+from ..types import CommandActiveMode
 
 
 class MCommand(Base):
@@ -37,8 +37,8 @@ class MCommand(Base):
     mod_cooldown: Mapped[int] = mapped_column(
         sa.Integer, nullable=False, server_default='0'
     )
-    active_mode: Mapped[TCommandActiveMode] = mapped_column(
-        sa.Enum(TCommandActiveMode), nullable=False, server_default='always'
+    active_mode: Mapped[CommandActiveMode] = mapped_column(
+        sa.String(100), nullable=False, server_default='always'
     )
     enabled: Mapped[bool] = mapped_column(
         sa.Boolean, nullable=False, server_default='1'

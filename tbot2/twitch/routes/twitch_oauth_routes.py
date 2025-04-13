@@ -27,7 +27,6 @@ from tbot2.common import (
     Oauth2TokenResponse,
     TAccessLevel,
     TokenData,
-    TProvider,
     bot_provider_scopes,
     channel_provider_scopes,
 )
@@ -50,7 +49,7 @@ client = AsyncClient(
 router = APIRouter()
 
 SCOPE_OPENID = 'openid user:read:email'
-bot_provider_scopes[TProvider.twitch] = ' '.join(
+bot_provider_scopes['twitch'] = ' '.join(
     {
         'user:bot',
         'user:write:chat',
@@ -63,7 +62,7 @@ bot_provider_scopes[TProvider.twitch] = ' '.join(
         'channel:moderate',
     }
 )
-channel_provider_scopes[TProvider.twitch] = ' '.join(
+channel_provider_scopes['twitch'] = ' '.join(
     {
         'channel:moderate',
         'channel:edit:commercial',
@@ -131,7 +130,7 @@ async def get_twitch_connect_url_route(
                 client_id=config.twitch.client_id,
                 response_type='code',
                 redirect_uri=str(request_url_for(request, 'twitch_auth_route')),
-                scope=channel_provider_scopes[TProvider.twitch],
+                scope=channel_provider_scopes['twitch'],
                 force_verify=True,
                 state={
                     'channel_id': str(channel_id),
@@ -162,7 +161,7 @@ async def get_twitch_connect_bot_url_route(
                 client_id=config.twitch.client_id,
                 response_type='code',
                 redirect_uri=str(request_url_for(request, 'twitch_auth_route')),
-                scope=bot_provider_scopes[TProvider.twitch],
+                scope=bot_provider_scopes['twitch'],
                 force_verify=True,
                 state={
                     'channel_id': str(channel_id),
@@ -192,7 +191,7 @@ async def get_twitch_system_provider_bot_connect_url_route(
                 client_id=config.twitch.client_id,
                 response_type='code',
                 redirect_uri=str(request_url_for(request, 'twitch_auth_route')),
-                scope=bot_provider_scopes[TProvider.twitch],
+                scope=bot_provider_scopes['twitch'],
                 force_verify=True,
                 state={
                     'mode': 'connect_system_provider_bot',
@@ -236,7 +235,7 @@ async def twitch_auth_route(
 
     if params.state['mode'] == 'sign_in':
         result = await get_or_create_user(
-            provider=TProvider.twitch,
+            provider='twitch',
             provider_user_id=twitch_user.id,
             data=UserCreate(
                 username=twitch_user.login,
@@ -247,7 +246,7 @@ async def twitch_auth_route(
         if result.created and result.channel:
             await save_channel_oauth_provider(
                 channel_id=result.channel.id,
-                provider=TProvider.twitch,
+                provider='twitch',
                 data=ChannelOAuthProviderRequest(
                     access_token=response.access_token,
                     refresh_token=response.refresh_token,
@@ -265,19 +264,19 @@ async def twitch_auth_route(
         channel_id = UUID(params.state['channel_id'])
         await save_channel_oauth_provider(
             channel_id=channel_id,
-            provider=TProvider.twitch,
+            provider='twitch',
             data=ChannelOAuthProviderRequest(
                 access_token=response.access_token,
                 refresh_token=response.refresh_token,
                 expires_in=response.expires_in,
-                scope=channel_provider_scopes[TProvider.twitch],
+                scope=channel_provider_scopes['twitch'],
                 name=twitch_user.display_name,
                 provider_user_id=twitch_user.id,
             ),
         )
 
         if provider := await get_system_bot_provider(
-            provider=TProvider.twitch,
+            provider='twitch',
         ):
             await twitch_add_channel_moderator(
                 channel_id=channel_id,
@@ -293,25 +292,25 @@ async def twitch_auth_route(
         channel_id = UUID(params.state['channel_id'])
         bot_provider = await save_bot_provider(
             data=BotProviderRequest(
-                provider=TProvider.twitch,
+                provider='twitch',
                 provider_user_id=twitch_user.id,
                 access_token=response.access_token,
                 refresh_token=response.refresh_token,
                 expires_in=response.expires_in,
-                scope=bot_provider_scopes[TProvider.twitch],
+                scope=bot_provider_scopes['twitch'],
                 name=twitch_user.display_name,
             ),
         )
         await save_channel_oauth_provider(
             channel_id=channel_id,
-            provider=TProvider.twitch,
+            provider='twitch',
             data=ChannelOAuthProviderRequest(
                 bot_provider_id=bot_provider.id,
             ),
         )
         provider = await get_channel_oauth_provider(
             channel_id=channel_id,
-            provider=TProvider.twitch,
+            provider='twitch',
         )
         if provider:
             await twitch_add_channel_moderator(
@@ -326,12 +325,12 @@ async def twitch_auth_route(
     elif params.state['mode'] == 'connect_system_provider_bot':
         await save_bot_provider(
             data=BotProviderRequest(
-                provider=TProvider.twitch,
+                provider='twitch',
                 provider_user_id=twitch_user.id,
                 access_token=response.access_token,
                 refresh_token=response.refresh_token,
                 expires_in=response.expires_in,
-                scope=bot_provider_scopes[TProvider.twitch],
+                scope=bot_provider_scopes['twitch'],
                 name=twitch_user.display_name,
                 system_default=True,
             ),

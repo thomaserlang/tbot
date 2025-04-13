@@ -9,7 +9,7 @@ from tbot2.bot_providers import (
     delete_bot_provider,
     get_system_bot_provider,
 )
-from tbot2.common import TokenData, TProvider
+from tbot2.common import Provider, TokenData
 from tbot2.dependecies import authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQuery, page_cursor
 
@@ -48,7 +48,7 @@ async def get_system_bot_providers_route(
     status_code=204,
 )
 async def delete_system_bot_provider_route(
-    provider: TProvider,
+    provider: Provider,
     token_data: Annotated[TokenData, Security(authenticated)],
 ) -> None:
     if not await token_data.is_global_admin():
@@ -75,7 +75,7 @@ async def delete_system_bot_provider_route(
     name='Get System Bot Provider',
 )
 async def get_system_bot_provider_route(
-    provider: TProvider,
+    provider: Provider,
     token_data: Annotated[TokenData, Security(authenticated)],
 ) -> BotProviderPublic:
     if not await token_data.is_global_admin():

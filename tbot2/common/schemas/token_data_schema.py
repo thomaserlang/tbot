@@ -7,12 +7,12 @@ from starlette.authentication import BaseUser
 from tbot2.config_settings import config
 
 from ..types.access_level_type import TAccessLevel
-from ..types.scope_type import TScope
+from ..types.scope_type import Scope
 
 
 class TokenData(BaseUser, BaseModel):
     user_id: UUID
-    scopes: list[str | TScope]
+    scopes: list[str | Scope]
 
     @property
     def is_authenticated(self) -> bool:
@@ -34,7 +34,7 @@ class TokenData(BaseUser, BaseModel):
             )
         return True
 
-    def has_any_scope(self, scopes: list[TScope]) -> bool:
+    def has_any_scope(self, scopes: list[Scope]) -> bool:
         return any(scope in self.scopes for scope in scopes)
 
     async def is_global_admin(self) -> bool:

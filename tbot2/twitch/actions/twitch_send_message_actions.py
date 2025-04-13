@@ -9,7 +9,6 @@ from tbot2.channel import (
     get_channel_oauth_provider,
     on_send_channel_message,
 )
-from tbot2.common import TProvider
 
 from ..twitch_http_client import twitch_app_client
 
@@ -23,7 +22,7 @@ async def twitch_bot_send_message(
 ) -> bool:
     if not bot_provider:
         bot_provider = await get_channel_bot_provider(
-            provider=TProvider.twitch,
+            provider='twitch',
             channel_id=channel_id,
         )
         if not bot_provider:
@@ -51,12 +50,12 @@ async def twitch_bot_send_message(
 
 @on_send_channel_message()
 async def channel_send_message(data: SendChannelMessage) -> None:
-    if data.provider != TProvider.twitch and data.provider != 'all':
+    if data.provider != 'twitch' and data.provider != 'all':
         return
 
     channel_provider = await get_channel_oauth_provider(
         channel_id=data.channel_id,
-        provider=TProvider.twitch,
+        provider='twitch',
     )
     if not channel_provider:
         return
@@ -64,7 +63,7 @@ async def channel_send_message(data: SendChannelMessage) -> None:
     bot_provider = channel_provider.bot_provider
     if not bot_provider:
         bot_provider = await get_channel_bot_provider(
-            provider=TProvider.twitch,
+            provider='twitch',
             channel_id=data.channel_id,
         )
         if not bot_provider:
