@@ -1,0 +1,64 @@
+import asyncio
+import logging
+from datetime import datetime
+
+from tbot2.channel_points import get_channel_point_settings, inc_bulk_points
+from tbot2.channel_stats import (
+    ChannelProviderStream,
+    get_live_channels_provider_streams,
+    inc_stream_viewer_watchtime,
+)
+from tbot2.chatlog import ChatterRequest
+from tbot2.common import TProvider, datetime_now
+from tbot2.twitch.actions.twitch_chatters_action import get_twitch_chatters
+
+CHECK_EVERY = 60
+
+
+async def task_update_viewer_streams() -> None:
+    last_check: datetime | None = None
+    logging.info('Starting task_update_viewer_streams')
+    while True:
+        if last_check:
+            elapsed = (datetime_now() - last_check).total_seconds()
+            sleep_time = max(0, CHECK_EVERY - elapsed)
+        else:
+            sleep_time = CHECK_EVERY
+        await asyncio.sleep(sleep_time)
+        last_check = datetime_now()
+        streams = await get_live_channels_provider_streams(provider=TProvider.twitch)
+        await asyncio.gather(*[update_viewer_stream_data(stream) for stream in streams])
+
+
+async def update_viewer_stream_data(stream: ChannelProviderStream) -> None:
+    try:
+        logging.debug(
+            'Updating viewer stream data for '
+            f'{stream.channel_id} {stream.provider_stream_id}'
+        )
+        point_settings = await get_channel_point_settings(channel_id=stream.channel_id)
+        async for chatters in await get_twitch_chatters(
+            channel_id=stream.channel_id,
+            broadcaster_id=stream.provider_id,
+        ):
+            if point_settings.enabled:
+                await inc_bulk_points(
+                    channel_id=stream.channel_id,
+                    provider=TProvider.twitch,
+                    chatter_ids=[chatter.user_id for chatter in chatters],
+                    points=point_settings.points_per_min,
+                )
+            await inc_stream_viewer_watchtime(
+                channel_provider_stream_id=stream.id,
+                provider_viewers=[
+                    ChatterRequest(
+                        chatter_id=chatter.user_id,
+                        chatter_name=chatter.user_login,
+                        chatter_display_name=chatter.user_name,
+                    )
+                    for chatter in chatters
+                ],
+                watchtime=CHECK_EVERY,
+            )
+    except Exception as e:
+        logging.exception(e)

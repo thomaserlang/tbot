@@ -1,14 +1,13 @@
-from datetime import UTC, datetime
-
 import sqlalchemy as sa
 from sqlalchemy.dialects.mysql import insert
 
 from tbot2.common.schemas.chat_message_schema import ChatMessage
 from tbot2.contexts import AsyncSession, get_session
 
+from ..actions.chatlog_chatter_actions import save_chatters
 from ..models.chatlog_chatter_stats_model import MChatlogChatterStats
-from ..models.chatlog_chatters_model import MChatlogChatters
 from ..models.chatlog_model import MChatlog
+from ..schemas.chatlog_chatter_schema import ChatterRequest
 
 
 async def create_chatlog(
@@ -35,21 +34,16 @@ async def create_chatlog(
             )
         )
 
-        last_seen_at = datetime.now(tz=UTC)
-        await session.execute(
-            insert(MChatlogChatters.__table__)  # type: ignore
-            .values(
-                provider=data.provider,
-                chatter_id=data.chatter_id,
-                chatter_name=data.chatter_name,
-                chatter_display_name=data.chatter_display_name,
-                last_seen_at=last_seen_at,
-            )
-            .on_duplicate_key_update(
-                chatter_name=data.chatter_name,
-                chatter_display_name=data.chatter_display_name,
-                last_seen_at=last_seen_at,
-            )
+        await save_chatters(
+            provider=data.provider,
+            chatters=[
+                ChatterRequest(
+                    chatter_id=data.chatter_id,
+                    chatter_name=data.chatter_name,
+                    chatter_display_name=data.chatter_display_name,
+                )
+            ],
+            session=session,
         )
 
     return True

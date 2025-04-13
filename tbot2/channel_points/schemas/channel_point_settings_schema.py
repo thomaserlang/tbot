@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import ConfigDict, Field, StringConstraints
+from pydantic import Field, StringConstraints
 
 from tbot2.common import BaseRequestSchema, BaseSchema
 
@@ -19,10 +19,6 @@ class ChannelPointSettingsUpdate(BaseRequestSchema):
 
 
 class ChannelPointSettings(BaseSchema):
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
-
     channel_id: UUID
     enabled: bool = False
     points_name: str = 'points'

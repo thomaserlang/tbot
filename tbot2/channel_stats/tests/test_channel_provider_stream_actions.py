@@ -16,6 +16,7 @@ async def test_create_channel_provider_stream(client: AsyncClient) -> None:
     result = await create_channel_provider_stream(
         channel_id=user.channel.id,
         provider=TProvider.twitch,
+        provider_id='12345',
         provider_stream_id='12345',
         started_at=datetime_now(),
     )
@@ -26,11 +27,13 @@ async def test_create_channel_provider_stream(client: AsyncClient) -> None:
     stream = await end_channel_provider_stream(
         channel_id=user.channel.id,
         provider=TProvider.twitch,
+        provider_id='12345',
     )
     assert stream is not None
     assert stream.id == result.id
     assert stream.channel_id == user.channel.id
     assert stream.provider == TProvider.twitch
+    assert stream.provider_id == '12345'
     assert stream.provider_stream_id == '12345'
     assert stream.started_at == result.started_at
     assert stream.ended_at is not None

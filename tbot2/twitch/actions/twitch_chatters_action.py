@@ -11,7 +11,7 @@ from ..twitch_http_client import get_twitch_pagination_yield
 
 
 async def get_twitch_chatters(
-    channel_id: UUID, broadcaster_id: str
+    *, channel_id: UUID, broadcaster_id: str
 ) -> AsyncGenerator[list[Chatter]]:
     response = await twitch_user_client.get(
         '/chat/chatters',

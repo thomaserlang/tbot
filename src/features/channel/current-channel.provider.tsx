@@ -1,3 +1,5 @@
+import { ErrorBox } from '@/components/error-box'
+import { PageLoader } from '@/components/page-loader'
 import { createContext, useContext } from 'react'
 import { useParams } from 'react-router'
 import { useGetChannel } from './api/channel.api'
@@ -14,7 +16,11 @@ export function CurrentChannelProvider({
     if (!channelId) {
         throw new Error('channelId is required')
     }
-    const { data } = useGetChannel({ channelId })
+    const { data, error, isLoading } = useGetChannel({ channelId })
+
+    if (isLoading) return <PageLoader />
+
+    if (error) return <ErrorBox errorObj={error} />
 
     return (
         <CurrentChannelContext.Provider value={data}>

@@ -33,7 +33,7 @@ async def streams_in_a_row_vars(
     stats = await get_channel_viewer_stats(
         channel_id=chat_message.channel_id,
         provider=chat_message.provider,
-        viewer_id=for_viewer_id,
+        provider_viewer_id=for_viewer_id,
     )
     vars['user.streams_row'].value = stats.streams_row
     vars['user.streams_total'].value = stats.streams

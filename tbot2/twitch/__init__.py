@@ -14,6 +14,9 @@ from .actions.eventsub_actions import (
 from .actions.eventsub_actions import (
     unregister_channel_eventsubs as unregister_channel_eventsubs,
 )
+from .actions.task_update_viewer_streams_actions import (
+    task_update_viewer_streams as task_update_viewer_streams,
+)
 from .actions.twitch_channel_follower_action import (
     twitch_channel_follower as twitch_channel_follower,
 )

@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -51,19 +52,20 @@ async def db() -> AsyncGenerator[None]:
 
 
 @cli.command()
-async def twitch_eventsub_unregister_all() -> None:
-    from tbot2.twitch import unregister_all_eventsubs
+async def refresh_twitch_eventsubs() -> None:
+    from tbot2.twitch import register_all_eventsubs, unregister_all_eventsubs
 
     async with db():
         await unregister_all_eventsubs()
+        await register_all_eventsubs()
 
 
 @cli.command()
-async def twitch_eventsub_register_all() -> None:
-    from tbot2.twitch import register_all_eventsubs
+async def tasks() -> None:
+    from tbot2.twitch import task_update_viewer_streams
 
     async with db():
-        await register_all_eventsubs()
+        await asyncio.gather(task_update_viewer_streams())
 
 
 def main() -> None:

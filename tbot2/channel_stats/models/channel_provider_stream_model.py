@@ -18,6 +18,7 @@ class MChannelProviderStream(Base):
         sa.UUID, sa.ForeignKey('channel_streams.id', ondelete='CASCADE'), nullable=False
     )
     provider: Mapped[str] = mapped_column(sa.String(100))
+    provider_id: Mapped[str] = mapped_column(sa.String(100))
     provider_stream_id: Mapped[str] = mapped_column(sa.String(100))
     started_at: Mapped[datetime] = mapped_column(sa.DateTime)
     ended_at: Mapped[datetime | None] = mapped_column(sa.DateTime, nullable=True)

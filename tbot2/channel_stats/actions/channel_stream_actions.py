@@ -23,7 +23,7 @@ async def get_channel_stream(
 
 
 async def get_existing_channel_stream(
-    *, channel_id: UUID, within_hours: int = 2, session: AsyncSession | None = None
+    *, channel_id: UUID, within_hours: int = 6, session: AsyncSession | None = None
 ) -> ChannelStream | None:
     async with get_session(session) as session:
         result = await session.scalar(

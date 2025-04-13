@@ -14,6 +14,6 @@ class MChatlogChatters(Base):
 
     provider: Mapped[TProvider] = mapped_column(sa.String(100), primary_key=True)
     chatter_id: Mapped[str] = mapped_column(sa.String(36), primary_key=True)
-    chatter_name: Mapped[str] = mapped_column(sa.String(200))
+    chatter_name: Mapped[str] = mapped_column(sa.String(200), primary_key=True)
     chatter_display_name: Mapped[str] = mapped_column(sa.String(200))
     last_seen_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True))

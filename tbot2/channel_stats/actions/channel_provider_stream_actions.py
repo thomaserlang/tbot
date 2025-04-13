@@ -31,16 +31,18 @@ async def get_current_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: TProvider,
+    provider_id: str | None = None,
     session: AsyncSession | None = None,
 ) -> ChannelProviderStream | None:
     async with get_session(session) as session:
-        result = await session.scalar(
-            sa.select(MChannelProviderStream).where(
-                MChannelProviderStream.channel_id == channel_id,
-                MChannelProviderStream.provider == provider,
-                MChannelProviderStream.ended_at.is_(None),
-            )
+        stmt = sa.select(MChannelProviderStream).where(
+            MChannelProviderStream.channel_id == channel_id,
+            MChannelProviderStream.provider == provider,
+            MChannelProviderStream.ended_at.is_(None),
         )
+        if provider_id:
+            stmt = stmt.where(MChannelProviderStream.provider_id == provider_id)
+        result = await session.scalar(stmt)
         if result:
             return ChannelProviderStream.model_validate(result)
 
@@ -49,6 +51,7 @@ async def create_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: TProvider,
+    provider_id: str,
     provider_stream_id: str,
     started_at: datetime,
     ended_at: datetime | None = None,
@@ -60,12 +63,14 @@ async def create_channel_provider_stream(
         stream = await get_current_channel_provider_stream(
             channel_id=channel_id,
             provider=provider,
+            provider_id=provider_id,
             session=session,
         )
         if stream:
             await end_channel_provider_stream(
                 channel_id=channel_id,
                 provider=provider,
+                provider_id=provider_id,
                 ended_at=datetime_now(),
                 session=session,
             )
@@ -80,6 +85,7 @@ async def create_channel_provider_stream(
                 channel_id=channel_id,
                 channel_stream_id=stream.id,
                 provider=provider,
+                provider_id=provider_id,
                 provider_stream_id=provider_stream_id,
                 started_at=started_at,
                 ended_at=ended_at,
@@ -97,6 +103,7 @@ async def end_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: TProvider,
+    provider_id: str | None = None,
     ended_at: datetime | None = None,
     session: AsyncSession | None = None,
 ) -> ChannelProviderStream | None:
@@ -106,6 +113,7 @@ async def end_channel_provider_stream(
         stream = await get_current_channel_provider_stream(
             channel_id=channel_id,
             provider=provider,
+            provider_id=provider_id,
             session=session,
         )
         if not stream:
@@ -119,3 +127,18 @@ async def end_channel_provider_stream(
         )
         stream.ended_at = ended_at
         return stream
+
+
+async def get_live_channels_provider_streams(
+    *,
+    provider: TProvider,
+    session: AsyncSession | None = None,
+) -> list[ChannelProviderStream]:
+    async with get_session(session) as session:
+        result = await session.scalars(
+            sa.select(MChannelProviderStream).where(
+                MChannelProviderStream.provider == provider,
+                MChannelProviderStream.ended_at.is_(None),
+            )
+        )
+        return [ChannelProviderStream.model_validate(r) for r in result]

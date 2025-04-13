@@ -1,8 +1,8 @@
-from datetime import UTC, datetime
 from uuid import UUID
 
 import sqlalchemy as sa
 
+from tbot2.common import datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.channel_viewer_stats_model import (
@@ -18,8 +18,8 @@ async def set_channel_viewer_watched_stream(
     *,
     channel_id: UUID,
     provider: str,
-    viewer_id: str,
-    stream_id: str,
+    provider_viewer_id: str,
+    channel_provider_stream_id: UUID,
     session: AsyncSession | None = None,
 ) -> None:
     """
@@ -30,26 +30,25 @@ async def set_channel_viewer_watched_stream(
         stats = await get_channel_viewer_stats(
             channel_id=channel_id,
             provider=provider,
-            viewer_id=viewer_id,
+            provider_viewer_id=provider_viewer_id,
             session=session,
         )
-        if stats.last_stream_id == stream_id:
+        if stats.last_channel_provider_stream_id == channel_provider_stream_id:
             return
 
         data = ChannelViewerStatsUpdate(
             streams=stats.streams + 1,
             streams_row=stats.streams_row + 1,
-            last_stream_id=stream_id,
-            last_stream_at=datetime.now(tz=UTC),
+            last_channel_provider_stream_id=channel_provider_stream_id,
         )
         if stats.streams_row + 1 > stats.streams_row_peak:
             data.streams_row_peak = stats.streams_row + 1
-            data.streams_row_peak_date = datetime.now(tz=UTC).date()
+            data.streams_row_peak_date = datetime_now().date()
 
         await update_channel_viewer_stats(
             channel_id=channel_id,
             provider=provider,
-            viewer_id=viewer_id,
+            provider_viewer_id=provider_viewer_id,
             data=data,
             session=session,
         )
@@ -59,7 +58,7 @@ async def get_channel_viewer_stats(
     *,
     channel_id: UUID,
     provider: str,
-    viewer_id: str,
+    provider_viewer_id: str,
     session: AsyncSession | None = None,
 ) -> ChannelViewerStats:
     async with get_session(session) as session:
@@ -67,7 +66,7 @@ async def get_channel_viewer_stats(
             sa.select(MChannelViewerStats).where(
                 MChannelViewerStats.channel_id == channel_id,
                 MChannelViewerStats.provider == provider,
-                MChannelViewerStats.viewer_id == viewer_id,
+                MChannelViewerStats.provider_viewer_id == provider_viewer_id,
             )
         )
         if result:
@@ -76,7 +75,7 @@ async def get_channel_viewer_stats(
             return ChannelViewerStats(
                 channel_id=channel_id,
                 provider=provider,
-                viewer_id=viewer_id,
+                provider_viewer_id=provider_viewer_id,
             )
 
 
@@ -84,7 +83,7 @@ async def update_channel_viewer_stats(
     *,
     channel_id: UUID,
     provider: str,
-    viewer_id: str,
+    provider_viewer_id: str,
     data: ChannelViewerStatsUpdate,
     session: AsyncSession | None = None,
 ) -> None:
@@ -94,7 +93,7 @@ async def update_channel_viewer_stats(
             .where(
                 MChannelViewerStats.channel_id == channel_id,
                 MChannelViewerStats.provider == provider,
-                MChannelViewerStats.viewer_id == viewer_id,
+                MChannelViewerStats.provider_viewer_id == provider_viewer_id,
             )
             .values(
                 **data.model_dump(
@@ -107,7 +106,7 @@ async def update_channel_viewer_stats(
                 sa.insert(MChannelViewerStats).values(
                     channel_id=channel_id,
                     provider=provider,
-                    viewer_id=viewer_id,
+                    provider_viewer_id=provider_viewer_id,
                     **data.model_dump(),
                 )
             )

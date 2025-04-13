@@ -9,6 +9,7 @@ def main() -> None:
 
     start = [
         ('api', ['python', 'runner.py', 'api'], path),
+        ('tasks', ['python', 'runner.py', 'tasks'], path),
     ]
 
     manager = Manager()

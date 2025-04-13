@@ -25,6 +25,7 @@ from ..twitch_http_client import (
 async def register_eventsubs(
     channel_id: UUID,
 ) -> None:
+    logging.info(f'Registering eventsub for channel {channel_id}')
     provider = await get_channel_oauth_provider(
         channel_id=channel_id,
         provider=TProvider.twitch,
@@ -152,6 +153,7 @@ async def get_eventsubs(
 
 
 async def unregister_all_eventsubs() -> None:
+    logging.info('Unregistering all eventsub registrations')
     async for eventsubs in await get_eventsubs():
         for eventsub in eventsubs:
             try:
@@ -166,6 +168,7 @@ async def unregister_all_eventsubs() -> None:
 async def unregister_channel_eventsubs(
     channel_id: UUID,
 ) -> None:
+    logging.info(f'Unregistering all eventsub registrations for channel {channel_id}')
     async for eventsubs in await get_eventsubs():
         for eventsub in eventsubs:
             if str(channel_id) not in eventsub.transport.callback:
@@ -180,6 +183,7 @@ async def unregister_channel_eventsubs(
 
 
 async def register_all_eventsubs() -> None:
+    logging.info('Registering all eventsub registrations')
     async for provider in get_channels_providers(provider=TProvider.twitch):
         logging.info(f'Registering eventsub for channel {provider.channel_id}')
         await register_eventsubs(channel_id=provider.channel_id)

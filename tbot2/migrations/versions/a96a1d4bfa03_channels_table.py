@@ -166,7 +166,7 @@ def upgrade() -> None:
     op.create_primary_key(
         'chatlog_chatters_pkey',
         'chatlog_chatters',
-        ['provider', 'chatter_id'],
+        ['provider', 'chatter_id', 'chatter_name'],
     )
 
 

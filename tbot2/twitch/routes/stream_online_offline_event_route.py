@@ -13,7 +13,10 @@ from ..schemas.eventsub_headers import EventSubHeaders
 from ..schemas.eventsub_notification_schema import (
     EventSubNotification,
 )
-from ..schemas.eventsub_stream_online_offline_schema import EventStreamOnline
+from ..schemas.eventsub_stream_online_offline_schema import (
+    EventStreamOffline,
+    EventStreamOnline,
+)
 from .dependencies import validate_twitch_webhook_signature
 
 router = APIRouter()
@@ -37,6 +40,7 @@ async def stream_online_event_route(
     await create_channel_provider_stream(
         channel_id=channel_id,
         provider=TProvider.twitch,
+        provider_id=data.event.broadcaster_user_id,
         provider_stream_id=data.event.id,
         started_at=data.event.started_at,
     )
@@ -49,8 +53,13 @@ async def stream_online_event_route(
 async def stream_offline_event_route(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],
     channel_id: UUID,
+    request: Request,
 ) -> None:
+    data = EventSubNotification[EventStreamOffline].model_validate_json(
+        await request.body()
+    )
     await end_channel_provider_stream(
         channel_id=channel_id,
         provider=TProvider.twitch,
+        provider_id=data.event.broadcaster_user_id,
     )
