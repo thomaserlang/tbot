@@ -2,7 +2,7 @@ from uuid import UUID
 
 import sqlalchemy as sa
 
-from tbot2.common import datetime_now
+from tbot2.common import Provider, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.channel_viewer_stats_model import (
@@ -17,7 +17,7 @@ from ..schemas.channel_viewer_stats_schema import (
 async def set_channel_viewer_watched_stream(
     *,
     channel_id: UUID,
-    provider: str,
+    provider: Provider,
     provider_viewer_id: str,
     channel_provider_stream_id: UUID,
     session: AsyncSession | None = None,
@@ -57,7 +57,7 @@ async def set_channel_viewer_watched_stream(
 async def get_channel_viewer_stats(
     *,
     channel_id: UUID,
-    provider: str,
+    provider: Provider,
     provider_viewer_id: str,
     session: AsyncSession | None = None,
 ) -> ChannelViewerStats:
