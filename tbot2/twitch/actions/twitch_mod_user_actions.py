@@ -1,5 +1,6 @@
-import logging
 from uuid import UUID
+
+from loguru import logger
 
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
@@ -22,7 +23,7 @@ async def twitch_add_channel_moderator(
         },
     )
     if response.status_code >= 400:
-        logging.error(
+        logger.error(
             f'twitch_add_channel_moderator: {response.status_code} {response.text}'
         )
         return False
@@ -45,7 +46,7 @@ async def twitch_remove_channel_moderator(
         },
     )
     if response.status_code >= 400:
-        logging.error(
+        logger.error(
             f'twitch_remove_channel_moderator: {response.status_code} {response.text}'
         )
         return False

@@ -1,9 +1,9 @@
 import asyncio
-import logging
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request
+from loguru import logger
 
 from tbot2.channel_chat_filters import matches_filter
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
@@ -76,7 +76,7 @@ async def channel_chat_message_event_route(
                 bot_provider=response.bot_provider,
             )
     except Exception as e:
-        logging.exception(e)
+        logger.exception(e)
 
     await asyncio.gather(
         handle_filter_message(chat_message=chat_message),
@@ -121,7 +121,7 @@ async def handle_filter_message(
                     command=TCommand(name='timeout', args=[]),
                 )
             except CommandError as e:
-                logging.warning(f'Timeout message failed: {e}')
+                logger.warning(f'Timeout message failed: {e}')
 
             await twitch_ban_user(
                 channel_id=chat_message.channel_id,
@@ -132,4 +132,4 @@ async def handle_filter_message(
             )
 
     except Exception as e:
-        logging.exception(e)
+        logger.exception(e)

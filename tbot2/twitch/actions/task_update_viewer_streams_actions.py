@@ -1,6 +1,7 @@
 import asyncio
-import logging
 from datetime import datetime
+
+from loguru import logger
 
 from tbot2.channel_points import get_channel_point_settings, inc_bulk_points
 from tbot2.channel_stats import (
@@ -10,14 +11,15 @@ from tbot2.channel_stats import (
 )
 from tbot2.chatlog import ChatterRequest
 from tbot2.common import TProvider, datetime_now
-from tbot2.twitch.actions.twitch_chatters_action import get_twitch_chatters
+
+from ..actions.twitch_chatters_action import get_twitch_chatters
 
 CHECK_EVERY = 60
 
 
 async def task_update_viewer_streams() -> None:
     last_check: datetime | None = None
-    logging.info('Starting task_update_viewer_streams')
+    logger.info('Starting task_update_viewer_streams')
     while True:
         if last_check:
             elapsed = (datetime_now() - last_check).total_seconds()
@@ -32,7 +34,7 @@ async def task_update_viewer_streams() -> None:
 
 async def update_viewer_stream_data(stream: ChannelProviderStream) -> None:
     try:
-        logging.debug(
+        logger.debug(
             'Updating viewer stream data for '
             f'{stream.channel_id} {stream.provider_stream_id}'
         )
@@ -61,4 +63,4 @@ async def update_viewer_stream_data(stream: ChannelProviderStream) -> None:
                 watchtime=CHECK_EVERY,
             )
     except Exception as e:
-        logging.exception(e)
+        logger.exception(e)

@@ -1,9 +1,9 @@
 import hashlib
 import hmac
-import logging
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request
+from loguru import logger
 
 from tbot2.config_settings import config
 from tbot2.dependecies import PlainResponse
@@ -39,14 +39,14 @@ async def validate_twitch_webhook_signature(
 
     if headers.message_type == 'revocation':
         revocation = EventSubNotification.model_validate_json(await request.body())  # type: ignore
-        logging.info(
+        logger.info(
             f'Revocation: {revocation.subscription.type}',
             extra=revocation.subscription.condition,
         )
         raise PlainResponse(status_code=200, content='Roger')
 
     if headers.message_type != 'notification':
-        logging.error(
+        logger.error(
             'Unknown message type: %s',
             headers.message_type,
         )

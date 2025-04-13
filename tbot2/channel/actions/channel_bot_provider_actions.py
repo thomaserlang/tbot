@@ -4,7 +4,6 @@ from uuid import UUID
 import sqlalchemy as sa
 
 from tbot2.bot_providers import BotProvider, MBotProvider, delete_bot_provider
-from tbot2.channel.models.channel_oauth_provider_model import MChannelOAuthProvider
 from tbot2.common import TProvider
 from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
@@ -13,6 +12,7 @@ from ..actions.channel_oauth_provider_actions import (
     get_channel_oauth_provider_by_id,
     save_channel_oauth_provider,
 )
+from ..models.channel_oauth_provider_model import MChannelOAuthProvider
 from ..schemas.channel_oauth_provider_schema import ChannelOAuthProviderRequest
 
 
@@ -22,8 +22,6 @@ async def get_channel_bot_provider(
     channel_id: UUID,
     session: AsyncSession | None = None,
 ) -> BotProvider | None:
-    from tbot2.channel import MChannelOAuthProvider
-
     async with get_session(session) as session:
         query = (
             sa.select(MBotProvider)
@@ -49,6 +47,36 @@ async def get_channel_bot_provider(
         bot_provider = await session.scalar(query)
         if bot_provider:
             return BotProvider.model_validate(bot_provider)
+
+
+async def get_channel_bot_providers(
+    *,
+    channel_id: UUID,
+    session: AsyncSession | None = None,
+) -> list[BotProvider]:
+    async with get_session(session) as session:
+        query = (
+            sa.select(MBotProvider)
+            .join(
+                MChannelOAuthProvider,
+                MChannelOAuthProvider.bot_provider_id == MBotProvider.id,
+                isouter=True,
+            )
+            .where(
+                sa.or_(
+                    MChannelOAuthProvider.channel_id == channel_id,
+                    MBotProvider.system_default.is_(True),
+                ),
+            )
+            .order_by(
+                sa.case(
+                    (MChannelOAuthProvider.channel_id == channel_id, 1),
+                    else_=2,
+                )
+            )
+        )
+        bot_providers = await session.scalars(query)
+        return [BotProvider.model_validate(provider) for provider in bot_providers]
 
 
 async def disconnect_channel_bot_provider(

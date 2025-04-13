@@ -1,7 +1,8 @@
-import logging
 from collections.abc import AsyncGenerator
 from urllib.parse import urljoin
 from uuid import UUID
+
+from loguru import logger
 
 from tbot2.bot_providers import BotProvider
 from tbot2.channel import (
@@ -30,13 +31,13 @@ async def register_channel_eventsubs(
     channel_id: UUID,
     event_type: str | None = None,
 ) -> None:
-    logging.info(f'Registering eventsub for channel {channel_id}')
+    logger.info(f'Registering eventsub for channel {channel_id}')
     provider = await get_channel_oauth_provider(
         channel_id=channel_id,
         provider=TProvider.twitch,
     )
     if not provider:
-        logging.error(
+        logger.error(
             f'Failed to register eventsub for channel {channel_id}: '
             'no oauth provider found'
         )
@@ -50,7 +51,7 @@ async def register_channel_eventsubs(
             provider=TProvider.twitch,
         )
         if not bot_provider:
-            logging.error(
+            logger.error(
                 f'Failed to register eventsub for channel {channel_id}: '
                 'no bot provider found'
             )
@@ -69,7 +70,7 @@ async def register_channel_eventsubs(
                 channel_id=channel_id,
             )
         except Exception as e:
-            logging.error(f'Failed to register eventsub {registration.event_type}: {e}')
+            logger.error(f'Failed to register eventsub {registration.event_type}: {e}')
 
 
 def get_eventsub_registrations(
@@ -134,7 +135,7 @@ async def delete_eventsub_registration(event_id: str) -> bool:
         url=f'/eventsub/subscriptions?id={event_id}'
     )
     if response.status_code >= 400:
-        logging.error(
+        logger.error(
             f'delete_eventsub_registration: {response.status_code} {response.text}'
         )
         return False
@@ -160,16 +161,16 @@ async def get_eventsubs(
 
 
 async def unregister_all_eventsubs(event_type: str | None = None) -> None:
-    logging.info(f'Unregistering {event_type or "all"} eventsub registrations')
+    logger.info(f'Unregistering {event_type or "all"} eventsub registrations')
     async for eventsubs in await get_eventsubs(
         event_type=event_type,
     ):
         for eventsub in eventsubs:
             try:
-                logging.info(f'Deleting eventsub registration {eventsub.id}')
+                logger.info(f'Deleting eventsub registration {eventsub.id}')
                 await delete_eventsub_registration(eventsub.id)
             except Exception as e:
-                logging.error(
+                logger.error(
                     f'Failed to delete eventsub registration {eventsub.id}: {e}'
                 )
 
@@ -178,7 +179,7 @@ async def unregister_channel_eventsubs(
     channel_id: UUID,
     event_type: str | None = None,
 ) -> None:
-    logging.info(
+    logger.info(
         f'Unregistering {event_type or "all"} eventsub registrations '
         f'for channel {channel_id}'
     )
@@ -190,10 +191,10 @@ async def unregister_channel_eventsubs(
             if channel_id_str not in eventsub.transport.callback:
                 continue
             try:
-                logging.info(f'Deleting eventsub registration {eventsub.id}')
+                logger.info(f'Deleting eventsub registration {eventsub.id}')
                 await delete_eventsub_registration(eventsub.id)
             except Exception as e:
-                logging.info(
+                logger.info(
                     f'Failed to delete eventsub registration {eventsub.id}: {e}'
                 )
 
@@ -201,9 +202,9 @@ async def unregister_channel_eventsubs(
 async def register_all_eventsubs(
     event_type: str | None = None,
 ) -> None:
-    logging.info(f'Registering {event_type or "all"} eventsub registrations')
+    logger.info(f'Registering {event_type or "all"} eventsub registrations')
     async for provider in get_channels_providers(provider=TProvider.twitch):
-        logging.info(f'Registering eventsub for channel {provider.channel_id}')
+        logger.info(f'Registering eventsub for channel {provider.channel_id}')
         await register_channel_eventsubs(
             channel_id=provider.channel_id, event_type=event_type
         )

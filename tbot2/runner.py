@@ -7,11 +7,12 @@ import asyncclick as click
 import uvicorn
 
 from tbot2.config_settings import config
+from tbot2.setup_logger import setup_logger
 
 
 @click.group()
 def cli() -> None:
-    pass
+    setup_logger()
 
 
 @cli.command()
@@ -61,10 +62,14 @@ async def refresh_twitch_eventsubs() -> None:
 
 @cli.command()
 async def tasks() -> None:
+    from tbot2.channel_timer import task_handle_timers
     from tbot2.twitch import task_update_viewer_streams
 
     async with db():
-        await asyncio.gather(task_update_viewer_streams())
+        await asyncio.gather(
+            task_update_viewer_streams(),
+            task_handle_timers(),
+        )
 
 
 def main() -> None:

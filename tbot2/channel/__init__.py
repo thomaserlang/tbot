@@ -26,6 +26,12 @@ from .actions.channel_user_access_level_actions import (
 from .actions.channel_user_access_level_actions import (
     set_channel_user_access_level as set_channel_user_access_level,
 )
+from .actions.send_channel_message_actions import (
+    on_send_channel_message as on_send_channel_message,
+)
+from .actions.send_channel_message_actions import (
+    send_channel_message as send_channel_message,
+)
 from .models.channel_model import MChannel as MChannel
 from .models.channel_oauth_provider_model import (
     MChannelOAuthProvider as MChannelOAuthProvider,
@@ -45,4 +51,7 @@ from .schemas.channel_oauth_provider_schema import (
 from .schemas.channel_schemas import Channel as Channel
 from .schemas.channel_schemas import ChannelCreate as ChannelCreate
 from .schemas.channel_schemas import ChannelUpdate as ChannelUpdate
+from .schemas.channel_send_message_schema import (
+    SendChannelMessage as SendChannelMessage,
+)
 from .types import ChannelScope as ChannelScope

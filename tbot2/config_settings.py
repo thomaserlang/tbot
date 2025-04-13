@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Literal
 from uuid import UUID
 
+from loguru import logger
 from pydantic import AnyHttpUrl, BaseModel
 from yaml_settings_pydantic import BaseYamlSettings, YamlSettingsConfigDict
 
@@ -145,16 +146,16 @@ def get_config_path() -> Path:
                 path = p
                 break
     if not path:
-        raise Exception(
-            'No config file specified. Set it with `TBOT__CONFIG` env var.'
-        )
+        raise Exception('No config file specified. Set it with `TBOT__CONFIG` env var.')
     if not path.exists():
         raise Exception(f'Config file does not exist: {path}')
-
-    import logging
-
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    logging.info(f'Using config: {path}')
+    logger.remove()
+    logger.add(
+        sys.stdout,
+        colorize=True,
+        format='<blue>{message}</blue>',
+    )
+    logger.info(f'Config: {path}')
     return path
 
 

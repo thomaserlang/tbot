@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -22,6 +22,25 @@ async def get_timer(
         )
         if timer:
             return Timer.model_validate(timer)
+
+
+async def get_timers(
+    *,
+    channel_id: UUID | None = None,
+    enabled: bool | None = None,
+    lte_next_run_at: datetime | None = None,
+    session: AsyncSession | None = None,
+) -> list[Timer]:
+    async with get_session(session) as session:
+        query = sa.select(MChannelTimer).order_by(MChannelTimer.id)
+        if channel_id:
+            query = query.where(MChannelTimer.channel_id == channel_id)
+        if enabled is not None:
+            query = query.where(MChannelTimer.enabled.is_(enabled))
+        if lte_next_run_at:
+            query = query.where(MChannelTimer.next_run_at <= lte_next_run_at)
+        timers = await session.scalars(query)
+        return [Timer.model_validate(timer) for timer in timers]
 
 
 async def create_timer(
@@ -61,8 +80,20 @@ async def update_timer(
 ) -> Timer:
     async with get_session(session) as session:
         data_ = data.model_dump(exclude_unset=True)
-        if data.interval:
-            data_['next_run_at'] = datetime_now() + timedelta(minutes=data.interval)
+
+        timer = await get_timer(
+            timer_id=timer_id,
+            session=session,
+        )
+        if not timer:
+            raise ValueError('Timer not found')
+
+        if (data.interval and timer.interval != data.interval) or (
+            data.enabled and not timer.enabled
+        ):
+            data_['next_run_at'] = datetime_now() + timedelta(
+                minutes=data.interval or timer.interval
+            )
         await session.execute(
             sa.update(MChannelTimer.__table__)  # type: ignore
             .where(MChannelTimer.id == timer_id)
@@ -98,3 +129,21 @@ async def delete_timer(
             sa.delete(MChannelTimer.__table__).where(MChannelTimer.id == timer_id)  # type: ignore
         )
         return True
+
+
+async def update_timer_next_run_at(
+    *,
+    timer_id: UUID,
+    next_run_at: datetime,
+    last_message_index: int,
+    session: AsyncSession | None = None,
+) -> None:
+    async with get_session(session) as session:
+        await session.execute(
+            sa.update(MChannelTimer.__table__)  # type: ignore
+            .where(MChannelTimer.id == timer_id)
+            .values(
+                next_run_at=next_run_at,
+                last_message_index=last_message_index,
+            )
+        )
