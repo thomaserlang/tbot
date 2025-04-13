@@ -7,9 +7,9 @@ from loguru import logger
 
 from tbot2.config_settings import config
 from tbot2.dependecies import PlainResponse
-from tbot2.twitch.schemas.eventsub_notification_schema import EventSubNotification
 
 from ..schemas.eventsub_headers import EventSubHeaders
+from ..schemas.eventsub_notification_schema import EventSubNotification
 
 
 async def validate_twitch_webhook_signature(
