@@ -49,7 +49,7 @@ async def twitch_bot_send_message(
 
 
 @on_send_channel_message()
-async def channel_send_message(data: SendChannelMessage) -> None:
+async def send_channel_message(data: SendChannelMessage) -> None:
     if data.provider != 'twitch' and data.provider != 'all':
         return
 

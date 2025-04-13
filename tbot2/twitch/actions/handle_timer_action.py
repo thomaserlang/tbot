@@ -2,7 +2,7 @@ from tbot2.channel import SendChannelMessage
 from tbot2.channel_timer import Timer, is_timer_active, on_handle_timer
 
 from ..actions.twitch_send_message_actions import (
-    channel_send_message,
+    send_channel_message,
 )
 
 
@@ -20,7 +20,7 @@ async def handle_timer(
     ):
         return
 
-    await channel_send_message(
+    await send_channel_message(
         SendChannelMessage(
             channel_id=timer.channel_id,
             provider='twitch',
