@@ -27,7 +27,8 @@ async def twitch_bot_send_message(
         )
         if not bot_provider:
             raise ValueError(
-                f'Failed to send message in channel {channel_id}: no bot provider found'
+                f'Failed to send for provider twitch for channel {channel_id}: '
+                'no bot provider found'
             )
 
     data = {
@@ -67,6 +68,10 @@ async def send_channel_message(data: SendChannelMessage) -> None:
             channel_id=data.channel_id,
         )
         if not bot_provider:
+            logger.error(
+                f'Failed to send for provider twitch for channel {data.channel_id}: '
+                'no bot provider found'
+            )
             return
 
     await twitch_bot_send_message(
