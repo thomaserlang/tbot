@@ -2,12 +2,12 @@ from typing import Annotated
 
 from pydantic import StringConstraints, field_validator
 
-from tbot2.common import BaseRequestSchema
+from tbot2.common import BaseRequestSchema, Provider
 
 
 class ChannelQuoteCreate(BaseRequestSchema):
     message: Annotated[str, StringConstraints(min_length=1, max_length=500)]
-    provider: Annotated[str, StringConstraints(min_length=0, max_length=36)]
+    provider: Provider
     created_by_chatter_id: Annotated[
         str, StringConstraints(min_length=0, max_length=36)
     ]
@@ -20,7 +20,7 @@ class ChannelQuoteUpdate(BaseRequestSchema):
     message: Annotated[str, StringConstraints(min_length=1, max_length=500)] | None = (
         None
     )
-    provider: Annotated[str, StringConstraints(min_length=0, max_length=36)] | None = (
+    provider: Provider | None = (
         None
     )
     created_by_chatter_id: (

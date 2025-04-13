@@ -1,12 +1,12 @@
 from uuid import UUID
 
-from tbot2.common import BaseSchema
+from tbot2.common import BaseSchema, Provider
 
 
 class ChatterPoints(BaseSchema):
     channel_id: UUID
     chatter_id: str
-    provider: str
+    provider: Provider
     points: int
 
 

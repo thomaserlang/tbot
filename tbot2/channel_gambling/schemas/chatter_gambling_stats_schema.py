@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from tbot2.common import BaseRequestSchema, BaseSchema
+from tbot2.common import BaseRequestSchema, BaseSchema, Provider
 
 
 class ChatterGamblingStatsUpdate(BaseRequestSchema):
@@ -13,7 +13,7 @@ class ChatterGamblingStatsUpdate(BaseRequestSchema):
 class ChatterGamblingStats(BaseSchema):
     channel_id: UUID
     chatter_id: str
-    provider: str
+    provider: Provider
     slots_wins: int = 0
     slots_losses: int = 0
     roulette_wins: int = 0

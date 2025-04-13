@@ -22,7 +22,7 @@ class TCommand:
 
 @dataclass(slots=True)
 class FillVars:
-    provider: str | Provider
+    provider: Provider
     vars: Sequence[str]
 
 

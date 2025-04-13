@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from tbot2.common import BaseSchema
+from tbot2.common import BaseSchema, Provider
 
 
 class ChannelQuote(BaseSchema):
@@ -9,7 +9,7 @@ class ChannelQuote(BaseSchema):
     channel_id: UUID
     number: int
     message: str
-    provider: str
+    provider: Provider
     created_by_chatter_id: str
     created_by_display_name: str
     created_at: datetime

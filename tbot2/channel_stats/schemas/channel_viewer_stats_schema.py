@@ -1,12 +1,12 @@
 from datetime import date
 from uuid import UUID
 
-from tbot2.common import BaseSchema
+from tbot2.common import BaseSchema, Provider
 
 
 class ChannelViewerStats(BaseSchema):
     channel_id: UUID
-    provider: str
+    provider: Provider
     provider_viewer_id: str
     streams: int = 0
     streams_row: int = 0

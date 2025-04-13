@@ -82,7 +82,7 @@ async def get_channel_viewer_stats(
 async def update_channel_viewer_stats(
     *,
     channel_id: UUID,
-    provider: str,
+    provider: Provider,
     provider_viewer_id: str,
     data: ChannelViewerStatsUpdate,
     session: AsyncSession | None = None,
