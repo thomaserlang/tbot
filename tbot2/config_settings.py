@@ -147,8 +147,11 @@ def get_config_path() -> Path:
                 break
     if not path:
         raise Exception('No config file specified. Set it with `TBOT__CONFIG` env var.')
+    
+    path = path.expanduser()
     if not path.exists():
         raise Exception(f'Config file does not exist: {path}')
+    
     logger.remove()
     logger.add(
         sys.stdout,
