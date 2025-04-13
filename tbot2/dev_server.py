@@ -1,11 +1,11 @@
-import os
+from pathlib import Path
 from subprocess import list2cmdline
 
 from honcho.manager import Manager  # type: ignore
 
 
 def main() -> None:
-    path = os.path.dirname(os.path.realpath(__file__))
+    path = Path(__file__).parent
 
     start = [
         ('api', ['python', 'runner.py', 'api'], path),
