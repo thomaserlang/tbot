@@ -1,4 +1,4 @@
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Awaitable, Callable
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
@@ -6,6 +6,7 @@ import sqlalchemy as sa
 from uuid6 import uuid7
 
 from tbot2.common import TProvider
+from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.channel_oauth_provider_model import (
@@ -116,10 +117,47 @@ async def delete_channel_oauth_provider(
     *, channel_id: UUID, channel_provider_id: UUID, session: AsyncSession | None = None
 ) -> bool:
     async with get_session(session) as session:
+        channel_provider = await get_channel_oauth_provider_by_id(
+            channel_id=channel_id,
+            provider_id=channel_provider_id,
+            session=session,
+        )
+        if not channel_provider:
+            return False
         result = await session.execute(
             sa.delete(MChannelOAuthProvider).where(
                 MChannelOAuthProvider.channel_id == channel_id,
                 MChannelOAuthProvider.id == channel_provider_id,
             )
         )
-        return result.rowcount > 0
+        if result.rowcount > 0:
+            await fire_event_delete_channel_oauth_provider(
+                channel_provider=channel_provider,
+            )
+            return True
+        return False
+
+
+def on_delete_channel_oauth_provider(
+    priority: int = 128,
+) -> Callable[
+    [Callable[[ChannelOAuthProvider], Awaitable[None]]],
+    Callable[[ChannelOAuthProvider], Awaitable[None]],
+]:
+    def decorator(
+        func: Callable[[ChannelOAuthProvider], Awaitable[None]],
+    ) -> Callable[[ChannelOAuthProvider], Awaitable[None]]:
+        add_event_handler('delete_channel_oauth_provider', func, priority)
+        return func
+
+    return decorator
+
+
+async def fire_event_delete_channel_oauth_provider(
+    *,
+    channel_provider: ChannelOAuthProvider,
+) -> None:
+    await fire_event_async(
+        'delete_channel_oauth_provider',
+        channel_provider=channel_provider,
+    )

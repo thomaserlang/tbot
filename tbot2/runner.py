@@ -53,11 +53,10 @@ async def db() -> AsyncGenerator[None]:
 
 @cli.command()
 async def refresh_twitch_eventsubs() -> None:
-    from tbot2.twitch import register_all_eventsubs, unregister_all_eventsubs
+    from tbot2.twitch import refresh_all_eventsubs
 
     async with db():
-        await unregister_all_eventsubs()
-        await register_all_eventsubs()
+        await refresh_all_eventsubs()
 
 
 @cli.command()

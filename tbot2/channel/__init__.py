@@ -5,11 +5,17 @@ from .actions.channel_actions import update_channel as update_channel
 from .actions.channel_bot_provider_actions import (
     get_channel_bot_provider as get_channel_bot_provider,
 )
+from .actions.channel_bot_provider_actions import (
+    on_disconnect_channel_bot_provider as on_disconnect_channel_bot_provider,
+)
 from .actions.channel_oauth_provider_actions import (
     get_channel_oauth_provider as get_channel_oauth_provider,
 )
 from .actions.channel_oauth_provider_actions import (
     get_channels_providers as get_channels_providers,
+)
+from .actions.channel_oauth_provider_actions import (
+    on_delete_channel_oauth_provider as on_delete_channel_oauth_provider,
 )
 from .actions.channel_oauth_provider_actions import (
     save_channel_oauth_provider as save_channel_oauth_provider,

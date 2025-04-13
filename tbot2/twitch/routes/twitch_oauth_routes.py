@@ -37,7 +37,10 @@ from tbot2.config_settings import config
 from tbot2.dependecies import authenticated
 from tbot2.user import UserCreate, get_or_create_user
 
-from ..actions.eventsub_actions import register_eventsubs
+from ..actions.eventsub_actions import (
+    refresh_all_eventsubs,
+    refresh_channel_eventsubs,
+)
 from ..actions.twitch_mod_user_actions import twitch_add_channel_moderator
 
 client = AsyncClient(
@@ -282,7 +285,7 @@ async def twitch_auth_route(
                 broadcaster_id=twitch_user.id,
             )
 
-        await register_eventsubs(
+        await refresh_channel_eventsubs(
             channel_id=channel_id,
         )
 
@@ -316,6 +319,9 @@ async def twitch_auth_route(
                 twitch_user_id=twitch_user.id,
                 broadcaster_id=provider.provider_user_id or '',
             )
+        await refresh_channel_eventsubs(
+            channel_id=channel_id, event_type='channel.chat.message'
+        )
 
     elif params.state['mode'] == 'connect_system_provider_bot':
         await save_bot_provider(
@@ -330,13 +336,12 @@ async def twitch_auth_route(
                 system_default=True,
             ),
         )
+        await refresh_all_eventsubs(event_type='channel.chat.message')
 
     else:
         raise HTTPException(
             status_code=400,
             detail=f'Invalid state mode: {params.state["mode"]}',
         )
-    import logging
 
-    logging.error(params.state['redirect_to'])
     return RedirectResponse(params.state['redirect_to'])

@@ -5,9 +5,14 @@ from .actions.eventsub_actions import (
 )
 from .actions.eventsub_actions import get_eventsubs as get_eventsubs
 from .actions.eventsub_actions import (
+    refresh_all_eventsubs as refresh_all_eventsubs,
+)
+from .actions.eventsub_actions import (
     register_all_eventsubs as register_all_eventsubs,
 )
-from .actions.eventsub_actions import register_eventsubs as register_eventsubs
+from .actions.eventsub_actions import (
+    register_channel_eventsubs as register_channel_eventsubs,
+)
 from .actions.eventsub_actions import (
     unregister_all_eventsubs as unregister_all_eventsubs,
 )

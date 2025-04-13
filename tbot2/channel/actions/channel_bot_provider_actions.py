@@ -1,3 +1,4 @@
+from collections.abc import Awaitable, Callable
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -5,6 +6,7 @@ import sqlalchemy as sa
 from tbot2.bot_providers import BotProvider, MBotProvider, delete_bot_provider
 from tbot2.channel.models.channel_oauth_provider_model import MChannelOAuthProvider
 from tbot2.common import TProvider
+from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 
 from ..actions.channel_oauth_provider_actions import (
@@ -91,3 +93,34 @@ async def disconnect_channel_bot_provider(
                 bot_provider_id=provider.bot_provider.id,
                 session=session,
             )
+        await fire_disconnect_channel_bot_provider(
+            channel_id=channel_id,
+            bot_provider=provider.bot_provider,
+        )
+
+
+def on_disconnect_channel_bot_provider(
+    priority: int = 128,
+) -> Callable[
+    [Callable[[UUID, BotProvider], Awaitable[None]]],
+    Callable[[UUID, BotProvider], Awaitable[None]],
+]:
+    def decorator(
+        func: Callable[[UUID, BotProvider], Awaitable[None]],
+    ) -> Callable[[UUID, BotProvider], Awaitable[None]]:
+        add_event_handler('disconnect_channel_bot_provider', func, priority)
+        return func
+
+    return decorator
+
+
+async def fire_disconnect_channel_bot_provider(
+    *,
+    channel_id: UUID,
+    bot_provider: BotProvider,
+) -> None:
+    await fire_event_async(
+        'disconnect_channel_bot_provider',
+        channel_id=channel_id,
+        bot_provider=bot_provider,
+    )
