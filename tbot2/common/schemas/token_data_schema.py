@@ -18,7 +18,7 @@ class TokenData(BaseUser, BaseModel):
     def is_authenticated(self) -> bool:
         return True
 
-    async def channel_has_access(
+    async def channel_require_access(
         self, *, channel_id: UUID, access_level: TAccessLevel
     ) -> bool:
         from tbot2.channel import get_channel_user_access_level

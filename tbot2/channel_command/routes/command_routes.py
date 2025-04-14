@@ -32,7 +32,7 @@ async def get_commands_route(
         TokenData, Security(authenticated, scopes=[CommandScope.READ])
     ],
 ) -> PageCursor[Command]:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -61,7 +61,7 @@ async def get_command_route(
         TokenData, Security(authenticated, scopes=[CommandScope.READ])
     ],
 ) -> Command:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -86,7 +86,7 @@ async def create_command_route(
         TokenData, Security(authenticated, scopes=[CommandScope.WRITE])
     ],
 ) -> Command:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -109,7 +109,7 @@ async def update_command_route(
         TokenData, Security(authenticated, scopes=[CommandScope.WRITE])
     ],
 ) -> Command:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -138,7 +138,7 @@ async def delete_command_route(
         TokenData, Security(authenticated, scopes=[CommandScope.WRITE])
     ],
 ) -> None:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )

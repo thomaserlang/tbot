@@ -1,3 +1,4 @@
+
 import pytest
 from uuid6 import uuid7
 
@@ -22,6 +23,7 @@ async def test_handle_message(db: None) -> None:
 
     response = await handle_message_response(
         chat_message=ChatMessage(
+            id=uuid7(),
             type='message',
             created_at=datetime_now(),
             message='!test',
@@ -41,6 +43,7 @@ async def test_handle_message(db: None) -> None:
     # test pattern
     response = await handle_message_response(
         chat_message=ChatMessage(
+            id=uuid7(),
             type='message',
             created_at=datetime_now(),
             message='asd match bbb it',
@@ -66,6 +69,7 @@ async def test_handle_message(db: None) -> None:
     )
     response = await handle_message_response(
         chat_message=ChatMessage(
+            id=uuid7(),
             type='message',
             created_at=datetime_now(),
             message='asd bbb? it',
@@ -84,6 +88,7 @@ async def test_handle_message(db: None) -> None:
 
     response = await handle_message_response(
         chat_message=ChatMessage(
+            id=uuid7(),
             type='message',
             created_at=datetime_now(),
             message='asd bbb it',

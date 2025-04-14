@@ -20,6 +20,7 @@ async def test_countdown(mocker: MockFixture) -> None:
     text = await fill_message(
         response_message='Countdown: {countdown "2024-05-20T20:00:00+02:00"} since',
         chat_message=ChatMessage(
+            id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             message='!countdown',
@@ -38,6 +39,7 @@ async def test_countdown(mocker: MockFixture) -> None:
     text = await fill_message(
         response_message='Countdown until: {countdown "2024-05-30T20:00:00+02:00"}',
         chat_message=ChatMessage(
+            id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             message='!countdown',

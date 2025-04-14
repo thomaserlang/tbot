@@ -41,6 +41,7 @@ async def test_followage_vars(mocker: MockFixture) -> None:
 
     await followage_vars(
         chat_message=ChatMessage(  # type: ignore
+            id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             provider='twitch',
@@ -81,6 +82,7 @@ async def test_followage_vars(mocker: MockFixture) -> None:
 
     await followage_vars(
         chat_message=ChatMessage(  # type: ignore
+            id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             provider='twitch',

@@ -6,10 +6,10 @@ import {
     IconHome,
     IconLink,
     IconLock,
+    IconMessage,
     IconPokerChip,
     IconQuote,
     IconShieldCog,
-    IconWood,
 } from '@tabler/icons-react'
 import { NavLink as RouterNavLink } from 'react-router-dom'
 import { CurrentChannelCard } from './components/current-channel-card'
@@ -32,9 +32,15 @@ export function ChannelNavbar() {
                 />
                 <NavLink
                     component={RouterNavLink}
-                    to={`/channels/${channel.id}/logviewer`}
-                    label="Logviewer"
-                    leftSection={<IconWood size={20} />}
+                    to={`/channels/${channel.id}/providers`}
+                    label="Providers"
+                    leftSection={<IconLink size={20} />}
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/combined-chat`}
+                    label="Combined Chat"
+                    leftSection={<IconMessage size={20} />}
                 />
                 <NavLink
                     component={RouterNavLink}
@@ -93,12 +99,6 @@ export function ChannelNavbar() {
                     label="User Access"
                     leftSection={<IconLock size={20} />}
                     disabled
-                />
-                <NavLink
-                    component={RouterNavLink}
-                    to={`/channels/${channel.id}/providers`}
-                    label="Providers"
-                    leftSection={<IconLink size={20} />}
                 />
             </Box>
         </>

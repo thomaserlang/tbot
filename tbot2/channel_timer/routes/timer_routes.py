@@ -30,7 +30,7 @@ async def get_timers_route(
     page_query: Annotated[PageCursorQuery, Depends()],
     token_data: Annotated[TokenData, Security(authenticated, scopes=[TimerScope.READ])],
 ) -> PageCursor[Timer]:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id, access_level=TAccessLevel.MOD
     )
     stmt = (
@@ -58,7 +58,7 @@ async def get_timer_route(
     timer_id: UUID,
     token_data: Annotated[TokenData, Security(authenticated, scopes=[TimerScope.READ])],
 ) -> Timer:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id, access_level=TAccessLevel.MOD
     )
     timer = await get_timer(
@@ -82,7 +82,7 @@ async def create_timer_route(
         TokenData, Security(authenticated, scopes=[TimerScope.WRITE])
     ],
 ) -> Timer:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id, access_level=TAccessLevel.MOD
     )
     timer = await create_timer(
@@ -104,7 +104,7 @@ async def update_timer_route(
         TokenData, Security(authenticated, scopes=[TimerScope.WRITE])
     ],
 ) -> Timer:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id, access_level=TAccessLevel.MOD
     )
     timer = await get_timer(
@@ -132,7 +132,7 @@ async def delete_timer_route(
         TokenData, Security(authenticated, scopes=[TimerScope.WRITE])
     ],
 ) -> None:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id, access_level=TAccessLevel.MOD
     )
     timer = await get_timer(

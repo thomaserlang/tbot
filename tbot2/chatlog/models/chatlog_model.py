@@ -2,7 +2,6 @@ import sys
 from uuid import UUID
 
 import sqlalchemy as sa
-from sqlalchemy.dialects.mysql import DATETIME
 from sqlalchemy.orm import Mapped, mapped_column
 
 from tbot2.common import Provider
@@ -13,10 +12,10 @@ class MChatlog(Base):
     __tablename__ = 'chatlogs'
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
-    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True, autoincrement=True)
+    id: Mapped[UUID] = mapped_column(sa.UUID(), primary_key=True)
     type: Mapped[str] = mapped_column(sa.String(100))
     sub_type: Mapped[str | None] = mapped_column(sa.String(100), nullable=True)
-    created_at: Mapped[sa.DateTime] = mapped_column(DATETIME(fsp=6, timezone=True))
+    created_at: Mapped[sa.DateTime] = mapped_column(sa.DateTime, nullable=False)
     channel_id: Mapped[UUID] = mapped_column(sa.UUID)
     chatter_id: Mapped[str] = mapped_column(sa.String(36))
     chatter_name: Mapped[str] = mapped_column(sa.String(200))

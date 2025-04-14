@@ -4,6 +4,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request
 from loguru import logger
+from uuid6 import uuid7
 
 from tbot2.channel_chat_filters import matches_filter
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
@@ -49,6 +50,7 @@ async def channel_chat_message_event_route(
         return
 
     chat_message = ChatMessage(
+        id=uuid7(),
         type='message',
         channel_id=channel_id,
         chatter_id=data.event.chatter_user_id,
@@ -82,7 +84,7 @@ async def channel_chat_message_event_route(
         handle_filter_message(chat_message=chat_message),
         create_chatlog(data=chat_message),
         database.redis.publish(  # type: ignore
-            f'tbot:live_chat:{chat_message.channel_id}', data.model_dump_json()
+            f'tbot:live_chat:{chat_message.channel_id}', chat_message.model_dump_json()
         ),
     )
 

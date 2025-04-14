@@ -50,7 +50,7 @@ async def spotify_connect_route(
     ],
     redirect_to: Annotated[RedirectUrl, Depends()],
 ) -> ConnectUrl:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id, access_level=TAccessLevel.ADMIN
     )
     return ConnectUrl(

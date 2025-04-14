@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import StringConstraints
+from pydantic import StringConstraints, field_validator
 from typing_extensions import Doc
 
 from tbot2.common import BaseRequestSchema
@@ -13,6 +13,7 @@ from .twitch_schemas import TwitchBadge, TwitchMessageFragment
 
 
 class ChatMessage(BaseRequestSchema):
+    id: UUID
     type: Literal['message', 'notice', 'mod_action']
     sub_type: Annotated[str, StringConstraints(min_length=1, max_length=100)] | None = (
         None
@@ -39,6 +40,13 @@ class ChatMessage(BaseRequestSchema):
     msg_id: Annotated[str, StringConstraints(min_length=1, max_length=36)]
     twitch_badges: list[TwitchBadge] | None = None
     twitch_fragments: list[TwitchMessageFragment] | None = None
+
+    @field_validator('chatter_color', mode='before')
+    @classmethod
+    def validate_chatter_color(cls, value: str | None) -> str | None:
+        if not value:
+            return None
+        return value
 
     def message_without_fragments(self) -> str:
         if not self.twitch_fragments:

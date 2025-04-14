@@ -25,7 +25,7 @@ async def get_channel_route(
     channel_id: UUID,
     token_data: Annotated[TokenData, Security(authenticated)],
 ) -> Channel:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )

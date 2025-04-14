@@ -35,7 +35,7 @@ async def get_chat_filters_route(  # noqa: ANN201
         Security(authenticated, scopes=[ChatFilterScope.READ]),
     ],
 ):
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -62,7 +62,7 @@ async def get_chat_filter_route(  # noqa: ANN201
         Security(authenticated, scopes=[ChatFilterScope.READ]),
     ],
 ):
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -95,7 +95,7 @@ async def create_chat_filter_route(  # noqa: ANN201
         Security(authenticated, scopes=[ChatFilterScope.WRITE]),
     ],
 ):
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -125,7 +125,7 @@ async def update_chat_filter_route(  # noqa: ANN201
         Security(authenticated, scopes=[ChatFilterScope.WRITE]),
     ],
 ):
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -163,7 +163,7 @@ async def delete_chat_filter_route(
         Security(authenticated, scopes=[ChatFilterScope.WRITE]),
     ],
 ) -> None:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )

@@ -120,7 +120,7 @@ async def get_twitch_connect_url_route(
     ],
     redirect_to: Annotated[RedirectUrl, Depends()],
 ) -> ConnectUrl:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id, access_level=TAccessLevel.OWNER
     )
     return ConnectUrl(
@@ -151,7 +151,7 @@ async def get_twitch_connect_bot_url_route(
     ],
     redirect_to: Annotated[RedirectUrl, Depends()],
 ) -> ConnectUrl:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id, access_level=TAccessLevel.OWNER
     )
     return ConnectUrl(

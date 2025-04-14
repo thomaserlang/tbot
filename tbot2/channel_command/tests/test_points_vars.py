@@ -2,6 +2,7 @@ from datetime import UTC, datetime
 
 import pytest
 from pytest_mock import MockFixture
+from uuid6 import uuid7
 
 from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_command import TCommand
@@ -58,6 +59,7 @@ async def test_points_vars(db: None, mocker: MockFixture) -> None:
     message = await fill_message(
         response_message='Points: {points} rank {points_rank}',
         chat_message=ChatMessage(
+            id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             provider='twitch',

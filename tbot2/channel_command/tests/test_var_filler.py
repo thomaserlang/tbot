@@ -22,6 +22,7 @@ async def test_var_filler() -> None:
     text = await fill_message(
         response_message='Test: {test "Test value"} - {test2}',
         chat_message=ChatMessage(
+            id=uuid7(),
             type='message',
             created_at=datetime_now(),
             message='!test',

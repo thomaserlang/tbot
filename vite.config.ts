@@ -12,6 +12,7 @@ export default defineConfig({
                 changeOrigin: true,
                 xfwd: true,
                 secure: false,
+                ws: true,
             },
         },
     },

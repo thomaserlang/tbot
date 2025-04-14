@@ -1,3 +1,4 @@
+
 import sqlalchemy as sa
 from sqlalchemy.dialects.mysql import insert
 

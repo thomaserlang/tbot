@@ -50,6 +50,7 @@ async def test_accountage_vars(mocker: MockFixture) -> None:
 
     await accountage_vars(
         chat_message=ChatMessage(  # type: ignore
+            id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             provider='twitch',
@@ -87,6 +88,7 @@ async def test_accountage_vars(mocker: MockFixture) -> None:
 
     await accountage_vars(
         chat_message=ChatMessage(  # type: ignore
+            id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             provider='twitch',

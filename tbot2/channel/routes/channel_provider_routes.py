@@ -30,7 +30,7 @@ async def get_channel_providers_route(
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_READ])
     ],
 ) -> list[ChannelProvider]:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
     )
@@ -50,7 +50,7 @@ async def get_channel_provider_route(
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_READ])
     ],
 ) -> ChannelProvider:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
     )
@@ -80,7 +80,7 @@ async def delete_channel_provider_route(
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
     ],
 ) -> None:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
     )
@@ -103,7 +103,7 @@ async def disconnect_channel_provider_bot_route(
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
     ],
 ) -> None:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
     )

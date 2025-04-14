@@ -4,6 +4,7 @@ from uuid import UUID
 
 import sqlalchemy as sa
 from fastapi import APIRouter, Security
+from uuid6 import uuid7
 
 from tbot2.channel_chat_filters.models.chat_filter_model import MChatFilter
 from tbot2.common import ChatMessage, TAccessLevel, TokenData
@@ -42,7 +43,7 @@ async def get_banned_terms_route(
         TokenData, Security(authenticated, scopes=[ChatFilterScope.READ])
     ],
 ) -> PageCursor[BannedTerm]:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -82,7 +83,7 @@ async def get_banned_term_route(
         TokenData, Security(authenticated, scopes=[ChatFilterScope.READ])
     ],
 ) -> BannedTerm:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -115,7 +116,7 @@ async def create_banned_term_route(
         TokenData, Security(authenticated, scopes=[ChatFilterScope.WRITE])
     ],
 ) -> BannedTerm:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -146,7 +147,7 @@ async def update_banned_term_route(
         TokenData, Security(authenticated, scopes=[ChatFilterScope.WRITE])
     ],
 ) -> BannedTerm:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -183,7 +184,7 @@ async def delete_banned_term_route(
         TokenData, Security(authenticated, scopes=[ChatFilterScope.WRITE])
     ],
 ) -> None:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -210,7 +211,7 @@ async def banned_term_test_route(
         TokenData, Security(authenticated, scopes=[ChatFilterScope.WRITE])
     ],
 ) -> FilterMatchResult:
-    await token_data.channel_has_access(
+    await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
@@ -223,6 +224,7 @@ async def banned_term_test_route(
 
     result = await filter.check_message(
         message=ChatMessage(
+            id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             provider='twitch',
