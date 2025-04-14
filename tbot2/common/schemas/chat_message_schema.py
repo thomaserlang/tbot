@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
+from pydantic import StringConstraints
 from typing_extensions import Doc
 
 from tbot2.common import BaseRequestSchema
@@ -13,19 +14,29 @@ from .twitch_schemas import TwitchBadge, TwitchMessageFragment
 
 class ChatMessage(BaseRequestSchema):
     type: Literal['message', 'notice', 'mod_action']
-    sub_type: str | None = None
+    sub_type: Annotated[str, StringConstraints(min_length=1, max_length=100)] | None = (
+        None
+    )
     created_at: datetime
     provider: Provider
-    provider_id: Annotated[
-        str, Doc('The ID of the chat message in the provider system')
-    ]
+    provider_id: Annotated[str, StringConstraints(min_length=1, max_length=36)]
     channel_id: Annotated[UUID, Doc('The ID of the TBot channel')]
-    chatter_id: str
-    chatter_name: str
-    chatter_display_name: str
-    chatter_color: str | None = None
-    message: str
-    msg_id: str
+    chatter_id: Annotated[str, StringConstraints(min_length=1, max_length=36)]
+    chatter_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
+    chatter_display_name: Annotated[
+        str, StringConstraints(min_length=1, max_length=200)
+    ]
+    chatter_color: (
+        Annotated[
+            str,
+            StringConstraints(
+                min_length=4, max_length=7, pattern='^#[0-9A-Fa-f]{3,6}$'
+            ),
+        ]
+        | None
+    ) = None
+    message: Annotated[str, StringConstraints(min_length=1, max_length=600)]
+    msg_id: Annotated[str, StringConstraints(min_length=1, max_length=36)]
     twitch_badges: list[TwitchBadge] | None = None
     twitch_fragments: list[TwitchMessageFragment] | None = None
 
