@@ -77,7 +77,6 @@ export function ChatlogsViewer({ channelId }: Props) {
     return (
         <ScrollArea
             onTopReached={() => {
-                console.log('top reached')
                 data.fetchNextPage()
             }}
             h="100%"
