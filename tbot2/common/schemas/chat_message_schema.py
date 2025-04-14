@@ -2,15 +2,16 @@ from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import BaseModel
 from typing_extensions import Doc
+
+from tbot2.common import BaseRequestSchema
 
 from ..types.access_level_type import TAccessLevel
 from ..types.provider_type import Provider
 from .twitch_schemas import TwitchBadge, TwitchMessageFragment
 
 
-class ChatMessage(BaseModel):
+class ChatMessage(BaseRequestSchema):
     type: Literal['message', 'notice', 'mod_action']
     sub_type: str | None = None
     created_at: datetime
