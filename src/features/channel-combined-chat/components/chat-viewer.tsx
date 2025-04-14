@@ -49,7 +49,7 @@ export function ChatlogsViewer({ channelId }: Props) {
             })
         },
         onMessage: (message) => {
-            setMessages((prev) => [...prev, message])
+            setMessages((prev) => [...prev, message].slice(-500))
         },
     })
 
