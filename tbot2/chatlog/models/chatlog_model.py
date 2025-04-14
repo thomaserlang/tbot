@@ -5,6 +5,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.mysql import DATETIME
 from sqlalchemy.orm import Mapped, mapped_column
 
+from tbot2.common import Provider
 from tbot2.model_base import Base
 
 
@@ -23,7 +24,7 @@ class MChatlog(Base):
     chatter_color: Mapped[str | None] = mapped_column(sa.String(7), nullable=True)
     message: Mapped[str] = mapped_column(sa.String(600))
     msg_id: Mapped[str] = mapped_column(sa.String(36))
-    provider: Mapped[str] = mapped_column(sa.String(100))
+    provider: Mapped[Provider] = mapped_column(sa.String(100))
     provider_id: Mapped[str] = mapped_column(sa.String(36))
     twitch_fragments: Mapped[dict[str, str | int | None] | None] = mapped_column(
         sa.JSON, nullable=True
