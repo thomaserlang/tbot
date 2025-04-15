@@ -31,8 +31,10 @@ export function FiltersView({ channelId }: Props) {
     if (!data || data.length === 0) {
         return (
             <Flex justify="center" align="center" direction="column" gap="1rem">
-                <IconShieldCog size={40} />
-                <Text fw={500}>No chat filters found, add one.</Text>
+                <IconShieldCog size={80} />
+                <Text size="xl" fw={500}>
+                    No chat filters found, add one.
+                </Text>
             </Flex>
         )
     }

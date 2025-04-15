@@ -2,8 +2,9 @@ import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
 import { ChannelId } from '@/features/channel/types'
 import { pageRecordsFlatten } from '@/utils/page-records'
+import { Flex, Text } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
-import { IconCheck } from '@tabler/icons-react'
+import { IconCheck, IconMessage } from '@tabler/icons-react'
 import { useEffect, useRef, useState } from 'react'
 import { VList, VListHandle } from 'virtua'
 import { useGetChatlogs, useGetChatlogsWS } from '../api/chatlogs.api'
@@ -54,6 +55,16 @@ export function ChatViewer({ channelId }: Props) {
 
     if (data.isLoading) return <PageLoader />
     if (data.error) return <ErrorBox errorObj={data.error} />
+
+    if (messages.length === 0)
+        return (
+            <Flex justify="center" align="center" direction="column" gap="1rem">
+                <IconMessage size={80} />
+                <Text size="xl" fw={500}>
+                    No chat messages
+                </Text>
+            </Flex>
+        )
 
     return (
         <>

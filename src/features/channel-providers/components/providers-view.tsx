@@ -14,8 +14,10 @@ export function ProvidersView({ providers }: Props) {
     if (providers.length === 0) {
         return (
             <Flex justify="center" align="center" direction="column" gap="1rem">
-                <IconLink size={40} />
-                <Text fw={500}>No providers found, add one.</Text>
+                <IconLink size={80} />
+                <Text size="xl" fw={500}>
+                    No providers found, add one.
+                </Text>
             </Flex>
         )
     }

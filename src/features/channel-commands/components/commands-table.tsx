@@ -1,6 +1,7 @@
 import { PageCursor } from '@/types/page-cursor.type'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { Anchor } from '@mantine/core'
+import { IconBlocks } from '@tabler/icons-react'
 import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query'
 import { DataTable } from 'mantine-datatable'
 import { Command } from '../command.types'
@@ -20,7 +21,8 @@ export function CommandsTable({ data, onEditClick }: Props) {
             onScrollToBottom={() => data.fetchNextPage()}
             fetching={data.isFetching}
             h="100%"
-            noRecordsText="No commands"
+            noRecordsText="No commands, create one."
+            noRecordsIcon={<IconBlocks size={80} />}
             columns={[
                 {
                     accessor: 'cmds',

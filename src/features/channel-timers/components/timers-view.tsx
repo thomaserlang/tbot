@@ -28,8 +28,10 @@ export function TimersView({ data, onEditClick }: Props) {
     if (!data.data || data.data.length === 0) {
         return (
             <Flex justify="center" align="center" direction="column" gap="1rem">
-                <IconClock size={40} />
-                <Text fw={500}>No timers found, create one.</Text>
+                <IconClock size={80} />
+                <Text size="xl" fw={500}>
+                    No timers found, create one.
+                </Text>
             </Flex>
         )
     }
