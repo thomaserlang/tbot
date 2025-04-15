@@ -223,8 +223,6 @@ async def twitch_auth_route(
         ).model_dump(),
     )
 
-    # TODO: Add the bot to some list so we know it's registered for the channel
-
     if r.status_code >= 400:
         raise HTTPException(status_code=r.status_code, detail=r.text)
 
@@ -257,7 +255,7 @@ async def twitch_auth_route(
                     access_token=response.access_token,
                     refresh_token=response.refresh_token,
                     expires_in=response.expires_in,
-                    scope=SCOPE_OPENID,
+                    scope=params.scope,
                     name=twitch_user.display_name,
                     provider_user_id=twitch_user.id,
                 ),
@@ -275,7 +273,7 @@ async def twitch_auth_route(
                 access_token=response.access_token,
                 refresh_token=response.refresh_token,
                 expires_in=response.expires_in,
-                scope=channel_provider_scopes['twitch'],
+                scope=params.scope,
                 name=twitch_user.display_name,
                 provider_user_id=twitch_user.id,
             ),
@@ -303,7 +301,7 @@ async def twitch_auth_route(
                 access_token=response.access_token,
                 refresh_token=response.refresh_token,
                 expires_in=response.expires_in,
-                scope=bot_provider_scopes['twitch'],
+                scope=params.scope,
                 name=twitch_user.display_name,
             ),
         )
@@ -336,7 +334,7 @@ async def twitch_auth_route(
                 access_token=response.access_token,
                 refresh_token=response.refresh_token,
                 expires_in=response.expires_in,
-                scope=bot_provider_scopes['twitch'],
+                scope=params.scope,
                 name=twitch_user.display_name,
                 system_default=True,
             ),
