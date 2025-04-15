@@ -41,6 +41,7 @@ export function useGetChatlogs({ channelId, params }: GetProps) {
             getChatlogs(channelId, { ...params, cursor: pageParam }),
         initialPageParam: '',
         getNextPageParam: (lastPage) => lastPage.cursor ?? undefined,
+        staleTime: Infinity,
     })
 }
 

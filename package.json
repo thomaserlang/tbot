@@ -25,7 +25,8 @@
         "react-router-dom": "^7.5.0",
         "react-use-websocket": "^4.13.0",
         "sanitize-html": "^2.15.0",
-        "use-query-params": "^2.2.1"
+        "use-query-params": "^2.2.1",
+        "virtua": "^0.40.3"
     },
     "devDependencies": {
         "@types/react": "^19.1.2",
