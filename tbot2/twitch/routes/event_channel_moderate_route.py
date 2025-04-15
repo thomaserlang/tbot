@@ -43,6 +43,82 @@ async def event_channel_chat_message_route(
     chat_message: ChatMessage | None = None
 
     match data.event.action:
+        case 'mod':
+            if data.event.mod:
+                chat_message = ChatMessage(
+                    id=uuid7(),
+                    type='mod_action',
+                    sub_type='mod',
+                    channel_id=channel_id,
+                    chatter_id=data.event.mod.user_id,
+                    chatter_name=data.event.mod.user_login,
+                    chatter_display_name=data.event.mod.user_name,
+                    created_at=headers.message_timestamp,
+                    message=(
+                        f'{data.event.moderator_user_name} modded '
+                        f'{data.event.mod.user_name}'
+                    ),
+                    msg_id=headers.message_id,
+                    provider='twitch',
+                    provider_id=data.event.broadcaster_user_id,
+                )
+        case 'unmod':
+            if data.event.unmod:
+                chat_message = ChatMessage(
+                    id=uuid7(),
+                    type='mod_action',
+                    sub_type='unmod',
+                    channel_id=channel_id,
+                    chatter_id=data.event.unmod.user_id,
+                    chatter_name=data.event.unmod.user_login,
+                    chatter_display_name=data.event.unmod.user_name,
+                    created_at=headers.message_timestamp,
+                    message=(
+                        f'{data.event.moderator_user_name} unmodded '
+                        f'{data.event.unmod.user_name}'
+                    ),
+                    msg_id=headers.message_id,
+                    provider='twitch',
+                    provider_id=data.event.broadcaster_user_id,
+                )
+        case 'vip':
+            if data.event.vip:
+                chat_message = ChatMessage(
+                    id=uuid7(),
+                    type='mod_action',
+                    sub_type='vip',
+                    channel_id=channel_id,
+                    chatter_id=data.event.vip.user_id,
+                    chatter_name=data.event.vip.user_login,
+                    chatter_display_name=data.event.vip.user_name,
+                    created_at=headers.message_timestamp,
+                    message=(
+                        f'{data.event.moderator_user_name} vipped '
+                        f'{data.event.vip.user_name}'
+                    ),
+                    msg_id=headers.message_id,
+                    provider='twitch',
+                    provider_id=data.event.broadcaster_user_id,
+                )
+        case 'unvip':
+            if data.event.unvip:
+                chat_message = ChatMessage(
+                    id=uuid7(),
+                    type='mod_action',
+                    sub_type='unmod',
+                    channel_id=channel_id,
+                    chatter_id=data.event.unvip.user_id,
+                    chatter_name=data.event.unvip.user_login,
+                    chatter_display_name=data.event.unvip.user_name,
+                    created_at=headers.message_timestamp,
+                    message=(
+                        f'{data.event.moderator_user_name} unvipped '
+                        f'{data.event.unvip.user_name}'
+                    ),
+                    msg_id=headers.message_id,
+                    provider='twitch',
+                    provider_id=data.event.broadcaster_user_id,
+                )
         case 'ban':
             if data.event.ban:
                 chat_message = ChatMessage(

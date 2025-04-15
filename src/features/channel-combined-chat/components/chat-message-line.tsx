@@ -12,7 +12,7 @@ interface Props {
 export function ChatMessageLine({ chatMessage }: Props) {
     return (
         <Box className={classes.message}>
-            <span className={classes.time} title={chatMessage.created_at}>
+            <span className={classes.dimmed} title={chatMessage.created_at}>
                 {new Date(chatMessage.created_at).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',

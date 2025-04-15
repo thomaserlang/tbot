@@ -53,7 +53,7 @@ async def event_channel_chat_notification_route(
             chatter_color=data.event.color,
             created_at=headers.message_timestamp,
             message=data.event.system_message,
-            msg_id=str(uuid7()),
+            msg_id=headers.message_id,
             provider='twitch',
             provider_id=data.event.broadcaster_user_id,
         )
