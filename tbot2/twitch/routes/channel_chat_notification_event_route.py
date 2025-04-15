@@ -45,6 +45,7 @@ async def channel_chat_notification_event_route(
         ChatMessage(
             id=uuid7(),
             type='notice',
+            sub_type=data.event.notice_type,
             channel_id=channel_id,
             chatter_id=data.event.chatter_user_id,
             chatter_name=data.event.chatter_user_login,
