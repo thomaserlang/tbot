@@ -5,5 +5,5 @@ dayjs.extend(localizedFormat)
 export function strDateFormat(date: string | Date): string {
     if (!date) return ''
 
-    return dayjs().format('LL')
+    return dayjs(date).format('LL')
 }
