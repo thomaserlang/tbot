@@ -24,9 +24,9 @@ class MCommand(Base):
     )
     cmds: Mapped[list[str]] = mapped_column(sa.JSON(), nullable=False)
     patterns: Mapped[list[str]] = mapped_column(sa.JSON(), nullable=False)
-    response: Mapped[str] = mapped_column(sa.String(500), nullable=False)
+    response: Mapped[str] = mapped_column(sa.String(255), nullable=False)
     group_name: Mapped[str] = mapped_column(
-        sa.String(100), nullable=False, server_default=''
+        sa.String(255), nullable=False, server_default=''
     )
     global_cooldown: Mapped[int] = mapped_column(
         sa.Integer, nullable=False, server_default='0'
@@ -38,7 +38,7 @@ class MCommand(Base):
         sa.Integer, nullable=False, server_default='0'
     )
     active_mode: Mapped[CommandActiveMode] = mapped_column(
-        sa.String(100), nullable=False, server_default='always'
+        sa.String(255), nullable=False, server_default='always'
     )
     enabled: Mapped[bool] = mapped_column(
         sa.Boolean, nullable=False, server_default='1'
@@ -48,7 +48,7 @@ class MCommand(Base):
         sa.Integer, nullable=False, server_default='0'
     )
     provider: Mapped[str] = mapped_column(
-        sa.String(50), nullable=False, server_default='all'
+        sa.String(255), nullable=False, server_default='all'
     )
     created_at: Mapped[datetime] = mapped_column(
         sa.DateTime, nullable=False, default=datetime.now

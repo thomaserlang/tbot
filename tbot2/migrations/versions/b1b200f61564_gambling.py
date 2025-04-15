@@ -24,7 +24,7 @@ def upgrade() -> None:
     op.alter_column(
         'channel_point_settings',
         'channel_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
         new_column_name='provider_id',
     )
     op.add_column(
@@ -80,7 +80,7 @@ def upgrade() -> None:
     op.alter_column(
         'channel_gambling_roulette_settings',
         'channel_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
         new_column_name='provider_id',
     )
     op.add_column(
@@ -128,7 +128,7 @@ def upgrade() -> None:
     op.alter_column(
         'channel_gambling_slots_settings',
         'channel_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
         new_column_name='provider_id',
     )
     op.add_column(
@@ -188,7 +188,7 @@ def upgrade() -> None:
     op.alter_column(
         'channel_chatter_gambling_stats',
         'channel_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
         new_column_name='provider_id',
     )
     op.add_column(
@@ -210,20 +210,20 @@ def upgrade() -> None:
         existing_type=sa.UUID,
     )
     op.add_column(
-        'channel_chatter_gambling_stats', sa.Column('provider', sa.String(100))
+        'channel_chatter_gambling_stats', sa.Column('provider', sa.String(255))
     )
     op.execute('UPDATE channel_chatter_gambling_stats SET provider="twitch"')
     op.alter_column(
         'channel_chatter_gambling_stats',
         'provider',
-        existing_type=sa.String(100),
+        existing_type=sa.String(255),
         nullable=False,
     )
     op.alter_column(
         'channel_chatter_gambling_stats',
         'user_id',
         new_column_name='chatter_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
     )
     op.drop_constraint(
         'channel_chatter_gambling_stats_pkey',
@@ -254,7 +254,7 @@ def upgrade() -> None:
     op.alter_column(
         'channel_chatter_points',
         'channel_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
         new_column_name='provider_id',
     )
     op.add_column(
@@ -275,19 +275,19 @@ def upgrade() -> None:
         nullable=False,
         existing_type=sa.UUID,
     )
-    op.add_column('channel_chatter_points', sa.Column('provider', sa.String(100)))
+    op.add_column('channel_chatter_points', sa.Column('provider', sa.String(255)))
     op.execute('UPDATE channel_chatter_points SET provider="twitch"')
     op.alter_column(
         'channel_chatter_points',
         'provider',
-        existing_type=sa.String(100),
+        existing_type=sa.String(255),
         nullable=False,
     )
     op.alter_column(
         'channel_chatter_points',
         'user_id',
         new_column_name='chatter_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
     )
     op.drop_constraint(
         'channel_chatter_points_pkey', 'channel_chatter_points', type_='primary'

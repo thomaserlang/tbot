@@ -14,7 +14,7 @@ class MUser(Base):
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True, default=uuid7)
-    username: Mapped[str] = mapped_column(sa.String(100), unique=True)
+    username: Mapped[str] = mapped_column(sa.String(255), unique=True)
     email: Mapped[str | None] = mapped_column(
         sa.String(255), unique=True, nullable=True
     )

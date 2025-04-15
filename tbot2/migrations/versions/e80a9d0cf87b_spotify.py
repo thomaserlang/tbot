@@ -27,10 +27,10 @@ def upgrade() -> None:
             sa.ForeignKey('channels.id', onupdate='cascade', ondelete='cascade'),
             primary_key=True,
         ),
-        sa.Column('access_token', sa.String(500), nullable=False),
-        sa.Column('refresh_token', sa.String(500), nullable=False),
+        sa.Column('access_token', sa.String(255), nullable=False),
+        sa.Column('refresh_token', sa.String(255), nullable=False),
         sa.Column('expires_at', sa.DateTime(), nullable=True),
-        sa.Column('name', sa.String(500), nullable=False),
+        sa.Column('name', sa.String(255), nullable=False),
     )
 
     op.execute("""

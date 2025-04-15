@@ -19,16 +19,16 @@ class MChatFilter(Base):
         sa.ForeignKey('channels.id', onupdate='CASCADE', ondelete='CASCADE'),
         nullable=False,
     )
-    type: Mapped[str] = mapped_column(sa.String(100), nullable=False)
-    provider: Mapped[str] = mapped_column(sa.String(50), nullable=False)
-    name: Mapped[str] = mapped_column(sa.String(500), nullable=False)
+    type: Mapped[str] = mapped_column(sa.String(255), nullable=False)
+    provider: Mapped[str] = mapped_column(sa.String(255), nullable=False)
+    name: Mapped[str] = mapped_column(sa.String(255), nullable=False)
     enabled: Mapped[bool] = mapped_column(sa.Boolean, nullable=False, default=True)
     exclude_access_level: Mapped[TAccessLevel] = mapped_column(
         sa.Integer, nullable=False
     )
     warning_enabled: Mapped[bool] = mapped_column(sa.Boolean, nullable=False)
-    warning_message: Mapped[str] = mapped_column(sa.String(1000), nullable=False)
+    warning_message: Mapped[str] = mapped_column(sa.String(255), nullable=False)
     warning_expire_duration: Mapped[int] = mapped_column(sa.Integer, nullable=False)
-    timeout_message: Mapped[str] = mapped_column(sa.String(1000), nullable=False)
+    timeout_message: Mapped[str] = mapped_column(sa.String(255), nullable=False)
     timeout_duration: Mapped[int] = mapped_column(sa.Integer, nullable=False)
     settings: Mapped[dict[str, str | int]] = mapped_column(sa.JSON(), nullable=True)

@@ -58,9 +58,9 @@ def upgrade() -> None:
             sa.ForeignKey('channel_streams.id', onupdate='CASCADE', ondelete='CASCADE'),
             nullable=False,
         ),
-        sa.Column('provider', sa.String(100), nullable=False),
-        sa.Column('provider_id', sa.String(100), nullable=False),
-        sa.Column('provider_stream_id', sa.String(100), nullable=False),
+        sa.Column('provider', sa.String(255), nullable=False),
+        sa.Column('provider_id', sa.String(255), nullable=False),
+        sa.Column('provider_stream_id', sa.String(255), nullable=False),
         sa.Column('started_at', sa.DateTime, nullable=False),
         sa.Column('ended_at', sa.DateTime, nullable=True),
         sa.UniqueConstraint(
@@ -100,7 +100,7 @@ def upgrade() -> None:
             primary_key=True,
         ),
         sa.Column(
-            'provider_viewer_id', sa.String(36), nullable=False, primary_key=True
+            'provider_viewer_id', sa.String(255), nullable=False, primary_key=True
         ),
         sa.Column(
             'watchtime',
@@ -130,8 +130,8 @@ def upgrade() -> None:
             sa.ForeignKey('channels.id', onupdate='CASCADE', ondelete='CASCADE'),
             nullable=False,
         ),
-        sa.Column('provider', sa.String(100), nullable=False),
-        sa.Column('provider_viewer_id', sa.String(100), nullable=False),
+        sa.Column('provider', sa.String(255), nullable=False),
+        sa.Column('provider_viewer_id', sa.String(255), nullable=False),
         sa.Column('streams', sa.Integer, nullable=False, server_default='0'),
         sa.Column('streams_row', sa.Integer, nullable=False, server_default='0'),
         sa.Column('streams_row_peak', sa.Integer, nullable=False, server_default='0'),

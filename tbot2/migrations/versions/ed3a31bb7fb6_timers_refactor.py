@@ -33,10 +33,10 @@ def upgrade() -> None:
         sa.Column('interval', sa.SmallInteger(), nullable=False, comment='minutes'),
         sa.Column('enabled', sa.Boolean(), nullable=False, server_default='1'),
         sa.Column('next_run_at', sa.DateTime(), nullable=False),
-        sa.Column('provider', sa.String(50), nullable=False, server_default='all'),
-        sa.Column('pick_mode', sa.String(50), nullable=False, server_default='order'),
+        sa.Column('provider', sa.String(255), nullable=False, server_default='all'),
+        sa.Column('pick_mode', sa.String(255), nullable=False, server_default='order'),
         sa.Column(
-            'active_mode', sa.String(50), nullable=False, server_default='always'
+            'active_mode', sa.String(255), nullable=False, server_default='always'
         ),
         sa.Column('last_message_index', sa.SmallInteger(), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=False),

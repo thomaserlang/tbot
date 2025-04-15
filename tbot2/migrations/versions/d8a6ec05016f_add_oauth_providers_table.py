@@ -23,7 +23,7 @@ def upgrade() -> None:
         'user_oauth_providers',
         sa.Column('id', sa.UUID(), nullable=False, primary_key=True),
         sa.Column('user_id', sa.UUID(), nullable=False),
-        sa.Column('provider', sa.String(100), nullable=False),
+        sa.Column('provider', sa.String(255), nullable=False),
         sa.Column('provider_user_id', sa.String(255), nullable=False),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=True),

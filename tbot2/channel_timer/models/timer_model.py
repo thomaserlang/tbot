@@ -29,13 +29,13 @@ class MChannelTimer(Base):
     enabled: Mapped[bool] = mapped_column(sa.Boolean(), nullable=False, default=True)
     next_run_at: Mapped[datetime] = mapped_column(sa.DateTime(), nullable=False)
     provider: Mapped[Literal['all'] | Provider] = mapped_column(
-        sa.String(50), nullable=False, server_default='all'
+        sa.String(255), nullable=False, server_default='all'
     )
     pick_mode: Mapped[TimerPickMode] = mapped_column(
-        sa.String(50), nullable=False, server_default='order'
+        sa.String(255), nullable=False, server_default='order'
     )
     active_mode: Mapped[TimerActiveMode] = mapped_column(
-        sa.String(50), nullable=False, server_default='always'
+        sa.String(255), nullable=False, server_default='always'
     )
     last_message_index: Mapped[int | None] = mapped_column(
         sa.SmallInteger(), nullable=True

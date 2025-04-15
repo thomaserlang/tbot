@@ -18,5 +18,5 @@ class MChatFilterBannedTerm(Base):
         sa.ForeignKey('chat_filters.id', onupdate='CASCADE', ondelete='CASCADE'),
         nullable=False,
     )
-    type: Mapped[str] = mapped_column(sa.String(50), nullable=False)
-    text: Mapped[str] = mapped_column(sa.String(1000), nullable=False)
+    type: Mapped[str] = mapped_column(sa.String(255), nullable=False)
+    text: Mapped[str] = mapped_column(sa.String(255), nullable=False)

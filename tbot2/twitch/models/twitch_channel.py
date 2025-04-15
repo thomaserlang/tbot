@@ -10,7 +10,7 @@ class MTwitchChannel(Base):
     __tablename__ = 'twitch_channels'
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
-    channel_id: Mapped[str] = mapped_column(sa.String(36), primary_key=True)
+    channel_id: Mapped[str] = mapped_column(sa.String(255), primary_key=True)
     name: Mapped[str] = mapped_column(sa.String(25))
     twitch_token: Mapped[str] = mapped_column(sa.String(200))
     twitch_refresh_token: Mapped[str] = mapped_column(sa.String(200))

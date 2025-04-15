@@ -17,7 +17,7 @@ class MUserOAuthProvider(Base):
     user_id: Mapped[UUID] = mapped_column(
         sa.UUID, sa.ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE')
     )
-    provider: Mapped[str] = mapped_column(sa.String(50))  # 'google', 'github', etc
+    provider: Mapped[str] = mapped_column(sa.String(255))  # 'google', 'github', etc
     provider_user_id: Mapped[str] = mapped_column(sa.String(255))
     created_at: Mapped[datetime] = mapped_column(sa.DateTime)
     updated_at: Mapped[datetime | None] = mapped_column(sa.DateTime, nullable=True)

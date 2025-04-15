@@ -13,8 +13,8 @@ class MChatlogChatterStats(Base):
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     channel_id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)
-    provider: Mapped[Provider] = mapped_column(sa.String(50), primary_key=True)  # noqa: F821
-    chatter_id: Mapped[str] = mapped_column(sa.String(36), primary_key=True)
+    provider: Mapped[Provider] = mapped_column(sa.String(255), primary_key=True)  # noqa: F821
+    chatter_id: Mapped[str] = mapped_column(sa.String(255), primary_key=True)
     chat_messages: Mapped[int] = mapped_column(sa.Integer)
     bans: Mapped[int] = mapped_column(sa.Integer)
     timeouts: Mapped[int] = mapped_column(sa.Integer)

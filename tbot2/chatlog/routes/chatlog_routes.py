@@ -66,20 +66,19 @@ async def get_chat_ws_route(
     websocket: WebSocket,
     channel_id: UUID,
 ) -> None:
-    await websocket.accept()
-
+    await websocket.accept() # type: ignore
     async with database.redis.pubsub() as pubsub:  # type: ignore
         await pubsub.subscribe(f'tbot:live_chat:{channel_id}')  # type: ignore
         while True:
             message = await pubsub.get_message(  # type: ignore
                 ignore_subscribe_messages=True,
-                timeout=None,  # type: ignore
+                timeout=10.0,  # type: ignore
             )
             if not message:
                 continue
             try:
                 await websocket.send_text(message['data'])  # type: ignore
             except WebSocketDisconnect:
-                pass
+                return
             except RuntimeError:
-                pass
+                return

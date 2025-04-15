@@ -20,9 +20,9 @@ class ChatMessage(BaseRequestSchema):
     )
     created_at: datetime
     provider: Provider
-    provider_id: Annotated[str, StringConstraints(min_length=1, max_length=36)]
+    provider_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     channel_id: Annotated[UUID, Doc('The ID of the TBot channel')]
-    chatter_id: Annotated[str, StringConstraints(min_length=1, max_length=36)]
+    chatter_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     chatter_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
     chatter_display_name: Annotated[
         str, StringConstraints(min_length=1, max_length=200)
@@ -36,8 +36,8 @@ class ChatMessage(BaseRequestSchema):
         ]
         | None
     ) = None
-    message: Annotated[str, StringConstraints(min_length=1, max_length=600)]
-    msg_id: Annotated[str, StringConstraints(min_length=1, max_length=36)]
+    message: Annotated[str, StringConstraints(min_length=1, max_length=2000)]
+    msg_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     twitch_badges: list[TwitchBadge] | None = None
     twitch_fragments: list[TwitchMessageFragment] | None = None
 

@@ -30,18 +30,18 @@ def upgrade() -> None:
         ),
         sa.Column('cmds', sa.JSON(), nullable=False, server_default='[]'),
         sa.Column('patterns', sa.JSON(), nullable=False, server_default='[]'),
-        sa.Column('response', sa.String(500), nullable=False),
-        sa.Column('group_name', sa.String(100), nullable=False, server_default=''),
+        sa.Column('response', sa.String(255), nullable=False),
+        sa.Column('group_name', sa.String(255), nullable=False, server_default=''),
         sa.Column('global_cooldown', sa.Integer, nullable=False, server_default='0'),
         sa.Column('chatter_cooldown', sa.Integer, nullable=False, server_default='0'),
         sa.Column('mod_cooldown', sa.Integer, nullable=False, server_default='0'),
         sa.Column(
-            'active_mode', sa.String(50), nullable=False, server_default='always'
+            'active_mode', sa.String(255), nullable=False, server_default='always'
         ),
         sa.Column('enabled', sa.Boolean, nullable=False, server_default='1'),
         sa.Column('public', sa.Boolean, nullable=False, server_default='1'),
         sa.Column('access_level', sa.SmallInteger, nullable=False, server_default='0'),
-        sa.Column('provider', sa.String(50), nullable=False, server_default='all'),
+        sa.Column('provider', sa.String(255), nullable=False, server_default='all'),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=False),
     )
@@ -79,7 +79,7 @@ def upgrade() -> None:
     op.create_table(
         'command_templates',
         sa.Column('id', sa.UUID(), primary_key=True, nullable=False),
-        sa.Column('title', sa.String(500), nullable=False),
+        sa.Column('title', sa.String(255), nullable=False),
         sa.Column('commands', sa.JSON(), nullable=False),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=True),

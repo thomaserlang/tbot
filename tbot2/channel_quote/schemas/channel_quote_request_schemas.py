@@ -9,7 +9,7 @@ class ChannelQuoteCreate(BaseRequestSchema):
     message: Annotated[str, StringConstraints(min_length=1, max_length=500)]
     provider: Provider
     created_by_chatter_id: Annotated[
-        str, StringConstraints(min_length=0, max_length=36)
+        str, StringConstraints(min_length=0, max_length=255)
     ]
     created_by_display_name: Annotated[
         str, StringConstraints(min_length=1, max_length=200)
@@ -24,7 +24,7 @@ class ChannelQuoteUpdate(BaseRequestSchema):
         None
     )
     created_by_chatter_id: (
-        Annotated[str, StringConstraints(min_length=1, max_length=36)] | None
+        Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
     created_by_display_name: (
         Annotated[str, StringConstraints(min_length=1, max_length=200)] | None

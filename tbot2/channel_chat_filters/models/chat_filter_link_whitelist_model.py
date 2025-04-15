@@ -18,4 +18,4 @@ class MChatFilterLinkAllowlist(Base):
         sa.ForeignKey('chat_filters.id', onupdate='CASCADE', ondelete='CASCADE'),
         nullable=False,
     )
-    url: Mapped[str] = mapped_column(sa.String(1000), nullable=False)
+    url: Mapped[str] = mapped_column(sa.String(255), nullable=False)

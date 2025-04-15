@@ -13,8 +13,8 @@ class MChannelViewerStats(Base):
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     channel_id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)
-    provider: Mapped[str] = mapped_column(sa.String(100), primary_key=True)
-    provider_viewer_id: Mapped[str] = mapped_column(sa.String(100), primary_key=True)
+    provider: Mapped[str] = mapped_column(sa.String(255), primary_key=True)
+    provider_viewer_id: Mapped[str] = mapped_column(sa.String(255), primary_key=True)
 
     streams: Mapped[int] = mapped_column(sa.Integer, nullable=False, server_default='0')
     streams_row: Mapped[int] = mapped_column(

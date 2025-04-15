@@ -28,17 +28,17 @@ def upgrade() -> None:
             sa.ForeignKey('channels.id', onupdate='CASCADE', ondelete='CASCADE'),
             nullable=False,
         ),
-        sa.Column('provider', sa.String(50), nullable=False, server_default='all'),
-        sa.Column('type', sa.String(100), nullable=False),
-        sa.Column('name', sa.String(500), nullable=False),
+        sa.Column('provider', sa.String(255), nullable=False, server_default='all'),
+        sa.Column('type', sa.String(255), nullable=False),
+        sa.Column('name', sa.String(255), nullable=False),
         sa.Column('enabled', sa.Boolean, nullable=False),
         sa.Column('exclude_access_level', sa.SmallInteger, nullable=False),
         sa.Column('warning_enabled', sa.Boolean, nullable=False),
-        sa.Column('warning_message', sa.String(1000), nullable=False),
+        sa.Column('warning_message', sa.String(255), nullable=False),
         sa.Column(
             'warning_expire_duration', sa.Integer, nullable=False, comment='seconds'
         ),
-        sa.Column('timeout_message', sa.String(1000), nullable=False),
+        sa.Column('timeout_message', sa.String(255), nullable=False),
         sa.Column('timeout_duration', sa.Integer, nullable=False, comment='seconds'),
         sa.Column('settings', sa.JSON(), nullable=True),
         sa.Column('old_id', sa.Integer, nullable=True),
@@ -67,8 +67,8 @@ def upgrade() -> None:
             sa.ForeignKey('chat_filters.id', onupdate='CASCADE', ondelete='CASCADE'),
             nullable=False,
         ),
-        sa.Column('text', sa.String(1000), nullable=False),
-        sa.Column('type', sa.String(50), nullable=False),
+        sa.Column('text', sa.String(255), nullable=False),
+        sa.Column('type', sa.String(255), nullable=False),
     )
     op.execute("""
         insert into chat_filter_banned_terms 
@@ -87,7 +87,7 @@ def upgrade() -> None:
             sa.ForeignKey('chat_filters.id', onupdate='CASCADE', ondelete='CASCADE'),
             primary_key=True,
         ),
-        sa.Column('url', sa.String(1000), nullable=False),
+        sa.Column('url', sa.String(255), nullable=False),
     )
 
 

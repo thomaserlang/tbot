@@ -18,7 +18,7 @@ class MChannelProviderStreamViewerWatchtime(Base):
         ),
         primary_key=True,
     )
-    provider_viewer_id: Mapped[str] = mapped_column(sa.String(36), primary_key=True)
+    provider_viewer_id: Mapped[str] = mapped_column(sa.String(255), primary_key=True)
     watchtime: Mapped[int] = mapped_column(
         sa.Integer, server_default='0', nullable=False, comment='Seconds'
     )

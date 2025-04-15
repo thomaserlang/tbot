@@ -23,7 +23,7 @@ def upgrade() -> None:
         'channels',
         sa.Column('id', sa.UUID(), nullable=False, primary_key=True),
         sa.Column('display_name', sa.String(200), nullable=False),
-        sa.Column('twitch_id', sa.String(36), nullable=True),
+        sa.Column('twitch_id', sa.String(255), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('bot_active', sa.Boolean(), nullable=False),
         sa.Column('bot_muted', sa.Boolean(), nullable=False),
@@ -58,7 +58,7 @@ def upgrade() -> None:
         )
 
     op.alter_column(
-        'chatlogs', 'user_id', existing_type=sa.String(36), new_column_name='chatter_id'
+        'chatlogs', 'user_id', existing_type=sa.String(255), new_column_name='chatter_id'
     )
     op.alter_column(
         'chatlogs',
@@ -70,7 +70,7 @@ def upgrade() -> None:
     op.alter_column(
         'chatlogs',
         'user_display_name',
-        existing_type=sa.String(100),
+        existing_type=sa.String(255),
         new_column_name='chatter_display_name',
         type_=sa.String(200),
     )
@@ -83,7 +83,7 @@ def upgrade() -> None:
     op.alter_column(
         'chatlogs',
         'channel_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
         new_column_name='provider_id',
     )
     op.add_column('chatlogs', sa.Column('channel_id', sa.UUID, nullable=True))
@@ -103,12 +103,12 @@ def upgrade() -> None:
         'chatlog_chatter_stats',
         'user_id',
         new_column_name='chatter_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
     )
     op.alter_column(
         'chatlog_chatter_stats',
         'channel_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
         new_column_name='provider_id',
     )
     op.add_column(
@@ -124,7 +124,7 @@ def upgrade() -> None:
     )
     op.add_column(
         'chatlog_chatter_stats',
-        sa.Column('provider', sa.String(50), nullable=False, server_default='twitch'),
+        sa.Column('provider', sa.String(255), nullable=False, server_default='twitch'),
     )
     op.create_primary_key(
         'chatlog_chatter_stats_pkey',
@@ -144,7 +144,7 @@ def upgrade() -> None:
         'chatlog_chatters',
         'user_id',
         new_column_name='chatter_id',
-        existing_type=sa.String(36),
+        existing_type=sa.String(255),
     )
     op.alter_column(
         'chatlog_chatters',
