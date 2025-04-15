@@ -8,11 +8,11 @@ from tbot2.channel_stats import (
     end_channel_provider_stream,
 )
 
-from ..schemas.eventsub_headers import EventSubHeaders
-from ..schemas.eventsub_notification_schema import (
+from ..schemas.event_headers import EventSubHeaders
+from ..schemas.event_notification_schema import (
     EventSubNotification,
 )
-from ..schemas.eventsub_stream_online_offline_schema import (
+from ..schemas.eventstream_online_offline_schema import (
     EventStreamOffline,
     EventStreamOnline,
 )
@@ -25,7 +25,7 @@ router = APIRouter()
     '/stream.online',
     status_code=204,
 )
-async def stream_online_event_route(
+async def event_stream_online_route(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],
     request: Request,
     channel_id: UUID,
@@ -49,7 +49,7 @@ async def stream_online_event_route(
     '/stream.offline',
     status_code=204,
 )
-async def stream_offline_event_route(
+async def event_stream_offline_route(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],
     channel_id: UUID,
     request: Request,

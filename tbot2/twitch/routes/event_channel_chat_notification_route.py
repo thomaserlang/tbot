@@ -9,11 +9,11 @@ from tbot2.chatlog import create_chatlog
 from tbot2.common import ChatMessage
 from tbot2.database import database
 
-from ..schemas.eventsub_channel_chat_notification_schema import (
+from ..schemas.event_channel_chat_notification_schema import (
     EventChannelChatNotification,
 )
-from ..schemas.eventsub_headers import EventSubHeaders
-from ..schemas.eventsub_notification_schema import (
+from ..schemas.event_headers import EventSubHeaders
+from ..schemas.event_notification_schema import (
     EventSubNotification,
 )
 from .dependencies import validate_twitch_webhook_signature
@@ -25,7 +25,7 @@ router = APIRouter()
     '/channel.chat.notification',
     status_code=204,
 )
-async def channel_chat_notification_event_route(
+async def event_channel_chat_notification_route(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],
     request: Request,
     channel_id: UUID,

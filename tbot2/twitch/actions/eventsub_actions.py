@@ -16,7 +16,7 @@ from tbot2.channel import (
 from tbot2.config_settings import config
 from tbot2.exceptions import ErrorMessage
 
-from ..schemas.eventsub_notification_schema import (
+from ..schemas.event_notification_schema import (
     EventSubRegistration,
     EventSubSubscription,
 )
@@ -104,7 +104,15 @@ def get_eventsub_registrations(
             version='1',
             condition={
                 'broadcaster_user_id': broadcaster_user_id,
-                'user_id': twitch_bot_user_id,
+                'user_id': broadcaster_user_id,
+            },
+        ),
+        EventSubRegistration(
+            event_type='channel.moderate',
+            version='2',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+                'moderator_user_id': broadcaster_user_id,
             },
         ),
     ]

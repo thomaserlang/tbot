@@ -17,11 +17,11 @@ from tbot2.twitch import twitch_warn_chat_user
 from ..actions.twitch_ban_user_actions import twitch_ban_user
 from ..actions.twitch_delete_message_actions import twitch_delete_message
 from ..actions.twitch_send_message_actions import twitch_bot_send_message
-from ..schemas.eventsub_channel_chat_message_schema import (
+from ..schemas.event_channel_chat_message_schema import (
     EventChannelChatMessage,
 )
-from ..schemas.eventsub_headers import EventSubHeaders
-from ..schemas.eventsub_notification_schema import (
+from ..schemas.event_headers import EventSubHeaders
+from ..schemas.event_notification_schema import (
     EventSubNotification,
 )
 from .dependencies import validate_twitch_webhook_signature
@@ -33,7 +33,7 @@ router = APIRouter()
     '/channel.chat.message',
     status_code=204,
 )
-async def channel_chat_message_event_route(
+async def event_channel_chat_message_route(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],
     request: Request,
     channel_id: UUID,

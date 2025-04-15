@@ -3,7 +3,7 @@ from typing import Literal
 from tbot2.common import BaseSchema
 from tbot2.common.schemas.twitch_schemas import TwitchBadge
 
-from .eventsub_channel_chat_message_schema import (
+from .event_channel_chat_message_schema import (
     ChannelChatMessageMessage,
 )
 
