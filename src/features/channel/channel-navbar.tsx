@@ -1,4 +1,4 @@
-import { Box, NavLink, Paper } from '@mantine/core'
+import { Badge, Box, NavLink, Paper } from '@mantine/core'
 import {
     IconBlocks,
     IconClock,
@@ -12,8 +12,10 @@ import {
     IconShieldCog,
 } from '@tabler/icons-react'
 import { NavLink as RouterNavLink } from 'react-router-dom'
+import { useGetProviders } from '../channel-providers/providers.api'
 import { CurrentChannelCard } from './components/current-channel-card'
 import { useCurrentChannel } from './current-channel.provider'
+import { Channel } from './types'
 
 export function ChannelNavbar() {
     const channel = useCurrentChannel()
@@ -30,12 +32,7 @@ export function ChannelNavbar() {
                     leftSection={<IconHome size={20} />}
                     end
                 />
-                <NavLink
-                    component={RouterNavLink}
-                    to={`/channels/${channel.id}/providers`}
-                    label="Providers"
-                    leftSection={<IconLink size={20} />}
-                />
+                <ProvidersNavbar channel={channel} />
                 <NavLink
                     component={RouterNavLink}
                     to={`/channels/${channel.id}/combined-chat`}
@@ -102,5 +99,33 @@ export function ChannelNavbar() {
                 />
             </Box>
         </>
+    )
+}
+
+function ProvidersNavbar({ channel }: { channel: Channel }) {
+    const { data } = useGetProviders({
+        channelId: channel.id,
+    })
+
+    let warnings = 0
+    for (const provider of data ?? []) {
+        if (provider.scope_needed) warnings++
+        if (provider.bot_provider?.scope_needed) warnings++
+    }
+
+    return (
+        <NavLink
+            component={RouterNavLink}
+            to={`/channels/${channel.id}/providers`}
+            label="Providers"
+            leftSection={<IconLink size={20} />}
+            rightSection={
+                warnings > 0 && (
+                    <Badge title="Extra permissions required" color="red">
+                        {warnings}
+                    </Badge>
+                )
+            }
+        />
     )
 }

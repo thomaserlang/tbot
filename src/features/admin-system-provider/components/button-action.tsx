@@ -36,7 +36,7 @@ export function ButtonAction({ provider, onDeleted }: Props) {
         <Flex gap="1rem">
             {provider.scope_needed && (
                 <Button
-                    color="orange"
+                    color="blue"
                     loading={connectUrl.isPending}
                     onClick={() => {
                         connectUrl.mutate({
@@ -44,7 +44,7 @@ export function ButtonAction({ provider, onDeleted }: Props) {
                         })
                     }}
                 >
-                    Reconnect needed
+                    Extra permissions needed
                 </Button>
             )}
 

@@ -79,7 +79,7 @@ export function BotButtonAction({ provider }: Props) {
 
             {provider.bot_provider?.scope_needed && (
                 <Button
-                    color="orange"
+                    color="blue"
                     loading={connectBotUrl.isPending}
                     onClick={() => {
                         connectBotUrl.mutate({
@@ -88,7 +88,7 @@ export function BotButtonAction({ provider }: Props) {
                         })
                     }}
                 >
-                    Reconnect needed
+                    Extra permissions needed
                 </Button>
             )}
         </Flex>

@@ -35,18 +35,7 @@ export function ProvidersView({ providers }: Props) {
                             ml="auto"
                             size="xs"
                             variant="outline"
-                            rightSection={
-                                (provider.scope_needed ||
-                                    provider.bot_provider?.scope_needed) && (
-                                    <Badge
-                                        size="xs"
-                                        color="orange"
-                                        title="Extra scope required"
-                                    >
-                                        1
-                                    </Badge>
-                                )
-                            }
+                            rightSection={providerErrors(provider)}
                             onClick={() => {
                                 navigate(
                                     `/channels/${provider.channel_id}/providers/${provider.id}`
@@ -59,5 +48,17 @@ export function ProvidersView({ providers }: Props) {
                 </Paper>
             ))}
         </Flex>
+    )
+}
+
+function providerErrors(provider: ChannelProvider) {
+    let warnings = 0
+    if (provider.scope_needed) warnings++
+    if (provider.bot_provider?.scope_needed) warnings++
+    if (warnings === 0) return null
+    return (
+        <Badge size="xs" color="red" title="Extra permissions required">
+            {warnings}
+        </Badge>
     )
 }
