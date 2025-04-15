@@ -30,7 +30,7 @@ router = APIRouter()
 
 
 @router.post(
-    '/twitch/eventsub/channel.chat.message',
+    '/channel.chat.message',
     status_code=204,
 )
 async def channel_chat_message_event_route(

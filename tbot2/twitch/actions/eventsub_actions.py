@@ -99,6 +99,14 @@ def get_eventsub_registrations(
                 'broadcaster_user_id': broadcaster_user_id,
             },
         ),
+        EventSubRegistration(
+            event_type='channel.chat.notification',
+            version='1',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+                'user_id': twitch_bot_user_id,
+            },
+        ),
     ]
 
 

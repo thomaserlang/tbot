@@ -22,7 +22,7 @@ router = APIRouter()
 
 
 @router.post(
-    '/twitch/eventsub/stream.online',
+    '/stream.online',
     status_code=204,
 )
 async def stream_online_event_route(
@@ -46,7 +46,7 @@ async def stream_online_event_route(
 
 
 @router.post(
-    '/twitch/eventsub/stream.offline',
+    '/stream.offline',
     status_code=204,
 )
 async def stream_offline_event_route(
