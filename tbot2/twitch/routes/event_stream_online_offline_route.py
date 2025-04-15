@@ -12,7 +12,7 @@ from ..schemas.event_headers import EventSubHeaders
 from ..schemas.event_notification_schema import (
     EventSubNotification,
 )
-from ..schemas.eventstream_online_offline_schema import (
+from ..schemas.event_stream_online_offline_schema import (
     EventStreamOffline,
     EventStreamOnline,
 )
