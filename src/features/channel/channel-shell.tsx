@@ -1,10 +1,10 @@
-import { Anchor, AppShell, Burger, Flex, Text } from '@mantine/core'
+import { AppShell, Burger, Flex } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { ReactNode, useEffect } from 'react'
-import { Link, useLocation } from 'react-router'
+import { useLocation } from 'react-router'
 
 import { CurrentUserCard } from '@/components/current-user'
-import { APP_TITLE } from '@/constants'
+import { Logo } from '@/components/logo'
 import { ChannelNavbar } from './channel-navbar'
 import { CurrentChannelProvider } from './current-channel.provider'
 
@@ -42,14 +42,7 @@ export function ChannelShell({ children }: { children: ReactNode }) {
                             size="sm"
                         />
 
-                        <Anchor
-                            className="logo"
-                            size="xl"
-                            component={Link}
-                            to="/"
-                        >
-                            <Text fw={700}>{APP_TITLE}</Text>
-                        </Anchor>
+                        <Logo width="7rem" />
 
                         <Flex ml="auto" mr="0.5rem">
                             <CurrentUserCard />

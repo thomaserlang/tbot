@@ -1,5 +1,5 @@
 import { ErrorBox } from '@/components/error-box'
-import { Container, Text, Title } from '@mantine/core'
+import { Anchor, Center, Container, Text, Title } from '@mantine/core'
 import {
     createBrowserRouter,
     isRouteErrorResponse,
@@ -12,6 +12,8 @@ import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
 import { CurrentUserProvider } from './components/current-user'
 import { AdminShell } from './features/admin/admin-shell'
 import { ChannelShell } from './features/channel/channel-shell'
+
+import { Logo } from './components/logo'
 
 const protectedRoutes: RouteObject[] = [
     {
@@ -138,14 +140,21 @@ export const router = createBrowserRouter([
             const error = useRouteError()
             if (isRouteErrorResponse(error)) {
                 return (
-                    <Container pt="1rem">
+                    <Container size="xs" pt="1rem">
+                        <Center mb="2rem">
+                            <Logo width="35rem" />
+                        </Center>
                         <Title order={1}>{error.status}</Title>
-                        <Text>{error.statusText}</Text>
+                        <Text mb="1rem">{error.statusText}</Text>
+                        <Anchor>Go back</Anchor>
                     </Container>
                 )
             }
             return (
                 <Container pt="1rem">
+                    <Center mb="2rem">
+                        <Logo width="35rem" />
+                    </Center>
                     <ErrorBox errorObj={error} />
                 </Container>
             )

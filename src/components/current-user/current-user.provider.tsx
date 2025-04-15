@@ -1,6 +1,7 @@
-import { Container } from '@mantine/core'
+import { Center, Container } from '@mantine/core'
 import { createContext, useContext } from 'react'
 import { ErrorBox } from '../error-box'
+import { Logo } from '../logo'
 import { useGetCurrentUser } from './current-user.api'
 import { ICurrentUser } from './current-user.type'
 
@@ -15,7 +16,10 @@ export function CurrentUserProvider({
 
     if (error)
         return (
-            <Container>
+            <Container mt="2rem">
+                <Center mb="2rem">
+                    <Logo width="35rem" />
+                </Center>
                 <ErrorBox errorObj={error} />
             </Container>
         )
