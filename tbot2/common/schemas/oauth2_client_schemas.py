@@ -29,7 +29,7 @@ class Oauth2AuthorizeParams(BaseModel):
             'context': value,
             'exp': datetime.now(tz=UTC) + timedelta(minutes=5),
         }
-        return jwt.encode(payload, config.cookie_secret, algorithm='HS256')
+        return jwt.encode(payload, config.secret, algorithm='HS256')
 
     @field_serializer('force_verify')
     def validate_force_verify(self, value: bool) -> str:
@@ -56,7 +56,7 @@ class Oauth2AuthorizeResponse(BaseModel):
             try:
                 result = jwt.decode(
                     value,
-                    config.cookie_secret,
+                    config.secret,
                     algorithms=['HS256'],
                 )['context']
             except jwt.ExpiredSignatureError:

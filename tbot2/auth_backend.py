@@ -37,7 +37,7 @@ class AuthBackend(AuthenticationBackend):
         try:
             payload = jwt.decode(
                 credentials,
-                config.cookie_secret,
+                config.secret,
                 algorithms=['HS256'],
             )
             token_data = TokenData.model_validate_json(payload['context'])
@@ -51,4 +51,4 @@ async def create_token_str(token_data: TokenData) -> str:
         'context': token_data.model_dump_json(),
         'exp': datetime_now() + timedelta(hours=12),
     }
-    return jwt.encode(payload, config.cookie_secret, algorithm='HS256')
+    return jwt.encode(payload, config.secret, algorithm='HS256')

@@ -111,7 +111,7 @@ class ConfigSettings(BaseYamlSettings):
     debug: bool = False
     sentry_dsn: str | None = None
     port: int = 8001
-    cookie_secret: str = ''
+    secret: str = ''
     base_url: AnyHttpUrl = AnyHttpUrl('https://heimra.net')
     twitch: ConfigTwitchModel = ConfigTwitchModel()
     discord: ConfigDiscordModel = ConfigDiscordModel()
