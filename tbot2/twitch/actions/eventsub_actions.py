@@ -132,7 +132,7 @@ async def _register_eventsub(
                 'method': 'webhook',
                 'callback': urljoin(
                     str(
-                        config.twitch.eventsub_callback_base_url or config.web.base_url
+                        config.twitch.eventsub_callback_base_url or config.base_url
                     ),
                     f'/api/2/twitch/eventsub/{registration.event_type}?channel_id={channel_id}',
                 ),

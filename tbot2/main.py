@@ -36,7 +36,7 @@ app = FastAPI(title=f'{APP_TITLE} API', version='2.0', lifespan=lifespan)
 app.add_middleware(AuthenticationMiddleware, backend=AuthBackend())
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[str(config.web.base_url)],
+    allow_origins=[str(config.base_url)],
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],

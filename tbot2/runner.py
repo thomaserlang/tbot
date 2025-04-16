@@ -20,7 +20,7 @@ def api() -> None:
     uvicorn.run(
         'tbot2.main:app',
         host='0.0.0.0',
-        port=config.web.port,
+        port=config.port,
         reload=config.debug,
         proxy_headers=True,
         forwarded_allow_ips='*',

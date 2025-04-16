@@ -194,5 +194,5 @@ class ChannelProviderBotOAuth(Auth):
 def _get_missing_provider_message(channel_uuid: UUID, provider: Provider) -> str:
     return (
         f'{provider} must be added as a provider: '
-        f'{config.web.base_url}channels/{channel_uuid}/providers'
+        f'{config.base_url}channels/{channel_uuid}/providers'
     )

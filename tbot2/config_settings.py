@@ -9,12 +9,6 @@ from pydantic import AnyHttpUrl, BaseModel
 from yaml_settings_pydantic import BaseYamlSettings, YamlSettingsConfigDict
 
 
-class ConfigWebModel(BaseModel):
-    port: int = 8001
-    cookie_secret: str = ''
-    base_url: AnyHttpUrl = AnyHttpUrl('https://heimra.net')
-
-
 class ConfigTwitchModel(BaseModel):
     client_id: str = ''
     client_secret: str = ''
@@ -116,7 +110,9 @@ class ConfigSettings(BaseYamlSettings):
 
     debug: bool = False
     sentry_dsn: str | None = None
-    web: ConfigWebModel = ConfigWebModel()
+    port: int = 8001
+    cookie_secret: str = ''
+    base_url: AnyHttpUrl = AnyHttpUrl('https://heimra.net')
     twitch: ConfigTwitchModel = ConfigTwitchModel()
     discord: ConfigDiscordModel = ConfigDiscordModel()
     youtube: ConfigYoutubeModel = ConfigYoutubeModel()
