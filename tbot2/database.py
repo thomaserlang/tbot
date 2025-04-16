@@ -29,12 +29,12 @@ class Database:
 
     async def setup(self) -> None:
         database_url = sa.URL.create(
-            drivername=config.mysql.drivername,
-            username=config.mysql.user,
-            password=config.mysql.password,
-            host=config.mysql.host,
-            port=config.mysql.port,
-            database=config.mysql.database,
+            drivername=config.db.drivername,
+            username=config.db.user,
+            password=config.db.password,
+            host=config.db.host,
+            port=config.db.port,
+            database=config.db.database,
         )
 
         self.engine = create_async_engine(
@@ -65,15 +65,15 @@ class Database:
 
     async def setup_test(self) -> None:
         config.redis.db = 15
-        config.mysql.database = 'tbot-testdb'
+        config.db.database = 'tbot-testdb'
 
         if not self._test_setup:
             u = sa.URL.create(
                 drivername='mariadb+pymysql',
-                username=config.mysql.user,
-                password=config.mysql.password,
-                host=config.mysql.host,
-                port=config.mysql.port,
+                username=config.db.user,
+                password=config.db.password,
+                host=config.db.host,
+                port=config.db.port,
             )
             engine = sa.create_engine(u)
             with engine.begin() as conn:

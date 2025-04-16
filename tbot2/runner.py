@@ -38,7 +38,7 @@ def upgrade(revision: str) -> None:
     cfg.set_main_option('script_location', 'tbot2:migrations')
     cfg.set_main_option(
         'sqlalchemy.url',
-        f'mariadb+pymysql://{config.mysql.user}:{config.mysql.password}@{config.mysql.host}:{config.mysql.port}/{config.mysql.database}',
+        f'mariadb+pymysql://{config.db.user}:{config.db.password}@{config.db.host}:{config.db.port}/{config.db.database}',
     )
     command.upgrade(cfg, revision)
 
