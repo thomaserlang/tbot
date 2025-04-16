@@ -13,7 +13,7 @@ export function ProviderView({ provider, onDeleted }: Props) {
         <Flex gap="1rem" direction="column">
             <ButtonAction provider={provider} onDeleted={onDeleted} />
 
-            {provider.provider == 'twitch' && (
+            {['twitch', 'youtube'].includes(provider.provider) && (
                 <Flex gap="0.25rem" direction="column">
                     <Title order={5}>Your own bot</Title>
                     <BotButtonAction provider={provider} />

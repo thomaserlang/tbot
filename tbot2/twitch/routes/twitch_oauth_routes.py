@@ -237,19 +237,40 @@ async def twitch_auth_route(
     )
     twitch_user = TwitchUser(**r.json()['data'][0])
 
-    if params.state['mode'] == 'sign_in':
-        result = await get_or_create_user(
-            provider='twitch',
-            provider_user_id=twitch_user.id,
-            data=UserCreate(
-                username=twitch_user.login,
-                display_name=twitch_user.display_name,
-                email=twitch_user.email,
-            ),
-        )
-        if result.created and result.channel:
+    match params.state['mode']:
+        case 'sign_in':
+            result = await get_or_create_user(
+                provider='twitch',
+                provider_user_id=twitch_user.id,
+                data=UserCreate(
+                    username=twitch_user.login,
+                    display_name=twitch_user.display_name,
+                    email=twitch_user.email,
+                ),
+            )
+            if result.created and result.channel:
+                await save_channel_oauth_provider(
+                    channel_id=result.channel.id,
+                    provider='twitch',
+                    data=ChannelOAuthProviderRequest(
+                        access_token=response.access_token,
+                        refresh_token=response.refresh_token,
+                        expires_in=response.expires_in,
+                        scope=params.scope,
+                        name=twitch_user.display_name,
+                        provider_user_id=twitch_user.id,
+                    ),
+                )
+
+            token = await create_token_str(result.token_data)
+            return RedirectResponse(
+                params.state['redirect_to'] + f'#access_token={token}'
+            )
+
+        case 'connect':
+            channel_id = UUID(params.state['channel_id'])
             await save_channel_oauth_provider(
-                channel_id=result.channel.id,
+                channel_id=channel_id,
                 provider='twitch',
                 data=ChannelOAuthProviderRequest(
                     access_token=response.access_token,
@@ -261,90 +282,72 @@ async def twitch_auth_route(
                 ),
             )
 
-        token = await create_token_str(result.token_data)
-        return RedirectResponse(params.state['redirect_to'] + f'#access_token={token}')
+            if provider := await get_system_bot_provider(
+                provider='twitch',
+            ):
+                await twitch_add_channel_moderator(
+                    channel_id=channel_id,
+                    twitch_user_id=provider.provider_user_id,
+                    broadcaster_id=twitch_user.id,
+                )
 
-    elif params.state['mode'] == 'connect':
-        channel_id = UUID(params.state['channel_id'])
-        await save_channel_oauth_provider(
-            channel_id=channel_id,
-            provider='twitch',
-            data=ChannelOAuthProviderRequest(
-                access_token=response.access_token,
-                refresh_token=response.refresh_token,
-                expires_in=response.expires_in,
-                scope=params.scope,
-                name=twitch_user.display_name,
-                provider_user_id=twitch_user.id,
-            ),
-        )
-
-        if provider := await get_system_bot_provider(
-            provider='twitch',
-        ):
-            await twitch_add_channel_moderator(
+            await refresh_channel_eventsubs(
                 channel_id=channel_id,
-                twitch_user_id=provider.provider_user_id,
-                broadcaster_id=twitch_user.id,
             )
 
-        await refresh_channel_eventsubs(
-            channel_id=channel_id,
-        )
-
-    elif params.state['mode'] == 'connect_bot':
-        channel_id = UUID(params.state['channel_id'])
-        bot_provider = await save_bot_provider(
-            data=BotProviderRequest(
-                provider='twitch',
-                provider_user_id=twitch_user.id,
-                access_token=response.access_token,
-                refresh_token=response.refresh_token,
-                expires_in=response.expires_in,
-                scope=params.scope,
-                name=twitch_user.display_name,
-            ),
-        )
-        await save_channel_oauth_provider(
-            channel_id=channel_id,
-            provider='twitch',
-            data=ChannelOAuthProviderRequest(
-                bot_provider_id=bot_provider.id,
-            ),
-        )
-        provider = await get_channel_oauth_provider(
-            channel_id=channel_id,
-            provider='twitch',
-        )
-        if provider:
-            await twitch_add_channel_moderator(
-                channel_id=channel_id,
-                twitch_user_id=twitch_user.id,
-                broadcaster_id=provider.provider_user_id or '',
+        case 'connect_bot':
+            channel_id = UUID(params.state['channel_id'])
+            bot_provider = await save_bot_provider(
+                data=BotProviderRequest(
+                    provider='twitch',
+                    provider_user_id=twitch_user.id,
+                    access_token=response.access_token,
+                    refresh_token=response.refresh_token,
+                    expires_in=response.expires_in,
+                    scope=params.scope,
+                    name=twitch_user.display_name,
+                ),
             )
-        await refresh_channel_eventsubs(
-            channel_id=channel_id, event_type='channel.chat.message'
-        )
-
-    elif params.state['mode'] == 'connect_system_provider_bot':
-        await save_bot_provider(
-            data=BotProviderRequest(
+            await save_channel_oauth_provider(
+                channel_id=channel_id,
                 provider='twitch',
-                provider_user_id=twitch_user.id,
-                access_token=response.access_token,
-                refresh_token=response.refresh_token,
-                expires_in=response.expires_in,
-                scope=params.scope,
-                name=twitch_user.display_name,
-                system_default=True,
-            ),
-        )
-        await refresh_all_eventsubs(event_type='channel.chat.message')
+                data=ChannelOAuthProviderRequest(
+                    bot_provider_id=bot_provider.id,
+                ),
+            )
+            provider = await get_channel_oauth_provider(
+                channel_id=channel_id,
+                provider='twitch',
+            )
+            if provider:
+                await twitch_add_channel_moderator(
+                    channel_id=channel_id,
+                    twitch_user_id=twitch_user.id,
+                    broadcaster_id=provider.provider_user_id or '',
+                )
+            await refresh_channel_eventsubs(
+                channel_id=channel_id, event_type='channel.chat.message'
+            )
 
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail=f'Invalid state mode: {params.state["mode"]}',
-        )
+        case 'connect_system_provider_bot':
+            await save_bot_provider(
+                data=BotProviderRequest(
+                    provider='twitch',
+                    provider_user_id=twitch_user.id,
+                    access_token=response.access_token,
+                    refresh_token=response.refresh_token,
+                    expires_in=response.expires_in,
+                    scope=params.scope,
+                    name=twitch_user.display_name,
+                    system_default=True,
+                ),
+            )
+            await refresh_all_eventsubs(event_type='channel.chat.message')
+
+        case _:
+            raise HTTPException(
+                status_code=400,
+                detail=f'Invalid state mode: {params.state["mode"]}',
+            )
 
     return RedirectResponse(params.state['redirect_to'])

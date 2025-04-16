@@ -18,4 +18,5 @@ export const channelProviderLabels: { [provider: string | Provider]: string } =
     {
         twitch: 'Twitch',
         spotify: 'Spotify',
+        youtube: 'YouTube',
     } as const

@@ -33,9 +33,6 @@ def upgrade() -> None:
         sa.UniqueConstraint(
             'provider', 'provider_user_id', name='uq_bot_providers_provider_user_id'
         ),
-        sa.UniqueConstraint(
-            'provider', 'system_default', name='uq_bot_providers_system_default'
-        ),
     )
 
     op.add_column(

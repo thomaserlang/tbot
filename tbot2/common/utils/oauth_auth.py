@@ -26,19 +26,20 @@ class ChannelProviderOAuth(Auth):
     def __init__(
         self, token_url: str, client_id: str, client_secret: str, provider: Provider
     ) -> None:
-        self.token_url = token_url
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.provider = provider
-        self._async_lock = asyncio.Lock()
+        self.token_url: str = token_url
+        self.client_id: str = client_id
+        self.client_secret: str = client_secret
+        self.provider: Provider = provider
+        self._async_lock: asyncio.Lock = asyncio.Lock()
 
     async def async_auth_flow(
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
         provider: ChannelOAuthProvider | None = None
-        channel_id = UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER, None))
+        channel_id = request.headers.pop(TBOT_CHANNEL_ID_HEADER, None)
         if not channel_id:
             raise Exception(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
+        channel_id = UUID(channel_id)
 
         async with self._async_lock:
             if not request.headers.get('Authorization'):
@@ -112,19 +113,20 @@ class ChannelProviderBotOAuth(Auth):
     def __init__(
         self, token_url: str, client_id: str, client_secret: str, provider: Provider
     ) -> None:
-        self.token_url = token_url
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.provider = provider
-        self._async_lock = asyncio.Lock()
+        self.token_url: str = token_url
+        self.client_id: str = client_id
+        self.client_secret: str = client_secret
+        self.provider: Provider = provider
+        self._async_lock: asyncio.Lock = asyncio.Lock()
 
     async def async_auth_flow(
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
         provider: BotProvider | None = None
-        channel_id = UUID(request.headers.pop(TBOT_CHANNEL_ID_HEADER, None))
+        channel_id = request.headers.pop(TBOT_CHANNEL_ID_HEADER, None)
         if not channel_id:
             raise Exception(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
+        channel_id = UUID(channel_id)
 
         async with self._async_lock:
             if not request.headers.get('Authorization'):

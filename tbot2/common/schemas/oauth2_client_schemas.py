@@ -4,6 +4,7 @@ from typing import Annotated, Any
 
 import jwt
 from fastapi import HTTPException
+from loguru import logger
 from pydantic import (
     BaseModel,
     StringConstraints,
@@ -21,7 +22,10 @@ class Oauth2AuthorizeParams(BaseModel):
     scope: Annotated[str, StringConstraints(min_length=1)]
     state: dict[str, Any] = {}
     claims: dict[str, str] | None = None
-    force_verify: bool = False
+    force_verify: bool | None = None
+    access_type: str | None = None
+    include_granted_scopes: bool | None = None
+    prompt: str | None = None
 
     @field_serializer('state')
     def serialize_state(self, value: dict[str, Any]) -> str:
@@ -31,8 +35,10 @@ class Oauth2AuthorizeParams(BaseModel):
         }
         return jwt.encode(payload, config.secret, algorithm='HS256')
 
-    @field_serializer('force_verify')
-    def validate_force_verify(self, value: bool) -> str:
+    @field_serializer('force_verify', 'include_granted_scopes')
+    def validate_force_verify(self, value: bool | None) -> str | None:
+        if value is None:
+            return None
         return 'true' if value else 'false'
 
     @field_serializer('claims')
@@ -86,3 +92,18 @@ class Oauth2TokenResponse(BaseModel):
     refresh_token: Annotated[str, StringConstraints(min_length=1)]
     token_type: Annotated[str, StringConstraints(min_length=1)]
     expires_in: int
+    id_token: dict[str, Any] | None = None
+
+    @field_validator('id_token', mode='before')
+    def validate_jwt_token(cls, value: str | None) -> dict[str, Any] | None:
+        if value is None:
+            return None
+
+        try:
+            return jwt.decode(value, options={'verify_signature': False})
+        except jwt.PyJWTError as e:
+            logger.error(f'Invalid jwt token: {e}')
+            raise HTTPException(
+                status_code=400,
+                detail='Invalid id_token',
+            ) from e

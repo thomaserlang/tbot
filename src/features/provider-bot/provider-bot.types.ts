@@ -14,4 +14,5 @@ export interface ProviderBot {
 
 export const providerBotLabels: { [provider: string | Provider]: string } = {
     twitch: 'Twitch',
+    youtube: 'YouTube',
 } as const
