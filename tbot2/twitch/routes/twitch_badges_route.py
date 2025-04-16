@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, Security
 
 from tbot2.channel import get_channel_oauth_provider
-from tbot2.chatlog import ChatlogsScope
+from tbot2.channel_chatlog import ChatlogsScope
 from tbot2.common import TokenData
 from tbot2.dependecies import authenticated
 

@@ -22,7 +22,7 @@ async def give_points_vars(
     sender_points = await get_points(
         channel_id=chat_message.channel_id,
         provider=chat_message.provider,
-        chatter_id=chat_message.chatter_id,
+        provider_viewer_id=chat_message.provider_viewer_id,
     )
 
     try:
@@ -46,7 +46,7 @@ async def give_points_vars(
     if give_points < 1:
         raise CommandError(f'You must give at least 1 {settings.points_name}.')
 
-    if chat_message.chatter_id == give_to_user.id:
+    if chat_message.provider_viewer_id == give_to_user.id:
         raise CommandError(f'You cannot give {settings.points_name} to yourself.')
 
     async with get_session() as session:
@@ -54,7 +54,7 @@ async def give_points_vars(
             session=session,
             channel_id=chat_message.channel_id,
             provider=chat_message.provider,
-            chatter_id=chat_message.chatter_id,
+            provider_viewer_id=chat_message.provider_viewer_id,
             points=-give_points,
         )
 
@@ -62,11 +62,11 @@ async def give_points_vars(
             session=session,
             channel_id=chat_message.channel_id,
             provider=chat_message.provider,
-            chatter_id=give_to_user.id,
+            provider_viewer_id=give_to_user.id,
             points=give_points,
         )
 
     vars[
         'give_points'
-    ].value = f'{chat_message.chatter_display_name} gave {give_points} '
+    ].value = f'{chat_message.viewer_display_name} gave {give_points} '
     '{settings.points_name} to {give_to_user.display_name}.'

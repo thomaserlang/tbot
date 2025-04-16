@@ -86,35 +86,35 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture) -> None:
     await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='test_chatter',
+        provider_viewer_id='test_chatter',
         points=100,
     )
 
     await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='test_chatter2',
+        provider_viewer_id='test_chatter2',
         points=200,
     )
 
     await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='test_chatter3',
+        provider_viewer_id='test_chatter3',
         points=300,
     )
 
     await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='test_chatter4',
+        provider_viewer_id='test_chatter4',
         points=400,
     )
 
     await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='test_chatter5',
+        provider_viewer_id='test_chatter5',
         points=500,
     )
 
@@ -127,9 +127,9 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture) -> None:
             provider='twitch',
             provider_id='1234',
             channel_id=channel.id,
-            chatter_id='test_chatter',
-            chatter_name='test',
-            chatter_display_name='Test',
+            provider_viewer_id='test_chatter',
+            viewer_name='test',
+            viewer_display_name='Test',
             message='!points_ranking',
             msg_id='123',
         ),

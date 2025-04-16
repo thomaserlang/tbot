@@ -22,12 +22,10 @@ class ChatMessage(BaseRequestSchema):
     provider: Provider
     provider_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     channel_id: Annotated[UUID, Doc('The ID of the TBot channel')]
-    chatter_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
-    chatter_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
-    chatter_display_name: Annotated[
-        str, StringConstraints(min_length=1, max_length=200)
-    ]
-    chatter_color: (
+    provider_viewer_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
+    viewer_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
+    viewer_display_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
+    viewer_color: (
         Annotated[
             str,
             StringConstraints(
@@ -41,9 +39,9 @@ class ChatMessage(BaseRequestSchema):
     twitch_badges: list[TwitchBadge] | None = None
     twitch_fragments: list[TwitchMessageFragment] | None = None
 
-    @field_validator('chatter_color', mode='before')
+    @field_validator('viewer_color', mode='before')
     @classmethod
-    def validate_chatter_color(cls, value: str | None) -> str | None:
+    def validate_viewer_color(cls, value: str | None) -> str | None:
         if not value:
             return None
         return value

@@ -11,6 +11,6 @@ from ..var_filler import fills_vars
 async def user_vars(
     chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
-    vars['user'].value = chat_message.chatter_display_name
+    vars['user'].value = chat_message.viewer_display_name
     if command.args:
         vars['user'].value = safe_username(command.args[0])

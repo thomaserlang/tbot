@@ -8,7 +8,7 @@ from tbot2.common import BaseRequestSchema, Provider
 class ChannelQuoteCreate(BaseRequestSchema):
     message: Annotated[str, StringConstraints(min_length=1, max_length=500)]
     provider: Provider
-    created_by_chatter_id: Annotated[
+    created_by_provider_viewer_id: Annotated[
         str, StringConstraints(min_length=0, max_length=255)
     ]
     created_by_display_name: Annotated[
@@ -23,7 +23,7 @@ class ChannelQuoteUpdate(BaseRequestSchema):
     provider: Provider | None = (
         None
     )
-    created_by_chatter_id: (
+    created_by_provider_viewer_id: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
     created_by_display_name: (
@@ -33,7 +33,7 @@ class ChannelQuoteUpdate(BaseRequestSchema):
     @field_validator(
         'message',
         'provider',
-        'created_by_chatter_id',
+        'created_by_provider_viewer_id',
         'created_by_display_name',
     )
     def check_not_none(cls, v: str | None) -> str:

@@ -23,7 +23,7 @@ from ..var_filler import fills_vars
 async def gambling_stats(
     chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
-    for_chatter_id = chat_message.chatter_id
+    for_provider_viewer_id = chat_message.provider_viewer_id
     if len(command.args) > 0:
         chatter = await lookup_twitch_user(
             channel_id=chat_message.channel_id,
@@ -31,12 +31,12 @@ async def gambling_stats(
         )
         if not chatter:
             raise CommandError('User not found.')
-        for_chatter_id = chatter.id
+        for_provider_viewer_id = chatter.id
 
     stats = await get_chatter_gambling_stats(
         channel_id=chat_message.channel_id,
         provider=chat_message.provider,
-        chatter_id=for_chatter_id,
+        provider_viewer_id=for_provider_viewer_id,
     )
 
     vars['gambling_stats.slots_wins'].value = stats.slots_wins

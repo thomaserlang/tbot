@@ -5,7 +5,7 @@ from tbot2.common import BaseSchema, Provider
 
 class ChatterPoints(BaseSchema):
     channel_id: UUID
-    chatter_id: str
+    provider_viewer_id: str
     provider: Provider
     points: int
 

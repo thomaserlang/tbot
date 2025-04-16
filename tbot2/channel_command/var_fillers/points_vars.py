@@ -17,7 +17,7 @@ from ..var_filler import fills_vars
 async def chatter_point_vars(
     chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
-    for_chatter_id = chat_message.chatter_id
+    for_provider_viewer_id = chat_message.provider_viewer_id
     if len(command.args) > 0:
         chatter = await lookup_twitch_user(
             channel_id=chat_message.channel_id,
@@ -25,12 +25,12 @@ async def chatter_point_vars(
         )
         if not chatter:
             raise CommandError('User not found.')
-        for_chatter_id = chatter.id
+        for_provider_viewer_id = chatter.id
 
     points_rank = await get_points_rank(
         channel_id=chat_message.channel_id,
         provider=chat_message.provider,
-        chatter_id=for_chatter_id,
+        provider_viewer_id=for_provider_viewer_id,
     )
 
     if not points_rank:

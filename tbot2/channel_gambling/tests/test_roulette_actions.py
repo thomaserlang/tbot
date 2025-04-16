@@ -17,14 +17,14 @@ async def test_roulette_actions(db: None) -> None:
         await roulette(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet=100,
         )
 
     await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='test_chatter',
+        provider_viewer_id='test_chatter',
         points=100,
     )
 
@@ -32,7 +32,7 @@ async def test_roulette_actions(db: None) -> None:
         await roulette(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet=4,
         )
 
@@ -40,7 +40,7 @@ async def test_roulette_actions(db: None) -> None:
         await roulette(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet='invalid',
         )
 
@@ -48,7 +48,7 @@ async def test_roulette_actions(db: None) -> None:
         await roulette(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet='101%',
         )
 
@@ -62,7 +62,7 @@ async def test_roulette_actions(db: None) -> None:
         result = await roulette(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet=50,
         )
         assert result.won
@@ -78,7 +78,7 @@ async def test_roulette_actions(db: None) -> None:
         result = await roulette(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet=50,
         )
         assert not result.won
@@ -91,7 +91,7 @@ async def test_roulette_actions(db: None) -> None:
         result = await roulette(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet='50%',
         )
         assert result.won
@@ -104,7 +104,7 @@ async def test_roulette_actions(db: None) -> None:
         result = await roulette(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet='all',
         )
         assert result.won
@@ -117,7 +117,7 @@ async def test_roulette_actions(db: None) -> None:
         result = await roulette(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet='all',
         )
         assert not result.won

@@ -22,7 +22,7 @@ async def points_ranking_vars(
     async with get_session() as session:
         result = await session.execute(
             sa.select(
-                MChatterPoints.chatter_id,
+                MChatterPoints.provider_viewer_id,
                 MChatterPoints.points,
                 sa.func.rank()
                 .over(
@@ -39,7 +39,7 @@ async def points_ranking_vars(
         for row in result:
             ranks.append(
                 {
-                    'chatter_id': row[0],
+                    'provider_viewer_id': row[0],
                     'points': row[1],
                     'rank': row[2],
                 }
@@ -47,7 +47,7 @@ async def points_ranking_vars(
 
         users = await lookup_twitch_users(
             channel_id=chat_message.channel_id,
-            user_ids=[r['chatter_id'] for r in ranks],
+            user_ids=[r['provider_viewer_id'] for r in ranks],
         )
 
         for rank, user in zip(ranks, users, strict=True):

@@ -230,9 +230,9 @@ async def banned_term_test_route(
             provider='twitch',
             provider_id='test',
             channel_id=channel_id,
-            chatter_id='test',
-            chatter_name='test',
-            chatter_display_name='test',
+            provider_viewer_id='test',
+            viewer_name='test',
+            viewer_display_name='test',
             message=data.message,
             msg_id='test',
         )

@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Request
 from uuid6 import uuid7
 
-from tbot2.chatlog import create_chatlog
+from tbot2.channel_chatlog import create_chatlog
 from tbot2.common import ChatMessage
 from tbot2.database import database
 
@@ -47,10 +47,10 @@ async def event_channel_chat_notification_route(
             type='notice',
             sub_type=data.event.notice_type,
             channel_id=channel_id,
-            chatter_id=data.event.chatter_user_id,
-            chatter_name=data.event.chatter_user_login,
-            chatter_display_name=data.event.chatter_user_name,
-            chatter_color=data.event.color,
+            provider_viewer_id=data.event.chatter_user_id,
+            viewer_name=data.event.chatter_user_login,
+            viewer_display_name=data.event.chatter_user_name,
+            viewer_color=data.event.color,
             created_at=headers.message_timestamp,
             message=data.event.system_message,
             msg_id=headers.message_id,
@@ -65,10 +65,10 @@ async def event_channel_chat_notification_route(
                 id=uuid7(),
                 type='message',
                 channel_id=channel_id,
-                chatter_id=data.event.chatter_user_id,
-                chatter_name=data.event.chatter_user_login,
-                chatter_display_name=data.event.chatter_user_name,
-                chatter_color=data.event.color,
+                provider_viewer_id=data.event.chatter_user_id,
+                viewer_name=data.event.chatter_user_login,
+                viewer_display_name=data.event.chatter_user_name,
+                viewer_color=data.event.color,
                 created_at=headers.message_timestamp,
                 message=data.event.message.text,
                 msg_id=data.event.message_id,

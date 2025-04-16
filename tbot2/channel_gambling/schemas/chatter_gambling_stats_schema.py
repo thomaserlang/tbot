@@ -12,7 +12,7 @@ class ChatterGamblingStatsUpdate(BaseRequestSchema):
 
 class ChatterGamblingStats(BaseSchema):
     channel_id: UUID
-    chatter_id: str
+    provider_viewer_id: str
     provider: Provider
     slots_wins: int = 0
     slots_losses: int = 0

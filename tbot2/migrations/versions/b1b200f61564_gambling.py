@@ -222,7 +222,7 @@ def upgrade() -> None:
     op.alter_column(
         'channel_chatter_gambling_stats',
         'user_id',
-        new_column_name='chatter_id',
+        new_column_name='provider_viewer_id',
         existing_type=sa.String(255),
     )
     op.drop_constraint(
@@ -236,7 +236,7 @@ def upgrade() -> None:
         [
             'channel_id',
             'provider',
-            'chatter_id',
+            'provider_viewer_id',
         ],
     )
     op.create_foreign_key(
@@ -286,7 +286,7 @@ def upgrade() -> None:
     op.alter_column(
         'channel_chatter_points',
         'user_id',
-        new_column_name='chatter_id',
+        new_column_name='provider_viewer_id',
         existing_type=sa.String(255),
     )
     op.drop_constraint(
@@ -295,7 +295,7 @@ def upgrade() -> None:
     op.create_primary_key(
         'channel_chatter_points_pkey',
         'channel_chatter_points',
-        ['channel_id', 'provider', 'chatter_id'],
+        ['channel_id', 'provider', 'provider_viewer_id'],
     )
     op.create_foreign_key(
         'channel_chatter_points_ibfk_1',

@@ -15,13 +15,13 @@ async def slots(
     *,
     channel_id: UUID,
     provider: Provider,
-    chatter_id: str,
+    provider_viewer_id: str,
     bet: int | str,
 ) -> SlotsResult:
     point_settings = await get_channel_point_settings(channel_id=channel_id)
     settings = await get_slots_settings(channel_id=channel_id)
     points = await get_points(
-        channel_id=channel_id, provider=provider, chatter_id=chatter_id
+        channel_id=channel_id, provider=provider, provider_viewer_id=provider_viewer_id
     )
 
     bet = convert_to_points(bet, points.points)
@@ -45,7 +45,7 @@ async def slots(
     new_points = await inc_points(
         channel_id=channel_id,
         provider=provider,
-        chatter_id=chatter_id,
+        provider_viewer_id=provider_viewer_id,
         points=bet * multiplier if won else -bet,
     )
 

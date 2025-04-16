@@ -22,7 +22,7 @@ async def test_channel_quote_routes(client: AsyncClient) -> None:
         json=ChannelQuoteCreate(
             message='Test quote',
             provider='twitch',
-            created_by_chatter_id=str(user.user.id),
+            created_by_provider_viewer_id=str(user.user.id),
             created_by_display_name=user.user.display_name,
         ).model_dump(),
     )
@@ -64,7 +64,7 @@ async def test_channel_quote_routes(client: AsyncClient) -> None:
         json=ChannelQuoteCreate(
             message='Another quote',
             provider='twitch',
-            created_by_chatter_id=str(user.user.id),
+            created_by_provider_viewer_id=str(user.user.id),
             created_by_display_name=user.user.display_name,
         ).model_dump(),
     )

@@ -10,6 +10,7 @@ from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
+from uuid6 import uuid7
 
 # revision identifiers, used by Alembic.
 revision: str = 'a96a1d4bfa03'
@@ -58,7 +59,10 @@ def upgrade() -> None:
         )
 
     op.alter_column(
-        'chatlogs', 'user_id', existing_type=sa.String(255), new_column_name='chatter_id'
+        'chatlogs',
+        'user_id',
+        existing_type=sa.String(255),
+        new_column_name='chatter_id',
     )
     op.alter_column(
         'chatlogs',
@@ -102,7 +106,7 @@ def upgrade() -> None:
     op.alter_column(
         'chatlog_chatter_stats',
         'user_id',
-        new_column_name='chatter_id',
+        new_column_name='provider_viewer_id',
         existing_type=sa.String(255),
     )
     op.alter_column(
@@ -115,12 +119,15 @@ def upgrade() -> None:
         'chatlog_chatter_stats', sa.Column('channel_id', sa.UUID, nullable=True)
     )
     op.execute(
-        'UPDATE chatlog_chatter_stats SET channel_id = (SELECT id FROM channels WHERE '
+        'UPDATE chatlog_chatter_stats SET channel_id = '
+        '(SELECT id FROM channels WHERE '
         'twitch_id = chatlog_chatter_stats.provider_id)'
     )
 
     op.drop_constraint(
-        'chatlog_chatter_stats_pkey', 'chatlog_chatter_stats', type_='primary'
+        'chatlog_chatter_stats_pkey',
+        'chatlog_chatter_stats',
+        type_='primary',
     )
     op.add_column(
         'chatlog_chatter_stats',
@@ -129,7 +136,7 @@ def upgrade() -> None:
     op.create_primary_key(
         'chatlog_chatter_stats_pkey',
         'chatlog_chatter_stats',
-        ['channel_id', 'provider', 'chatter_id'],
+        ['channel_id', 'provider', 'provider_viewer_id'],
     )
 
     op.alter_column(
@@ -141,31 +148,38 @@ def upgrade() -> None:
     op.drop_column('chatlog_chatter_stats', 'provider_id')
 
     op.alter_column(
-        'chatlog_chatters',
+        'provider_viewer_name_history',
         'user_id',
-        new_column_name='chatter_id',
+        new_column_name='provider_viewer_id',
         existing_type=sa.String(255),
     )
     op.alter_column(
-        'chatlog_chatters',
+        'provider_viewer_name_history',
         'user',
         existing_type=sa.String(25),
-        new_column_name='chatter_name',
+        new_column_name='name',
         type_=sa.String(200),
     )
-    op.add_column('chatlog_chatters', sa.Column('chatter_display_name', sa.String(200)))
-    op.execute('UPDATE chatlog_chatters SET chatter_display_name = chatter_name')
+    op.add_column(
+        'provider_viewer_name_history', sa.Column('display_name', sa.String(200))
+    )
+    op.execute('UPDATE provider_viewer_name_history SET display_name = name')
     op.alter_column(
-        'chatlog_chatters',
-        'chatter_display_name',
+        'provider_viewer_name_history',
+        'display_name',
         existing_type=sa.String(200),
         nullable=False,
     )
-    op.drop_constraint('chatlog_chatters_pkey', 'chatlog_chatters', type_='primary')
+    op.drop_constraint('viewers_pkey', 'provider_viewer_name_history', type_='primary')
     op.create_primary_key(
-        'chatlog_chatters_pkey',
-        'chatlog_chatters',
-        ['provider', 'chatter_id', 'chatter_name'],
+        'provider_viewer_name_history_pkey',
+        'provider_viewer_name_history',
+        ['provider', 'provider_viewer_id', 'name'],
+    )
+    op.create_index(
+        'channel_provider_ix_display_name',
+        'provider_viewer_name_history',
+        ['display_name'],
     )
 
 

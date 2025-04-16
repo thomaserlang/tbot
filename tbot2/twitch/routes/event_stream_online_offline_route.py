@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request
 
-from tbot2.channel_stats import (
+from tbot2.channel_stream import (
     create_channel_provider_stream,
     end_channel_provider_stream,
 )

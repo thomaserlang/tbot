@@ -1,15 +1,17 @@
+import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
 import { Provider } from '@/types/provider.type'
 import { Box } from '@mantine/core'
-import { ChatMessage } from '../types/chat_message.type'
+import { ChatMessage } from '../types/chat-message.type'
 import { Badges } from './badges'
 import classes from './chat-message-line.module.css'
 import { MessageWithFragments } from './message-with-fragments'
 
 interface Props {
     chatMessage: ChatMessage
+    onViewerClick?: (viewer: ViewerName) => void
 }
 
-export function ChatMessageLine({ chatMessage }: Props) {
+export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
     return (
         <Box className={classes.message}>
             <span className={classes.dimmed} title={chatMessage.created_at}>
@@ -28,9 +30,20 @@ export function ChatMessageLine({ chatMessage }: Props) {
             )}
             <span
                 className={classes.username}
-                style={{ color: fixColor(chatMessage.chatter_color) || '' }}
+                onClick={() => {
+                    onViewerClick?.({
+                        provider: chatMessage.provider,
+                        provider_viewer_id: chatMessage.provider_viewer_id,
+                        name: chatMessage.viewer_name,
+                        display_name: chatMessage.viewer_display_name,
+                    } as ViewerName)
+                }}
+                style={{
+                    color: fixColor(chatMessage.viewer_color) || '',
+                    cursor: onViewerClick ? 'pointer' : 'default',
+                }}
             >
-                {chatMessage.chatter_display_name}
+                {chatMessage.viewer_display_name}
             </span>
             :
             <span className={classes.text}>

@@ -16,7 +16,7 @@ async def get_chatter_gambling_stats(
     *,
     channel_id: UUID,
     provider: Provider,
-    chatter_id: str,
+    provider_viewer_id: str,
     session: AsyncSession | None = None,
 ) -> ChatterGamblingStats:
     async with get_session(session) as session:
@@ -24,13 +24,13 @@ async def get_chatter_gambling_stats(
             sa.select(MChatterGamblingStats).where(
                 MChatterGamblingStats.channel_id == channel_id,
                 MChatterGamblingStats.provider == provider,
-                MChatterGamblingStats.chatter_id == chatter_id,
+                MChatterGamblingStats.provider_viewer_id == provider_viewer_id,
             )
         )
         if not result:
             return ChatterGamblingStats(
                 channel_id=channel_id,
-                chatter_id=chatter_id,
+                provider_viewer_id=provider_viewer_id,
                 provider=provider,
             )
         return ChatterGamblingStats.model_validate(result)
@@ -40,7 +40,7 @@ async def inc_chatter_gambling_stats(
     *,
     channel_id: UUID,
     provider: Provider,
-    chatter_id: str,
+    provider_viewer_id: str,
     data: ChatterGamblingStatsUpdate,
 ) -> ChatterGamblingStats:
     async with get_session() as session:
@@ -50,7 +50,7 @@ async def inc_chatter_gambling_stats(
             .where(
                 MChatterGamblingStats.channel_id == channel_id,
                 MChatterGamblingStats.provider == provider,
-                MChatterGamblingStats.chatter_id == chatter_id,
+                MChatterGamblingStats.provider_viewer_id == provider_viewer_id,
             )
             .values(
                 {k: getattr(MChatterGamblingStats, k) + v for k, v in data_.items()}
@@ -62,7 +62,7 @@ async def inc_chatter_gambling_stats(
                 sa.insert(MChatterGamblingStats).values(
                     channel_id=channel_id,
                     provider=provider,
-                    chatter_id=chatter_id,
+                    provider_viewer_id=provider_viewer_id,
                     **{k: v if v > 0 else 0 for k, v in data_.items()},
                 )
             )
@@ -70,7 +70,7 @@ async def inc_chatter_gambling_stats(
         chatter_gambling_stats = await get_chatter_gambling_stats(
             channel_id=channel_id,
             provider=provider,
-            chatter_id=chatter_id,
+            provider_viewer_id=provider_viewer_id,
             session=session,
         )
         if not chatter_gambling_stats:

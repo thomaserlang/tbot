@@ -26,8 +26,8 @@ async def quote_add(
         data=ChannelQuoteCreate(
             message=' '.join(command.args),
             provider=chat_message.provider,
-            created_by_chatter_id=chat_message.chatter_id,
-            created_by_display_name=chat_message.chatter_display_name,
+            created_by_provider_viewer_id=chat_message.provider_viewer_id,
+            created_by_display_name=chat_message.viewer_display_name,
         ),
     )
     vars['quote.add'].value = f'Quote created with number: {quote.number}'

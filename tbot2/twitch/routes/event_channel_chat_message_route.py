@@ -7,9 +7,9 @@ from loguru import logger
 from uuid6 import uuid7
 
 from tbot2.channel_chat_filters import matches_filter
+from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
-from tbot2.chatlog import create_chatlog
 from tbot2.common import ChatMessage
 from tbot2.database import database
 from tbot2.twitch import twitch_warn_chat_user
@@ -53,10 +53,10 @@ async def event_channel_chat_message_route(
         id=uuid7(),
         type='message',
         channel_id=channel_id,
-        chatter_id=data.event.chatter_user_id,
-        chatter_name=data.event.chatter_user_login,
-        chatter_display_name=data.event.chatter_user_name,
-        chatter_color=data.event.color,
+        provider_viewer_id=data.event.chatter_user_id,
+        viewer_name=data.event.chatter_user_login,
+        viewer_display_name=data.event.chatter_user_name,
+        viewer_color=data.event.color,
         created_at=headers.message_timestamp,
         message=data.event.message.text,
         msg_id=data.event.message_id,
@@ -106,7 +106,7 @@ async def handle_filter_message(
                 await twitch_warn_chat_user(
                     channel_id=chat_message.channel_id,
                     broadcaster_id=chat_message.provider_id,
-                    twitch_user_id=chat_message.chatter_id,
+                    twitch_user_id=chat_message.provider_viewer_id,
                     reason=await fill_message(
                         response_message=match.filter.warning_message,
                         chat_message=chat_message,
@@ -128,7 +128,7 @@ async def handle_filter_message(
             await twitch_ban_user(
                 channel_id=chat_message.channel_id,
                 broadcaster_id=chat_message.provider_id,
-                twitch_user_id=chat_message.chatter_id,
+                twitch_user_id=chat_message.provider_viewer_id,
                 duration=match.filter.timeout_duration,
                 reason=timeout_message,
             )

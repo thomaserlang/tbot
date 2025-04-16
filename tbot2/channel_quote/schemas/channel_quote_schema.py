@@ -10,7 +10,7 @@ class ChannelQuote(BaseSchema):
     number: int
     message: str
     provider: Provider
-    created_by_chatter_id: str
+    created_by_provider_viewer_id: str
     created_by_display_name: str
     created_at: datetime
     updated_at: datetime | None = None

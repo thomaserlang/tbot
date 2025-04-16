@@ -25,18 +25,19 @@ def upgrade() -> None:
     op.execute('UPDATE chatlogs SET provider = "twitch"')
 
     op.rename_table('twitch_user_chat_stats', 'chatlog_chatter_stats')
-    op.rename_table('twitch_usernames', 'chatlog_chatters')
+    op.rename_table('twitch_usernames', 'provider_viewer_name_history')
 
-    op.add_column('chatlog_chatters', sa.Column('provider', sa.String(255)))
-    op.execute('UPDATE chatlog_chatters SET provider="twitch"')
+    op.add_column('provider_viewer_name_history', sa.Column('provider', sa.String(255)))
+    op.execute('UPDATE provider_viewer_name_history SET provider="twitch"')
     op.alter_column(
-        'chatlog_chatters',
+        'provider_viewer_name_history',
         'expires',
         new_column_name='last_seen_at',
         existing_type=sa.DateTime,
     )
     op.execute(
-        'update chatlog_chatters set last_seen_at = last_seen_at - INTERVAL 30 DAY'
+        'update provider_viewer_name_history set last_seen_at = '
+        'last_seen_at - INTERVAL 30 DAY'
     )
 
     op.add_column('chatlogs', sa.Column('user_display_name', sa.String(255)))

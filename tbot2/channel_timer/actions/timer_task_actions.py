@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from loguru import logger
 
-from tbot2.channel_stats import get_current_channel_provider_stream
+from tbot2.channel_stream import get_current_channel_provider_stream
 from tbot2.channel_timer.actions.timer_actions import (
     Timer,
     get_timers,

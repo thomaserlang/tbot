@@ -23,7 +23,7 @@ async def matches_filter(chat_message: ChatMessage) -> FilterMatchResult | None:
         if await has_permit(
             channel_id=chat_message.channel_id,
             provider=chat_message.provider,
-            chatter_id=chat_message.chatter_id,
+            provider_viewer_id=chat_message.provider_viewer_id,
         ):
             return None
 
@@ -32,13 +32,13 @@ async def matches_filter(chat_message: ChatMessage) -> FilterMatchResult | None:
         if filter.warning_enabled and not await has_warning(
             channel_id=chat_message.channel_id,
             provider=chat_message.provider,
-            chatter_id=chat_message.chatter_id,
+            provider_viewer_id=chat_message.provider_viewer_id,
         ):
             result.action = 'warning'
             await give_warning(
                 channel_id=chat_message.channel_id,
                 provider=chat_message.provider,
-                chatter_id=chat_message.chatter_id,
+                provider_viewer_id=chat_message.provider_viewer_id,
                 warning_duration=filter.warning_expire_duration,
             )
 

@@ -28,8 +28,8 @@ async def followage_vars(
 
 
 async def twitch_followed_at(chat_message: ChatMessage, command: TCommand) -> datetime:
-    user_id = chat_message.chatter_id
-    display_name = chat_message.chatter_display_name
+    user_id = chat_message.provider_viewer_id
+    display_name = chat_message.viewer_display_name
     if command.args:
         user = await lookup_twitch_users(
             channel_id=chat_message.channel_id,

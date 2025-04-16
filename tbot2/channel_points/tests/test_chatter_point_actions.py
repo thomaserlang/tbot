@@ -16,21 +16,21 @@ async def test_point_actions(db: None) -> None:
     await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='123',
+        provider_viewer_id='123',
         points=10,
     )
 
     points = await get_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='123',
+        provider_viewer_id='123',
     )
     assert points.points == 10
 
     points = await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='123',
+        provider_viewer_id='123',
         points=10,
     )
     assert points.points == 20
@@ -38,7 +38,7 @@ async def test_point_actions(db: None) -> None:
     points = await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='123',
+        provider_viewer_id='123',
         points=-5,
     )
     assert points.points == 15
@@ -46,14 +46,14 @@ async def test_point_actions(db: None) -> None:
     points = await get_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='123',
+        provider_viewer_id='123',
     )
     assert points.points == 15
 
     points = await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='123',
+        provider_viewer_id='123',
         points=-1000,
     )
     assert points.points == 0
@@ -66,21 +66,21 @@ async def test_inc_bulk_points(db: None) -> None:
     await inc_bulk_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_ids=['1', '2'],
+        provider_viewer_ids=['1', '2'],
         points=10,
     )
 
     points = await get_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='1',
+        provider_viewer_id='1',
     )
     assert points.points == 10
 
     points = await get_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='2',
+        provider_viewer_id='2',
     )
     assert points.points == 10
 

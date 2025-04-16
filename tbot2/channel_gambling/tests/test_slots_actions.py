@@ -17,14 +17,14 @@ async def test_roulette_actions(db: None) -> None:
         await slots(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet=100,
         )
 
     await inc_points(
         channel_id=channel.id,
         provider='twitch',
-        chatter_id='test_chatter',
+        provider_viewer_id='test_chatter',
         points=100,
     )
 
@@ -32,7 +32,7 @@ async def test_roulette_actions(db: None) -> None:
         await slots(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet=4,
         )
 
@@ -40,7 +40,7 @@ async def test_roulette_actions(db: None) -> None:
         await slots(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet='invalid',
         )
 
@@ -48,7 +48,7 @@ async def test_roulette_actions(db: None) -> None:
         await slots(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet='101%',
         )
 
@@ -62,7 +62,7 @@ async def test_roulette_actions(db: None) -> None:
         result = await slots(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet=100,
         )
         assert 'you WON 800 points' in result.message
@@ -75,7 +75,7 @@ async def test_roulette_actions(db: None) -> None:
         result = await slots(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet='all',
         )
         assert 'you WON 7200 points' in result.message
@@ -91,7 +91,7 @@ async def test_roulette_actions(db: None) -> None:
         result = await slots(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet=100,
         )
         assert 'you lost 100 points' in result.message
@@ -104,7 +104,7 @@ async def test_roulette_actions(db: None) -> None:
         result = await slots(
             channel_id=channel.id,
             provider='twitch',
-            chatter_id='test_chatter',
+            provider_viewer_id='test_chatter',
             bet='all',
         )
         assert 'you lost 8000 points' in result.message

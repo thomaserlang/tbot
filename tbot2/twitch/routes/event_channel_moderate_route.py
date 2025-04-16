@@ -6,7 +6,7 @@ import humanize.time
 from fastapi import APIRouter, Depends, Request
 from uuid6 import uuid7
 
-from tbot2.chatlog import create_chatlog
+from tbot2.channel_chatlog import create_chatlog
 from tbot2.common import ChatMessage, datetime_now
 from tbot2.database import database
 
@@ -50,9 +50,9 @@ async def event_channel_chat_message_route(
                     type='mod_action',
                     sub_type='mod',
                     channel_id=channel_id,
-                    chatter_id=data.event.mod.user_id,
-                    chatter_name=data.event.mod.user_login,
-                    chatter_display_name=data.event.mod.user_name,
+                    provider_viewer_id=data.event.mod.user_id,
+                    viewer_name=data.event.mod.user_login,
+                    viewer_display_name=data.event.mod.user_name,
                     created_at=headers.message_timestamp,
                     message=(
                         f'{data.event.moderator_user_name} modded '
@@ -69,9 +69,9 @@ async def event_channel_chat_message_route(
                     type='mod_action',
                     sub_type='unmod',
                     channel_id=channel_id,
-                    chatter_id=data.event.unmod.user_id,
-                    chatter_name=data.event.unmod.user_login,
-                    chatter_display_name=data.event.unmod.user_name,
+                    provider_viewer_id=data.event.unmod.user_id,
+                    viewer_name=data.event.unmod.user_login,
+                    viewer_display_name=data.event.unmod.user_name,
                     created_at=headers.message_timestamp,
                     message=(
                         f'{data.event.moderator_user_name} unmodded '
@@ -88,9 +88,9 @@ async def event_channel_chat_message_route(
                     type='mod_action',
                     sub_type='vip',
                     channel_id=channel_id,
-                    chatter_id=data.event.vip.user_id,
-                    chatter_name=data.event.vip.user_login,
-                    chatter_display_name=data.event.vip.user_name,
+                    provider_viewer_id=data.event.vip.user_id,
+                    viewer_name=data.event.vip.user_login,
+                    viewer_display_name=data.event.vip.user_name,
                     created_at=headers.message_timestamp,
                     message=(
                         f'{data.event.moderator_user_name} vipped '
@@ -107,9 +107,9 @@ async def event_channel_chat_message_route(
                     type='mod_action',
                     sub_type='unmod',
                     channel_id=channel_id,
-                    chatter_id=data.event.unvip.user_id,
-                    chatter_name=data.event.unvip.user_login,
-                    chatter_display_name=data.event.unvip.user_name,
+                    provider_viewer_id=data.event.unvip.user_id,
+                    viewer_name=data.event.unvip.user_login,
+                    viewer_display_name=data.event.unvip.user_name,
                     created_at=headers.message_timestamp,
                     message=(
                         f'{data.event.moderator_user_name} unvipped '
@@ -126,9 +126,9 @@ async def event_channel_chat_message_route(
                     type='mod_action',
                     sub_type='ban',
                     channel_id=channel_id,
-                    chatter_id=data.event.ban.user_id,
-                    chatter_name=data.event.ban.user_login,
-                    chatter_display_name=data.event.ban.user_name,
+                    provider_viewer_id=data.event.ban.user_id,
+                    viewer_name=data.event.ban.user_login,
+                    viewer_display_name=data.event.ban.user_name,
                     created_at=headers.message_timestamp,
                     message=(
                         f'{data.event.moderator_user_name} banned '
@@ -145,9 +145,9 @@ async def event_channel_chat_message_route(
                     type='mod_action',
                     sub_type='unban',
                     channel_id=channel_id,
-                    chatter_id=data.event.unban.user_id,
-                    chatter_name=data.event.unban.user_login,
-                    chatter_display_name=data.event.unban.user_name,
+                    provider_viewer_id=data.event.unban.user_id,
+                    viewer_name=data.event.unban.user_login,
+                    viewer_display_name=data.event.unban.user_name,
                     created_at=headers.message_timestamp,
                     message=(
                         f'{data.event.moderator_user_name} unbanned '
@@ -167,9 +167,9 @@ async def event_channel_chat_message_route(
                     type='mod_action',
                     sub_type='timeout',
                     channel_id=channel_id,
-                    chatter_id=data.event.timeout.user_id,
-                    chatter_name=data.event.timeout.user_login,
-                    chatter_display_name=data.event.timeout.user_name,
+                    provider_viewer_id=data.event.timeout.user_id,
+                    viewer_name=data.event.timeout.user_login,
+                    viewer_display_name=data.event.timeout.user_name,
                     created_at=headers.message_timestamp,
                     message=(
                         f'{data.event.moderator_user_name} timed out '
@@ -186,9 +186,9 @@ async def event_channel_chat_message_route(
                     type='mod_action',
                     sub_type='untimeout',
                     channel_id=channel_id,
-                    chatter_id=data.event.untimeout.user_id,
-                    chatter_name=data.event.untimeout.user_login,
-                    chatter_display_name=data.event.untimeout.user_name,
+                    provider_viewer_id=data.event.untimeout.user_id,
+                    viewer_name=data.event.untimeout.user_login,
+                    viewer_display_name=data.event.untimeout.user_name,
                     created_at=headers.message_timestamp,
                     message=(
                         f'{data.event.moderator_user_name} removed time out on '
@@ -205,9 +205,9 @@ async def event_channel_chat_message_route(
                     type='mod_action',
                     sub_type='warn',
                     channel_id=channel_id,
-                    chatter_id=data.event.warn.user_id,
-                    chatter_name=data.event.warn.user_login,
-                    chatter_display_name=data.event.warn.user_name,
+                    provider_viewer_id=data.event.warn.user_id,
+                    viewer_name=data.event.warn.user_login,
+                    viewer_display_name=data.event.warn.user_name,
                     created_at=headers.message_timestamp,
                     message=(
                         f'{data.event.moderator_user_name} warned '
@@ -223,9 +223,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='clear',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=f'{data.event.moderator_user_name} cleared chat',
                 msg_id=headers.message_id,
@@ -238,9 +238,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='emoteonly',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=f'{data.event.moderator_user_name} activated emoteonly mode',
                 msg_id=headers.message_id,
@@ -253,9 +253,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='emoteonlyoff',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=(
                     f'{data.event.moderator_user_name} deactivated emoteonly mode'
@@ -270,9 +270,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='followers',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=(f'{data.event.moderator_user_name} activated followers mode'),
                 msg_id=headers.message_id,
@@ -285,9 +285,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='followersoff',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=(
                     f'{data.event.moderator_user_name} deactivated followers mode'
@@ -302,9 +302,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='uniquechat',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=(
                     f'{data.event.moderator_user_name} activated unique chat mode'
@@ -319,9 +319,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='uniquechatoff',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=(
                     f'{data.event.moderator_user_name} deactivated unique chat mode'
@@ -336,9 +336,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='slow',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=(f'{data.event.moderator_user_name} activated slow mode'),
                 msg_id=headers.message_id,
@@ -351,9 +351,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='slowoff',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=(f'{data.event.moderator_user_name} deactivated slow mode'),
                 msg_id=headers.message_id,
@@ -366,9 +366,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='subscribers',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=(
                     f'{data.event.moderator_user_name} activated subscribers mode'
@@ -383,9 +383,9 @@ async def event_channel_chat_message_route(
                 type='mod_action',
                 sub_type='subscribersoff',
                 channel_id=channel_id,
-                chatter_id=data.event.moderator_user_id,
-                chatter_name=data.event.moderator_user_login,
-                chatter_display_name=data.event.moderator_user_name,
+                provider_viewer_id=data.event.moderator_user_id,
+                viewer_name=data.event.moderator_user_login,
+                viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
                 message=(
                     f'{data.event.moderator_user_name} deactivated subscribers mode'

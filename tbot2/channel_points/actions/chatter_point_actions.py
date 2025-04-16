@@ -14,7 +14,7 @@ async def get_points(
     *,
     channel_id: UUID,
     provider: Provider,
-    chatter_id: str,
+    provider_viewer_id: str,
     session: AsyncSession | None = None,
 ) -> ChatterPoints:
     async with get_session(session) as session:
@@ -22,13 +22,13 @@ async def get_points(
             sa.select(MChatterPoints).where(
                 MChatterPoints.channel_id == channel_id,
                 MChatterPoints.provider == provider,
-                MChatterPoints.chatter_id == chatter_id,
+                MChatterPoints.provider_viewer_id == provider_viewer_id,
             )
         )
         if not result:
             return ChatterPoints(
                 channel_id=channel_id,
-                chatter_id=chatter_id,
+                provider_viewer_id=provider_viewer_id,
                 provider=provider,
                 points=0,
             )
@@ -39,7 +39,7 @@ async def get_points_rank(
     *,
     channel_id: UUID,
     provider: Provider,
-    chatter_id: str,
+    provider_viewer_id: str,
     session: AsyncSession | None = None,
 ) -> ChatterPointsRank | None:
     async with get_session(session) as session:
@@ -51,7 +51,7 @@ async def get_points_rank(
                     partition_by=MChatterPoints.channel_id,
                 )
                 .label('rank'),
-                MChatterPoints.chatter_id,
+                MChatterPoints.provider_viewer_id,
             )
             .where(
                 MChatterPoints.channel_id == channel_id,
@@ -66,8 +66,8 @@ async def get_points_rank(
                 ).where(
                     MChatterPoints.channel_id == channel_id,
                     MChatterPoints.provider == provider,
-                    MChatterPoints.chatter_id == chatter_id,
-                    sub_rank.c.chatter_id == MChatterPoints.chatter_id,
+                    MChatterPoints.provider_viewer_id == provider_viewer_id,
+                    sub_rank.c.provider_viewer_id == MChatterPoints.provider_viewer_id,
                 )
             )
         ).first()
@@ -82,7 +82,7 @@ async def inc_points(
     *,
     channel_id: UUID,
     provider: Provider,
-    chatter_id: str,
+    provider_viewer_id: str,
     points: int,
     session: AsyncSession | None = None,
 ) -> ChatterPoints:
@@ -92,7 +92,7 @@ async def inc_points(
             .where(
                 MChatterPoints.channel_id == channel_id,
                 MChatterPoints.provider == provider,
-                MChatterPoints.chatter_id == chatter_id,
+                MChatterPoints.provider_viewer_id == provider_viewer_id,
             )
             .values(
                 points=sa.func.if_(
@@ -108,7 +108,7 @@ async def inc_points(
                 sa.insert(MChatterPoints).values(
                     channel_id=channel_id,
                     provider=provider,
-                    chatter_id=chatter_id,
+                    provider_viewer_id=provider_viewer_id,
                     points=points if points > 0 else 0,
                 )
             )
@@ -116,7 +116,7 @@ async def inc_points(
         return await get_points(
             channel_id=channel_id,
             provider=provider,
-            chatter_id=chatter_id,
+            provider_viewer_id=provider_viewer_id,
             session=session,
         )
 
@@ -125,7 +125,7 @@ async def inc_bulk_points(
     *,
     channel_id: UUID,
     provider: Provider,
-    chatter_ids: list[str],
+    provider_viewer_ids: list[str],
     points: int,
     session: AsyncSession | None = None,
 ) -> None:
@@ -137,10 +137,10 @@ async def inc_bulk_points(
                     {
                         'channel_id': channel_id,
                         'provider': provider,
-                        'chatter_id': chatter_id,
+                        'provider_viewer_id': provider_viewer_id,
                         'points': points if points > 0 else 0,
                     }
-                    for chatter_id in chatter_ids
+                    for provider_viewer_id in provider_viewer_ids
                 ]
             )
             .on_duplicate_key_update(

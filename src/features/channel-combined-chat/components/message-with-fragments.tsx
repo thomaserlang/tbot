@@ -1,6 +1,6 @@
 import { Fragment } from 'react/jsx-runtime'
 import { EmotesResponse, useGetEmotes } from '../api/emotes.api'
-import { ChatMessage } from '../types/chat_message.type'
+import { ChatMessage } from '../types/chat-message.type'
 import {
     TwitchFragmentEmote,
     TwitchMessageFragment,

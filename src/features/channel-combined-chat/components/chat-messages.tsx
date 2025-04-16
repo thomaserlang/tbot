@@ -1,16 +1,18 @@
+import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
 import { strDateFormat } from '@/utils/date'
 import { Divider } from '@mantine/core'
 import { Fragment } from 'react/jsx-runtime'
-import { ChatMessage } from '../types/chat_message.type'
+import { ChatMessage } from '../types/chat-message.type'
 import { ChatMessageLine } from './chat-message-line'
 import { ChatModActionLine } from './chat-mod-action-line'
 import { ChatNoticeLine } from './chat-notice-line'
 
 interface Props {
     messages: ChatMessage[]
+    onViewerClick?: (viewer: ViewerName) => void
 }
 
-export function ChatMessages({ messages }: Props) {
+export function ChatMessages({ messages, onViewerClick }: Props) {
     let lastDate = ''
     return (
         <>
@@ -29,7 +31,10 @@ export function ChatMessages({ messages }: Props) {
                             />
                         )}
                         {message.type == 'message' && (
-                            <ChatMessageLine chatMessage={message} />
+                            <ChatMessageLine
+                                chatMessage={message}
+                                onViewerClick={onViewerClick}
+                            />
                         )}
 
                         {message.type == 'mod_action' && (

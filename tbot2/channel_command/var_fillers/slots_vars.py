@@ -15,7 +15,7 @@ async def slots_vars(
         result = await slots(
             channel_id=chat_message.channel_id,
             provider=chat_message.provider,
-            chatter_id=chat_message.chatter_id,
+            provider_viewer_id=chat_message.provider_viewer_id,
             bet=command.args[0],
         )
         vars['gamble_slots'].value = result.message

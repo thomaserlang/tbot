@@ -22,11 +22,11 @@ async def permit_manager_var(
     )
     if not chatter:
         raise CommandError('User not found.')
-    for_chatter_id = chatter.id
+    for_provider_viewer_id = chatter.id
     await create_permit(
         channel_id=chat_message.channel_id,
         provider=chat_message.provider,
-        chatter_id=for_chatter_id,
+        provider_viewer_id=for_provider_viewer_id,
         seconds=60,
     )
     vars[

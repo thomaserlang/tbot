@@ -30,7 +30,7 @@ async def add_points_vars(
             await inc_bulk_points(
                 channel_id=chat_message.channel_id,
                 provider=chat_message.provider,
-                chatter_ids=[chatter.user_id for chatter in chatters],
+                provider_viewer_ids=[chatter.user_id for chatter in chatters],
                 points=points,
             )
             total_chatters += len(chatters)
@@ -47,7 +47,7 @@ async def add_points_vars(
         points = await inc_points(
             channel_id=chat_message.channel_id,
             provider=chat_message.provider,
-            chatter_id=give_to_user.id,
+            provider_viewer_id=give_to_user.id,
             points=points,
         )
         vars['add_points'].value = (

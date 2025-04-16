@@ -20,13 +20,13 @@ async def roulette(
     *,
     channel_id: UUID,
     provider: Provider,
-    chatter_id: str,
+    provider_viewer_id: str,
     bet: int | str,
 ) -> RouletteResult:
     point_settings = await get_channel_point_settings(channel_id=channel_id)
     settings = await get_roulette_settings(channel_id=channel_id)
     points = await get_points(
-        channel_id=channel_id, provider=provider, chatter_id=chatter_id
+        channel_id=channel_id, provider=provider, provider_viewer_id=provider_viewer_id
     )
 
     bet = convert_to_points(bet, points.points)
@@ -42,7 +42,7 @@ async def roulette(
     new_points = await inc_points(
         channel_id=channel_id,
         provider=provider,
-        chatter_id=chatter_id,
+        provider_viewer_id=provider_viewer_id,
         points=bet if won else -bet,
     )
 
@@ -56,7 +56,7 @@ async def roulette(
         await inc_chatter_gambling_stats(
             channel_id=channel_id,
             provider=provider,
-            chatter_id=chatter_id,
+            provider_viewer_id=provider_viewer_id,
             data=ChatterGamblingStatsUpdate(roulette_wins=1),
         )
 

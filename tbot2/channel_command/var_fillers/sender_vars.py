@@ -11,4 +11,4 @@ from ..var_filler import fills_vars
 async def sender_vars(
     chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
-    vars['sender'].value = chat_message.chatter_display_name
+    vars['sender'].value = chat_message.viewer_display_name

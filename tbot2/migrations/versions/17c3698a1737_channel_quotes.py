@@ -29,7 +29,7 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column('provider', sa.String(255), nullable=False),
-        sa.Column('created_by_chatter_id', sa.String(255), nullable=False),
+        sa.Column('created_by_provider_viewer_id', sa.String(255), nullable=False),
         sa.Column('created_by_display_name', sa.String(200), nullable=False),
         sa.Column('message', sa.String(255), nullable=False),
         sa.Column('number', sa.Integer(), nullable=False, server_default='1'),
@@ -55,10 +55,10 @@ def upgrade() -> None:
         conn.execute(
             sa.text("""
                 INSERT INTO channel_quotes (
-                    id, channel_id, provider, created_by_chatter_id,
+                    id, channel_id, provider, created_by_provider_viewer_id,
                     created_by_display_name, message, number, created_at, updated_at
                 )
-                VALUES (:id, :channel_id, :provider, :created_by_chatter_id,
+                VALUES (:id, :channel_id, :provider, :created_by_provider_viewer_id,
                     :created_by_display_name, :message, :number, :created_at, 
                     :updated_at
                 """),
@@ -66,7 +66,7 @@ def upgrade() -> None:
                 'id': uuid7(),
                 'channel_id': result[0],
                 'provider': 'twitch',
-                'created_by_chatter_id': result[2],
+                'created_by_provider_viewer_id': result[2],
                 'created_by_display_name': result[3],
                 'message': result[1],
                 'number': result[6],

@@ -1,5 +1,5 @@
 import { Box } from '@mantine/core'
-import { ChatMessage } from '../types/chat_message.type'
+import { ChatMessage } from '../types/chat-message.type'
 import { providerShort } from './chat-message-line'
 import classes from './chat-message-line.module.css'
 import { MessageWithFragments } from './message-with-fragments'

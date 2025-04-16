@@ -124,6 +124,7 @@ def upgrade() -> None:
 
     op.create_table(
         'channel_provider_viewer_stats',
+        sa.Column('id', sa.UUID(), primary_key=True),
         sa.Column(
             'channel_id',
             sa.UUID(),
@@ -136,6 +137,7 @@ def upgrade() -> None:
         sa.Column('streams_row', sa.Integer, nullable=False, server_default='0'),
         sa.Column('streams_row_peak', sa.Integer, nullable=False, server_default='0'),
         sa.Column('streams_row_peak_date', sa.Date, nullable=True),
+        sa.Column('watchtime', sa.Integer, nullable=False, server_default='0'),
         sa.Column(
             'last_channel_provider_stream_id',
             sa.UUID(),
@@ -144,8 +146,7 @@ def upgrade() -> None:
             ),
             nullable=True,
         ),
-        sa.Column('last_stream_at', sa.DateTime, nullable=True),
-        sa.PrimaryKeyConstraint(
+        sa.UniqueConstraint(
             'channel_id',
             'provider',
             'provider_viewer_id',
@@ -155,16 +156,26 @@ def upgrade() -> None:
     op.execute(
         """
         INSERT INTO channel_provider_viewer_stats (
+            id,
             channel_id, provider, provider_viewer_id, streams, 
             streams_row, streams_row_peak, streams_row_peak_date, 
                 last_channel_provider_stream_id)
-        SELECT c.id, "twitch", user_id, streams, streams_row, streams_row_peak, 
+        SELECT uuid_v7(), c.id, "twitch", user_id, streams, streams_row, 
+            streams_row_peak, 
             streams_row_peak_date, p.id
         FROM twitch_user_stats, channels c, channel_provider_streams p where 
             c.twitch_id = twitch_user_stats.channel_id and 
             twitch_user_stats.last_viewed_stream_id = p.provider_stream_id
         """
     )
+
+    op.execute("""
+        update channel_provider_viewer_stats s
+            set watchtime = (select sum(watchtime) 
+                from channel_provider_stream_viewer_watchtime w 
+                where 
+                    w.provider_viewer_id = s.provider_viewer_id)
+    """)
 
 
 def downgrade() -> None:

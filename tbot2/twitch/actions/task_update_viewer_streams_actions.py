@@ -4,12 +4,11 @@ from datetime import datetime
 from loguru import logger
 
 from tbot2.channel_points import get_channel_point_settings, inc_bulk_points
-from tbot2.channel_stats import (
+from tbot2.channel_stream import (
     ChannelProviderStream,
     get_live_channels_provider_streams,
-    inc_stream_viewer_watchtime,
 )
-from tbot2.chatlog import ChatterRequest
+from tbot2.channel_viewer import ViewerNameHistoryRequest, inc_stream_viewer_watchtime
 from tbot2.common import datetime_now
 
 from ..actions.twitch_chatters_action import get_twitch_chatters
@@ -47,16 +46,16 @@ async def update_viewer_stream_data(stream: ChannelProviderStream) -> None:
                 await inc_bulk_points(
                     channel_id=stream.channel_id,
                     provider='twitch',
-                    chatter_ids=[chatter.user_id for chatter in chatters],
+                    provider_viewer_ids=[chatter.user_id for chatter in chatters],
                     points=point_settings.points_per_min,
                 )
             await inc_stream_viewer_watchtime(
                 channel_provider_stream_id=stream.id,
                 provider_viewers=[
-                    ChatterRequest(
-                        chatter_id=chatter.user_id,
-                        chatter_name=chatter.user_login,
-                        chatter_display_name=chatter.user_name,
+                    ViewerNameHistoryRequest(
+                        provider_viewer_id=chatter.user_id,
+                        name=chatter.user_login,
+                        display_name=chatter.user_name,
                     )
                     for chatter in chatters
                 ],
