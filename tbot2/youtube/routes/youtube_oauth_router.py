@@ -176,21 +176,26 @@ async def youtube_auth_route(
             )
             if r.status_code >= 400:
                 raise HTTPException(status_code=r.status_code, detail=r.text)
-            channels = YoutubeItems[YoutubeChannel].model_validate(r.json())
 
-            for channel in channels.items:
-                await save_channel_oauth_provider(
-                    channel_id=UUID(params.state['channel_id']),
-                    provider='youtube',
-                    data=ChannelOAuthProviderRequest(
-                        provider_user_id=channel.id,
-                        access_token=response.access_token,
-                        refresh_token=response.refresh_token,
-                        expires_in=response.expires_in,
-                        scope=params.scope,
-                        name=channel.snippet.title,
-                    ),
+            channels = YoutubeItems[YoutubeChannel].model_validate(r.json())
+            if not channels.items:
+                raise HTTPException(
+                    status_code=400,
+                    detail='No channels found',
                 )
+            channel = channels.items[0]
+            await save_channel_oauth_provider(
+                channel_id=UUID(params.state['channel_id']),
+                provider='youtube',
+                data=ChannelOAuthProviderRequest(
+                    provider_user_id=channel.id,
+                    access_token=response.access_token,
+                    refresh_token=response.refresh_token,
+                    expires_in=response.expires_in,
+                    scope=params.scope,
+                    name=channel.snippet.title,
+                ),
+            )
 
         case 'connect_system_provider_bot':
             r = await client.get(
