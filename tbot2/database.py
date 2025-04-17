@@ -22,9 +22,9 @@ class Database:
     def __init__(self) -> None:
         self.engine: AsyncEngine
         self.session: async_sessionmaker[AsyncSession]
-        self.redis: redis.Redis
+        self.redis: redis.Redis[str]
         self.redis_queue: ArqRedis
-        self._test_setup = False
+        self._test_setup: bool = False
         self._conn: AsyncConnection
 
     async def setup(self) -> None:
@@ -107,7 +107,7 @@ class Database:
 
     async def close(self) -> None:
         await self.engine.dispose()
-        await self.redis.aclose()
+        await self.redis.close()
 
     async def close_test(self) -> None:
         await self.trans.rollback()

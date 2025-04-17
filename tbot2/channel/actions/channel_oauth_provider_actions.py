@@ -15,7 +15,6 @@ from ..models.channel_oauth_provider_model import (
 from ..schemas.channel_oauth_provider_schema import (
     ChannelOAuthProvider,
     ChannelOAuthProviderRequest,
-    ChannelProvider,
 )
 
 
@@ -34,13 +33,12 @@ async def get_channel_oauth_provider(
 
 
 async def get_channel_oauth_provider_by_id(
-    *, channel_id: UUID, provider_id: UUID, session: AsyncSession | None = None
+    *, channel_provider_id: UUID, session: AsyncSession | None = None
 ) -> ChannelOAuthProvider | None:
     async with get_session(session) as session:
         channel_oauth_provider = await session.scalar(
             sa.select(MChannelOAuthProvider).where(
-                MChannelOAuthProvider.channel_id == channel_id,
-                MChannelOAuthProvider.id == provider_id,
+                MChannelOAuthProvider.id == channel_provider_id,
             )
         )
         if channel_oauth_provider:
@@ -64,7 +62,7 @@ async def get_channel_oauth_providers(
 
 async def get_channels_providers(
     *, provider: Provider, session: AsyncSession | None = None
-) -> AsyncGenerator[ChannelProvider]:
+) -> AsyncGenerator[ChannelOAuthProvider]:
     async with get_session(session) as session:
         providers = await session.stream_scalars(
             sa.select(MChannelOAuthProvider).where(
@@ -72,7 +70,7 @@ async def get_channels_providers(
             )
         )
         async for p in providers:
-            yield ChannelProvider.model_validate(p)
+            yield ChannelOAuthProvider.model_validate(p)
 
 
 async def save_channel_oauth_provider(
@@ -114,19 +112,17 @@ async def save_channel_oauth_provider(
 
 
 async def delete_channel_oauth_provider(
-    *, channel_id: UUID, channel_provider_id: UUID, session: AsyncSession | None = None
+    *, channel_provider_id: UUID, session: AsyncSession | None = None
 ) -> bool:
     async with get_session(session) as session:
         channel_provider = await get_channel_oauth_provider_by_id(
-            channel_id=channel_id,
-            provider_id=channel_provider_id,
+            channel_provider_id=channel_provider_id,
             session=session,
         )
         if not channel_provider:
             return False
         result = await session.execute(
             sa.delete(MChannelOAuthProvider).where(
-                MChannelOAuthProvider.channel_id == channel_id,
                 MChannelOAuthProvider.id == channel_provider_id,
             )
         )

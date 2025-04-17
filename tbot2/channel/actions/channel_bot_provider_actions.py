@@ -86,17 +86,16 @@ async def disconnect_channel_bot_provider(
     session: AsyncSession | None = None,
 ) -> None:
     async with get_session(session) as session:
-        provider = await get_channel_oauth_provider_by_id(
-            channel_id=channel_id,
-            provider_id=channel_provider_id,
+        channel_provider = await get_channel_oauth_provider_by_id(
+            channel_provider_id=channel_provider_id,
             session=session,
         )
-        if not provider:
+        if not channel_provider or not channel_provider.channel_id != channel_id:
             raise ValueError(
                 f'Failed to disconnect channel bot provider {channel_provider_id}: '
                 'no provider found'
             )
-        if not provider.bot_provider:
+        if not channel_provider.bot_provider:
             raise ValueError(
                 f'Failed to disconnect channel bot provider {channel_provider_id}: '
                 'no bot provider found'
@@ -104,7 +103,7 @@ async def disconnect_channel_bot_provider(
 
         await save_channel_oauth_provider(
             channel_id=channel_id,
-            provider=provider.provider,
+            provider=channel_provider.provider,
             data=ChannelOAuthProviderRequest(
                 bot_provider_id=None,
             ),
@@ -113,17 +112,17 @@ async def disconnect_channel_bot_provider(
 
         providers_left = await session.scalar(
             sa.select(sa.func.count('*')).where(
-                MChannelOAuthProvider.bot_provider_id == provider.bot_provider.id
+                MChannelOAuthProvider.bot_provider_id == channel_provider.bot_provider.id
             )
         )
         if not providers_left:
             await delete_bot_provider(
-                bot_provider_id=provider.bot_provider.id,
+                bot_provider_id=channel_provider.bot_provider.id,
                 session=session,
             )
         await fire_disconnect_channel_bot_provider(
             channel_id=channel_id,
-            bot_provider=provider.bot_provider,
+            bot_provider=channel_provider.bot_provider,
         )
 
 

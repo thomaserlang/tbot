@@ -32,7 +32,9 @@ class ConfigSpotifyConfig(BaseModel):
 
 
 class ConfigLoggingModel(BaseModel):
-    level: Literal['notset', 'debug', 'info', 'warn', 'error', 'critical'] = 'warn'
+    level: Literal['notset', 'trace', 'debug', 'info', 'warn', 'error', 'critical'] = (
+        'info'
+    )
     path: str | None = None
     max_size: int = 100 * 1000 * 1000  # ~ 95 mb
     num_backups: int = 10

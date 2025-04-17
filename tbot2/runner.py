@@ -64,11 +64,13 @@ async def refresh_twitch_eventsubs() -> None:
 async def tasks() -> None:
     from tbot2.channel_timer import task_handle_timers
     from tbot2.twitch import task_update_viewer_streams
+    from tbot2.youtube import task_youtube_live
 
     async with db():
         await asyncio.gather(
             task_update_viewer_streams(),
             task_handle_timers(),
+            task_youtube_live(),
         )
 
 

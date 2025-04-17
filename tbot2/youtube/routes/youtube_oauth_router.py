@@ -27,7 +27,9 @@ from tbot2.common.schemas.connect_url_schema import RedirectUrl
 from tbot2.common.utils.request_url_for import request_url_for
 from tbot2.config_settings import config
 from tbot2.dependecies import authenticated
-from tbot2.youtube.schemas.youtube_channel_schema import YoutubeChannel, YoutubeItems
+
+from ..schemas.youtube_channel_schema import YoutubeChannel
+from ..schemas.youtube_page_schema import YoutubePage
 
 router = APIRouter()
 
@@ -177,7 +179,7 @@ async def youtube_auth_route(
             if r.status_code >= 400:
                 raise HTTPException(status_code=r.status_code, detail=r.text)
 
-            channels = YoutubeItems[YoutubeChannel].model_validate(r.json())
+            channels = YoutubePage[YoutubeChannel].model_validate(r.json())
             if not channels.items:
                 raise HTTPException(
                     status_code=400,
@@ -206,7 +208,7 @@ async def youtube_auth_route(
             )
             if r.status_code >= 400:
                 raise HTTPException(status_code=r.status_code, detail=r.text)
-            channels = YoutubeItems[YoutubeChannel].model_validate(r.json())
+            channels = YoutubePage[YoutubeChannel].model_validate(r.json())
             if not channels.items:
                 raise HTTPException(
                     status_code=400,

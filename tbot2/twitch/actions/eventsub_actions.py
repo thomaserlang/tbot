@@ -218,9 +218,9 @@ async def register_all_eventsubs(
     event_type: str | None = None,
 ) -> None:
     logger.info(f'Registering {event_type or "all"} eventsub registrations')
-    async for provider in get_channels_providers(provider='twitch'):
+    async for channel_provider in get_channels_providers(provider='twitch'):
         await register_channel_eventsubs(
-            channel_id=provider.channel_id, event_type=event_type
+            channel_id=channel_provider.channel_id, event_type=event_type
         )
 
 

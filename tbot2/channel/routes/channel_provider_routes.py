@@ -54,18 +54,17 @@ async def get_channel_provider_route(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
     )
-    provider = await get_channel_oauth_provider_by_id(
-        channel_id=channel_id,
-        provider_id=channel_provider_id,
+    channel_provider = await get_channel_oauth_provider_by_id(
+        channel_provider_id=channel_provider_id,
     )
 
-    if not provider:
+    if not channel_provider or channel_provider.channel_id != channel_id:
         raise HTTPException(
             status_code=404,
             detail='Channel provider not found',
         )
 
-    return ChannelProvider.model_validate(provider)
+    return ChannelProvider.model_validate(channel_provider)
 
 
 @router.delete(
@@ -84,9 +83,15 @@ async def delete_channel_provider_route(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
     )
-
+    channel_provider = await get_channel_oauth_provider_by_id(
+        channel_provider_id=channel_provider_id,
+    )
+    if not channel_provider or channel_provider.channel_id != channel_id:
+        raise HTTPException(
+            status_code=404,
+            detail='Channel provider not found',
+        )
     await delete_channel_oauth_provider(
-        channel_id=channel_id,
         channel_provider_id=channel_provider_id,
     )
 

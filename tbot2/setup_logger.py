@@ -7,13 +7,13 @@ from tbot2.config_settings import config
 
 def setup_logger() -> None:
     logger.remove()
-    format = '<green>{time}</green> | <level>{level: <8}</level> | {message}'
+    format = '<green>{time}</green> | <level>{level: <8}</level> | {message} | {extra}'
     if config.logging.level == 'debug':
         format = (
             '<green>{time:HH:mm:ss.SSS}</green> | '
             '<level>{level: <8}</level> | '
-            '{message} | '
-            '<light-blue>{module}:{function}:{line}</light-blue>'
+            '{message} | {extra} | '
+            '<light-blue>{module}.{function}:{line}</light-blue>'
         )
     logger.add(
         sys.stderr,
