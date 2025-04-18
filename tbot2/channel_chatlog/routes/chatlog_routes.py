@@ -72,7 +72,7 @@ async def get_chat_ws_route(
     provider: Annotated[Provider | None, Query()] = None,
     provider_viewer_id: str | None = None,
 ) -> None:
-    await websocket.accept()  # type: ignore
+    await websocket.accept()
     async with database.redis.pubsub() as pubsub:  # type: ignore
         await pubsub.subscribe(f'tbot:live_chat:{channel_id}')  # type: ignore
         while True:

@@ -4,7 +4,6 @@ from uuid6 import uuid7
 from tbot2.channel import ChannelOAuthProvider
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.common import ChatMessage
-from tbot2.database import database
 
 from ..schemas.youtube_live_chat_message_schema import LiveChatMessage
 
@@ -47,6 +46,3 @@ async def handle_text_message_event(
         provider_id=channel_provider.provider_user_id or '',
     )
     await create_chatlog(data=chat_message)
-    await database.redis.publish(  # type: ignore
-        f'tbot:live_chat:{chat_message.channel_id}', chat_message.model_dump_json()
-    )

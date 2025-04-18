@@ -11,7 +11,6 @@ from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.common import ChatMessage
-from tbot2.database import database
 from tbot2.twitch import twitch_warn_chat_user
 
 from ..actions.twitch_ban_user_actions import twitch_ban_user
@@ -83,9 +82,6 @@ async def event_channel_chat_message_route(
     await asyncio.gather(
         handle_filter_message(chat_message=chat_message),
         create_chatlog(data=chat_message),
-        database.redis.publish(  # type: ignore
-            f'tbot:live_chat:{chat_message.channel_id}', chat_message.model_dump_json()
-        ),
     )
 
 

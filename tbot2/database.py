@@ -103,7 +103,7 @@ class Database:
         self._test_setup = True
         self.trans = await self._conn.begin()
 
-        await self.redis.flushdb()  # type: ignore
+        await self.redis.flushdb()
 
     async def close(self) -> None:
         await self.engine.dispose()
