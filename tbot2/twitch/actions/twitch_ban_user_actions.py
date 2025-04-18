@@ -3,7 +3,10 @@ from uuid import UUID
 from loguru import logger
 
 from tbot2.channel import get_channel_bot_provider
-from tbot2.constants import APP_TITLE, TBOT_CHANNEL_ID_HEADER
+from tbot2.constants import (
+    APP_TITLE,
+    TBOT_CHANNEL_ID_HEADER,
+)
 
 from ..twitch_http_client import twitch_bot_client
 
@@ -15,11 +18,11 @@ async def twitch_ban_user(
     duration: int | None = None,
     reason: str | None = None,
 ) -> bool:
-    provider = await get_channel_bot_provider(
+    bot_provider = await get_channel_bot_provider(
         provider='twitch',
         channel_id=channel_id,
     )
-    if not provider:
+    if not bot_provider:
         raise ValueError(
             f'Failed to ban user {twitch_user_id} in channel '
             f'{channel_id}: no provider found'
@@ -38,11 +41,10 @@ async def twitch_ban_user(
         url='/moderation/bans',
         params={
             'broadcaster_id': broadcaster_id,
-            'moderator_id': provider.provider_user_id or '',
+            'moderator_id': bot_provider.provider_user_id or '',
         },
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
-            'Authorization': f'Bearer {provider.access_token}',
         },
         json=data,
     )

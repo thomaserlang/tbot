@@ -36,7 +36,6 @@ async def live_chat_ban(
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
             TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
-            'Authorization': f'Bearer {channel_provider.access_token}',
         },
     )
     if response.status_code >= 400:

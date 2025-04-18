@@ -61,9 +61,6 @@ async def get_live_broadcasts(
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
             TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
-            'Authorization': f'Bearer {channel_provider.access_token}'
-            if channel_provider
-            else '',
         },
         params=params,
     )

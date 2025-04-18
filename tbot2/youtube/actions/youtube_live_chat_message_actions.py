@@ -28,9 +28,6 @@ async def get_live_chat_messages(
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
             TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
-            'Authorization': f'Bearer {channel_provider.access_token}'
-            if channel_provider.access_token
-            else '',
         },
     )
     if response.status_code >= 400:
@@ -64,7 +61,6 @@ async def send_live_chat_message(
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
             TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
-            'Authorization': f'Bearer {bot_provider.access_token}',
         },
     )
     if response.status_code >= 400:
@@ -94,7 +90,6 @@ async def delete_live_chat_message(
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
             TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
-            'Authorization': f'Bearer {channel_provider.access_token}',
         },
     )
     if response.status_code >= 400:

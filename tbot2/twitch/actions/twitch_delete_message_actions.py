@@ -31,7 +31,6 @@ async def twitch_delete_message(
         },
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
-            'Authorization': f'Bearer {bot_provider.access_token}',
         },
     )
     if response.status_code >= 400:

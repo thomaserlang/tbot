@@ -39,7 +39,6 @@ async def twitch_warn_chat_user(
         },
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
-            'Authorization': f'Bearer {provider.access_token}',
         },
         json=data,
     )
