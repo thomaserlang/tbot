@@ -1,9 +1,12 @@
-class BaseException(Exception): ...
 
 
-class ErrorMessage(BaseException): ...
+class TBotBaseException(Exception): ...
 
-class InternalHttpError(BaseException):
+
+class ErrorMessage(TBotBaseException): ...
+
+
+class InternalHttpError(TBotBaseException):
     def __init__(self, status_code: int, body: str) -> None:
         super().__init__(body)
         self.status_code = status_code

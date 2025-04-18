@@ -3,7 +3,11 @@ from uuid import UUID
 
 from loguru import logger
 
-from tbot2.channel import ChannelOAuthProvider, get_channels_providers
+from tbot2.channel import (
+    ChannelOAuthProvider,
+    ChannelProviderNotFound,
+    get_channels_providers,
+)
 from tbot2.database import database
 from tbot2.exceptions import InternalHttpError
 from tbot2.youtube.actions.youtube_handle_message import handle_message
@@ -25,25 +29,30 @@ async def task_youtube_live() -> None:
 
         async for channel_provider in get_channels_providers(provider='youtube'):
             channel_provider_ids[channel_provider.id] = asyncio.create_task(
-                handle_channel_provider(channel_provider)
+                check_for_live_broadcasts(channel_provider)
             )
 
         # Cancel tasks for channels that are no longer active
-        for channel_provider_id, tasks in live_broadcast_tasks.items():
+        for channel_provider_id in live_broadcast_tasks:
             if channel_provider_id not in channel_provider_ids:
-                for task in tasks:
-                    task.cancel()
-                del live_broadcast_tasks[channel_provider_id]
+                cancel_channel_provider_tasks(channel_provider_id)
         await asyncio.sleep(60)
 
 
+def cancel_channel_provider_tasks(channel_provider_id: UUID) -> None:
+    tasks = live_broadcast_tasks.pop(channel_provider_id, [])
+    for task in tasks:
+        task.cancel()
+    logger.debug(f'Cancelled tasks for channel provider {channel_provider_id}')
+
+
 @logger.catch
-async def handle_channel_provider(channel_provider: ChannelOAuthProvider) -> None:
+async def check_for_live_broadcasts(channel_provider: ChannelOAuthProvider) -> None:
     with logger.contextualize(
         channel_provider_id=channel_provider.id,
     ):
-        logger.debug('Handling channel provider')
-
+        # For now we only keep checking until there is a live broadcast
+        # then just assume that it will be the only one until it ends
         if channel_provider.id in live_broadcast_tasks:
             logger.debug('Is already being handled')
             return
@@ -84,11 +93,19 @@ async def handle_live_broadcast(
             )
             while True:
                 try:
-                    messages = await get_live_chat_messages(
-                        channel_provider=channel_provider,
-                        live_chat_id=live_chat_id,
-                        page_token=page_token or '',
-                    )
+                    try:
+                        messages = await get_live_chat_messages(
+                            channel_provider=channel_provider,
+                            live_chat_id=live_chat_id,
+                            page_token=page_token or '',
+                        )
+                    except ChannelProviderNotFound as e:
+                        logger.info(
+                            f'YouTube channel provider no longer exists on '
+                            f'channel {e.channel_id} '
+                        )
+                        break
+
                     await database.redis.set(
                         f'youtube:live_broadcast:{live_chat_id}:page_token',
                         messages.next_page_token,
@@ -109,7 +126,7 @@ async def handle_live_broadcast(
                     )
                 except InternalHttpError as e:
                     if e.status_code == 403:
-                        logger.info(e.body)
+                        logger.error(e.body)
                         break
                     else:
                         logger.error(f'Error getting live chat messages: {e.body}')
@@ -117,7 +134,8 @@ async def handle_live_broadcast(
         finally:
             task = asyncio.current_task()
             if task:
-                live_broadcast_tasks[channel_provider.id].remove(task)
+                if task in live_broadcast_tasks[channel_provider.id]:
+                    live_broadcast_tasks[channel_provider.id].remove(task)
                 if not live_broadcast_tasks[channel_provider.id]:
                     del live_broadcast_tasks[channel_provider.id]
 

@@ -38,6 +38,7 @@ from .actions.send_channel_provider_message_actions import (
 from .actions.send_channel_provider_message_actions import (
     send_channel_provider_message as send_channel_provider_message,
 )
+from .exceptions import ChannelProviderNotFound as ChannelProviderNotFound
 from .models.channel_model import MChannel as MChannel
 from .models.channel_oauth_provider_model import (
     MChannelOAuthProvider as MChannelOAuthProvider,

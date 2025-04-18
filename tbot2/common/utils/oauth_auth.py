@@ -12,14 +12,14 @@ from tbot2.bot_providers import (
 from tbot2.channel import (
     ChannelOAuthProvider,
     ChannelOAuthProviderRequest,
+    ChannelProviderNotFound,
     get_channel_bot_provider,
     get_channel_oauth_provider,
     save_channel_oauth_provider,
 )
 from tbot2.common import Provider
-from tbot2.config_settings import config
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
-from tbot2.exceptions import ErrorMessage
+from tbot2.exceptions import ErrorMessage, InternalHttpError
 
 
 class ChannelProviderOAuth(Auth):
@@ -48,11 +48,9 @@ class ChannelProviderOAuth(Auth):
                     provider=self.provider,
                 )
                 if not channel_provider:
-                    raise ErrorMessage(
-                        _get_missing_provider_message(
-                            channel_uuid=channel_id,
-                            provider=self.provider,
-                        )
+                    raise ChannelProviderNotFound(
+                        channel_id=channel_id,
+                        provider=self.provider,
                     )
                 request.headers['Authorization'] = (
                     f'Bearer {channel_provider.access_token}'
@@ -68,11 +66,9 @@ class ChannelProviderOAuth(Auth):
                         provider=self.provider,
                     )
                     if not channel_provider:
-                        raise ErrorMessage(
-                            _get_missing_provider_message(
-                                channel_uuid=channel_id,
-                                provider=self.provider,
-                            )
+                        raise ChannelProviderNotFound(
+                            channel_id=channel_id,
+                            provider=self.provider,
                         )
                 access_token = await self._refresh_token(
                     channel_id=channel_id,
@@ -94,7 +90,7 @@ class ChannelProviderOAuth(Auth):
                 },
             )
             if response.status_code >= 400:
-                ErrorMessage(f'{response.status_code} {response.text}')
+                raise InternalHttpError(response.status_code, response.text)
             data = response.json()
 
             await save_channel_oauth_provider(
@@ -139,10 +135,8 @@ class ChannelProviderBotOAuth(Auth):
                 )
                 if not bot_provider:
                     raise ErrorMessage(
-                        _get_missing_provider_message(
-                            channel_uuid=channel_id,
-                            provider=self.provider,
-                        )
+                        'Missing bot provider for channel '
+                        f'{channel_id} {self.provider}'
                     )
                 request.headers['Authorization'] = f'Bearer {bot_provider.access_token}'
 
@@ -157,10 +151,8 @@ class ChannelProviderBotOAuth(Auth):
                     )
                     if not bot_provider:
                         raise ErrorMessage(
-                            _get_missing_provider_message(
-                                channel_uuid=channel_id,
-                                provider=self.provider,
-                            )
+                            'Missing bot provider for channel '
+                            f'{channel_id} {self.provider}'
                         )
                 access_token = await self._refresh_token(
                     provider_user_id=bot_provider.provider_user_id,
@@ -196,10 +188,3 @@ class ChannelProviderBotOAuth(Auth):
                 ),
             )
             return str(data['access_token'])
-
-
-def _get_missing_provider_message(channel_uuid: UUID, provider: Provider) -> str:
-    return (
-        f'{provider} must be added as a provider: '
-        f'{config.base_url}channels/{channel_uuid}/providers'
-    )
