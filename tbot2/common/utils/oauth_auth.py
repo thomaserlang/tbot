@@ -35,7 +35,7 @@ class ChannelProviderOAuth(Auth):
     async def async_auth_flow(
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
-        provider: ChannelOAuthProvider | None = None
+        channel_provider: ChannelOAuthProvider | None = None
         channel_id = request.headers.pop(TBOT_CHANNEL_ID_HEADER, None)
         if not channel_id:
             raise Exception(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
@@ -43,29 +43,31 @@ class ChannelProviderOAuth(Auth):
 
         async with self._async_lock:
             if not request.headers.get('Authorization'):
-                provider = await get_channel_oauth_provider(
+                channel_provider = await get_channel_oauth_provider(
                     channel_id=channel_id,
                     provider=self.provider,
                 )
-                if not provider:
+                if not channel_provider:
                     raise ErrorMessage(
                         _get_missing_provider_message(
                             channel_uuid=channel_id,
                             provider=self.provider,
                         )
                     )
-                request.headers['Authorization'] = f'Bearer {provider.access_token}'
+                request.headers['Authorization'] = (
+                    f'Bearer {channel_provider.access_token}'
+                )
 
         response = yield request
 
         if response.status_code == 401:
             async with self._async_lock:
-                if not provider:
-                    provider = await get_channel_oauth_provider(
+                if not channel_provider:
+                    channel_provider = await get_channel_oauth_provider(
                         channel_id=channel_id,
                         provider=self.provider,
                     )
-                    if not provider:
+                    if not channel_provider:
                         raise ErrorMessage(
                             _get_missing_provider_message(
                                 channel_uuid=channel_id,
@@ -73,7 +75,8 @@ class ChannelProviderOAuth(Auth):
                             )
                         )
                 access_token = await self._refresh_token(
-                    channel_id=channel_id, refresh_token=provider.refresh_token or ''
+                    channel_id=channel_id,
+                    refresh_token=channel_provider.refresh_token or '',
                 )
                 request.headers['Authorization'] = f'Bearer {access_token}'
 
@@ -122,7 +125,7 @@ class ChannelProviderBotOAuth(Auth):
     async def async_auth_flow(
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
-        provider: BotProvider | None = None
+        bot_provider: BotProvider | None = None
         channel_id = request.headers.pop(TBOT_CHANNEL_ID_HEADER, None)
         if not channel_id:
             raise Exception(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
@@ -130,29 +133,29 @@ class ChannelProviderBotOAuth(Auth):
 
         async with self._async_lock:
             if not request.headers.get('Authorization'):
-                provider = await get_channel_bot_provider(
+                bot_provider = await get_channel_bot_provider(
                     channel_id=channel_id,
                     provider=self.provider,
                 )
-                if not provider:
+                if not bot_provider:
                     raise ErrorMessage(
                         _get_missing_provider_message(
                             channel_uuid=channel_id,
                             provider=self.provider,
                         )
                     )
-                request.headers['Authorization'] = f'Bearer {provider.access_token}'
+                request.headers['Authorization'] = f'Bearer {bot_provider.access_token}'
 
         response = yield request
 
         if response.status_code == 401:
             async with self._async_lock:
-                if not provider:
-                    provider = await get_channel_bot_provider(
+                if not bot_provider:
+                    bot_provider = await get_channel_bot_provider(
                         channel_id=channel_id,
                         provider=self.provider,
                     )
-                    if not provider:
+                    if not bot_provider:
                         raise ErrorMessage(
                             _get_missing_provider_message(
                                 channel_uuid=channel_id,
@@ -160,8 +163,8 @@ class ChannelProviderBotOAuth(Auth):
                             )
                         )
                 access_token = await self._refresh_token(
-                    provider_user_id=provider.provider_user_id,
-                    refresh_token=provider.refresh_token or '',
+                    provider_user_id=bot_provider.provider_user_id,
+                    refresh_token=bot_provider.refresh_token or '',
                 )
                 request.headers['Authorization'] = f'Bearer {access_token}'
 
