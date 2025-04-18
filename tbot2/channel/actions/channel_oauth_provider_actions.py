@@ -19,15 +19,20 @@ from ..schemas.channel_oauth_provider_schema import (
 
 
 async def get_channel_oauth_provider(
-    *, channel_id: UUID, provider: Provider, session: AsyncSession | None = None
+    *,
+    channel_id: UUID,
+    provider: Provider,
+    provider_id: str | None = None,
+    session: AsyncSession | None = None,
 ) -> ChannelOAuthProvider | None:
     async with get_session(session) as session:
-        channel_oauth_provider = await session.scalar(
-            sa.select(MChannelOAuthProvider).where(
-                MChannelOAuthProvider.channel_id == channel_id,
-                MChannelOAuthProvider.provider == provider,
-            )
+        stmt = sa.select(MChannelOAuthProvider).where(
+            MChannelOAuthProvider.channel_id == channel_id,
+            MChannelOAuthProvider.provider == provider,
         )
+        if provider_id:
+            stmt = stmt.where(MChannelOAuthProvider.provider_user_id == provider_id)
+        channel_oauth_provider = await session.scalar(stmt)
         if channel_oauth_provider:
             return ChannelOAuthProvider.model_validate(channel_oauth_provider)
 
@@ -46,14 +51,18 @@ async def get_channel_oauth_provider_by_id(
 
 
 async def get_channel_oauth_providers(
-    *, channel_id: UUID, session: AsyncSession | None = None
+    *,
+    channel_id: UUID,
+    provider: Provider | None = None,
+    session: AsyncSession | None = None,
 ) -> list[ChannelOAuthProvider]:
     async with get_session(session) as session:
-        channel_oauth_providers = await session.scalars(
-            sa.select(MChannelOAuthProvider).where(
-                MChannelOAuthProvider.channel_id == channel_id,
-            )
+        stmt = sa.select(MChannelOAuthProvider).where(
+            MChannelOAuthProvider.channel_id == channel_id,
         )
+        if provider:
+            stmt = stmt.where(MChannelOAuthProvider.provider == provider)
+        channel_oauth_providers = await session.scalars(stmt)
         return [
             ChannelOAuthProvider.model_validate(provider)
             for provider in channel_oauth_providers

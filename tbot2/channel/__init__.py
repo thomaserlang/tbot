@@ -15,6 +15,9 @@ from .actions.channel_oauth_provider_actions import (
     get_channel_oauth_provider_by_id as get_channel_oauth_provider_by_id,
 )
 from .actions.channel_oauth_provider_actions import (
+    get_channel_oauth_providers as get_channel_oauth_providers,
+)
+from .actions.channel_oauth_provider_actions import (
     get_channels_providers as get_channels_providers,
 )
 from .actions.channel_oauth_provider_actions import (
@@ -29,11 +32,11 @@ from .actions.channel_user_access_level_actions import (
 from .actions.channel_user_access_level_actions import (
     set_channel_user_access_level as set_channel_user_access_level,
 )
-from .actions.send_channel_message_actions import (
-    on_send_channel_message as on_send_channel_message,
+from .actions.send_channel_provider_message_actions import (
+    on_send_channel_provider_message as on_send_channel_provider_message,
 )
-from .actions.send_channel_message_actions import (
-    send_channel_message as send_channel_message,
+from .actions.send_channel_provider_message_actions import (
+    send_channel_provider_message as send_channel_provider_message,
 )
 from .models.channel_model import MChannel as MChannel
 from .models.channel_oauth_provider_model import (

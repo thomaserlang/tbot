@@ -130,7 +130,7 @@ async def handle_messages(
         try:
             await handle_message(
                 channel_provider=channel_provider,
-                message=message,
+                live_message=message,
             )
         except Exception as e:
             logger.exception(e)

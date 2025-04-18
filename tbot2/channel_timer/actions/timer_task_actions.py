@@ -5,15 +5,17 @@ from datetime import datetime, timedelta
 
 from loguru import logger
 
+from tbot2.channel import ChannelOAuthProvider
 from tbot2.channel_stream import get_current_channel_provider_stream
-from tbot2.channel_timer.actions.timer_actions import (
+from tbot2.common import Provider, datetime_now
+from tbot2.common.utils.event import add_event_handler, fire_event_async
+from tbot2.contexts import AsyncSession, get_session
+
+from ..actions.timer_actions import (
     Timer,
     get_timers,
     update_timer_next_run_at,
 )
-from tbot2.common import Provider, datetime_now
-from tbot2.common.utils.event import add_event_handler, fire_event_async
-from tbot2.contexts import AsyncSession, get_session
 
 CHECK_EVERY = 60
 
@@ -82,7 +84,7 @@ async def handle_timer(timer: Timer) -> None:
 
 async def is_timer_active(
     timer: Timer,
-    provider: Provider,
+    channel_provider: ChannelOAuthProvider,
     session: AsyncSession | None = None,
 ) -> bool:
     async with get_session(session) as session:
@@ -90,7 +92,8 @@ async def is_timer_active(
             return True
         stream = await get_current_channel_provider_stream(
             channel_id=timer.channel_id,
-            provider=provider,
+            provider=channel_provider.provider,
+            provider_id=channel_provider.provider_user_id,
             session=session,
         )
         if timer.active_mode == 'online' and stream:
@@ -105,13 +108,14 @@ async def fire_event_handle_timer(
     message: str,
 ) -> None:
     await fire_event_async(
-        'handle_timer',
+        f'handle_timer.{timer.provider}',
         timer=timer,
         message=message,
     )
 
 
 def on_handle_timer(
+    provider: Provider,
     priority: int = 128,
 ) -> Callable[
     [Callable[[Timer, str], Awaitable[None]]],
@@ -120,7 +124,8 @@ def on_handle_timer(
     def decorator(
         func: Callable[[Timer, str], Awaitable[None]],
     ) -> Callable[[Timer, str], Awaitable[None]]:
-        add_event_handler('handle_timer', func, priority)
+        add_event_handler(f'handle_timer.{provider}', func, priority)
+        add_event_handler('handle_timer.all', func, priority)
         return func
 
     return decorator

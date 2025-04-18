@@ -186,7 +186,9 @@ class ChannelProviderBotOAuth(Auth):
                     provider=self.provider,
                     provider_user_id=provider_user_id,
                     access_token=data['access_token'],
-                    refresh_token=data['refresh_token'],
+                    refresh_token=data['refresh_token']
+                    if 'refresh_token' in data
+                    else refresh_token,
                     expires_in=data['expires_in'],
                 ),
             )

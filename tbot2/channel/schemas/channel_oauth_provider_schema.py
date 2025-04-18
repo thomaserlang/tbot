@@ -11,6 +11,8 @@ from tbot2.common import (
     Provider,
     channel_provider_scopes,
 )
+from tbot2.contexts import AsyncSession
+from tbot2.exceptions import ErrorMessage
 
 
 class ChannelOAuthProvider(BaseSchema):
@@ -25,6 +27,23 @@ class ChannelOAuthProvider(BaseSchema):
     name: str | None
     bot_provider_id: UUID | None
     bot_provider: BotProvider | None
+
+    async def get_default_or_system_bot_provider(
+        self,
+        session: AsyncSession | None = None,
+    ) -> BotProvider:
+        from tbot2.channel import get_channel_bot_provider
+
+        bot_provider = self.bot_provider
+        if not bot_provider:
+            bot_provider = await get_channel_bot_provider(
+                provider=self.provider,
+                channel_id=self.channel_id,
+                session=session,
+            )
+            if not bot_provider:
+                raise ErrorMessage(f'No bot provider found for {self.provider}')
+        return bot_provider
 
 
 class ChannelProvider(BaseSchema):

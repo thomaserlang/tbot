@@ -23,7 +23,7 @@ class BannedUserDetails(BaseSchema):
 
 class UserBannedDetails(BaseSchema):
     banned_user_details: Annotated[BannedUserDetails, Field(alias='bannedUserDetails')]
-    ban_type: Annotated[str, Field(alias='banType')]
+    ban_type: Annotated[str | Literal['permanent', 'temporary'], Field(alias='banType')]
     ban_duration_seconds: Annotated[int | None, Field(alias='banDurationSeconds')]
 
 

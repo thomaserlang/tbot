@@ -1,10 +1,9 @@
-from typing import Literal
-from uuid import UUID
 
-from tbot2.common import BaseRequestSchema, Provider
+from tbot2.common import BaseRequestSchema
+
+from ..schemas.channel_oauth_provider_schema import ChannelOAuthProvider
 
 
 class SendChannelMessage(BaseRequestSchema):
-    channel_id: UUID
-    provider: Provider | Literal['all']
+    channel_provider: ChannelOAuthProvider
     message: str

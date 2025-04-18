@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from async_lru import alru_cache
+from loguru import logger
 
 from tbot2.bot_providers import BotProvider
 from tbot2.channel import get_channel_bot_provider
@@ -32,7 +33,6 @@ async def handle_message_response(
             channel_id=chat_message.channel_id,
             session=session,
         )
-
         # Bail early if there are no patterns or cmds to match
         has_patters = any(command.patterns for command in commands)
         if not has_patters and not chat_message.message.startswith('!'):
@@ -65,8 +65,13 @@ async def handle_message_response(
                         response.bot_provider.provider_user_id
                         == chat_message.provider_viewer_id
                     ):
+                        logger.debug('Bot is replying to itself, skipping')
                         return None
                 return response
+            else:
+                logger.trace(
+                    f'No matched command for message: {chat_message.message}'
+                )
 
     return None
 

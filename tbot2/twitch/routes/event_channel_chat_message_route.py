@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Request
 from loguru import logger
 from uuid6 import uuid7
 
+from tbot2.channel import get_channel_oauth_provider
 from tbot2.channel_chat_filters import matches_filter
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
@@ -69,12 +70,21 @@ async def event_channel_chat_message_route(
         if response := await handle_message_response(
             chat_message=chat_message,
         ):
-            await twitch_bot_send_message(
+            channel_provider = await get_channel_oauth_provider(
                 channel_id=chat_message.channel_id,
-                broadcaster_id=chat_message.provider_id,
+                provider='twitch',
+                provider_id=chat_message.provider_id,
+            )
+            if not channel_provider:
+                logger.warning(
+                    f'Channel provider not found for '
+                    f'{chat_message.channel_id} {chat_message.provider_id}'
+                )
+                return
+            await twitch_bot_send_message(
+                channel_provider=channel_provider,
                 message=response.response,
                 reply_parent_message_id=chat_message.msg_id,
-                bot_provider=response.bot_provider,
             )
     except Exception as e:
         logger.exception(e)

@@ -1,6 +1,6 @@
 from twitchAPI.twitch import TwitchUser as TwitchUser
 
-from .actions import handle_timer_action as handle_timer_action
+from .actions import twitch_handle_timer_action as twitch_handle_timer_action
 from .actions.eventsub_actions import (
     delete_eventsub_registration as delete_eventsub_registration,
 )

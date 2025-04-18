@@ -1,38 +1,23 @@
-from uuid import UUID
 
 from loguru import logger
 
-from tbot2.bot_providers import BotProvider
 from tbot2.channel import (
+    ChannelOAuthProvider,
     SendChannelMessage,
-    get_channel_bot_provider,
-    get_channel_oauth_provider,
-    on_send_channel_message,
+    on_send_channel_provider_message,
 )
 
 from ..twitch_http_client import twitch_app_client
 
 
 async def twitch_bot_send_message(
-    channel_id: UUID,
-    broadcaster_id: str,
+    channel_provider: ChannelOAuthProvider,
     message: str,
     reply_parent_message_id: str | None = None,
-    bot_provider: BotProvider | None = None,
 ) -> bool:
-    if not bot_provider:
-        bot_provider = await get_channel_bot_provider(
-            provider='twitch',
-            channel_id=channel_id,
-        )
-        if not bot_provider:
-            raise ValueError(
-                f'Failed to send for provider twitch for channel {channel_id}: '
-                'no bot provider found'
-            )
-
+    bot_provider = await channel_provider.get_default_or_system_bot_provider()
     data = {
-        'broadcaster_id': broadcaster_id,
+        'broadcaster_id': channel_provider.provider_user_id or '',
         'sender_id': bot_provider.provider_user_id or '',
         'message': message,
     }
@@ -49,34 +34,9 @@ async def twitch_bot_send_message(
     return True
 
 
-@on_send_channel_message()
+@on_send_channel_provider_message('twitch')
 async def send_channel_message(data: SendChannelMessage) -> None:
-    if data.provider != 'twitch' and data.provider != 'all':
-        return
-
-    channel_provider = await get_channel_oauth_provider(
-        channel_id=data.channel_id,
-        provider='twitch',
-    )
-    if not channel_provider:
-        return
-
-    bot_provider = channel_provider.bot_provider
-    if not bot_provider:
-        bot_provider = await get_channel_bot_provider(
-            provider='twitch',
-            channel_id=data.channel_id,
-        )
-        if not bot_provider:
-            logger.error(
-                f'Failed to send for provider twitch for channel {data.channel_id}: '
-                'no bot provider found'
-            )
-            return
-
     await twitch_bot_send_message(
-        channel_id=data.channel_id,
-        broadcaster_id=channel_provider.provider_user_id or '',
+        channel_provider=data.channel_provider,
         message=data.message,
-        bot_provider=bot_provider,
     )
