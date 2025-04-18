@@ -18,13 +18,13 @@ class LiveBroadcastSnippet(BaseSchema):
         str,
         Field(
             alias='channelId',
-            description='The ID that YouTube uses to uniquely identify the channel '
-            'that is publishing the broadcast.',
         ),
     ]
+    """The ID that YouTube uses to uniquely identify the channel 
+    that is publishing the broadcast."""
     title: str
     description: str
-    thumbnails: dict[Literal['default', 'medium', 'high'], Thumbnail]
+    thumbnails: dict[Literal['default', 'medium', 'high', 'standard'] | str, Thumbnail]
     scheduled_start_time: Annotated[
         datetime | None, Field(alias='scheduledStartTime')
     ] = None
@@ -37,7 +37,20 @@ class LiveBroadcastSnippet(BaseSchema):
 
 
 class LiveBroadcastStatus(BaseSchema):
-    life_cycle_status: Annotated[str, Field(alias='lifeCycleStatus')]
+    life_cycle_status: Annotated[
+        str
+        | Literal[
+            'complete',
+            'created',
+            'live',
+            'liveStarting',
+            'ready',
+            'revoked',
+            'testStarting',
+            'testing',
+        ],
+        Field(alias='lifeCycleStatus'),
+    ]
     privacy_status: Annotated[
         Literal['private', 'public', 'unlisted'] | str, Field(alias='privacyStatus')
     ]
@@ -90,6 +103,7 @@ class LiveBroadcast(BaseSchema):
     kind: str
     etag: str
     id: str
+    'The ID that YouTube assigns to uniquely identify the broadcast.'
     snippet: LiveBroadcastSnippet
     status: LiveBroadcastStatus
     content_details: Annotated[ContentDetails, Field(alias='contentDetails')]

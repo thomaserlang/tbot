@@ -32,6 +32,7 @@ async def get_current_channel_provider_stream(
     channel_id: UUID,
     provider: Provider,
     provider_id: str | None = None,
+    provider_stream_id: str | None = None,
     session: AsyncSession | None = None,
 ) -> ChannelProviderStream | None:
     async with get_session(session) as session:
@@ -42,6 +43,10 @@ async def get_current_channel_provider_stream(
         )
         if provider_id:
             stmt = stmt.where(MChannelProviderStream.provider_id == provider_id)
+        if provider_stream_id:
+            stmt = stmt.where(
+                MChannelProviderStream.provider_stream_id == provider_stream_id
+            )
         result = await session.scalar(stmt)
         if result:
             return ChannelProviderStream.model_validate(result)
@@ -104,6 +109,7 @@ async def end_channel_provider_stream(
     channel_id: UUID,
     provider: Provider,
     provider_id: str | None = None,
+    provider_stream_id: str | None = None,
     ended_at: datetime | None = None,
     session: AsyncSession | None = None,
 ) -> ChannelProviderStream | None:
@@ -118,13 +124,18 @@ async def end_channel_provider_stream(
         )
         if not stream:
             return None
-        await session.execute(
-            sa.update(MChannelProviderStream.__table__)  # type: ignore
+        stmt = (
+            sa.update(MChannelProviderStream.__table__) # type: ignore
             .where(
                 MChannelProviderStream.id == stream.id,
             )
             .values(ended_at=ended_at)
         )
+        if provider_stream_id:
+            stmt = stmt.where(
+                MChannelProviderStream.provider_stream_id == provider_stream_id
+            )
+        await session.execute(stmt)
         stream.ended_at = ended_at
         return stream
 
