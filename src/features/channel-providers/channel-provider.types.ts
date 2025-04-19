@@ -9,7 +9,9 @@ export interface ChannelProvider {
     id: ChannelProviderId
     channel_id: ChannelId
     provider: Provider
-    name: string | null
+    provider_user_id: string | null
+    provider_user_name: string | null
+    provider_user_display_name: string | null
     scope_needed: boolean
     bot_provider: ProviderBot | null
 }

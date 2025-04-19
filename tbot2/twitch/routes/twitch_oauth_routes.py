@@ -257,7 +257,8 @@ async def twitch_auth_route(
                         refresh_token=response.refresh_token,
                         expires_in=response.expires_in,
                         scope=params.scope,
-                        name=twitch_user.display_name,
+                        provider_user_name=twitch_user.login,
+                        provider_user_display_name=twitch_user.display_name,
                         provider_user_id=twitch_user.id,
                     ),
                 )
@@ -277,7 +278,8 @@ async def twitch_auth_route(
                     refresh_token=response.refresh_token,
                     expires_in=response.expires_in,
                     scope=params.scope,
-                    name=twitch_user.display_name,
+                    provider_user_name=twitch_user.display_name,
+                    provider_user_display_name=twitch_user.display_name,
                     provider_user_id=twitch_user.id,
                 ),
             )

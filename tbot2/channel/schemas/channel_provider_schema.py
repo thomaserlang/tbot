@@ -20,11 +20,12 @@ class ChannelProvider(BaseSchema):
     channel_id: UUID
     provider: Provider
     provider_user_id: str | None
+    provider_user_name: str | None
+    provider_user_display_name: str | None
     access_token: str | None
     refresh_token: str | None
     expires_at: datetime | None
     scope: str | None
-    name: str | None
     bot_provider_id: UUID | None
     bot_provider: BotProvider | None
 
@@ -50,7 +51,8 @@ class ChannelProviderPublic(BaseSchema):
     id: UUID
     channel_id: UUID
     provider: Provider
-    name: str | None
+    provider_user_name: str | None
+    provider_user_display_name: str | None
     scope: str | None
     bot_provider_id: UUID | None
     bot_provider: BotProviderPublic | None
@@ -66,6 +68,12 @@ class ChannelProviderRequest(BaseRequestSchema):
     provider_user_id: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
+    provider_user_name: (
+        Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
+    ) = None
+    provider_user_display_name: (
+        Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
+    ) = None
     access_token: (
         Annotated[str, StringConstraints(min_length=1, max_length=2000)] | None
     ) = None
@@ -77,5 +85,4 @@ class ChannelProviderRequest(BaseRequestSchema):
     scope: Annotated[str, StringConstraints(min_length=1, max_length=2000)] | None = (
         None
     )
-    name: Annotated[str, StringConstraints(min_length=1, max_length=255)] | None = None
     bot_provider_id: UUID | None = None

@@ -19,11 +19,16 @@ class MChannelProvider(Base):
     )
     provider: Mapped[str] = mapped_column(sa.String(255))
     provider_user_id: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
+    provider_user_name: Mapped[str | None] = mapped_column(
+        sa.String(255), nullable=True
+    )
+    provider_user_display_name: Mapped[str | None] = mapped_column(
+        sa.String(255), nullable=True
+    )
     access_token: Mapped[str | None] = mapped_column(sa.String(2000), nullable=True)
     refresh_token: Mapped[str | None] = mapped_column(sa.String(2000), nullable=True)
     expires_at: Mapped[datetime | None] = mapped_column(sa.DateTime(), nullable=True)
     scope: Mapped[str | None] = mapped_column(sa.String(2000), nullable=True)
-    name: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
     bot_provider_id: Mapped[UUID | None] = mapped_column(
         sa.UUID,
         sa.ForeignKey('bot_providers.id', ondelete='SET NULL', onupdate='CASCADE'),

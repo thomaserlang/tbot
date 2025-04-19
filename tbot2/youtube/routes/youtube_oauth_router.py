@@ -190,12 +190,13 @@ async def youtube_auth_route(
                 channel_id=UUID(params.state['channel_id']),
                 provider='youtube',
                 data=ChannelProviderRequest(
-                    provider_user_id=channel.id,
                     access_token=response.access_token,
                     refresh_token=response.refresh_token,
                     expires_in=response.expires_in,
                     scope=params.scope,
-                    name=channel.snippet.title,
+                    provider_user_id=channel.id,
+                    provider_user_name=channel.snippet.title,
+                    provider_user_display_name=channel.snippet.title,
                 ),
             )
 

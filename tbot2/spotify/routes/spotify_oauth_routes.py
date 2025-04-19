@@ -113,7 +113,9 @@ async def spotify_auth_route(
             refresh_token=oauth_response.refresh_token,
             expires_in=oauth_response.expires_in,
             scope=channel_provider_scopes['spotify'],
-            name=user_info['id'],
+            provider_user_id=user_info['id'],
+            provider_user_name=user_info['id'],
+            provider_user_display_name=user_info['display_name'],
         ),
     )
 
