@@ -1,17 +1,17 @@
-import { providerLabels } from '@/types/provider.type'
+import { providers } from '@/types/provider.type'
 import { Badge, Button, Flex, Paper, Text } from '@mantine/core'
 import { IconLink } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
-import { ChannelProvider } from '../provider.types'
+import { ChannelProvider } from '../channel-provider.types'
 
 interface Props {
-    providers: ChannelProvider[]
+    channelProviders: ChannelProvider[]
 }
 
-export function ProvidersView({ providers }: Props) {
+export function ProvidersView({ channelProviders: channelProviders }: Props) {
     const navigate = useNavigate()
 
-    if (providers.length === 0) {
+    if (channelProviders.length === 0) {
         return (
             <Flex justify="center" align="center" direction="column" gap="1rem">
                 <IconLink size={80} />
@@ -24,23 +24,24 @@ export function ProvidersView({ providers }: Props) {
 
     return (
         <Flex gap="2rem" wrap={'wrap'}>
-            {providers.map((provider) => (
-                <Paper key={provider.id} withBorder p="0.5rem" w={300}>
+            {channelProviders.map((channelProvider) => (
+                <Paper key={channelProvider.id} withBorder p="0.5rem" w={300}>
                     <Text fw={500} size="lg">
-                        {providerLabels[provider.provider] || provider.provider}
+                        {providers[channelProvider.provider].name ||
+                            channelProvider.provider}
                     </Text>
 
                     <Flex gap="0.5rem" align="center">
-                        <Text c="dimmed">{provider.name}</Text>
+                        <Text c="dimmed">{channelProvider.name}</Text>
 
                         <Button
                             ml="auto"
                             size="xs"
                             variant="outline"
-                            rightSection={providerErrors(provider)}
+                            rightSection={providerErrors(channelProvider)}
                             onClick={() => {
                                 navigate(
-                                    `/channels/${provider.channel_id}/providers/${provider.id}`
+                                    `/channels/${channelProvider.channel_id}/providers/${channelProvider.id}`
                                 )
                             }}
                         >

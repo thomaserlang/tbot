@@ -1,5 +1,4 @@
-import { providerBotLabels } from '@/features/provider-bot/provider-bot.types'
-import { Provider } from '@/types/provider.type'
+import { providers } from '@/types/provider.type'
 import { toastError } from '@/utils/toast'
 import { Button, Menu } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
@@ -29,18 +28,20 @@ export function AddProviderButton() {
             </Menu.Target>
 
             <Menu.Dropdown>
-                {Object.keys(providerBotLabels).map((t) => (
-                    <Menu.Item
-                        key={t}
-                        onClick={() => {
-                            add.mutate({
-                                provider: t as Provider,
-                            })
-                        }}
-                    >
-                        {providerBotLabels[t]}
-                    </Menu.Item>
-                ))}
+                {Object.values(providers)
+                    .filter((t) => t.system_bot)
+                    .map((t) => (
+                        <Menu.Item
+                            key={t.key}
+                            onClick={() => {
+                                add.mutate({
+                                    provider: t.key,
+                                })
+                            }}
+                        >
+                            {t.name}
+                        </Menu.Item>
+                    ))}
             </Menu.Dropdown>
         </Menu>
     )

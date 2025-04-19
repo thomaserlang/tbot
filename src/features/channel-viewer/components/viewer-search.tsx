@@ -1,6 +1,6 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
-import { providerLabels } from '@/types/provider.type'
+import { providers } from '@/types/provider.type'
 import { Flex, Input, Text } from '@mantine/core'
 import { IconSearch } from '@tabler/icons-react'
 import { DataTable } from 'mantine-datatable'
@@ -57,7 +57,7 @@ export function ViewerSearch({ onSelect }: Props) {
                             noWrap: true,
                             render: (row) => (
                                 <Text c="dimmed" fz="xl">
-                                    {providerLabels[row.provider] ||
+                                    {providers[row.provider].name ||
                                         row.provider}
                                 </Text>
                             ),

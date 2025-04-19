@@ -1,5 +1,5 @@
 import { Flex, Title } from '@mantine/core'
-import { ChannelProvider } from '../provider.types'
+import { ChannelProvider } from '../channel-provider.types'
 import { BotButtonAction } from './bot-button-action'
 import { ButtonAction } from './button-action'
 

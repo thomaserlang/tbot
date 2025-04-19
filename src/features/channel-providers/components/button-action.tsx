@@ -1,8 +1,11 @@
 import { toastError, toastSuccess } from '@/utils/toast'
 import { Button, Flex, Text } from '@mantine/core'
 import { openConfirmModal } from '@mantine/modals'
-import { useDeleteProvider, useGetProviderConnectUrl } from '../provider.api'
-import { ChannelProvider } from '../provider.types'
+import {
+    useDeleteChannelProvider,
+    useGetChannelProviderConnectUrl,
+} from '../channel-provider.api'
+import { ChannelProvider } from '../channel-provider.types'
 
 interface Props {
     provider: ChannelProvider
@@ -10,7 +13,7 @@ interface Props {
 }
 
 export function ButtonAction({ provider, onDeleted }: Props) {
-    const connectUrl = useGetProviderConnectUrl({
+    const connectUrl = useGetChannelProviderConnectUrl({
         onSuccess: ({ url }) => {
             window.location.href = url
         },
@@ -19,7 +22,7 @@ export function ButtonAction({ provider, onDeleted }: Props) {
         },
     })
 
-    const deleteProvider = useDeleteProvider({
+    const deleteProvider = useDeleteChannelProvider({
         onSuccess: () => {
             toastSuccess('Provider deleted')
             onDeleted?.()
@@ -62,7 +65,7 @@ export function ButtonAction({ provider, onDeleted }: Props) {
                         onConfirm: () => {
                             deleteProvider.mutate({
                                 channelId: provider.channel_id,
-                                providerId: provider.id,
+                                channelProviderId: provider.id,
                             })
                         },
                     })

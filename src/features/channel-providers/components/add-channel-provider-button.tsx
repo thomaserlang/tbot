@@ -1,17 +1,16 @@
 import { ChannelId } from '@/features/channel'
-import { Provider } from '@/types/provider.type'
+import { providers } from '@/types/provider.type'
 import { toastError } from '@/utils/toast'
 import { Button, Menu } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
-import { useGetProviderConnectUrl } from '../provider.api'
-import { channelProviderLabels } from '../provider.types'
+import { useGetChannelProviderConnectUrl } from '../channel-provider.api'
 
 interface Props {
     channelId: ChannelId
 }
 
-export function AddProviderButton({ channelId }: Props) {
-    const add = useGetProviderConnectUrl({
+export function AddChannelProviderButton({ channelId }: Props) {
+    const add = useGetChannelProviderConnectUrl({
         onSuccess: ({ url }) => {
             window.location.href = url
         },
@@ -34,17 +33,17 @@ export function AddProviderButton({ channelId }: Props) {
             </Menu.Target>
 
             <Menu.Dropdown>
-                {Object.keys(channelProviderLabels).map((t) => (
+                {Object.values(providers).map((provider) => (
                     <Menu.Item
-                        key={t}
+                        key={provider.key}
                         onClick={() => {
                             add.mutate({
                                 channelId,
-                                provider: t as Provider,
+                                provider: provider.key,
                             })
                         }}
                     >
-                        {channelProviderLabels[t]}
+                        {provider.name}
                     </Menu.Item>
                 ))}
             </Menu.Dropdown>

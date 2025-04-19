@@ -1,5 +1,5 @@
 import { accessLevelLabels } from '@/types/access-level.type'
-import { providerLabels } from '@/types/provider.type'
+import { providers } from '@/types/provider.type'
 import {
     Flex,
     NumberInput,
@@ -43,10 +43,15 @@ export function FilterForm({ form }: Props) {
                 <Select
                     label="Provider"
                     key={form.key('provider')}
-                    data={Object.keys(providerLabels).map((key) => ({
-                        value: key,
-                        label: providerLabels[key],
-                    }))}
+                    data={Object.values({
+                        all: { key: 'all', name: 'All', chat: true },
+                        ...providers,
+                    })
+                        .filter((t) => t.chat)
+                        .map((value) => ({
+                            value: value.key,
+                            label: value.name,
+                        }))}
                     {...form.getInputProps('provider')}
                 />
             </SimpleGrid>

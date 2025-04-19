@@ -1,7 +1,7 @@
 import { api } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
 import { ChannelId } from '../channel/types'
-import { ChannelProvider } from './provider.types'
+import { ChannelProvider } from './channel-provider.types'
 
 export function getProvidersQueryKey(channelId: ChannelId) {
     return ['channelProviders', channelId]

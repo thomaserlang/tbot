@@ -4,17 +4,17 @@ import { Provider } from '@/types/provider.type'
 import { api } from '@/utils/api'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useLocation } from 'react-router-dom'
-import { ChannelProvider, ChannelProviderId } from './provider.types'
-import { getProvidersQueryKey } from './providers.api'
+import { ChannelProvider, ChannelProviderId } from './channel-provider.types'
+import { getProvidersQueryKey } from './channel-providers.api'
 
-export function getProviderQueryKey(
+export function getChannelProviderQueryKey(
     channelId: ChannelId,
     providerId: ChannelProviderId
 ) {
     return ['channelProvider', channelId, providerId]
 }
 
-export async function getProvider(
+export async function getChannelProvider(
     channelId: ChannelId,
     providerId: ChannelProviderId
 ) {
@@ -26,28 +26,34 @@ export async function getProvider(
 
 interface GetParams {
     channelId: ChannelId
-    providerId: ChannelProviderId
+    channelProviderId: ChannelProviderId
 }
-export function useGetProvider(props: GetParams) {
+export function useGetChannelProvider(props: GetParams) {
     return useQuery({
-        queryKey: getProviderQueryKey(props.channelId, props.providerId),
-        queryFn: () => getProvider(props.channelId, props.providerId),
+        queryKey: getChannelProviderQueryKey(
+            props.channelId,
+            props.channelProviderId
+        ),
+        queryFn: () =>
+            getChannelProvider(props.channelId, props.channelProviderId),
     })
 }
 
-export async function deleteProvider(
+export async function deleteChannelProvider(
     channelId: ChannelId,
-    providerId: ChannelProviderId
+    channelProviderId: ChannelProviderId
 ) {
-    await api.delete(`/api/2/channels/${channelId}/providers/${providerId}`)
+    await api.delete(
+        `/api/2/channels/${channelId}/providers/${channelProviderId}`
+    )
 }
 
 interface DeleteParams {
     channelId: ChannelId
-    providerId: ChannelProviderId
+    channelProviderId: ChannelProviderId
 }
 
-export function useDeleteProvider({
+export function useDeleteChannelProvider({
     onSuccess,
     onError,
 }: {
@@ -55,21 +61,25 @@ export function useDeleteProvider({
     onError?: (error: unknown) => void
 } = {}) {
     return useMutation({
-        mutationFn: async ({ channelId, providerId }: DeleteParams) => {
-            await deleteProvider(channelId, providerId)
+        mutationFn: async ({
+            channelId,
+            channelProviderId: providerId,
+        }: DeleteParams) => {
+            await deleteChannelProvider(channelId, providerId)
         },
         onSuccess: (data, variables) => {
             queryClient.removeQueries({
-                queryKey: getProviderQueryKey(
+                queryKey: getChannelProviderQueryKey(
                     variables.channelId,
-                    variables.providerId
+                    variables.channelProviderId
                 ),
             })
             queryClient.setQueryData(
                 getProvidersQueryKey(variables.channelId),
                 (oldData: ChannelProvider[]) =>
                     oldData.filter(
-                        (provider) => provider.id !== variables.providerId
+                        (provider) =>
+                            provider.id !== variables.channelProviderId
                     )
             )
             onSuccess?.(data, variables)
@@ -82,7 +92,7 @@ interface ConnectURL {
     url: string
 }
 
-export function useGetProviderConnectUrl({
+export function useGetChannelProviderConnectUrl({
     onSuccess,
     onError,
 }: {
@@ -113,7 +123,7 @@ export function useGetProviderConnectUrl({
     })
 }
 
-export function useGetProviderConnectBotUrl({
+export function useGetChannelProviderConnectBotUrl({
     onSuccess,
     onError,
 }: {
@@ -144,7 +154,7 @@ export function useGetProviderConnectBotUrl({
     })
 }
 
-export async function disconnectProviderBot(
+export async function disconnectChannelProviderBot(
     channelId: ChannelId,
     providerId: ChannelProviderId
 ) {
@@ -155,7 +165,7 @@ interface DisconnectBotParams {
     channelId: ChannelId
     providerId: ChannelProviderId
 }
-export function useDisconnectProviderBot({
+export function useDisconnectChannelProviderBot({
     onSuccess,
     onError,
 }: {
@@ -164,11 +174,14 @@ export function useDisconnectProviderBot({
 } = {}) {
     return useMutation({
         mutationFn: async ({ channelId, providerId }: DisconnectBotParams) => {
-            await disconnectProviderBot(channelId, providerId)
+            await disconnectChannelProviderBot(channelId, providerId)
         },
         onSuccess: (data, variables) => {
             queryClient.setQueryData(
-                getProviderQueryKey(variables.channelId, variables.providerId),
+                getChannelProviderQueryKey(
+                    variables.channelId,
+                    variables.providerId
+                ),
                 (oldData: ChannelProvider) => ({
                     ...oldData,
                     bot_provider: null,

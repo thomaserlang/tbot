@@ -2,17 +2,17 @@ import { toastError, toastSuccess } from '@/utils/toast'
 import { Button, Flex, Text } from '@mantine/core'
 import { openConfirmModal } from '@mantine/modals'
 import {
-    useDisconnectProviderBot,
-    useGetProviderConnectBotUrl,
-} from '../provider.api'
-import { ChannelProvider } from '../provider.types'
+    useDisconnectChannelProviderBot,
+    useGetChannelProviderConnectBotUrl,
+} from '../channel-provider.api'
+import { ChannelProvider } from '../channel-provider.types'
 
 interface Props {
     provider: ChannelProvider
 }
 
 export function BotButtonAction({ provider }: Props) {
-    const connectBotUrl = useGetProviderConnectBotUrl({
+    const connectBotUrl = useGetChannelProviderConnectBotUrl({
         onSuccess: ({ url }) => {
             window.location.href = url
         },
@@ -21,7 +21,7 @@ export function BotButtonAction({ provider }: Props) {
         },
     })
 
-    const disconnectBotUrl = useDisconnectProviderBot({
+    const disconnectBotUrl = useDisconnectChannelProviderBot({
         onSuccess: () => {
             toastSuccess('Bot disconnected')
         },

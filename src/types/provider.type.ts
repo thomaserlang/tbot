@@ -1,9 +1,37 @@
 export type Provider = 'twitch' | 'youtube' | 'discord' | 'spotify'
 
-export const providerLabels: { [key: string | Provider]: string } = {
-    all: 'All',
-    twitch: 'Twitch',
-    youtube: 'YouTube',
-    discord: 'Discord',
-    spotify: 'Spotify',
+export interface ProviderInfo {
+    key: Provider
+    name: string
+    stream?: boolean
+    chat?: boolean
+    own_bot?: boolean
+    system_bot?: boolean
+}
+
+export const providers: { [key: string | Provider]: ProviderInfo } = {
+    twitch: {
+        key: 'twitch',
+        name: 'Twitch',
+        stream: true,
+        chat: true,
+        own_bot: true,
+        system_bot: true,
+    },
+    youtube: {
+        key: 'youtube',
+        name: 'YouTube',
+        stream: true,
+        chat: true,
+        own_bot: true,
+        system_bot: true,
+    },
+    spotify: {
+        key: 'spotify',
+        name: 'Spotify',
+        stream: false,
+        chat: false,
+        own_bot: true,
+        system_bot: false,
+    },
 } as const

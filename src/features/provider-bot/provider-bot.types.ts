@@ -11,8 +11,3 @@ export interface ProviderBot {
     scope: string | null
     scope_needed: boolean
 }
-
-export const providerBotLabels: { [provider: string | Provider]: string } = {
-    twitch: 'Twitch',
-    youtube: 'YouTube',
-} as const

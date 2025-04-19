@@ -4,11 +4,11 @@ import { useDocumentTitle } from '@/utils/document-title'
 import { Container, Flex, Title } from '@mantine/core'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCurrentChannel } from '../channel/current-channel.provider'
-import { AddProviderButton } from './components/add-provider-button'
-import { ProviderModal } from './components/provider-modal'
-import { ProvidersView } from './components/providers-view'
-import { ChannelProviderId } from './provider.types'
-import { useGetProviders } from './providers.api'
+import { ChannelProviderId } from './channel-provider.types'
+import { useGetProviders } from './channel-providers.api'
+import { AddChannelProviderButton } from './components/add-channel-provider-button'
+import { ChannelProviderModal } from './components/channel-provider-modal'
+import { ProvidersView } from './components/channel-providers-view'
 
 export function Component() {
     const channel = useCurrentChannel()
@@ -24,20 +24,20 @@ export function Component() {
             <Flex direction="column" gap="1rem">
                 <Flex>
                     <Title order={2}>Providers</Title>
-                    <AddProviderButton channelId={channel.id} />
+                    <AddChannelProviderButton channelId={channel.id} />
                 </Flex>
 
                 {isLoading && <PageLoader />}
 
                 {error && <ErrorBox errorObj={error} />}
 
-                {data && <ProvidersView providers={data} />}
+                {data && <ProvidersView channelProviders={data} />}
             </Flex>
 
             {providerId && (
-                <ProviderModal
+                <ChannelProviderModal
                     channelId={channel.id}
-                    providerId={providerId}
+                    channelProviderId={providerId}
                     onClose={() => {
                         navigate(`/channels/${channel.id}/providers`)
                     }}

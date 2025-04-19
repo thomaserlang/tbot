@@ -1,31 +1,35 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
 import { ChannelId } from '@/features/channel/types'
-import { providerLabels } from '@/types/provider.type'
+import { providers } from '@/types/provider.type'
 import { Modal } from '@mantine/core'
-import { useGetProvider } from '../provider.api'
-import { ChannelProviderId } from '../provider.types'
-import { ProviderView } from './provider-view'
+import { useGetChannelProvider } from '../channel-provider.api'
+import { ChannelProviderId } from '../channel-provider.types'
+import { ProviderView } from './channel-provider-view'
 
 interface Props {
     channelId: ChannelId
-    providerId: ChannelProviderId
+    channelProviderId: ChannelProviderId
     onClose: () => void
 }
 
-export function ProviderModal({ channelId, providerId, onClose }: Props) {
-    const { isLoading, error, data } = useGetProvider({
+export function ChannelProviderModal({
+    channelId,
+    channelProviderId: channelProviderId,
+    onClose,
+}: Props) {
+    const { isLoading, error, data } = useGetChannelProvider({
         channelId,
-        providerId,
+        channelProviderId: channelProviderId,
     })
     return (
         <Modal
             size="lg"
-            opened={!!providerId}
+            opened={!!channelProviderId}
             onClose={onClose}
             title={
                 data
-                    ? providerLabels[data.provider] || data.provider
+                    ? providers[data.provider].name || data.provider
                     : 'Provider settings'
             }
         >

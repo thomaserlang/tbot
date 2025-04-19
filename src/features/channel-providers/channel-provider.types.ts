@@ -13,10 +13,3 @@ export interface ChannelProvider {
     scope_needed: boolean
     bot_provider: ProviderBot | null
 }
-
-export const channelProviderLabels: { [provider: string | Provider]: string } =
-    {
-        twitch: 'Twitch',
-        spotify: 'Spotify',
-        youtube: 'YouTube',
-    } as const
