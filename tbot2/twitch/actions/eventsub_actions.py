@@ -252,7 +252,7 @@ async def handle_disconnect_channel_bot_provider(
 
 
 @on_delete_channel_provider()
-async def handle_delete_channel_oauth_provider(
+async def handle_delete_channel_provider(
     channel_provider: ChannelProvider,
 ) -> None:
     if channel_provider.provider != 'twitch':

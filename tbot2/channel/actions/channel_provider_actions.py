@@ -32,22 +32,22 @@ async def get_channel_provider(
         )
         if provider_id:
             stmt = stmt.where(MChannelProvider.provider_user_id == provider_id)
-        channel_oauth_provider = await session.scalar(stmt)
-        if channel_oauth_provider:
-            return ChannelProvider.model_validate(channel_oauth_provider)
+        channel_provider = await session.scalar(stmt)
+        if channel_provider:
+            return ChannelProvider.model_validate(channel_provider)
 
 
 async def get_channel_provider_by_id(
     *, channel_provider_id: UUID, session: AsyncSession | None = None
 ) -> ChannelProvider | None:
     async with get_session(session) as session:
-        channel_oauth_provider = await session.scalar(
+        channel_provider = await session.scalar(
             sa.select(MChannelProvider).where(
                 MChannelProvider.id == channel_provider_id,
             )
         )
-        if channel_oauth_provider:
-            return ChannelProvider.model_validate(channel_oauth_provider)
+        if channel_provider:
+            return ChannelProvider.model_validate(channel_provider)
 
 
 async def get_channel_providers(
@@ -62,10 +62,10 @@ async def get_channel_providers(
         )
         if provider:
             stmt = stmt.where(MChannelProvider.provider == provider)
-        channel_oauth_providers = await session.scalars(stmt)
+        channel_providers = await session.scalars(stmt)
         return [
             ChannelProvider.model_validate(provider)
-            for provider in channel_oauth_providers
+            for provider in channel_providers
         ]
 
 
