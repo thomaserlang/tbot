@@ -1,7 +1,7 @@
 from loguru import logger
 
 from tbot2.channel import (
-    ChannelOAuthProvider,
+    ChannelProvider,
     SendChannelMessage,
     on_send_channel_provider_message,
 )
@@ -13,7 +13,7 @@ from ..schemas.youtube_live_chat_message_schema import LiveChatMessages
 
 
 async def get_live_chat_messages(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     live_chat_id: str,
     page_token: str,
 ) -> LiveChatMessages:
@@ -37,7 +37,7 @@ async def get_live_chat_messages(
 
 
 async def send_live_chat_message(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     live_chat_id: str,
     message: str,
 ) -> bool:
@@ -79,7 +79,7 @@ async def send_channel_message(data: SendChannelMessage) -> None:
 
 
 async def delete_live_chat_message(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     message_id: str,
 ) -> bool:
     response = await youtube_bot_client.delete(

@@ -6,9 +6,9 @@ from tbot2.bot_providers import (
     save_bot_provider,
 )
 from tbot2.channel import (
-    ChannelOAuthProviderRequest,
+    ChannelProviderRequest,
     get_channel_bot_provider,
-    save_channel_oauth_provider,
+    save_channel_provider,
 )
 from tbot2.testbase import run_file, user_signin
 
@@ -50,10 +50,10 @@ async def test_bot_provider_actions(client: AsyncClient) -> None:
     assert check_bot_provider.name == 'System Bot'
     assert check_bot_provider.id == system_bot_provider.id
 
-    await save_channel_oauth_provider(
+    await save_channel_provider(
         channel_id=user.channel.id,
         provider='twitch',
-        data=ChannelOAuthProviderRequest(
+        data=ChannelProviderRequest(
             provider_user_id='123',
             bot_provider_id=bot_provider.id,
         ),

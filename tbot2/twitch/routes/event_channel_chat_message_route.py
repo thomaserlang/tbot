@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Request
 from loguru import logger
 from uuid6 import uuid7
 
-from tbot2.channel import get_channel_oauth_provider
+from tbot2.channel import get_channel_provider
 from tbot2.channel_chat_filters import matches_filter
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
@@ -70,7 +70,7 @@ async def event_channel_chat_message_route(
         if response := await handle_message_response(
             chat_message=chat_message,
         ):
-            channel_provider = await get_channel_oauth_provider(
+            channel_provider = await get_channel_provider(
                 channel_id=chat_message.channel_id,
                 provider='twitch',
                 provider_id=chat_message.provider_id,

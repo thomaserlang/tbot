@@ -10,12 +10,12 @@ from tbot2.channel.actions.channel_bot_provider_actions import (
 from tbot2.common import TAccessLevel, TokenData
 from tbot2.dependecies import authenticated
 
-from ..actions.channel_oauth_provider_actions import (
-    delete_channel_oauth_provider,
-    get_channel_oauth_provider_by_id,
-    get_channel_oauth_providers,
+from ..actions.channel_provider_actions import (
+    delete_channel_provider,
+    get_channel_provider_by_id,
+    get_channel_providers,
 )
-from ..schemas.channel_oauth_provider_schema import ChannelProvider
+from ..schemas.channel_provider_schema import ChannelProviderPublic
 
 router = APIRouter()
 
@@ -29,15 +29,15 @@ async def get_channel_providers_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_READ])
     ],
-) -> list[ChannelProvider]:
+) -> list[ChannelProviderPublic]:
     await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
     )
-    providers = await get_channel_oauth_providers(
+    providers = await get_channel_providers(
         channel_id=channel_id,
     )
-    return [ChannelProvider.model_validate(provider) for provider in providers]
+    return [ChannelProviderPublic.model_validate(provider) for provider in providers]
 
 
 @router.get(
@@ -49,12 +49,12 @@ async def get_channel_provider_route(
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_READ])
     ],
-) -> ChannelProvider:
+) -> ChannelProviderPublic:
     await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
     )
-    channel_provider = await get_channel_oauth_provider_by_id(
+    channel_provider = await get_channel_provider_by_id(
         channel_provider_id=channel_provider_id,
     )
 
@@ -64,7 +64,7 @@ async def get_channel_provider_route(
             detail='Channel provider not found',
         )
 
-    return ChannelProvider.model_validate(channel_provider)
+    return ChannelProviderPublic.model_validate(channel_provider)
 
 
 @router.delete(
@@ -83,7 +83,7 @@ async def delete_channel_provider_route(
         channel_id=channel_id,
         access_level=TAccessLevel.ADMIN,
     )
-    channel_provider = await get_channel_oauth_provider_by_id(
+    channel_provider = await get_channel_provider_by_id(
         channel_provider_id=channel_provider_id,
     )
     if not channel_provider or channel_provider.channel_id != channel_id:
@@ -91,7 +91,7 @@ async def delete_channel_provider_route(
             status_code=404,
             detail='Channel provider not found',
         )
-    await delete_channel_oauth_provider(
+    await delete_channel_provider(
         channel_provider_id=channel_provider_id,
     )
 

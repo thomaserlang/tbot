@@ -9,84 +9,84 @@ from tbot2.common import Provider
 from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 
-from ..models.channel_oauth_provider_model import (
-    MChannelOAuthProvider,
+from ..models.channel_provider_model import (
+    MChannelProvider,
 )
-from ..schemas.channel_oauth_provider_schema import (
-    ChannelOAuthProvider,
-    ChannelOAuthProviderRequest,
+from ..schemas.channel_provider_schema import (
+    ChannelProvider,
+    ChannelProviderRequest,
 )
 
 
-async def get_channel_oauth_provider(
+async def get_channel_provider(
     *,
     channel_id: UUID,
     provider: Provider,
     provider_id: str | None = None,
     session: AsyncSession | None = None,
-) -> ChannelOAuthProvider | None:
+) -> ChannelProvider | None:
     async with get_session(session) as session:
-        stmt = sa.select(MChannelOAuthProvider).where(
-            MChannelOAuthProvider.channel_id == channel_id,
-            MChannelOAuthProvider.provider == provider,
+        stmt = sa.select(MChannelProvider).where(
+            MChannelProvider.channel_id == channel_id,
+            MChannelProvider.provider == provider,
         )
         if provider_id:
-            stmt = stmt.where(MChannelOAuthProvider.provider_user_id == provider_id)
+            stmt = stmt.where(MChannelProvider.provider_user_id == provider_id)
         channel_oauth_provider = await session.scalar(stmt)
         if channel_oauth_provider:
-            return ChannelOAuthProvider.model_validate(channel_oauth_provider)
+            return ChannelProvider.model_validate(channel_oauth_provider)
 
 
-async def get_channel_oauth_provider_by_id(
+async def get_channel_provider_by_id(
     *, channel_provider_id: UUID, session: AsyncSession | None = None
-) -> ChannelOAuthProvider | None:
+) -> ChannelProvider | None:
     async with get_session(session) as session:
         channel_oauth_provider = await session.scalar(
-            sa.select(MChannelOAuthProvider).where(
-                MChannelOAuthProvider.id == channel_provider_id,
+            sa.select(MChannelProvider).where(
+                MChannelProvider.id == channel_provider_id,
             )
         )
         if channel_oauth_provider:
-            return ChannelOAuthProvider.model_validate(channel_oauth_provider)
+            return ChannelProvider.model_validate(channel_oauth_provider)
 
 
-async def get_channel_oauth_providers(
+async def get_channel_providers(
     *,
     channel_id: UUID,
     provider: Provider | None = None,
     session: AsyncSession | None = None,
-) -> list[ChannelOAuthProvider]:
+) -> list[ChannelProvider]:
     async with get_session(session) as session:
-        stmt = sa.select(MChannelOAuthProvider).where(
-            MChannelOAuthProvider.channel_id == channel_id,
+        stmt = sa.select(MChannelProvider).where(
+            MChannelProvider.channel_id == channel_id,
         )
         if provider:
-            stmt = stmt.where(MChannelOAuthProvider.provider == provider)
+            stmt = stmt.where(MChannelProvider.provider == provider)
         channel_oauth_providers = await session.scalars(stmt)
         return [
-            ChannelOAuthProvider.model_validate(provider)
+            ChannelProvider.model_validate(provider)
             for provider in channel_oauth_providers
         ]
 
 
 async def get_channels_providers(
     *, provider: Provider, session: AsyncSession | None = None
-) -> AsyncGenerator[ChannelOAuthProvider]:
+) -> AsyncGenerator[ChannelProvider]:
     async with get_session(session) as session:
         providers = await session.stream_scalars(
-            sa.select(MChannelOAuthProvider).where(
-                MChannelOAuthProvider.provider == provider,
+            sa.select(MChannelProvider).where(
+                MChannelProvider.provider == provider,
             )
         )
         async for p in providers:
-            yield ChannelOAuthProvider.model_validate(p)
+            yield ChannelProvider.model_validate(p)
 
 
-async def save_channel_oauth_provider(
+async def save_channel_provider(
     *,
     channel_id: UUID,
     provider: Provider,
-    data: ChannelOAuthProviderRequest,
+    data: ChannelProviderRequest,
     session: AsyncSession | None = None,
 ) -> bool:
     async with get_session(session) as session:
@@ -99,10 +99,10 @@ async def save_channel_oauth_provider(
                 )
 
         r = await session.execute(
-            sa.update(MChannelOAuthProvider)
+            sa.update(MChannelProvider)
             .where(
-                MChannelOAuthProvider.channel_id == channel_id,
-                MChannelOAuthProvider.provider == provider,
+                MChannelProvider.channel_id == channel_id,
+                MChannelProvider.provider == provider,
             )
             .values(**data_)
         )
@@ -110,7 +110,7 @@ async def save_channel_oauth_provider(
         if r.rowcount == 0:
             id = uuid7()
             await session.execute(
-                sa.insert(MChannelOAuthProvider).values(
+                sa.insert(MChannelProvider).values(
                     id=id,
                     channel_id=channel_id,
                     provider=provider,
@@ -120,49 +120,49 @@ async def save_channel_oauth_provider(
         return True
 
 
-async def delete_channel_oauth_provider(
+async def delete_channel_provider(
     *, channel_provider_id: UUID, session: AsyncSession | None = None
 ) -> bool:
     async with get_session(session) as session:
-        channel_provider = await get_channel_oauth_provider_by_id(
+        channel_provider = await get_channel_provider_by_id(
             channel_provider_id=channel_provider_id,
             session=session,
         )
         if not channel_provider:
             return False
         result = await session.execute(
-            sa.delete(MChannelOAuthProvider).where(
-                MChannelOAuthProvider.id == channel_provider_id,
+            sa.delete(MChannelProvider).where(
+                MChannelProvider.id == channel_provider_id,
             )
         )
         if result.rowcount > 0:
-            await fire_event_delete_channel_oauth_provider(
+            await fire_event_delete_channel_provider(
                 channel_provider=channel_provider,
             )
             return True
         return False
 
 
-def on_delete_channel_oauth_provider(
+def on_delete_channel_provider(
     priority: int = 128,
 ) -> Callable[
-    [Callable[[ChannelOAuthProvider], Awaitable[None]]],
-    Callable[[ChannelOAuthProvider], Awaitable[None]],
+    [Callable[[ChannelProvider], Awaitable[None]]],
+    Callable[[ChannelProvider], Awaitable[None]],
 ]:
     def decorator(
-        func: Callable[[ChannelOAuthProvider], Awaitable[None]],
-    ) -> Callable[[ChannelOAuthProvider], Awaitable[None]]:
-        add_event_handler('delete_channel_oauth_provider', func, priority)
+        func: Callable[[ChannelProvider], Awaitable[None]],
+    ) -> Callable[[ChannelProvider], Awaitable[None]]:
+        add_event_handler('delete_channel_provider', func, priority)
         return func
 
     return decorator
 
 
-async def fire_event_delete_channel_oauth_provider(
+async def fire_event_delete_channel_provider(
     *,
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
 ) -> None:
     await fire_event_async(
-        'delete_channel_oauth_provider',
+        'delete_channel_provider',
         channel_provider=channel_provider,
     )

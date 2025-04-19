@@ -8,12 +8,12 @@ from tbot2.common import Provider
 from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 
-from ..actions.channel_oauth_provider_actions import (
-    get_channel_oauth_provider_by_id,
-    save_channel_oauth_provider,
+from ..models.channel_provider_model import MChannelProvider
+from ..schemas.channel_provider_schema import ChannelProviderRequest
+from .channel_provider_actions import (
+    get_channel_provider_by_id,
+    save_channel_provider,
 )
-from ..models.channel_oauth_provider_model import MChannelOAuthProvider
-from ..schemas.channel_oauth_provider_schema import ChannelOAuthProviderRequest
 
 
 async def get_channel_bot_provider(
@@ -26,20 +26,20 @@ async def get_channel_bot_provider(
         query = (
             sa.select(MBotProvider)
             .join(
-                MChannelOAuthProvider,
-                MChannelOAuthProvider.bot_provider_id == MBotProvider.id,
+                MChannelProvider,
+                MChannelProvider.bot_provider_id == MBotProvider.id,
                 isouter=True,
             )
             .where(
                 MBotProvider.provider == provider,
                 sa.or_(
-                    MChannelOAuthProvider.channel_id == channel_id,
+                    MChannelProvider.channel_id == channel_id,
                     MBotProvider.system_default.is_(True),
                 ),
             )
             .order_by(
                 sa.case(
-                    (MChannelOAuthProvider.channel_id == channel_id, 1),
+                    (MChannelProvider.channel_id == channel_id, 1),
                     else_=2,
                 )
             )
@@ -58,19 +58,19 @@ async def get_channel_bot_providers(
         query = (
             sa.select(MBotProvider)
             .join(
-                MChannelOAuthProvider,
-                MChannelOAuthProvider.bot_provider_id == MBotProvider.id,
+                MChannelProvider,
+                MChannelProvider.bot_provider_id == MBotProvider.id,
                 isouter=True,
             )
             .where(
                 sa.or_(
-                    MChannelOAuthProvider.channel_id == channel_id,
+                    MChannelProvider.channel_id == channel_id,
                     MBotProvider.system_default.is_(True),
                 ),
             )
             .order_by(
                 sa.case(
-                    (MChannelOAuthProvider.channel_id == channel_id, 1),
+                    (MChannelProvider.channel_id == channel_id, 1),
                     else_=2,
                 )
             )
@@ -86,7 +86,7 @@ async def disconnect_channel_bot_provider(
     session: AsyncSession | None = None,
 ) -> None:
     async with get_session(session) as session:
-        channel_provider = await get_channel_oauth_provider_by_id(
+        channel_provider = await get_channel_provider_by_id(
             channel_provider_id=channel_provider_id,
             session=session,
         )
@@ -101,10 +101,10 @@ async def disconnect_channel_bot_provider(
                 'no bot provider found'
             )
 
-        await save_channel_oauth_provider(
+        await save_channel_provider(
             channel_id=channel_id,
             provider=channel_provider.provider,
-            data=ChannelOAuthProviderRequest(
+            data=ChannelProviderRequest(
                 bot_provider_id=None,
             ),
             session=session,
@@ -112,7 +112,7 @@ async def disconnect_channel_bot_provider(
 
         providers_left = await session.scalar(
             sa.select(sa.func.count('*')).where(
-                MChannelOAuthProvider.bot_provider_id == channel_provider.bot_provider.id
+                MChannelProvider.bot_provider_id == channel_provider.bot_provider.id
             )
         )
         if not providers_left:

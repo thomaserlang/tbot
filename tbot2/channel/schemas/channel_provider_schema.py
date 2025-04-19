@@ -15,7 +15,7 @@ from tbot2.contexts import AsyncSession
 from tbot2.exceptions import ErrorMessage
 
 
-class ChannelOAuthProvider(BaseSchema):
+class ChannelProvider(BaseSchema):
     id: UUID
     channel_id: UUID
     provider: Provider
@@ -46,7 +46,7 @@ class ChannelOAuthProvider(BaseSchema):
         return bot_provider
 
 
-class ChannelProvider(BaseSchema):
+class ChannelProviderPublic(BaseSchema):
     id: UUID
     channel_id: UUID
     provider: Provider
@@ -62,7 +62,7 @@ class ChannelProvider(BaseSchema):
         return bool(required_scopes - scopes)
 
 
-class ChannelOAuthProviderRequest(BaseRequestSchema):
+class ChannelProviderRequest(BaseRequestSchema):
     provider_user_id: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None

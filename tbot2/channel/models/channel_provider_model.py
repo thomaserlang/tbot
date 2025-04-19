@@ -9,8 +9,8 @@ from tbot2.bot_providers import MBotProvider
 from tbot2.model_base import Base
 
 
-class MChannelOAuthProvider(Base):
-    __tablename__ = 'channel_oauth_providers'
+class MChannelProvider(Base):
+    __tablename__ = 'channel_providers'
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)

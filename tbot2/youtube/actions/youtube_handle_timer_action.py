@@ -1,4 +1,4 @@
-from tbot2.channel import get_channel_oauth_providers
+from tbot2.channel import get_channel_providers
 from tbot2.channel_stream import get_current_channel_provider_stream
 from tbot2.channel_timer import Timer, on_handle_timer
 from tbot2.youtube.actions.youtube_live_chat_message_actions import (
@@ -11,7 +11,7 @@ async def handle_timer(
     timer: Timer,
     message: str,
 ) -> None:
-    for channel_provider in await get_channel_oauth_providers(
+    for channel_provider in await get_channel_providers(
         channel_id=timer.channel_id,
         provider='twitch',
     ):

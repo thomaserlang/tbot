@@ -107,7 +107,7 @@ class Database:
 
     async def close(self) -> None:
         await self.engine.dispose()
-        await self.redis.close()
+        await self.redis.aclose()  # type: ignore
 
     async def close_test(self) -> None:
         await self.trans.rollback()

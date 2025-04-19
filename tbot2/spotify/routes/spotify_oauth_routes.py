@@ -7,9 +7,9 @@ from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
 
 from tbot2.channel import (
-    ChannelOAuthProviderRequest,
+    ChannelProviderRequest,
     ChannelScope,
-    save_channel_oauth_provider,
+    save_channel_provider,
 )
 from tbot2.common import (
     ConnectUrl,
@@ -105,10 +105,10 @@ async def spotify_auth_route(
         raise HTTPException(status_code=r.status_code, detail=r.text)
     user_info = r.json()
 
-    await save_channel_oauth_provider(
+    await save_channel_provider(
         channel_id=UUID(params.state['channel_id']),
         provider='spotify',
-        data=ChannelOAuthProviderRequest(
+        data=ChannelProviderRequest(
             access_token=oauth_response.access_token,
             refresh_token=oauth_response.refresh_token,
             expires_in=oauth_response.expires_in,

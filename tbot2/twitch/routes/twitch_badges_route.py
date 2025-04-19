@@ -4,7 +4,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Security
 
-from tbot2.channel import get_channel_oauth_provider
+from tbot2.channel import get_channel_provider
 from tbot2.channel_chatlog import ChatlogsScope
 from tbot2.common import TokenData
 from tbot2.dependecies import authenticated
@@ -25,7 +25,7 @@ async def get_twitch_badges(
         TokenData, Security(authenticated, scopes=[ChatlogsScope.READ])
     ],
 ) -> ChannelBadges:
-    provider = await get_channel_oauth_provider(
+    provider = await get_channel_provider(
         channel_id=channel_id,
         provider='twitch',
     )

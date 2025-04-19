@@ -8,23 +8,23 @@ from .actions.channel_bot_provider_actions import (
 from .actions.channel_bot_provider_actions import (
     on_disconnect_channel_bot_provider as on_disconnect_channel_bot_provider,
 )
-from .actions.channel_oauth_provider_actions import (
-    get_channel_oauth_provider as get_channel_oauth_provider,
+from .actions.channel_provider_actions import (
+    get_channel_provider as get_channel_provider,
 )
-from .actions.channel_oauth_provider_actions import (
-    get_channel_oauth_provider_by_id as get_channel_oauth_provider_by_id,
+from .actions.channel_provider_actions import (
+    get_channel_provider_by_id as get_channel_provider_by_id,
 )
-from .actions.channel_oauth_provider_actions import (
-    get_channel_oauth_providers as get_channel_oauth_providers,
+from .actions.channel_provider_actions import (
+    get_channel_providers as get_channel_providers,
 )
-from .actions.channel_oauth_provider_actions import (
+from .actions.channel_provider_actions import (
     get_channels_providers as get_channels_providers,
 )
-from .actions.channel_oauth_provider_actions import (
-    on_delete_channel_oauth_provider as on_delete_channel_oauth_provider,
+from .actions.channel_provider_actions import (
+    on_delete_channel_provider as on_delete_channel_provider,
 )
-from .actions.channel_oauth_provider_actions import (
-    save_channel_oauth_provider as save_channel_oauth_provider,
+from .actions.channel_provider_actions import (
+    save_channel_provider as save_channel_provider,
 )
 from .actions.channel_user_access_level_actions import (
     get_channel_user_access_level as get_channel_user_access_level,
@@ -40,20 +40,20 @@ from .actions.send_channel_provider_message_actions import (
 )
 from .exceptions import ChannelProviderNotFound as ChannelProviderNotFound
 from .models.channel_model import MChannel as MChannel
-from .models.channel_oauth_provider_model import (
-    MChannelOAuthProvider as MChannelOAuthProvider,
+from .models.channel_provider_model import (
+    MChannelProvider as MChannelProvider,
 )
 from .models.channel_user_access_levels_model import (
     MChannelUserAccessLevel as MChannelUserAccessLevel,
 )
-from .schemas.channel_oauth_provider_schema import (
-    ChannelOAuthProvider as ChannelOAuthProvider,
-)
-from .schemas.channel_oauth_provider_schema import (
-    ChannelOAuthProviderRequest as ChannelOAuthProviderRequest,
-)
-from .schemas.channel_oauth_provider_schema import (
+from .schemas.channel_provider_schema import (
     ChannelProvider as ChannelProvider,
+)
+from .schemas.channel_provider_schema import (
+    ChannelProviderPublic as ChannelProviderPublic,
+)
+from .schemas.channel_provider_schema import (
+    ChannelProviderRequest as ChannelProviderRequest,
 )
 from .schemas.channel_schemas import Channel as Channel
 from .schemas.channel_schemas import ChannelCreate as ChannelCreate

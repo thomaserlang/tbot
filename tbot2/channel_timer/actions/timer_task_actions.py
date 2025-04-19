@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from loguru import logger
 
-from tbot2.channel import ChannelOAuthProvider
+from tbot2.channel import ChannelProvider
 from tbot2.channel_stream import get_current_channel_provider_stream
 from tbot2.common import Provider, datetime_now
 from tbot2.common.utils.event import add_event_handler, fire_event_async
@@ -84,7 +84,7 @@ async def handle_timer(timer: Timer) -> None:
 
 async def is_timer_active(
     timer: Timer,
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     session: AsyncSession | None = None,
 ) -> bool:
     async with get_session(session) as session:

@@ -4,7 +4,7 @@ from uuid import UUID
 from loguru import logger
 
 from tbot2.channel import (
-    ChannelOAuthProvider,
+    ChannelProvider,
     ChannelProviderNotFound,
     get_channels_providers,
 )
@@ -41,7 +41,7 @@ async def task_youtube_live() -> None:
 
 
 @logger.catch
-async def check_for_live_broadcasts(channel_provider: ChannelOAuthProvider) -> None:
+async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
     with logger.contextualize(
         channel_provider_id=channel_provider.id,
     ):
@@ -87,7 +87,7 @@ async def check_for_live_broadcasts(channel_provider: ChannelOAuthProvider) -> N
 
 @logger.catch
 async def handle_broadcast_live_chat(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     live_broadcast: LiveBroadcast,
 ) -> None:
     live_chat_id = live_broadcast.snippet.live_chat_id
@@ -159,7 +159,7 @@ async def handle_broadcast_live_chat(
 
 
 async def handle_messages(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     messages: LiveChatMessages,
 ) -> None:
     for message in messages.items:

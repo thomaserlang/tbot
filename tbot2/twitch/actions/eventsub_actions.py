@@ -6,11 +6,11 @@ from loguru import logger
 
 from tbot2.bot_providers import BotProvider
 from tbot2.channel import (
-    ChannelOAuthProvider,
+    ChannelProvider,
     get_channel_bot_provider,
-    get_channel_oauth_provider,
+    get_channel_provider,
     get_channels_providers,
-    on_delete_channel_oauth_provider,
+    on_delete_channel_provider,
     on_disconnect_channel_bot_provider,
 )
 from tbot2.config_settings import config
@@ -31,7 +31,7 @@ async def register_channel_eventsubs(
     event_type: str | None = None,
 ) -> None:
     logger.info(f'Registering eventsub for channel {channel_id}')
-    provider = await get_channel_oauth_provider(
+    provider = await get_channel_provider(
         channel_id=channel_id,
         provider='twitch',
     )
@@ -251,9 +251,9 @@ async def handle_disconnect_channel_bot_provider(
     )
 
 
-@on_delete_channel_oauth_provider()
+@on_delete_channel_provider()
 async def handle_delete_channel_oauth_provider(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
 ) -> None:
     if channel_provider.provider != 'twitch':
         return

@@ -10,12 +10,12 @@ from tbot2.bot_providers import (
     save_bot_provider,
 )
 from tbot2.channel import (
-    ChannelOAuthProvider,
-    ChannelOAuthProviderRequest,
+    ChannelProvider,
     ChannelProviderNotFound,
+    ChannelProviderRequest,
     get_channel_bot_provider,
-    get_channel_oauth_provider,
-    save_channel_oauth_provider,
+    get_channel_provider,
+    save_channel_provider,
 )
 from tbot2.common import Provider
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
@@ -35,7 +35,7 @@ class ChannelProviderOAuth(Auth):
     async def async_auth_flow(
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
-        channel_provider: ChannelOAuthProvider | None = None
+        channel_provider: ChannelProvider | None = None
         channel_id = request.headers.pop(TBOT_CHANNEL_ID_HEADER, None)
         if not channel_id:
             raise Exception(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
@@ -43,7 +43,7 @@ class ChannelProviderOAuth(Auth):
 
         async with self._async_lock:
             if not request.headers.get('Authorization'):
-                channel_provider = await get_channel_oauth_provider(
+                channel_provider = await get_channel_provider(
                     channel_id=channel_id,
                     provider=self.provider,
                 )
@@ -61,7 +61,7 @@ class ChannelProviderOAuth(Auth):
         if response.status_code == 401:
             async with self._async_lock:
                 if not channel_provider:
-                    channel_provider = await get_channel_oauth_provider(
+                    channel_provider = await get_channel_provider(
                         channel_id=channel_id,
                         provider=self.provider,
                     )
@@ -93,10 +93,10 @@ class ChannelProviderOAuth(Auth):
                 raise InternalHttpError(response.status_code, response.text)
             data = response.json()
 
-            await save_channel_oauth_provider(
+            await save_channel_provider(
                 channel_id=channel_id,
                 provider=self.provider,
-                data=ChannelOAuthProviderRequest(
+                data=ChannelProviderRequest(
                     access_token=data['access_token'],
                     # For e.g. spotify they do not give a new refresh token
                     refresh_token=data['refresh_token']

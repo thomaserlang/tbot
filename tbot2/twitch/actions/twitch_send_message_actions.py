@@ -2,7 +2,7 @@
 from loguru import logger
 
 from tbot2.channel import (
-    ChannelOAuthProvider,
+    ChannelProvider,
     SendChannelMessage,
     on_send_channel_provider_message,
 )
@@ -11,7 +11,7 @@ from ..twitch_http_client import twitch_app_client
 
 
 async def twitch_bot_send_message(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     message: str,
     reply_parent_message_id: str | None = None,
 ) -> bool:

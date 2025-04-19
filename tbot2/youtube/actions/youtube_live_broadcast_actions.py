@@ -1,6 +1,6 @@
 from typing import Literal
 
-from tbot2.channel import ChannelOAuthProvider
+from tbot2.channel import ChannelProvider
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER, TBOT_CHANNEL_PROVIDER_ID_HEADER
 from tbot2.exceptions import InternalHttpError
 
@@ -10,7 +10,7 @@ from ..schemas.youtube_page_schema import YoutubePage
 
 
 async def get_live_broadcasts(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     broadcast_status: Literal['active', 'all', 'completed', 'upcoming'] | None = None,
     id: str | None = None,
     mine: bool | None = True,

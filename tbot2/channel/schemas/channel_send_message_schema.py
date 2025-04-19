@@ -1,9 +1,9 @@
 
 from tbot2.common import BaseRequestSchema
 
-from ..schemas.channel_oauth_provider_schema import ChannelOAuthProvider
+from .channel_provider_schema import ChannelProvider
 
 
 class SendChannelMessage(BaseRequestSchema):
-    channel_provider: ChannelOAuthProvider
+    channel_provider: ChannelProvider
     message: str

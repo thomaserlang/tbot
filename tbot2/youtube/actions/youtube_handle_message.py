@@ -3,7 +3,7 @@ import asyncio
 from loguru import logger
 from uuid6 import uuid7
 
-from tbot2.channel import ChannelOAuthProvider
+from tbot2.channel import ChannelProvider
 from tbot2.channel_chat_filters import matches_filter
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_command import TCommand, handle_message_response
@@ -19,7 +19,7 @@ from ..schemas.youtube_live_chat_message_schema import LiveChatMessage
 
 
 async def handle_message(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     live_message: LiveChatMessage,
 ) -> None:
     if (datetime_now() - live_message.snippet.published_at).total_seconds() > 30:
@@ -65,7 +65,7 @@ async def handle_message(
 
 
 async def handle_text_message_event(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     message: LiveChatMessage,
 ) -> None:
     if not message.snippet.text_message_details:
@@ -108,7 +108,7 @@ async def handle_text_message_event(
 
 
 async def handle_filter_message(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     chat_message: ChatMessage,
     live_chat_id: str,
 ) -> None:
@@ -147,7 +147,7 @@ async def handle_filter_message(
 
 
 async def handle_type_message_deleted_event(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     live_message: LiveChatMessage,
 ) -> None:
     details = live_message.snippet.message_deleted_details
@@ -173,7 +173,7 @@ async def handle_type_message_deleted_event(
 
 
 async def handle_type_user_banned_event(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     live_message: LiveChatMessage,
 ) -> None:
     details = live_message.snippet.user_banned_details
@@ -219,7 +219,7 @@ async def handle_type_user_banned_event(
 
 
 async def handle_notice(
-    channel_provider: ChannelOAuthProvider,
+    channel_provider: ChannelProvider,
     live_message: LiveChatMessage,
 ) -> None:
     chat_message = ChatMessage(
