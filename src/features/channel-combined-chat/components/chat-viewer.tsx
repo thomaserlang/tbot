@@ -4,8 +4,7 @@ import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
 import { ChannelId } from '@/features/channel/types'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { Flex, Text } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
-import { IconCheck, IconMessage } from '@tabler/icons-react'
+import { IconMessage } from '@tabler/icons-react'
 import { useEffect, useRef, useState } from 'react'
 import { VList, VListHandle } from 'virtua'
 import {
@@ -46,13 +45,6 @@ export function ChatViewer({
         channelId,
         connect: liveUpdates,
         params,
-        onOpen: () => {
-            notificationReconnected()
-        },
-        onClose: (event) => {
-            if (event.code === 1005) return
-            notificationShowReconnect()
-        },
         onMessage: (message) => {
             setMessages((prev) => [...(prev || []), message].slice(-1000))
         },
@@ -122,30 +114,4 @@ export function ChatViewer({
             )}
         </>
     )
-}
-
-function notificationShowReconnect() {
-    notifications.show({
-        id: 'chat-reconnect',
-        color: 'blue',
-        loading: true,
-        title: 'Disconnected from chat',
-        message: 'Trying to reconnect',
-        autoClose: false,
-        withCloseButton: true,
-        position: 'bottom-right',
-        icon: <IconCheck size={18} />,
-    })
-}
-
-function notificationReconnected() {
-    notifications.update({
-        id: 'chat-reconnect',
-        title: 'Connected to chat',
-        color: 'green',
-        message: '',
-        autoClose: 2000,
-        loading: false,
-        withCloseButton: false,
-    })
 }

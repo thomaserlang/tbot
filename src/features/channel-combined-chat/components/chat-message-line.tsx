@@ -16,7 +16,7 @@ export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
         <Box className={classes.message}>
             <Text
                 component="span"
-                mr="0.5rem"
+                mr="0.25rem"
                 c="dimmed"
                 title={chatMessage.created_at}
             >

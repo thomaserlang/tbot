@@ -44,6 +44,7 @@ def upgrade() -> None:
         sa.Column('twitch_badges', sa.JSON, nullable=True),
         sa.Index('ix_chatlogs_1', 'channel_id', 'created_at'),
         sa.Index('ix_chatlogs_2', 'channel_id', 'provider_viewer_id', 'created_at'),
+        sa.Index('ix_chatlogs_3', 'channel_id', 'type', 'created_at'),
         sa.UniqueConstraint('msg_id', name='uq_chatlogs_msg_id'),
     )
     op.execute("""

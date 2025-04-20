@@ -23,6 +23,7 @@ export function ViewerSearch({ onSelect }: Props) {
                 placeholder="Search..."
                 w="100%"
                 rightSection={<IconSearch />}
+                data-autofocus
                 onChange={(e) => {
                     setName(e.currentTarget.value)
                 }}

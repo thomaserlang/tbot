@@ -11,10 +11,12 @@ from ..types.access_level_type import TAccessLevel
 from ..types.provider_type import Provider
 from .twitch_schemas import TwitchBadge, TwitchMessageFragment
 
+ChatMessageType = Literal['message', 'notice', 'mod_action']
+
 
 class ChatMessage(BaseRequestSchema):
     id: UUID
-    type: Literal['message', 'notice', 'mod_action']
+    type: ChatMessageType
     sub_type: Annotated[str, StringConstraints(min_length=1, max_length=100)] | None = (
         None
     )

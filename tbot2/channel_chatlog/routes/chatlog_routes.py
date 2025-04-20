@@ -5,7 +5,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from fastapi import APIRouter, Query, Security, WebSocket, WebSocketDisconnect
 
-from tbot2.common import ChatMessage, Provider, TAccessLevel, TokenData
+from tbot2.common import ChatMessage, ChatMessageType, Provider, TAccessLevel, TokenData
 from tbot2.database import database
 from tbot2.dependecies import authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQueryDep, page_cursor
@@ -29,6 +29,7 @@ async def get_chatlogs(
     page_query: PageCursorQueryDep,
     provider: Annotated[Provider | None, Query()] = None,
     provider_viewer_id: str | None = None,
+    type: ChatMessageType | None = None,
     lte_created_at: datetime | None = None,
 ) -> PageCursor[Chatlog]:
     await token_data.channel_require_access(
@@ -53,6 +54,9 @@ async def get_chatlogs(
     if lte_created_at:
         stmt = stmt.where(MChatlog.created_at <= lte_created_at)
 
+    if type:
+        stmt = stmt.where(MChatlog.type == type)
+
     page = await page_cursor(
         query=stmt,
         page_query=page_query,
@@ -71,6 +75,7 @@ async def get_chat_ws_route(
     channel_id: UUID,
     provider: Annotated[Provider | None, Query()] = None,
     provider_viewer_id: str | None = None,
+    type: ChatMessageType | None = None,
 ) -> None:
     await websocket.accept()
     async with database.redis.pubsub() as pubsub:  # type: ignore
@@ -93,6 +98,9 @@ async def get_chat_ws_route(
                         or message.provider_viewer_id != provider_viewer_id
                     ):
                         continue
+                if type and message.type != type:
+                    continue
+
                 await websocket.send_text(message.model_dump_json())
             except WebSocketDisconnect:
                 return

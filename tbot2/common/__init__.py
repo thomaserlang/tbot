@@ -1,6 +1,7 @@
 from .schemas.base_request_schema import BaseRequestSchema as BaseRequestSchema
 from .schemas.base_schema import BaseSchema as BaseSchema
 from .schemas.chat_message_schema import ChatMessage as ChatMessage
+from .schemas.chat_message_schema import ChatMessageType as ChatMessageType
 from .schemas.connect_url_schema import ConnectUrl as ConnectUrl
 from .schemas.oauth2_client_schemas import (
     Oauth2AuthorizeParams as Oauth2AuthorizeParams,

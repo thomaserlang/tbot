@@ -69,6 +69,7 @@ export function ChannelProviderUpdateStreamTitle({ channelProvider }: Props) {
                         w="100%"
                         key={form.key('stream_title')}
                         readOnly={update.isPending}
+                        data-autofocus
                         {...form.getInputProps('stream_title')}
                     />
                     <Text size="sm" c="dimmed" ml="auto">
