@@ -60,7 +60,7 @@ export function DashboardProviders({ channelId }: Props) {
                     <Flex direction="row" gap="1rem">
                         <Divider orientation="vertical" />
                         {channelProviders.data
-                            ?.filter((f) => providers[f.provider])
+                            ?.filter((f) => providers[f.provider].stream)
                             .map((channelProvider) => (
                                 <Fragment key={channelProvider.id}>
                                     <DashboardChannelProvider
