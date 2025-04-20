@@ -42,8 +42,7 @@ export function ChannelProviderLiveStatus({ channelProvider }: Props) {
                     </HoverCard.Target>
                     <HoverCard.Dropdown>
                         <Text size="sm">
-                            Action is required to go live. Click the dashboard
-                            button.
+                            Click the Create Broadcast button.
                         </Text>
                     </HoverCard.Dropdown>
                 </HoverCard>

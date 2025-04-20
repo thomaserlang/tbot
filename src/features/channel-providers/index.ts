@@ -1,6 +1,6 @@
 export * from './channel-provider.api'
 export * from './channel-provider.types'
 export * from './channel-providers.api'
-export * from './components/channel-provider-dashboard-button'
 export * from './components/channel-provider-embed-live'
 export * from './components/channel-provider-live-status'
+export * from './components/channel-provider-to-external-dashboard'

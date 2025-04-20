@@ -1,58 +1,52 @@
 import {
     ChannelProvider,
-    ChannelProviderDashboardButton,
     ChannelProviderEmbedLive,
     ChannelProviderLiveStatus,
+    ChannelProviderToExternalDashboardTitle,
 } from '@/features/channel-providers'
-import { providers } from '@/types/provider.type'
-import { Box, Flex, Paper, Text } from '@mantine/core'
-import { TwitchDashView } from './twitch/twitch-dash-view'
+import { Box, Flex, Text } from '@mantine/core'
 import { YoutubeDashView } from './youtube/youtube-dash-view'
 
 interface Props {
     channelProvider: ChannelProvider
+    collapsed?: boolean
 }
 
-export function DashboardChannelProvider({ channelProvider }: Props) {
+export function DashboardChannelProvider({
+    channelProvider,
+    collapsed = false,
+}: Props) {
     return (
-        <Paper w={300} key={channelProvider.id} withBorder p="0.5rem">
-            <Flex direction="column" gap="0.5rem" h="100%">
-                <Flex align="center">
-                    <Text fw={500}>
-                        {providers[channelProvider.provider].name ||
-                            channelProvider.provider}
-                    </Text>
-                    <Box ml="auto">
-                        <ChannelProviderLiveStatus
-                            channelProvider={channelProvider}
-                        />
-                    </Box>
-                </Flex>
-                <Box>
-                    <DashView channelProvider={channelProvider} />
-                </Box>
-
-                <ChannelProviderEmbedLive channelProvider={channelProvider} />
-
-                <Flex mt="auto">
-                    <ChannelProviderDashboardButton
+        <Flex direction="column" gap="0.25rem" h="100%" w={300}>
+            <Flex align="center">
+                <ChannelProviderToExternalDashboardTitle
+                    channelProvider={channelProvider}
+                />
+                <Box ml="auto">
+                    <ChannelProviderLiveStatus
                         channelProvider={channelProvider}
                     />
-                </Flex>
+                </Box>
             </Flex>
-        </Paper>
+            {channelProvider.stream_id && (
+                <Text truncate>{channelProvider.stream_title}</Text>
+            )}
+
+            <DashView channelProvider={channelProvider} />
+
+            {!collapsed && (
+                <>
+                    <ChannelProviderEmbedLive
+                        channelProvider={channelProvider}
+                    />
+                </>
+            )}
+        </Flex>
     )
 }
 
 function DashView({ channelProvider }: { channelProvider: ChannelProvider }) {
     switch (channelProvider.provider) {
-        case 'twitch':
-            return (
-                <TwitchDashView
-                    key={channelProvider.provider}
-                    channelProvider={channelProvider}
-                />
-            )
         case 'youtube':
             return (
                 <YoutubeDashView

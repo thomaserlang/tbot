@@ -1,5 +1,5 @@
 import { providers } from '@/types/provider.type'
-import { Button } from '@mantine/core'
+import { Button, Flex, Text } from '@mantine/core'
 import { IconExternalLink } from '@tabler/icons-react'
 import { ChannelProvider } from '../channel-provider.types'
 
@@ -7,8 +7,11 @@ interface Props {
     channelProvider: ChannelProvider
 }
 
-export function ChannelProviderDashboardButton({ channelProvider }: Props) {
+export function ChannelProviderToExternalDashboardButton({
+    channelProvider,
+}: Props) {
     if (!providers[channelProvider.provider].dashboard_url) return
+
     return (
         <Button
             component={'a'}
@@ -19,6 +22,33 @@ export function ChannelProviderDashboardButton({ channelProvider }: Props) {
         >
             Dashboard
         </Button>
+    )
+}
+
+export function ChannelProviderToExternalDashboardTitle({
+    channelProvider,
+}: Props) {
+    if (!providers[channelProvider.provider].dashboard_url)
+        return (
+            <Text fw={500}>
+                {providers[channelProvider.provider].name ||
+                    channelProvider.provider}
+            </Text>
+        )
+    return (
+        <Flex gap="0.25rem" align="center">
+            <Text
+                component="a"
+                fw={500}
+                href={getUrl(channelProvider)}
+                target="_blank"
+            >
+                {providers[channelProvider.provider].name ||
+                    channelProvider.provider}
+            </Text>
+
+            <IconExternalLink size={16} />
+        </Flex>
     )
 }
 

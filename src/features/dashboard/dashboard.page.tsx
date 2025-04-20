@@ -8,7 +8,7 @@ export function Component() {
     useDocumentTitle(`Dashboard - ${channel.display_name}`)
 
     return (
-        <Container>
+        <Container size="xl">
             <DashboardProviders channelId={channel.id} />
         </Container>
     )
