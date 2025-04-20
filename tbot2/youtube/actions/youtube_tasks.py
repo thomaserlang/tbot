@@ -31,7 +31,7 @@ from ..schemas.youtube_live_broadcast_schema import LiveBroadcast
 broadcast_chat_monitor_tasks: dict[str, asyncio.Task[None]] = {}
 
 
-CHECK_EVERY = 30
+CHECK_EVERY = 15
 
 
 async def task_youtube_live() -> None:

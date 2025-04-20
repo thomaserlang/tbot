@@ -11,6 +11,7 @@ export interface ProviderInfo {
     system_bot?: boolean
     dashboard_url?: string
     embed_url?: string
+    broadcast_edit_url?: string
 }
 
 export const providers: { [key: string | Provider]: ProviderInfo } = {
@@ -24,6 +25,7 @@ export const providers: { [key: string | Provider]: ProviderInfo } = {
         system_bot: true,
         dashboard_url:
             'https://dashboard.twitch.tv/u/{provider_user_name}/stream-manager',
+
         embed_url:
             `https://player.twitch.tv/?channel={provider_user_name}` +
             `&parent=${window.location.hostname}&muted=true&autoplay=true`,
@@ -38,6 +40,8 @@ export const providers: { [key: string | Provider]: ProviderInfo } = {
         system_bot: true,
         dashboard_url:
             'https://studio.youtube.com/channel/{provider_user_id}/livestreaming',
+        broadcast_edit_url:
+            'https://studio.youtube.com/video/{stream_id}/livestreaming',
         embed_url:
             'https://www.youtube.com/embed/{stream_id}?mute=1&autoplay=1',
     },
