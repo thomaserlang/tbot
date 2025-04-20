@@ -4,6 +4,7 @@ import {
     IconBlocks,
     IconClock,
     IconCoin,
+    IconGift,
     IconHome,
     IconLink,
     IconLock,
@@ -11,6 +12,7 @@ import {
     IconPokerChip,
     IconQuote,
     IconShieldCog,
+    IconUsers,
 } from '@tabler/icons-react'
 import { NavLink as RouterNavLink } from 'react-router-dom'
 import { CurrentChannelCard } from './components/current-channel-card'
@@ -56,6 +58,20 @@ export function ChannelNavbar() {
                     to={`/channels/${channel.id}/chat-filters`}
                     label="Chat Filters"
                     leftSection={<IconShieldCog size={20} />}
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/giveaways`}
+                    label="Giveaways"
+                    leftSection={<IconGift size={20} />}
+                    disabled
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/queues`}
+                    label="Queues"
+                    leftSection={<IconUsers size={20} />}
+                    disabled
                 />
                 <NavLink
                     component={RouterNavLink}
