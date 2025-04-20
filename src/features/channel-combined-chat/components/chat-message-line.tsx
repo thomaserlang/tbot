@@ -1,5 +1,5 @@
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
-import { Provider } from '@/types/provider.type'
+import { Provider, providers } from '@/types/provider.type'
 import { Box } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
 import { Badges } from './badges'
@@ -54,26 +54,16 @@ export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
 }
 
 export function providerShort(provider: Provider) {
-    switch (provider) {
-        case 'twitch':
-            return (
-                <span
-                    className={`${classes.provider} ${classes.twitch}`}
-                    title="Twitch"
-                >
-                    T
-                </span>
-            )
-        case 'youtube':
-            return (
-                <span
-                    className={`${classes.provider} ${classes.youtube}`}
-                    title="YouTube"
-                >
-                    Y
-                </span>
-            )
-    }
+    return (
+        <Box
+            component="span"
+            className={classes.provider}
+            title={providers[provider].name || ''}
+            c={providers[provider].color}
+        >
+            {providers[provider].chat_icon}
+        </Box>
+    )
 }
 
 function fixColor(color: string | null) {

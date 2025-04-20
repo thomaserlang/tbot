@@ -1,7 +1,10 @@
+import { IconBrandTwitch, IconBrandYoutube } from '@tabler/icons-react'
+import { ReactNode } from 'react'
+
 export type Provider = 'twitch' | 'youtube' | 'discord' | 'spotify'
 
 export interface ProviderInfo {
-    [key: string]: string | boolean | Provider | undefined | number
+    [key: string]: string | boolean | Provider | undefined | number | ReactNode
     key: Provider
     name: string
     color?: string
@@ -13,6 +16,7 @@ export interface ProviderInfo {
     embed_url?: string
     broadcast_edit_url?: string
     stream_title_max_length?: number
+    chat_icon?: ReactNode
 }
 
 export const providers: { [key: string | Provider]: ProviderInfo } = {
@@ -30,6 +34,7 @@ export const providers: { [key: string | Provider]: ProviderInfo } = {
             `https://player.twitch.tv/?channel={provider_user_name}` +
             `&parent=${window.location.hostname}&muted=true&autoplay=true`,
         stream_title_max_length: 140,
+        chat_icon: <IconBrandTwitch size={18} />,
     },
     youtube: {
         key: 'youtube',
@@ -46,6 +51,7 @@ export const providers: { [key: string | Provider]: ProviderInfo } = {
         embed_url:
             'https://www.youtube.com/embed/{stream_id}?mute=1&autoplay=1',
         stream_title_max_length: 100,
+        chat_icon: <IconBrandYoutube size={18} />,
     },
     spotify: {
         key: 'spotify',
