@@ -1,6 +1,6 @@
-import { Box } from '@mantine/core'
+import { Box, Text } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
-import { providerShort } from './chat-message-line'
+import { providerLogo } from './chat-message-line'
 import classes from './chat-message-line.module.css'
 import { MessageWithFragments } from './message-with-fragments'
 
@@ -11,17 +11,22 @@ interface Props {
 export function ChatModActionLine({ chatMessage }: Props) {
     return (
         <Box className={classes.message}>
-            <span className={classes.dimmed} title={chatMessage.created_at}>
+            <Text
+                component="span"
+                mr="0.5rem"
+                c="dimmed"
+                title={chatMessage.created_at}
+            >
                 {new Date(chatMessage.created_at).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
                     hour12: false,
                 })}
-            </span>
-            {providerShort(chatMessage.provider)}
-            <span className={classes.dimmed}>
+            </Text>
+            {providerLogo(chatMessage.provider)}
+            <Text component="span" c="dimmed">
                 <MessageWithFragments chatMessage={chatMessage} />
-            </span>
+            </Text>
         </Box>
     )
 }

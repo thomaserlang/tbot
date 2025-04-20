@@ -1,6 +1,6 @@
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
 import { Provider, providers } from '@/types/provider.type'
-import { Box } from '@mantine/core'
+import { Box, Text } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
 import { Badges } from './badges'
 import classes from './chat-message-line.module.css'
@@ -14,14 +14,19 @@ interface Props {
 export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
     return (
         <Box className={classes.message}>
-            <span className={classes.dimmed} title={chatMessage.created_at}>
+            <Text
+                component="span"
+                mr="0.5rem"
+                c="dimmed"
+                title={chatMessage.created_at}
+            >
                 {new Date(chatMessage.created_at).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
                     hour12: false,
                 })}
-            </span>
-            {providerShort(chatMessage.provider)}
+            </Text>
+            {providerLogo(chatMessage.provider)}
             {chatMessage.twitch_badges && (
                 <Badges
                     channelId={chatMessage.channel_id}
@@ -53,7 +58,7 @@ export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
     )
 }
 
-export function providerShort(provider: Provider) {
+export function providerLogo(provider: Provider) {
     return (
         <Box
             component="span"
