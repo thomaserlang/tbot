@@ -8,7 +8,7 @@ dependencies = [
     "fastapi==0.115.11",
     "sqlalchemy==2.0.38",
     "yaml-settings-pydantic==2.3.2",
-    "pydantic[email]==2.10.6",
+    "pydantic[email]==2.11.3",
     "redis==5.2.1",
     "httpx[http2]==0.28.1",
     "httpx_auth==0.23.1",

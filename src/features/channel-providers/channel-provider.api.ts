@@ -5,7 +5,7 @@ import { api } from '@/utils/api'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useLocation } from 'react-router-dom'
 import { ChannelProvider, ChannelProviderId } from './channel-provider.types'
-import { getProvidersQueryKey } from './channel-providers.api'
+import { getChannelProvidersQueryKey } from './channel-providers.api'
 
 export function getChannelProviderQueryKey(
     channelId: ChannelId,
@@ -75,7 +75,7 @@ export function useDeleteChannelProvider({
                 ),
             })
             queryClient.setQueryData(
-                getProvidersQueryKey(variables.channelId),
+                getChannelProvidersQueryKey(variables.channelId),
                 (oldData: ChannelProvider[]) =>
                     oldData.filter(
                         (provider) =>
@@ -188,7 +188,7 @@ export function useDisconnectChannelProviderBot({
                 })
             )
             queryClient.setQueryData(
-                getProvidersQueryKey(variables.channelId),
+                getChannelProvidersQueryKey(variables.channelId),
                 (oldData: ChannelProvider[]) =>
                     oldData.map((provider) =>
                         provider.id === variables.providerId
@@ -200,4 +200,21 @@ export function useDisconnectChannelProviderBot({
         },
         onError,
     })
+}
+
+export function updateChannelProviderCache(channelProvider: ChannelProvider) {
+    queryClient.setQueryData(
+        getChannelProviderQueryKey(
+            channelProvider.channel_id,
+            channelProvider.id
+        ),
+        channelProvider
+    )
+    queryClient.setQueryData(
+        getChannelProvidersQueryKey(channelProvider.channel_id),
+        (oldData: ChannelProvider[]) =>
+            oldData.map((provider) =>
+                provider.id === channelProvider.id ? channelProvider : provider
+            )
+    )
 }

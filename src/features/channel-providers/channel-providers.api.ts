@@ -3,24 +3,28 @@ import { useQuery } from '@tanstack/react-query'
 import { ChannelId } from '../channel/types'
 import { ChannelProvider } from './channel-provider.types'
 
-export function getProvidersQueryKey(channelId: ChannelId) {
+export function getChannelProvidersQueryKey(channelId: ChannelId) {
     return ['channelProviders', channelId]
 }
 
-export async function getProviders(channelId: ChannelId) {
+export async function getChannelProviders(channelId: ChannelId) {
     const r = await api.get<ChannelProvider[]>(
         `/api/2/channels/${channelId}/providers`
     )
     return r.data
 }
 
-interface GetParams {
+interface GetProps {
     channelId: ChannelId
+    options?: {
+        refetchInterval?: number
+    }
 }
 
-export function useGetProviders(props: GetParams) {
+export function useGetChannelProviders(props: GetProps) {
     return useQuery({
-        queryKey: getProvidersQueryKey(props.channelId),
-        queryFn: () => getProviders(props.channelId),
+        queryKey: getChannelProvidersQueryKey(props.channelId),
+        queryFn: () => getChannelProviders(props.channelId),
+        ...props.options,
     })
 }

@@ -10,6 +10,7 @@ from .schemas.oauth2_client_schemas import (
 )
 from .schemas.oauth2_client_schemas import Oauth2TokenParams as Oauth2TokenParams
 from .schemas.oauth2_client_schemas import Oauth2TokenResponse as Oauth2TokenResponse
+from .schemas.thumbnail_schema import Thumbnail as Thumbnail
 from .schemas.token_data_schema import TokenData as TokenData
 from .types.access_level_type import TAccessLevel as TAccessLevel
 from .types.provider_type import Provider as Provider

@@ -6,18 +6,22 @@ from loguru import logger
 from tbot2.channel import (
     ChannelProvider,
     ChannelProviderNotFound,
+    ChannelProviderRequest,
     get_channels_providers,
+    save_channel_provider,
 )
 from tbot2.channel_stream import (
-    create_channel_provider_stream,
     end_channel_provider_stream,
-    get_current_channel_provider_stream,
+    get_or_create_channel_provider_stream,
 )
+from tbot2.common import datetime_now
 from tbot2.database import database
 from tbot2.exceptions import InternalHttpError
 from tbot2.youtube.actions.youtube_handle_message import handle_message
 
-from ..actions.youtube_live_broadcast_actions import get_live_broadcasts
+from ..actions.youtube_live_broadcast_actions import (
+    get_live_broadcasts,
+)
 from ..actions.youtube_live_chat_message_actions import (
     LiveChatMessages,
     get_live_chat_messages,
@@ -25,6 +29,9 @@ from ..actions.youtube_live_chat_message_actions import (
 from ..schemas.youtube_live_broadcast_schema import LiveBroadcast
 
 broadcast_chat_monitor_tasks: dict[str, asyncio.Task[None]] = {}
+
+
+CHECK_EVERY = 30
 
 
 async def task_youtube_live() -> None:
@@ -37,7 +44,7 @@ async def task_youtube_live() -> None:
                 check_for_live_broadcasts(channel_provider)
             )
 
-        await asyncio.sleep(60)
+        await asyncio.sleep(CHECK_EVERY)
 
 
 @logger.catch
@@ -47,33 +54,49 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
     ):
         live_broadcasts = await get_live_broadcasts(
             channel_provider=channel_provider,
+            broadcast_status='active',
         )
-        logger.debug(f'Found {len(live_broadcasts)} broadcasts')
         if not live_broadcasts:
+            if channel_provider.stream_live:
+                await end_stream(
+                    channel_provider=channel_provider,
+                )
             return
 
         for live_broadcast in live_broadcasts:
-            if live_broadcast.status.life_cycle_status not in ('live', 'ready'):
-                continue
-
-            if live_broadcast.snippet.actual_start_time:
-                stream = await get_current_channel_provider_stream(
+            if (
+                live_broadcast.snippet.actual_start_time
+                and not channel_provider.stream_live
+            ):
+                logger.info('Channel is live')
+                await get_or_create_channel_provider_stream(
                     channel_id=channel_provider.channel_id,
                     provider='youtube',
                     provider_id=live_broadcast.snippet.channel_id,
                     provider_stream_id=live_broadcast.id,
+                    started_at=live_broadcast.snippet.actual_start_time,
                 )
-                if not stream:
-                    logger.info(
-                        f'Creating stream for {live_broadcast.snippet.title}'
-                    )
-                    await create_channel_provider_stream(
-                        channel_id=channel_provider.channel_id,
-                        provider='youtube',
-                        provider_id=live_broadcast.snippet.channel_id,
-                        provider_stream_id=live_broadcast.id,
-                        started_at=live_broadcast.snippet.actual_start_time,
-                    )
+
+            if (
+                not channel_provider.stream_id
+                or channel_provider.stream_id != live_broadcast.id
+            ):
+                await save_channel_provider(
+                    channel_id=channel_provider.channel_id,
+                    provider='youtube',
+                    data=ChannelProviderRequest(
+                        stream_id=live_broadcast.id,
+                    ),
+                )
+
+            if channel_provider.stream_title != live_broadcast.snippet.title:
+                await save_channel_provider(
+                    channel_id=channel_provider.channel_id,
+                    provider='youtube',
+                    data=ChannelProviderRequest(
+                        stream_title=live_broadcast.snippet.title,
+                    ),
+                )
 
             if live_broadcast.snippet.live_chat_id not in broadcast_chat_monitor_tasks:
                 task = asyncio.create_task(
@@ -83,6 +106,11 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
                     )
                 )
                 broadcast_chat_monitor_tasks[live_broadcast.snippet.live_chat_id] = task
+
+            # Is having multiple streams live at the same time
+            # for a channel actually a thing?
+            # For now just track the latest ready or live one.
+            break
 
 
 @logger.catch
@@ -131,12 +159,10 @@ async def handle_broadcast_live_chat(
                         logger.info(
                             f'Live chat is offline, stopping monitoring {live_chat_id}'
                         )
-                        await end_channel_provider_stream(
-                            channel_id=channel_provider.channel_id,
-                            provider='youtube',
-                            provider_id=live_broadcast.snippet.channel_id,
-                            provider_stream_id=live_broadcast.id,
-                            ended_at=messages.offline_at,
+
+                        await end_stream(
+                            channel_provider=channel_provider,
+                            live_broadcast=live_broadcast,
                         )
                         break
 
@@ -148,11 +174,12 @@ async def handle_broadcast_live_chat(
                         asyncio.sleep(messages.polling_interval_millis / 1000),
                     )
                 except InternalHttpError as e:
-                    if e.status_code == 403:
+                    if e.status_code in (403, 404):
                         logger.error(e.body)
                         break
                     else:
                         logger.error(f'Error getting live chat messages: {e.body}')
+                        await asyncio.sleep(60)
 
         finally:
             del broadcast_chat_monitor_tasks[live_chat_id]
@@ -170,3 +197,33 @@ async def handle_messages(
             )
         except Exception as e:
             logger.exception(e)
+
+
+async def end_stream(
+    channel_provider: ChannelProvider,
+    live_broadcast: LiveBroadcast | None = None,
+) -> None:
+    logger.debug('Ending stream')
+    if not live_broadcast:
+        live_broadcasts = await get_live_broadcasts(
+            channel_provider=channel_provider,
+            broadcast_status='completed',
+        )
+        if not live_broadcasts:
+            await end_channel_provider_stream(
+                channel_id=channel_provider.channel_id,
+                provider='youtube',
+                provider_id=channel_provider.provider_user_id,
+                ended_at=datetime_now(),
+                reset_channel_stream_id=True,
+            )
+            return
+        live_broadcast = live_broadcasts[0]
+    await end_channel_provider_stream(
+        channel_id=channel_provider.channel_id,
+        provider='youtube',
+        provider_id=live_broadcast.snippet.channel_id,
+        provider_stream_id=live_broadcast.id,
+        ended_at=live_broadcast.snippet.actual_end_time,
+        reset_channel_stream_id=True,
+    )

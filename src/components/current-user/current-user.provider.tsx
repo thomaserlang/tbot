@@ -14,7 +14,7 @@ export function CurrentUserProvider({
 }) {
     const { data, error } = useGetCurrentUser()
 
-    if (error)
+    if (!data && error)
         return (
             <Container mt="2rem">
                 <Center mb="2rem">

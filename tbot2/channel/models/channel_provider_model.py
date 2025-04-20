@@ -39,3 +39,11 @@ class MChannelProvider(Base):
         lazy=False,
         viewonly=True,
     )
+    stream_title: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
+    stream_id: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
+    stream_live: Mapped[bool] = mapped_column(
+        sa.Boolean(), nullable=False, default=False
+    )
+    stream_live_at: Mapped[datetime | None] = mapped_column(
+        sa.DateTime(), nullable=True
+    )

@@ -39,6 +39,10 @@ const protectedRoutes: RouteObject[] = [
         },
         children: [
             {
+                path: '',
+                lazy: () => import('./features/dashboard/dashboard.page'),
+            },
+            {
                 path: 'providers',
                 lazy: () =>
                     import(

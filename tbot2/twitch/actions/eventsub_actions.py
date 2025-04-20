@@ -115,6 +115,13 @@ def get_eventsub_registrations(
                 'moderator_user_id': broadcaster_user_id,
             },
         ),
+        EventSubRegistration(
+            event_type='channel.update',
+            version='2',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+            },
+        ),
     ]
 
 
@@ -131,9 +138,7 @@ async def _register_eventsub(
             'transport': {
                 'method': 'webhook',
                 'callback': urljoin(
-                    str(
-                        config.twitch.eventsub_callback_base_url or config.base_url
-                    ),
+                    str(config.twitch.eventsub_callback_base_url or config.base_url),
                     f'/api/2/twitch/eventsub/{registration.event_type}?channel_id={channel_id}',
                 ),
                 'secret': config.twitch.eventsub_secret,

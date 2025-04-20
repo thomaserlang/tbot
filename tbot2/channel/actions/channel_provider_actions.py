@@ -64,20 +64,24 @@ async def get_channel_providers(
             stmt = stmt.where(MChannelProvider.provider == provider)
         channel_providers = await session.scalars(stmt)
         return [
-            ChannelProvider.model_validate(provider)
-            for provider in channel_providers
+            ChannelProvider.model_validate(provider) for provider in channel_providers
         ]
 
 
 async def get_channels_providers(
-    *, provider: Provider, session: AsyncSession | None = None
+    *,
+    provider: Provider,
+    stream_live: bool | None = None,
+    session: AsyncSession | None = None,
 ) -> AsyncGenerator[ChannelProvider]:
     async with get_session(session) as session:
-        providers = await session.stream_scalars(
-            sa.select(MChannelProvider).where(
-                MChannelProvider.provider == provider,
-            )
+        stmt = sa.select(MChannelProvider).where(
+            MChannelProvider.provider == provider,
         )
+        if stream_live is not None:
+            stmt = stmt.where(MChannelProvider.stream_live.is_(stream_live))
+
+        providers = await session.stream_scalars(stmt)
         async for p in providers:
             yield ChannelProvider.model_validate(p)
 

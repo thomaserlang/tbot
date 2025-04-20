@@ -1,3 +1,4 @@
+import { useGetChannelProviders } from '@/features/channel-providers'
 import { Badge, Box, NavLink, Paper } from '@mantine/core'
 import {
     IconBlocks,
@@ -12,7 +13,6 @@ import {
     IconShieldCog,
 } from '@tabler/icons-react'
 import { NavLink as RouterNavLink } from 'react-router-dom'
-import { useGetProviders } from '../channel-providers/channel-providers.api'
 import { CurrentChannelCard } from './components/current-channel-card'
 import { useCurrentChannel } from './current-channel.provider'
 import { Channel } from './types'
@@ -103,7 +103,7 @@ export function ChannelNavbar() {
 }
 
 function ProvidersNavbar({ channel }: { channel: Channel }) {
-    const { data } = useGetProviders({
+    const { data } = useGetChannelProviders({
         channelId: channel.id,
     })
 

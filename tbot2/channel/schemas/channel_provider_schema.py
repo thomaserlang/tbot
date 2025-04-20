@@ -15,18 +15,24 @@ from tbot2.contexts import AsyncSession
 from tbot2.exceptions import ErrorMessage
 
 
-class ChannelProvider(BaseSchema):
+class ChannelProviderBase(BaseSchema):
     id: UUID
     channel_id: UUID
     provider: Provider
     provider_user_id: str | None
     provider_user_name: str | None
     provider_user_display_name: str | None
+    scope: str | None
+    stream_title: str | None
+    stream_id: str | None
+    stream_live: bool = False
+    stream_live_at: datetime | None = None
+
+
+class ChannelProvider(ChannelProviderBase):
     access_token: str | None
     refresh_token: str | None
     expires_at: datetime | None
-    scope: str | None
-    bot_provider_id: UUID | None
     bot_provider: BotProvider | None
 
     async def get_default_or_system_bot_provider(
@@ -47,14 +53,7 @@ class ChannelProvider(BaseSchema):
         return bot_provider
 
 
-class ChannelProviderPublic(BaseSchema):
-    id: UUID
-    channel_id: UUID
-    provider: Provider
-    provider_user_name: str | None
-    provider_user_display_name: str | None
-    scope: str | None
-    bot_provider_id: UUID | None
+class ChannelProviderPublic(ChannelProviderBase):
     bot_provider: BotProviderPublic | None
 
     @computed_field
@@ -86,3 +85,16 @@ class ChannelProviderRequest(BaseRequestSchema):
         None
     )
     bot_provider_id: UUID | None = None
+    stream_title: (
+        Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
+    ) = None
+    stream_id: (
+        Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
+    ) = None
+    """
+    Used to update the channel provider's stream_id. 
+    This is meant to be the id to watch the stream. 
+    For Twitch it would be the username and for YouTube the broadcast id.
+    """
+    stream_live: bool = False
+    stream_live_at: datetime | None = None

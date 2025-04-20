@@ -22,7 +22,7 @@ export function CurrentChannelProvider({
 
     if (isLoading) return <PageLoader />
 
-    if (error)
+    if (!data && error)
         return (
             <Container mt="2rem">
                 <Center mb="2rem">

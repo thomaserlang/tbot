@@ -20,9 +20,6 @@ from .actions.eventsub_actions import (
 from .actions.eventsub_actions import (
     unregister_channel_eventsubs as unregister_channel_eventsubs,
 )
-from .actions.task_update_viewer_streams_actions import (
-    task_update_viewer_streams as task_update_viewer_streams,
-)
 from .actions.twitch_channel_follower_action import (
     twitch_channel_follower as twitch_channel_follower,
 )
@@ -41,6 +38,9 @@ from .actions.twitch_mod_user_actions import (
 )
 from .actions.twitch_send_message_actions import (
     twitch_bot_send_message as twitch_bot_send_message,
+)
+from .actions.twitch_tasks import (
+    task_update_live_streams as task_update_live_streams,
 )
 from .actions.twitch_warn_chat_user_action import (
     twitch_warn_chat_user as twitch_warn_chat_user,

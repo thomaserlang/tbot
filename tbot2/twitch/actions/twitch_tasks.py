@@ -11,14 +11,14 @@ from tbot2.channel_stream import (
 from tbot2.channel_viewer import ViewerNameHistoryRequest, inc_stream_viewer_watchtime
 from tbot2.common import datetime_now
 
-from ..actions.twitch_chatters_action import get_twitch_chatters
+from .twitch_chatters_action import get_twitch_chatters
 
 CHECK_EVERY = 60
 
 
-async def task_update_viewer_streams() -> None:
+async def task_update_live_streams() -> None:
     last_check: datetime | None = None
-    logger.info('Starting task_update_viewer_streams')
+    logger.info('Starting Twitch task_update_live_streams')
     while True:
         if last_check:
             elapsed = (datetime_now() - last_check).total_seconds()
@@ -27,11 +27,14 @@ async def task_update_viewer_streams() -> None:
             sleep_time = CHECK_EVERY
         await asyncio.sleep(sleep_time)
         last_check = datetime_now()
+
         streams = await get_live_channels_provider_streams(provider='twitch')
-        await asyncio.gather(*[update_viewer_stream_data(stream) for stream in streams])
+        await asyncio.gather(
+            *[update_viewers_stream_data(stream) for stream in streams],
+        )
 
 
-async def update_viewer_stream_data(stream: ChannelProviderStream) -> None:
+async def update_viewers_stream_data(stream: ChannelProviderStream) -> None:
     try:
         logger.debug(
             'Updating viewer stream data for '

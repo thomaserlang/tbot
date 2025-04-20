@@ -42,6 +42,7 @@ async def event_stream_online_route(
         provider_id=data.event.broadcaster_user_id,
         provider_stream_id=data.event.id,
         started_at=data.event.started_at,
+        stream_id=data.event.broadcaster_user_name,
     )
 
 
