@@ -40,9 +40,8 @@ export function DashboardChannelProvider({
                         style={{ cursor: 'pointer' }}
                         onClick={open}
                     >
-                        <Text truncate>{channelProvider.stream_title}</Text>
-
                         <IconEdit size={18} />
+                        <Text truncate>{channelProvider.stream_title}</Text>
                     </Flex>
                 )}
 
