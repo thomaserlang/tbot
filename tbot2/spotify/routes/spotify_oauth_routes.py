@@ -7,9 +7,11 @@ from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
 
 from tbot2.channel import (
+    ChannelProviderOAuthRequest,
     ChannelProviderRequest,
     ChannelScope,
     save_channel_provider,
+    save_channel_provider_oauth,
 )
 from tbot2.common import (
     ConnectUrl,
@@ -93,29 +95,34 @@ async def spotify_auth_route(
     if response.status_code >= 400:
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
-    oauth_response = Oauth2TokenResponse.model_validate(response.json())
+    response = Oauth2TokenResponse.model_validate(response.json())
 
     r = await client.get(
         url='https://api.spotify.com/v1/me',
         headers={
-            'Authorization': f'Bearer {oauth_response.access_token}',
+            'Authorization': f'Bearer {response.access_token}',
         },
     )
     if r.status_code >= 400:
         raise HTTPException(status_code=r.status_code, detail=r.text)
     user_info = r.json()
 
-    await save_channel_provider(
+    channel_provider = await save_channel_provider(
         channel_id=UUID(params.state['channel_id']),
         provider='spotify',
         data=ChannelProviderRequest(
-            access_token=oauth_response.access_token,
-            refresh_token=oauth_response.refresh_token,
-            expires_in=oauth_response.expires_in,
             scope=channel_provider_scopes['spotify'],
             provider_user_id=user_info['id'],
             provider_user_name=user_info['id'],
             provider_user_display_name=user_info['display_name'],
+        ),
+    )
+    await save_channel_provider_oauth(
+        channel_provider_id=channel_provider.id,
+        data=ChannelProviderOAuthRequest(
+            access_token=response.access_token,
+            refresh_token=response.refresh_token,
+            expires_in=response.expires_in,
         ),
     )
 
