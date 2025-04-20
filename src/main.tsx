@@ -14,7 +14,7 @@ import './theme.css'
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <MantineProvider theme={theme} forceColorScheme={'dark'}>
-            <Notifications position="top-center" />
+            <Notifications position="top-right" />
             <QueryClientProvider client={queryClient}>
                 <ModalsProvider>
                     <RouterProvider router={router} />

@@ -1,7 +1,8 @@
 from tbot2.channel import get_channel_providers
 from tbot2.channel_stream import get_current_channel_provider_stream
 from tbot2.channel_timer import Timer, on_handle_timer
-from tbot2.youtube.actions.youtube_live_chat_message_actions import (
+
+from ..actions.youtube_live_chat_message_actions import (
     send_live_chat_message,
 )
 

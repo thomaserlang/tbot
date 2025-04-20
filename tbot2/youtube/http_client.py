@@ -2,7 +2,10 @@ import sys
 
 from httpx import AsyncClient
 
-from tbot2.common.utils.oauth_auth import ChannelProviderBotOAuth, ChannelProviderOAuth
+from tbot2.common.utils.oauth_auth import (
+    ChannelProviderBotOAuthHelper,
+    ChannelProviderOAuthHelper,
+)
 from tbot2.config_settings import config
 
 youtube_user_client = AsyncClient(
@@ -10,7 +13,7 @@ youtube_user_client = AsyncClient(
     headers={
         'Client-ID': config.youtube.client_id,
     },
-    auth=ChannelProviderOAuth(
+    auth=ChannelProviderOAuthHelper(
         provider='youtube',
         token_url='https://oauth2.googleapis.com/token',
         client_id=config.youtube.client_id,
@@ -27,7 +30,7 @@ youtube_bot_client = AsyncClient(
     headers={
         'Client-ID': config.youtube.client_id,
     },
-    auth=ChannelProviderBotOAuth(
+    auth=ChannelProviderBotOAuthHelper(
         provider='youtube',
         token_url='https://oauth2.googleapis.com/token',
         client_id=config.youtube.client_id,

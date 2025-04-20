@@ -1,3 +1,4 @@
+from .actions import youtube_handle_internal_events as youtube_handle_internal_events
 from .actions import youtube_handle_message as youtube_handle_message
 from .actions import youtube_handle_timer_action as youtube_handle_timer_action
 from .actions.youtube_tasks import task_youtube_live as task_youtube_live

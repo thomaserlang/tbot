@@ -4,7 +4,7 @@ import { Provider } from '@/types/provider.type'
 import { api } from '@/utils/api'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useLocation } from 'react-router-dom'
-import { ChannelProvider, ChannelProviderId } from './channel-provider.types'
+import { ChannelProvider, ChannelProviderId } from '../channel-provider.types'
 import { getChannelProvidersQueryKey } from './channel-providers.api'
 
 export function getChannelProviderQueryKey(

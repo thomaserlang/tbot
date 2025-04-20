@@ -1,5 +1,5 @@
 from tbot2.channel import ChannelProvider
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER, TBOT_CHANNEL_PROVIDER_ID_HEADER
+from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.exceptions import InternalHttpError
 
 from ..schemas.youtube_live_stream_schema import LiveStream, LiveStreamInsert
@@ -25,7 +25,6 @@ async def get_live_streams(
         '/liveStreams',
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
-            TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
         },
         params=params,
     )
@@ -42,7 +41,6 @@ async def create_live_stream(
         '/liveStreams',
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
-            TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
         },
         params={
             'part': ','.join(PART),

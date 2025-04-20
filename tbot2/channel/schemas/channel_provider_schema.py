@@ -30,9 +30,6 @@ class ChannelProviderBase(BaseSchema):
 
 
 class ChannelProvider(ChannelProviderBase):
-    access_token: str | None
-    refresh_token: str | None
-    expires_at: datetime | None
     bot_provider: BotProvider | None
 
     async def get_default_or_system_bot_provider(
@@ -73,14 +70,6 @@ class ChannelProviderRequest(BaseRequestSchema):
     provider_user_display_name: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
-    access_token: (
-        Annotated[str, StringConstraints(min_length=1, max_length=2000)] | None
-    ) = None
-    refresh_token: (
-        Annotated[str, StringConstraints(min_length=1, max_length=2000)] | None
-    ) = None
-    expires_at: datetime | None = None
-    expires_in: int | None = None
     scope: Annotated[str, StringConstraints(min_length=1, max_length=2000)] | None = (
         None
     )

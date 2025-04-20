@@ -1,15 +1,20 @@
+from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Security
 
 from tbot2.channel import (
     ChannelProviderPublic,
     ChannelProviderRequest,
+    ChannelScope,
     get_channel_provider_by_id,
     save_channel_provider,
 )
+from tbot2.common import TAccessLevel, TokenData
 from tbot2.contexts import get_session
-from tbot2.youtube.actions.youtube_live_broadcast_actions import (
+from tbot2.dependecies import authenticated
+
+from ..actions.youtube_live_broadcast_actions import (
     create_new_broadcast_from_previous,
 )
 
@@ -23,7 +28,15 @@ router = APIRouter()
 async def youtube_create_broadcast_route(
     channel_id: UUID,
     channel_provider_id: UUID,
+    token_data: Annotated[
+        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+    ],
 ) -> ChannelProviderPublic:
+    await token_data.channel_require_access(
+        channel_id=channel_id,
+        access_level=TAccessLevel.ADMIN,
+    )
+
     channel_provider = await get_channel_provider_by_id(
         channel_provider_id=channel_provider_id,
     )

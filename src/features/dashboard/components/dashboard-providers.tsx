@@ -5,7 +5,7 @@ import { useGetChannelProviders } from '@/features/channel-providers'
 import { providers } from '@/types/provider.type'
 import { Divider, Flex, Paper, ScrollArea } from '@mantine/core'
 import { useLocalStorage } from '@mantine/hooks'
-import { IconCaretDown, IconCaretRight } from '@tabler/icons-react'
+import { IconChevronDown, IconChevronRight } from '@tabler/icons-react'
 import { Fragment } from 'react/jsx-runtime'
 import { DashboardChannelProvider } from './dashboard-channel-provider'
 
@@ -33,7 +33,7 @@ export function DashboardProviders({ channelId }: Props) {
         <Paper withBorder p="0.5rem">
             <Flex direction="row" gap="1rem">
                 {!collapsed ? (
-                    <IconCaretDown
+                    <IconChevronDown
                         title="Collapse"
                         onClick={() => {
                             setCollapsed(!collapsed)
@@ -44,7 +44,7 @@ export function DashboardProviders({ channelId }: Props) {
                         size={24}
                     />
                 ) : (
-                    <IconCaretRight
+                    <IconChevronRight
                         title="Expand"
                         onClick={() => {
                             setCollapsed(!collapsed)

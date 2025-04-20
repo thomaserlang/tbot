@@ -8,8 +8,8 @@ from twitchAPI.object.base import TwitchObject
 from twitchAPI.twitch import Twitch
 
 from tbot2.common.utils.oauth_auth import (
-    ChannelProviderBotOAuth,
-    ChannelProviderOAuth,
+    ChannelProviderBotOAuthHelper,
+    ChannelProviderOAuthHelper,
 )
 from tbot2.config_settings import config
 from tbot2.exceptions import ErrorMessage
@@ -43,7 +43,7 @@ twitch_user_client = AsyncClient(
     headers={
         'Client-ID': config.twitch.client_id,
     },
-    auth=ChannelProviderOAuth(
+    auth=ChannelProviderOAuthHelper(
         provider='twitch',
         token_url='https://id.twitch.tv/oauth2/token',
         client_id=config.twitch.client_id,
@@ -59,7 +59,7 @@ twitch_bot_client = AsyncClient(
     headers={
         'Client-ID': config.twitch.client_id,
     },
-    auth=ChannelProviderBotOAuth(
+    auth=ChannelProviderBotOAuthHelper(
         provider='twitch',
         token_url='https://id.twitch.tv/oauth2/token',
         client_id=config.twitch.client_id,

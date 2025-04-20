@@ -8,9 +8,11 @@ from httpx import AsyncClient
 
 from tbot2.bot_providers import BotProviderRequest, save_bot_provider
 from tbot2.channel import (
+    ChannelProviderOAuthRequest,
     ChannelProviderRequest,
     ChannelScope,
     save_channel_provider,
+    save_channel_provider_oauth,
 )
 from tbot2.common import (
     ConnectUrl,
@@ -186,17 +188,22 @@ async def youtube_auth_route(
                     detail='No channels found',
                 )
             channel = channels.items[0]
-            await save_channel_provider(
+            channel_provider = await save_channel_provider(
                 channel_id=UUID(params.state['channel_id']),
                 provider='youtube',
                 data=ChannelProviderRequest(
-                    access_token=response.access_token,
-                    refresh_token=response.refresh_token,
-                    expires_in=response.expires_in,
                     scope=params.scope,
                     provider_user_id=channel.id,
                     provider_user_name=channel.snippet.title,
                     provider_user_display_name=channel.snippet.title,
+                ),
+            )
+            await save_channel_provider_oauth(
+                channel_provider_id=channel_provider.id,
+                data=ChannelProviderOAuthRequest(
+                    access_token=response.access_token,
+                    refresh_token=response.refresh_token,
+                    expires_in=response.expires_in,
                 ),
             )
 

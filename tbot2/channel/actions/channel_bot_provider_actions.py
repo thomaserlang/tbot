@@ -49,36 +49,6 @@ async def get_channel_bot_provider(
             return BotProvider.model_validate(bot_provider)
 
 
-async def get_channel_bot_providers(
-    *,
-    channel_id: UUID,
-    session: AsyncSession | None = None,
-) -> list[BotProvider]:
-    async with get_session(session) as session:
-        query = (
-            sa.select(MBotProvider)
-            .join(
-                MChannelProvider,
-                MChannelProvider.bot_provider_id == MBotProvider.id,
-                isouter=True,
-            )
-            .where(
-                sa.or_(
-                    MChannelProvider.channel_id == channel_id,
-                    MBotProvider.system_default.is_(True),
-                ),
-            )
-            .order_by(
-                sa.case(
-                    (MChannelProvider.channel_id == channel_id, 1),
-                    else_=2,
-                )
-            )
-        )
-        bot_providers = await session.scalars(query)
-        return [BotProvider.model_validate(provider) for provider in bot_providers]
-
-
 async def disconnect_channel_bot_provider(
     *,
     channel_provider_id: UUID,

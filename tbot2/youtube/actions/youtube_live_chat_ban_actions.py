@@ -3,7 +3,7 @@ from typing import Any, Literal
 from loguru import logger
 
 from tbot2.channel import ChannelProvider
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER, TBOT_CHANNEL_PROVIDER_ID_HEADER
+from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..actions.youtube_live_chat_message_actions import youtube_bot_client
 
@@ -35,7 +35,6 @@ async def live_chat_ban(
         json=data,
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
-            TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
         },
     )
     if response.status_code >= 400:

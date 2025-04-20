@@ -1,7 +1,7 @@
 export type Provider = 'twitch' | 'youtube' | 'discord' | 'spotify'
 
 export interface ProviderInfo {
-    [key: string]: string | boolean | Provider | undefined
+    [key: string]: string | boolean | Provider | undefined | number
     key: Provider
     name: string
     color?: string
@@ -12,6 +12,7 @@ export interface ProviderInfo {
     dashboard_url?: string
     embed_url?: string
     broadcast_edit_url?: string
+    stream_title_max_length?: number
 }
 
 export const providers: { [key: string | Provider]: ProviderInfo } = {
@@ -25,10 +26,10 @@ export const providers: { [key: string | Provider]: ProviderInfo } = {
         system_bot: true,
         dashboard_url:
             'https://dashboard.twitch.tv/u/{provider_user_name}/stream-manager',
-
         embed_url:
             `https://player.twitch.tv/?channel={provider_user_name}` +
             `&parent=${window.location.hostname}&muted=true&autoplay=true`,
+        stream_title_max_length: 140,
     },
     youtube: {
         key: 'youtube',
@@ -44,6 +45,7 @@ export const providers: { [key: string | Provider]: ProviderInfo } = {
             'https://studio.youtube.com/video/{stream_id}/livestreaming',
         embed_url:
             'https://www.youtube.com/embed/{stream_id}?mute=1&autoplay=1',
+        stream_title_max_length: 100,
     },
     spotify: {
         key: 'spotify',

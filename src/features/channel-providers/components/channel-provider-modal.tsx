@@ -3,7 +3,7 @@ import { PageLoader } from '@/components/page-loader'
 import { ChannelId } from '@/features/channel/types'
 import { providers } from '@/types/provider.type'
 import { Modal } from '@mantine/core'
-import { useGetChannelProvider } from '../channel-provider.api'
+import { useGetChannelProvider } from '../api/channel-provider.api'
 import { ChannelProviderId } from '../channel-provider.types'
 import { ProviderView } from './channel-provider-view'
 

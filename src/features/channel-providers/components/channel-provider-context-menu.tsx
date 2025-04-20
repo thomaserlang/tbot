@@ -20,6 +20,7 @@ export function ChannelProviderContextMenu({ channelProvider }: Props) {
                     component="a"
                     leftSection={<IconExternalLink size={18} />}
                     href={getUrl(channelProvider)}
+                    target="_blank"
                 >
                     {providers[channelProvider.provider].name} Dashboard
                 </Menu.Item>

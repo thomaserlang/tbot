@@ -262,3 +262,6 @@ class LiveBroadcastInsert(BaseRequestSchema):
             description='Additional broadcast behavior settings.',
         ),
     ] = None
+
+
+class LiveBroadcastUpdate(LiveBroadcastInsert): ...

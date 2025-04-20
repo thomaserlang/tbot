@@ -4,7 +4,7 @@ import { openConfirmModal } from '@mantine/modals'
 import {
     useDisconnectChannelProviderBot,
     useGetChannelProviderConnectBotUrl,
-} from '../channel-provider.api'
+} from '../api/channel-provider.api'
 import { ChannelProvider } from '../channel-provider.types'
 
 interface Props {

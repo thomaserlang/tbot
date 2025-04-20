@@ -25,9 +25,6 @@ class MChannelProvider(Base):
     provider_user_display_name: Mapped[str | None] = mapped_column(
         sa.String(255), nullable=True
     )
-    access_token: Mapped[str | None] = mapped_column(sa.String(2000), nullable=True)
-    refresh_token: Mapped[str | None] = mapped_column(sa.String(2000), nullable=True)
-    expires_at: Mapped[datetime | None] = mapped_column(sa.DateTime(), nullable=True)
     scope: Mapped[str | None] = mapped_column(sa.String(2000), nullable=True)
     bot_provider_id: Mapped[UUID | None] = mapped_column(
         sa.UUID,

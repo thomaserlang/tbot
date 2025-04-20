@@ -1,5 +1,4 @@
 from collections.abc import AsyncGenerator, Awaitable, Callable
-from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -92,15 +91,9 @@ async def save_channel_provider(
     provider: Provider,
     data: ChannelProviderRequest,
     session: AsyncSession | None = None,
-) -> bool:
+) -> ChannelProvider:
     async with get_session(session) as session:
         data_ = data.model_dump(exclude_unset=True)
-        if 'expires_in' in data_:
-            data_.pop('expires_in')
-            if not data.expires_at and data.expires_in:
-                data_['expires_at'] = datetime.now(tz=UTC) + timedelta(
-                    seconds=data.expires_in
-                )
 
         r = await session.execute(
             sa.update(MChannelProvider)
@@ -121,7 +114,16 @@ async def save_channel_provider(
                     **data_,
                 )
             )
-        return True
+
+        channel_provider = await get_channel_provider(
+            channel_id=channel_id,
+            provider=provider,
+            session=session,
+        )
+        if not channel_provider:
+            raise Exception('Channel provider not found')
+
+        return ChannelProvider.model_validate(channel_provider)
 
 
 async def delete_channel_provider(

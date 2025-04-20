@@ -3,7 +3,7 @@ import { providers } from '@/types/provider.type'
 import { toastError } from '@/utils/toast'
 import { Button, Menu } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
-import { useGetChannelProviderConnectUrl } from '../channel-provider.api'
+import { useGetChannelProviderConnectUrl } from '../api/channel-provider.api'
 
 interface Props {
     channelId: ChannelId

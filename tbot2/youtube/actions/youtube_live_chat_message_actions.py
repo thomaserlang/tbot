@@ -3,9 +3,9 @@ from loguru import logger
 from tbot2.channel import (
     ChannelProvider,
     SendChannelMessage,
-    on_send_channel_provider_message,
+    on_event_send_message,
 )
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER, TBOT_CHANNEL_PROVIDER_ID_HEADER
+from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.exceptions import InternalHttpError
 
 from ..http_client import youtube_bot_client, youtube_user_client
@@ -27,7 +27,6 @@ async def get_live_chat_messages(
         params=params,
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
-            TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
         },
     )
     if response.status_code >= 400:
@@ -60,7 +59,6 @@ async def send_live_chat_message(
         },
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
-            TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
         },
     )
     if response.status_code >= 400:
@@ -69,7 +67,7 @@ async def send_live_chat_message(
     return True
 
 
-@on_send_channel_provider_message('youtube')
+@on_event_send_message('youtube')
 async def send_channel_message(data: SendChannelMessage) -> None:
     await send_live_chat_message(
         channel_provider=data.channel_provider,
@@ -89,7 +87,6 @@ async def delete_live_chat_message(
         },
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
-            TBOT_CHANNEL_PROVIDER_ID_HEADER: str(channel_provider.id),
         },
     )
     if response.status_code >= 400:

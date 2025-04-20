@@ -14,10 +14,12 @@ from tbot2.bot_providers import (
     save_bot_provider,
 )
 from tbot2.channel import (
+    ChannelProviderOAuthRequest,
     ChannelProviderRequest,
     ChannelScope,
     get_channel_provider,
     save_channel_provider,
+    save_channel_provider_oauth,
 )
 from tbot2.common import (
     ConnectUrl,
@@ -249,17 +251,22 @@ async def twitch_auth_route(
                 ),
             )
             if result.created and result.channel:
-                await save_channel_provider(
+                channel_provider = await save_channel_provider(
                     channel_id=result.channel.id,
                     provider='twitch',
                     data=ChannelProviderRequest(
-                        access_token=response.access_token,
-                        refresh_token=response.refresh_token,
-                        expires_in=response.expires_in,
                         scope=params.scope,
                         provider_user_name=twitch_user.login,
                         provider_user_display_name=twitch_user.display_name,
                         provider_user_id=twitch_user.id,
+                    ),
+                )
+                await save_channel_provider_oauth(
+                    channel_provider_id=channel_provider.id,
+                    data=ChannelProviderOAuthRequest(
+                        access_token=response.access_token,
+                        refresh_token=response.refresh_token,
+                        expires_in=response.expires_in,
                     ),
                 )
 
@@ -270,18 +277,23 @@ async def twitch_auth_route(
 
         case 'connect':
             channel_id = UUID(params.state['channel_id'])
-            await save_channel_provider(
+            channel_provider = await save_channel_provider(
                 channel_id=channel_id,
                 provider='twitch',
                 data=ChannelProviderRequest(
-                    access_token=response.access_token,
-                    refresh_token=response.refresh_token,
-                    expires_in=response.expires_in,
                     scope=params.scope,
                     provider_user_name=twitch_user.login,
                     provider_user_display_name=twitch_user.display_name,
                     provider_user_id=twitch_user.id,
                     stream_id=twitch_user.login,
+                ),
+            )
+            await save_channel_provider_oauth(
+                channel_provider_id=channel_provider.id,
+                data=ChannelProviderOAuthRequest(
+                    access_token=response.access_token,
+                    refresh_token=response.refresh_token,
+                    expires_in=response.expires_in,
                 ),
             )
 
