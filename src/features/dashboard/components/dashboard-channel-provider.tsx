@@ -2,7 +2,7 @@ import {
     ChannelProvider,
     ChannelProviderEmbedLive,
     ChannelProviderLiveStatus,
-    ChannelProviderToExternalDashboardTitle,
+    ChannelProviderTitle,
 } from '@/features/channel-providers'
 import { Box, Flex, Text } from '@mantine/core'
 import { YoutubeDashView } from './youtube/youtube-dash-view'
@@ -19,9 +19,7 @@ export function DashboardChannelProvider({
     return (
         <Flex direction="column" gap="0.25rem" h="100%" w={300}>
             <Flex align="center">
-                <ChannelProviderToExternalDashboardTitle
-                    channelProvider={channelProvider}
-                />
+                <ChannelProviderTitle channelProvider={channelProvider} />
                 <Box ml="auto">
                     <ChannelProviderLiveStatus
                         channelProvider={channelProvider}
