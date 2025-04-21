@@ -29,7 +29,9 @@ export function ChannelProviderUpdateStreamTitle({ channelProvider }: Props) {
     return (
         <form
             onSubmit={form.onSubmit((values) => {
-                for (const p of channelProviders.data || []) {
+                for (const p of channelProviders.data?.filter(
+                    (f) => providerInfo[f.provider].stream_title_max_length
+                ) || []) {
                     if (!form.values.update_all && p.id !== channelProvider.id)
                         continue
                     toastPromise({
