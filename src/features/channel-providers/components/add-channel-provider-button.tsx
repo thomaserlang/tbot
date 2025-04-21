@@ -1,5 +1,5 @@
+import { providerInfo } from '@/constants'
 import { ChannelId } from '@/features/channel'
-import { providers } from '@/types/provider.type'
 import { toastError } from '@/utils/toast'
 import { Button, Menu } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
@@ -33,7 +33,7 @@ export function AddChannelProviderButton({ channelId }: Props) {
             </Menu.Target>
 
             <Menu.Dropdown>
-                {Object.values(providers).map((provider) => (
+                {Object.values(providerInfo).map((provider) => (
                     <Menu.Item
                         key={provider.key}
                         onClick={() => {

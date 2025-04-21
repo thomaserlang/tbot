@@ -1,5 +1,5 @@
+import { providerInfo } from '@/constants'
 import { ChatMessage } from '@/features/channel-combined-chat/types/chat-message.type'
-import { providers } from '@/types/provider.type'
 import { Box, Flex, Text } from '@mantine/core'
 
 interface Props {
@@ -18,8 +18,8 @@ export function NoticeFeedList({ notices }: Props) {
                             hour12: false,
                         })}
                     </Text>
-                    <Box c={providers[notice.provider].color}>
-                        {providers[notice.provider].chat_icon}
+                    <Box c={providerInfo[notice.provider].color}>
+                        {providerInfo[notice.provider].chat_icon}
                     </Box>
                     <Text>{notice.message}</Text>
                 </Flex>

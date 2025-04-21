@@ -1,4 +1,4 @@
-import { providers } from '@/types/provider.type'
+import { providerInfo } from '@/constants'
 import { toastPromise } from '@/utils/toast'
 import { Button, Flex, Modal, Switch, Text, Textarea } from '@mantine/core'
 import { useForm } from '@mantine/form'
@@ -42,17 +42,17 @@ export function ChannelProviderUpdateStreamTitle({ channelProvider }: Props) {
                         }),
                         loading: {
                             title: `Updating stream title for ${
-                                providers[p.provider].name
+                                providerInfo[p.provider].name
                             }`,
                         },
                         success: {
                             title: `Stream title updated for ${
-                                providers[p.provider].name
+                                providerInfo[p.provider].name
                             }`,
                         },
                         error: {
                             title: `Failed to update stream title for ${
-                                providers[p.provider].name
+                                providerInfo[p.provider].name
                             }`,
                         },
                     })
@@ -74,7 +74,7 @@ export function ChannelProviderUpdateStreamTitle({ channelProvider }: Props) {
                     />
                     <Text size="sm" c="dimmed" ml="auto">
                         {form.values.stream_title.length}/
-                        {providers[channelProvider.provider]
+                        {providerInfo[channelProvider.provider]
                             .stream_title_max_length || 100}
                     </Text>
                 </Flex>
@@ -109,7 +109,7 @@ export function ChannelProviderUpdateStreamTitleModal({
             opened={opened}
             onClose={onClose}
             title={`${
-                providers[channelProvider.provider].name ||
+                providerInfo[channelProvider.provider].name ||
                 channelProvider.provider
             } - Update Stream Title`}
         >

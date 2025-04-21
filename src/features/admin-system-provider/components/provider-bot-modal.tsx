@@ -1,6 +1,7 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
-import { Provider, providers } from '@/types/provider.type'
+import { providerInfo } from '@/constants'
+import { Provider } from '@/types/provider.type'
 import { Modal } from '@mantine/core'
 import { useGetSystemProviderBot } from '../provider-bot.api'
 import { ProviderBotView } from './provider-bot-view'
@@ -21,7 +22,7 @@ export function ProviderBotModal({ provider, onClose }: Props) {
             onClose={onClose}
             title={
                 data
-                    ? providers[data.provider].name || data.provider
+                    ? providerInfo[data.provider].name || data.provider
                     : 'Provider Bot'
             }
         >

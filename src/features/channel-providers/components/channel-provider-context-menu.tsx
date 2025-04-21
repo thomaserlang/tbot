@@ -1,4 +1,4 @@
-import { providers } from '@/types/provider.type'
+import { providerInfo } from '@/constants'
 import { ActionIcon, Menu } from '@mantine/core'
 import { IconDotsVertical, IconExternalLink } from '@tabler/icons-react'
 import { ChannelProvider } from '../channel-provider.types'
@@ -22,7 +22,7 @@ export function ChannelProviderContextMenu({ channelProvider }: Props) {
                     href={getUrl(channelProvider)}
                     target="_blank"
                 >
-                    {providers[channelProvider.provider].name} Dashboard
+                    {providerInfo[channelProvider.provider].name} Dashboard
                 </Menu.Item>
             </Menu.Dropdown>
         </Menu>
@@ -32,13 +32,15 @@ export function ChannelProviderContextMenu({ channelProvider }: Props) {
 function getUrl(channelProvider: ChannelProvider) {
     if (
         channelProvider.stream_id &&
-        providers[channelProvider.provider].broadcast_edit_url
+        providerInfo[channelProvider.provider].broadcast_edit_url
     )
-        return providers[channelProvider.provider].broadcast_edit_url?.replace(
+        return providerInfo[
+            channelProvider.provider
+        ].broadcast_edit_url?.replace(
             /{([^{}]+)}/g,
             (_, key) => (channelProvider[key] as string) || ''
         )
-    return providers[channelProvider.provider].dashboard_url?.replace(
+    return providerInfo[channelProvider.provider].dashboard_url?.replace(
         /{([^{}]+)}/g,
         (_, key) => (channelProvider[key] as string) || ''
     )

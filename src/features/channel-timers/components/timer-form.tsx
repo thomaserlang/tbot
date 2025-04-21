@@ -1,4 +1,4 @@
-import { providers } from '@/types/provider.type'
+import { providerInfo } from '@/constants'
 import {
     ActionIcon,
     Flex,
@@ -65,7 +65,7 @@ export function TimerForm({ form }: Props) {
                     key={form.key('provider')}
                     data={Object.values({
                         all: { key: 'all', name: 'All', chat: true },
-                        ...providers,
+                        ...providerInfo,
                     })
                         .filter((t) => t.chat)
                         .map((value) => ({

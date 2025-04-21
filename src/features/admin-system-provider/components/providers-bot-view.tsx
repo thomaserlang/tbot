@@ -1,5 +1,5 @@
+import { providerInfo } from '@/constants'
 import { ProviderBot } from '@/features/provider-bot/provider-bot.types'
-import { providers } from '@/types/provider.type'
 import { Button, Flex, Paper, Text } from '@mantine/core'
 import { IconRobot } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
@@ -25,7 +25,7 @@ export function ProviderBotsView({ providerBots }: Props) {
             {providerBots.map((bot) => (
                 <Paper key={bot.id} withBorder p="0.5rem" w={300}>
                     <Text fw={500} size="lg">
-                        {providers[bot.provider].name || bot.provider}
+                        {providerInfo[bot.provider].name || bot.provider}
                     </Text>
 
                     <Flex gap="0.5rem" align="center">

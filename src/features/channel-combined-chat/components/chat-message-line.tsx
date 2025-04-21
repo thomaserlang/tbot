@@ -1,5 +1,6 @@
+import { providerInfo } from '@/constants'
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
-import { Provider, providers } from '@/types/provider.type'
+import { Provider } from '@/types/provider.type'
 import { Box, Text } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
 import { Badges } from './badges'
@@ -63,10 +64,10 @@ export function providerLogo(provider: Provider) {
         <Box
             component="span"
             className={classes.provider}
-            title={providers[provider].name || ''}
-            c={providers[provider].color}
+            title={providerInfo[provider].name || ''}
+            c={providerInfo[provider].color}
         >
-            {providers[provider].chat_icon}
+            {providerInfo[provider].chat_icon}
         </Box>
     )
 }

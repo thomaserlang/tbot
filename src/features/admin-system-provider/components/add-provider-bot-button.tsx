@@ -1,4 +1,4 @@
-import { providers } from '@/types/provider.type'
+import { providerInfo } from '@/constants'
 import { toastError } from '@/utils/toast'
 import { Button, Menu } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
@@ -28,7 +28,7 @@ export function AddProviderButton() {
             </Menu.Target>
 
             <Menu.Dropdown>
-                {Object.values(providers)
+                {Object.values(providerInfo)
                     .filter((t) => t.system_bot)
                     .map((t) => (
                         <Menu.Item

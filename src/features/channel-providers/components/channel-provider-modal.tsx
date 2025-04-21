@@ -1,7 +1,7 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
+import { providerInfo } from '@/constants'
 import { ChannelId } from '@/features/channel/types'
-import { providers } from '@/types/provider.type'
 import { Modal } from '@mantine/core'
 import { useGetChannelProvider } from '../api/channel-provider.api'
 import { ChannelProviderId } from '../channel-provider.types'
@@ -29,7 +29,7 @@ export function ChannelProviderModal({
             onClose={onClose}
             title={
                 data
-                    ? providers[data.provider].name || data.provider
+                    ? providerInfo[data.provider].name || data.provider
                     : 'Provider settings'
             }
         >

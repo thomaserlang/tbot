@@ -1,4 +1,4 @@
-import { providers } from '@/types/provider.type'
+import { providerInfo } from '@/constants'
 import { Badge, Button, Flex, Paper, Text } from '@mantine/core'
 import { IconLink } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
@@ -27,7 +27,7 @@ export function ProvidersView({ channelProviders: channelProviders }: Props) {
             {channelProviders.map((channelProvider) => (
                 <Paper key={channelProvider.id} withBorder p="0.5rem" w={300}>
                     <Text fw={500} size="lg">
-                        {providers[channelProvider.provider].name ||
+                        {providerInfo[channelProvider.provider].name ||
                             channelProvider.provider}
                     </Text>
 
