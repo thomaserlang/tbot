@@ -26,7 +26,6 @@ async def task_handle_timers() -> None:
     while True:
         if last_check:
             elapsed = (datetime_now() - last_check).total_seconds()
-            logger.info(elapsed)
             sleep_time = max(0.0, CHECK_EVERY - elapsed)
         else:
             sleep_time = CHECK_EVERY
