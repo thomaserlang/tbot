@@ -18,7 +18,11 @@ import { Logo } from './components/logo'
 const protectedRoutes: RouteObject[] = [
     {
         path: '',
-        lazy: () => import('./features/root/root.page'),
+        lazy: () => import('./features/landing-page/landing.page'),
+    },
+    {
+        path: '/channels',
+        lazy: () => import('./features/channel/channels.page'),
     },
     {
         path: '/channels/:channelId',

@@ -1,8 +1,8 @@
-import { Anchor, Image } from '@mantine/core'
+import { Anchor, Image, StyleProp } from '@mantine/core'
 import logo from './logo.svg'
 
 interface Props {
-    width: string
+    width: StyleProp<React.CSSProperties['width']>
 }
 export function Logo({ width }: Props) {
     return (
