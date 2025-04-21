@@ -21,6 +21,7 @@ export function CommandsTable({ data, onEditClick }: Props) {
             onScrollToBottom={() => data.fetchNextPage()}
             fetching={data.isFetching}
             h="100%"
+            fz="md"
             noRecordsText="No commands, create one."
             noRecordsIcon={<IconBlocks size={80} />}
             columns={[
@@ -30,7 +31,7 @@ export function CommandsTable({ data, onEditClick }: Props) {
                     width: '25%',
 
                     render: (row) => (
-                        <Anchor size="sm" onClick={() => onEditClick?.(row)}>
+                        <Anchor onClick={() => onEditClick?.(row)}>
                             {row.cmds.map((cmd) => `!${cmd}`).join(', ')}
                             {!row.cmds && row.patterns?.join(', ')}
                         </Anchor>
