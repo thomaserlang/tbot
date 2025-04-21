@@ -7,9 +7,9 @@ from tbot2.channel import (
 )
 from tbot2.channel_timer import Timer, is_timer_active, on_handle_timer
 
-from .twitch_channel_actions import (
+from .twitch_channel_information_actions import (
     ModifyChannelInformationRequest,
-    update_twitch_channel,
+    update_twitch_channel_information,
 )
 from .twitch_send_message_actions import twitch_bot_send_message
 
@@ -27,8 +27,9 @@ async def update_stream_title(
     channel_provider: ChannelProvider,
     stream_title: str,
 ) -> bool:
-    await update_twitch_channel(
-        channel_provider=channel_provider,
+    await update_twitch_channel_information(
+        channel_id=channel_provider.id,
+        broadcaster_id=channel_provider.provider_user_id or '',
         data=ModifyChannelInformationRequest(
             title=stream_title,
         ),

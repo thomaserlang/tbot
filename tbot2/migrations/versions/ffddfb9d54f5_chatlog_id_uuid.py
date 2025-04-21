@@ -48,7 +48,7 @@ def upgrade() -> None:
         sa.UniqueConstraint('msg_id', name='uq_chatlogs_msg_id'),
     )
     op.execute("""
-        INSERT INTO chatlogs_v2 
+        INSERT IGNORE INTO chatlogs_v2 
                (id, type, sub_type, created_at, channel_id, provider_viewer_id, 
                viewer_name, 
                viewer_display_name, viewer_color, message, msg_id, provider, 

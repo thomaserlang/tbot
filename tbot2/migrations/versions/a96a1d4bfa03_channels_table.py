@@ -134,6 +134,8 @@ def upgrade() -> None:
         'chatlog_chatter_stats',
         sa.Column('provider', sa.String(255), nullable=False, server_default='twitch'),
     )
+    op.execute('DELETE FROM chatlog_chatter_stats WHERE channel_id IS NULL')
+    op.execute('DELETE FROM chatlog_chatter_stats WHERE provider_viewer_id=0')
     op.create_primary_key(
         'chatlog_chatter_stats_pkey',
         'chatlog_chatter_stats',

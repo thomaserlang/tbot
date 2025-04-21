@@ -86,7 +86,7 @@ class ChannelProviderOAuthHelper(Auth):
         await database.redis.set(
             f'channel_provider_oauth:{self.provider}:{channel_id}',
             access_token,
-            ex=expires_in,
+            ex=int(expires_in),
         )
 
     async def refresh_token(self, channel_id: UUID) -> str:
@@ -205,7 +205,7 @@ class ChannelProviderBotOAuthHelper(Auth):
         await database.redis.set(
             f'channel_provider_bot_oauth:{self.provider}:{channel_id}',
             access_token,
-            ex=expires_in,
+            ex=int(expires_in),
         )
 
     async def refresh_token(self, channel_id: UUID) -> str:

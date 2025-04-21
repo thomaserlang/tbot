@@ -1,4 +1,4 @@
-from tbot2.channel_points import get_points_rank
+from tbot2.channel_points import get_points_rank, get_total_point_users
 from tbot2.common import ChatMessage, safe_username
 from tbot2.twitch import lookup_twitch_user
 
@@ -9,10 +9,7 @@ from ..var_filler import fills_vars
 
 @fills_vars(
     provider='twitch',
-    vars=(
-        'points',
-        'points_rank',
-    ),
+    vars=('points', 'points_rank', 'total_point_users'),
 )
 async def chatter_point_vars(
     chat_message: ChatMessage, command: TCommand, vars: MessageVars
@@ -38,3 +35,7 @@ async def chatter_point_vars(
 
     vars['points'].value = points_rank.points
     vars['points_rank'].value = points_rank.rank
+    vars['total_point_users'].value = await get_total_point_users(
+        channel_id=chat_message.channel_id,
+        provider=chat_message.provider,
+    )

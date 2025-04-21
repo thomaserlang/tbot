@@ -10,6 +10,7 @@ from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
+from loguru import logger
 
 # revision identifiers, used by Alembic.
 revision: str = '189219e5576e'
@@ -35,6 +36,7 @@ def upgrade() -> None:
             'started_at',
         ),
     )
+    logger.info('Inserting channel streams')
     op.execute(
         """
         INSERT INTO channel_streams (id, channel_id, started_at)
@@ -74,6 +76,7 @@ def upgrade() -> None:
         sa.Index('ix_ended_at', 'ended_at'),
     )
 
+    logger.info('Inserting channel provider streams')
     op.execute(
         """
         INSERT INTO channel_provider_streams (id, channel_stream_id, channel_id, 
@@ -110,15 +113,22 @@ def upgrade() -> None:
             comment='Seconds',
         ),
     )
+    logger.info('Inserting channel provider stream viewer watchtime')
+    op.execute("""
+        CREATE INDEX
+            twitch_stream_watchtime_index_3 on twitch_stream_watchtime 
+            (stream_id ASC),
+            `ix_provider_stream_id` on `channel_provider_streams` 
+                (`provider_stream_id` ASC);
+    """)
     op.execute(
         """
         INSERT INTO channel_provider_stream_viewer_watchtime 
             (channel_provider_stream_id, provider_viewer_id, watchtime)
-        SELECT p.provider_stream_id, user_id, time
-        FROM twitch_stream_watchtime, channels c, channel_provider_streams p 
+        SELECT p.id, user_id, time
+        FROM twitch_stream_watchtime w, channel_provider_streams p 
         where 
-            c.twitch_id = twitch_stream_watchtime.channel_id and 
-            twitch_stream_watchtime.stream_id = p.provider_stream_id;
+            w.stream_id = p.provider_stream_id;
         """
     )
 
@@ -153,6 +163,14 @@ def upgrade() -> None:
             name='channel_provider_viewer_stats_pkey',
         ),
     )
+
+    logger.info('Inserting channel provider viewer stats')
+    op.execute('DELETE FROM twitch_user_stats where user_id IS NULL')
+    op.execute("""
+        CREATE INDEX
+        `twitch_user_stats_index_2` on `twitch_user_stats` 
+               (`channel_id` ASC, `last_viewed_stream_id` ASC);
+    """)
     op.execute(
         """
         INSERT INTO channel_provider_viewer_stats (
@@ -169,12 +187,22 @@ def upgrade() -> None:
         """
     )
 
+    logger.info('Updating channel provider viewer stats')
     op.execute("""
-        update channel_provider_viewer_stats s
-            set watchtime = (select sum(watchtime) 
-                from channel_provider_stream_viewer_watchtime w 
-                where 
-                    w.provider_viewer_id = s.provider_viewer_id)
+        update
+        channel_provider_viewer_stats s,
+        (
+            select
+            sum(watchtime) as watchtime, provider_viewer_id
+            from
+            channel_provider_stream_viewer_watchtime w
+            group by
+            w.provider_viewer_id
+        ) a
+        set
+        s.watchtime = a.watchtime
+        where
+            s.provider_viewer_id = a.provider_viewer_id
     """)
 
 

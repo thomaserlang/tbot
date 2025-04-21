@@ -23,11 +23,11 @@ class TokenData(BaseUser, BaseModel):
     ) -> bool:
         from tbot2.channel import get_channel_user_access_level
 
-        level = await get_channel_user_access_level(
+        user_level = await get_channel_user_access_level(
             user_id=self.user_id,
             channel_id=channel_id,
         )
-        if level is None or level.access_level < access_level.value:
+        if user_level is None or user_level.access_level < access_level.value:
             raise HTTPException(
                 status_code=403,
                 detail='Insufficient access level',

@@ -10,6 +10,7 @@ from tbot2.channel import get_channel_bot_provider
 from tbot2.channel_stream import get_current_channel_provider_stream
 from tbot2.common import ChatMessage, check_pattern_match
 from tbot2.contexts import AsyncSession, get_session
+from tbot2.exceptions import ErrorMessage
 
 from ..exceptions import CommandError
 from ..fill_message import fill_message
@@ -69,9 +70,7 @@ async def handle_message_response(
                         return None
                 return response
             else:
-                logger.trace(
-                    f'No matched command for message: {chat_message.message}'
-                )
+                logger.trace(f'No matched command for message: {chat_message.message}')
 
     return None
 
@@ -121,7 +120,7 @@ async def _matches_cmd(
             chat_message=chat_message,
         )
         return MessageResponse(response=response, command=command)
-    except CommandError as e:
+    except ErrorMessage as e:
         return MessageResponse(
             response=str(e),
             command=command,

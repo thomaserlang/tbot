@@ -52,7 +52,7 @@ def upgrade() -> None:
             uuid_v7(), 
             c.id as channel_id, 
             t.name,
-            CONCAT('["', REPLACE(t.messages, '\n', '","'), '"]'),
+            t.messages,
             t.interval,
             t.enabled,
             t.created_at,

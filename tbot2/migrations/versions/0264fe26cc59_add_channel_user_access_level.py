@@ -41,7 +41,6 @@ def upgrade() -> None:
             name='uq_channel_user_access_levels',
         ),
     )
-    op.drop_table('twitch_channel_admins')
 
     op.execute("""
         INSERT INTO users (id, username, display_name, created_at, twitch_id)
@@ -63,6 +62,29 @@ def upgrade() -> None:
             9 as access_level
         FROM channels c, users u where u.twitch_id = c.twitch_id
     """)
+
+    op.execute("""
+        INSERT IGNORE INTO channel_user_access_levels 
+        (id, channel_id, user_id, access_level)
+        select
+        uuid_v7 (),
+        c.id as channel_id,
+        u.id as user_id,
+        a.level
+        from
+        twitch_channel_admins a,
+        channels c,
+        users u
+        where
+        c.twitch_id = a.channel_id
+        and u.twitch_id = a.user_id;
+    """)
+    op.execute(
+        'update channel_user_access_levels set access_level = 8 where access_level = 3'
+    )
+    op.execute(
+        'update channel_user_access_levels set access_level = 7 where access_level = 1'
+    )
 
     op.execute("""
         INSERT INTO user_oauth_providers (id, user_id, provider, 

@@ -49,10 +49,10 @@ async def points_ranking_vars(
             channel_id=chat_message.channel_id,
             user_ids=[r['provider_viewer_id'] for r in ranks],
         )
-
-        for rank, user in zip(ranks, users, strict=True):
-            rank['user'] = user.display_name if user else 'Unknown'
+        user_ids = {user.id: user for user in users}
 
         vars['points_ranking'].value = ', '.join(
-            f'{r["rank"]}. {r["user"]} ({intcomma(r["points"])})' for r in ranks
+            f'{r["rank"]}. {user_ids[r["provider_viewer_id"]].display_name} '
+            f'({intcomma(r["points"])})'
+            for r in ranks
         )

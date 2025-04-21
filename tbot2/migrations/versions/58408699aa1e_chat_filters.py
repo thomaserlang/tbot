@@ -59,6 +59,49 @@ def upgrade() -> None:
                c.twitch_id = f.channel_id
     """)
     op.execute('update chat_filters set type="banned_terms" where type="banned_words"')
+    op.execute('update chat_filters set type="non_latin" where type="non-latin"')
+    op.execute("""
+        update 
+            chat_filters f, twitch_filter_caps fc, channels c
+        set 
+            f.settings=JSON_OBJECT('min_length', fc.min_length, 
+               'max_percent', fc.max_percent) 
+        where
+            c.twitch_id = fc.channel_id AND f.channel_id = c.id AND f.type="caps";
+    """)
+    op.execute("""
+        update 
+            chat_filters f, twitch_filter_emote fc, channels c
+        set 
+            f.settings=JSON_OBJECT('max_emotes', fc.max_emotes) 
+        where
+            c.twitch_id = fc.channel_id AND f.channel_id = c.id AND f.type="emote";
+    """)
+    op.execute("""
+        update 
+            chat_filters f, twitch_filter_non_latin fc, channels c
+        set 
+            f.settings=JSON_OBJECT('min_length', fc.min_length, 
+               'max_percent', fc.max_percent) 
+        where
+            c.twitch_id = fc.channel_id AND f.channel_id = c.id AND f.type="non_latin";
+    """)
+    op.execute("""
+        update 
+            chat_filters f, twitch_filter_paragraph fc, channels c
+        set 
+            f.settings=JSON_OBJECT('max_length', fc.max_length) 
+        where
+            c.twitch_id = fc.channel_id AND f.channel_id = c.id AND f.type="paragraph";
+    """)
+    op.execute("""
+        update 
+            chat_filters f, twitch_filter_symbol fc, channels c
+        set 
+            f.settings=JSON_OBJECT('max_symbols', fc.max_symbols) 
+        where
+            c.twitch_id = fc.channel_id AND f.channel_id = c.id AND f.type="symbol";
+    """)
 
     op.create_table(
         'chat_filter_banned_terms',

@@ -55,6 +55,7 @@ async def get_points_rank(
             )
             .where(
                 MChatterPoints.channel_id == channel_id,
+                MChatterPoints.provider == provider,
             )
             .subquery()
         )
@@ -76,6 +77,22 @@ async def get_points_rank(
             cpr = ChatterPointsRank.model_validate(result[0])
             cpr.rank = result.rank
             return cpr
+
+
+async def get_total_point_users(
+    *,
+    channel_id: UUID,
+    provider: Provider,
+    session: AsyncSession | None = None,
+) -> int:
+    async with get_session(session) as session:
+        result = await session.scalar(
+            sa.select(sa.func.count('*')).where(
+                MChatterPoints.channel_id == channel_id,
+                MChatterPoints.provider == provider,
+            )
+        )
+        return result if result else 0
 
 
 async def inc_points(

@@ -9,7 +9,7 @@ from tbot2.common import BaseRequestSchema, BaseSchema
 
 class UserCreate(BaseRequestSchema):
     username: Annotated[str, StringConstraints(min_length=3, max_length=100)]
-    email: EmailStr
+    email: EmailStr | None
     display_name: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     default_channel_id: UUID | None = None
 
@@ -25,7 +25,7 @@ class UserUpdate(BaseRequestSchema):
     is_active: bool | None = None
     default_channel_id: UUID | None = None
 
-    @field_validator('username', 'email', 'display_name', 'is_active')
+    @field_validator('username', 'display_name', 'is_active')
     def check_not_none(cls, value: str | bool | None) -> str | bool:
         if value is None:
             raise ValueError('Must not be None')
@@ -35,7 +35,7 @@ class UserUpdate(BaseRequestSchema):
 class User(BaseSchema):
     id: UUID
     username: str
-    email: str
+    email: str | None
     display_name: str
     created_at: datetime
     updated_at: datetime | None = None
