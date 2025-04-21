@@ -5,6 +5,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
+from tbot2.common.utils.sqlalchemy_utils import UtcDateTime
 from tbot2.model_base import Base
 
 
@@ -19,4 +20,4 @@ class MChannelProviderOAuth(Base):
     )
     access_token: Mapped[str | None] = mapped_column(sa.String(2000), nullable=False)
     refresh_token: Mapped[str | None] = mapped_column(sa.String(2000), nullable=False)
-    expires_at: Mapped[datetime | None] = mapped_column(sa.DateTime(), nullable=False)
+    expires_at: Mapped[datetime | None] = mapped_column(UtcDateTime(), nullable=False)

@@ -5,6 +5,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
 from tbot2.common import Provider
+from tbot2.common.utils.sqlalchemy_utils import UtcDateTime
 from tbot2.model_base import Base
 
 
@@ -15,7 +16,7 @@ class MChatlog(Base):
     id: Mapped[UUID] = mapped_column(sa.UUID(), primary_key=True)
     type: Mapped[str] = mapped_column(sa.String(255))
     sub_type: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
-    created_at: Mapped[sa.DateTime] = mapped_column(sa.DateTime, nullable=False)
+    created_at: Mapped[sa.DateTime] = mapped_column(UtcDateTime, nullable=False)
     channel_id: Mapped[UUID] = mapped_column(sa.UUID)
     provider_viewer_id: Mapped[str] = mapped_column(sa.String(255))
     viewer_name: Mapped[str] = mapped_column(sa.String(200))

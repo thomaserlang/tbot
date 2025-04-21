@@ -6,6 +6,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 from uuid6 import uuid7
 
+from tbot2.common.utils.sqlalchemy_utils import UtcDateTime
 from tbot2.model_base import Base
 
 
@@ -19,8 +20,8 @@ class MUser(Base):
         sa.String(255), unique=True, nullable=True
     )
     display_name: Mapped[str] = mapped_column(sa.String(255))
-    created_at: Mapped[datetime] = mapped_column(sa.DateTime)
-    updated_at: Mapped[datetime | None] = mapped_column(sa.DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(UtcDateTime())
+    updated_at: Mapped[datetime | None] = mapped_column(UtcDateTime(), nullable=True)
     is_active: Mapped[bool] = mapped_column(sa.Boolean, default=True)
     default_channel_id: Mapped[UUID | None] = mapped_column(
         sa.UUID,

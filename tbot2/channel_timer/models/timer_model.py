@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from uuid6 import uuid7
 
 from tbot2.common import Provider
+from tbot2.common.utils.sqlalchemy_utils import UtcDateTime
 from tbot2.model_base import Base
 
 from ..schemas.timer_schemas import TimerActiveMode, TimerPickMode
@@ -27,7 +28,7 @@ class MChannelTimer(Base):
     messages: Mapped[list[str]] = mapped_column(sa.JSON(), nullable=False)
     interval: Mapped[int] = mapped_column(sa.SmallInteger(), nullable=False)
     enabled: Mapped[bool] = mapped_column(sa.Boolean(), nullable=False, default=True)
-    next_run_at: Mapped[datetime] = mapped_column(sa.DateTime(), nullable=False)
+    next_run_at: Mapped[datetime] = mapped_column(UtcDateTime(), nullable=False)
     provider: Mapped[Literal['all'] | Provider] = mapped_column(
         sa.String(255), nullable=False, server_default='all'
     )
@@ -40,5 +41,5 @@ class MChannelTimer(Base):
     last_message_index: Mapped[int | None] = mapped_column(
         sa.SmallInteger(), nullable=True
     )
-    created_at: Mapped[datetime] = mapped_column(sa.DateTime(), nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(sa.DateTime(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(UtcDateTime(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(UtcDateTime(), nullable=False)

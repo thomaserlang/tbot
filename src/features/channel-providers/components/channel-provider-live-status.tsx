@@ -1,3 +1,4 @@
+import { TimeCounter } from '@/components/time-counter'
 import { Flex, HoverCard, Text } from '@mantine/core'
 import { IconInfoCircleFilled } from '@tabler/icons-react'
 import { ChannelProvider } from '../channel-provider.types'
@@ -13,7 +14,15 @@ export function ChannelProviderLiveStatus({ channelProvider }: Props) {
                 <HoverCard width={280}>
                     <HoverCard.Target>
                         <Flex gap="0.25rem" align="center">
-                            <Text size="sm">Live</Text>
+                            <Text size="sm">
+                                {channelProvider.stream_live_at && (
+                                    <TimeCounter
+                                        fromDateTime={
+                                            channelProvider.stream_live_at
+                                        }
+                                    />
+                                )}
+                            </Text>
                             <IconInfoCircleFilled size={20} color="green" />
                         </Flex>
                     </HoverCard.Target>

@@ -6,6 +6,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
 from tbot2.common import Provider
+from tbot2.common.utils.sqlalchemy_utils import UtcDateTime
 from tbot2.model_base import Base
 
 
@@ -21,5 +22,5 @@ class MChannelProviderStream(Base):
     provider: Mapped[Provider] = mapped_column(sa.String(255))
     provider_id: Mapped[str] = mapped_column(sa.String(255))
     provider_stream_id: Mapped[str] = mapped_column(sa.String(255))
-    started_at: Mapped[datetime] = mapped_column(sa.DateTime)
-    ended_at: Mapped[datetime | None] = mapped_column(sa.DateTime, nullable=True)
+    started_at: Mapped[datetime] = mapped_column(UtcDateTime())
+    ended_at: Mapped[datetime | None] = mapped_column(UtcDateTime(), nullable=True)

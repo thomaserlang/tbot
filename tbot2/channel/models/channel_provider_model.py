@@ -6,6 +6,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
 from tbot2.bot_providers import MBotProvider
+from tbot2.common.utils.sqlalchemy_utils import UtcDateTime
 from tbot2.model_base import Base
 
 
@@ -42,6 +43,6 @@ class MChannelProvider(Base):
         sa.Boolean(), nullable=False, default=False
     )
     stream_live_at: Mapped[datetime | None] = mapped_column(
-        sa.DateTime(), nullable=True
+        UtcDateTime(), nullable=True
     )
     stream_chat_id: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)

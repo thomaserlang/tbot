@@ -5,6 +5,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
+from tbot2.common.utils.sqlalchemy_utils import UtcDateTime
 from tbot2.model_base import Base
 
 
@@ -14,4 +15,4 @@ class MChannelStream(Base):
 
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)
     channel_id: Mapped[UUID] = mapped_column(sa.UUID)
-    started_at: Mapped[datetime] = mapped_column(sa.DateTime)
+    started_at: Mapped[datetime] = mapped_column(UtcDateTime())

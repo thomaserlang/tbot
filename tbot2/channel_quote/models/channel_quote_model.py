@@ -4,6 +4,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 
+from tbot2.common.utils.sqlalchemy_utils import UtcDateTime
 from tbot2.model_base import Base
 
 
@@ -20,5 +21,5 @@ class MChannelQuote(Base):
     created_by_display_name: Mapped[str] = mapped_column(sa.String(200), nullable=False)
     message: Mapped[str] = mapped_column(sa.String(255), nullable=False)
     number: Mapped[int] = mapped_column(sa.Integer, nullable=False, server_default='1')
-    created_at: Mapped[sa.DateTime] = mapped_column(sa.DateTime, nullable=False)
-    updated_at: Mapped[sa.DateTime] = mapped_column(sa.DateTime, nullable=True)
+    created_at: Mapped[sa.DateTime] = mapped_column(UtcDateTime, nullable=False)
+    updated_at: Mapped[sa.DateTime] = mapped_column(UtcDateTime, nullable=True)
