@@ -29,14 +29,14 @@ from ..actions.youtube_live_chat_message_actions import (
 from ..schemas.youtube_live_broadcast_schema import LiveBroadcast
 
 broadcast_chat_monitor_tasks: dict[str, asyncio.Task[None]] = {}
-
-
 CHECK_EVERY = 15
 
 
 async def task_youtube_live() -> None:
     logger.info('Checking for live youtube channels')
     while True:
+        await asyncio.sleep(CHECK_EVERY)
+
         channel_provider_ids: dict[UUID, asyncio.Task[None]] = {}
         current_chat_ids: set[str] = set()
 
@@ -65,8 +65,6 @@ async def task_youtube_live() -> None:
                 broadcast_chat_monitor_tasks[chat_id].cancel()
                 del broadcast_chat_monitor_tasks[chat_id]
 
-        await asyncio.sleep(CHECK_EVERY)
-
 
 @logger.catch
 async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
@@ -94,15 +92,19 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
                         stream_chat_id=live_broadcast.snippet.live_chat_id,
                     ),
                 )
-                if live_broadcast.snippet.actual_start_time:
-                    logger.debug('Channel is live')
-                    await get_or_create_channel_provider_stream(
-                        channel_id=channel_provider.channel_id,
-                        provider='youtube',
-                        provider_id=live_broadcast.snippet.channel_id,
-                        provider_stream_id=live_broadcast.id,
-                        started_at=live_broadcast.snippet.actual_start_time,
-                    )
+
+            if live_broadcast.snippet.actual_start_time and (
+                not channel_provider.stream_live
+                or channel_provider.stream_id != live_broadcast.id
+            ):
+                logger.debug('Channel is live')
+                await get_or_create_channel_provider_stream(
+                    channel_id=channel_provider.channel_id,
+                    provider='youtube',
+                    provider_id=live_broadcast.snippet.channel_id,
+                    provider_stream_id=live_broadcast.id,
+                    started_at=live_broadcast.snippet.actual_start_time,
+                )
 
             if channel_provider.stream_title != live_broadcast.snippet.title:
                 await save_channel_provider(
