@@ -13,7 +13,7 @@ from tbot2.common import datetime_now
 
 from .twitch_chatters_action import get_twitch_chatters
 
-CHECK_EVERY = 60
+CHECK_EVERY = 60.0
 
 
 async def task_update_live_streams() -> None:
@@ -22,7 +22,7 @@ async def task_update_live_streams() -> None:
     while True:
         if last_check:
             elapsed = (datetime_now() - last_check).total_seconds()
-            sleep_time = max(0, CHECK_EVERY - elapsed)
+            sleep_time = max(0.0, CHECK_EVERY - elapsed)
         else:
             sleep_time = CHECK_EVERY
         await asyncio.sleep(sleep_time)
@@ -62,7 +62,7 @@ async def update_viewers_stream_data(stream: ChannelProviderStream) -> None:
                     )
                     for chatter in chatters
                 ],
-                watchtime=CHECK_EVERY,
+                watchtime=int(CHECK_EVERY),
             )
     except Exception as e:
         logger.exception(e)
