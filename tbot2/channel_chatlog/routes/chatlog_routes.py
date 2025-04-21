@@ -1,9 +1,11 @@
+import asyncio
 from datetime import datetime
 from typing import Annotated, cast
 from uuid import UUID
 
 import sqlalchemy as sa
 from fastapi import APIRouter, Query, Security, WebSocket, WebSocketDisconnect
+from loguru import logger
 
 from tbot2.common import ChatMessage, ChatMessageType, Provider, TAccessLevel, TokenData
 from tbot2.database import database
@@ -78,19 +80,58 @@ async def get_chat_ws_route(
     type: ChatMessageType | None = None,
 ) -> None:
     await websocket.accept()
+    _, pending = await asyncio.wait(
+        [
+            asyncio.create_task(handle_disconnect(websocket)),
+            asyncio.create_task(
+                handle_connection(
+                    channel_id=channel_id,
+                    websocket=websocket,
+                    provider=provider,
+                    provider_viewer_id=provider_viewer_id,
+                    type=type,
+                ),
+            ),
+        ],
+        return_when=asyncio.FIRST_COMPLETED,
+    )
+    for task in pending:
+        task.cancel()
+
+
+@logger.catch
+async def handle_disconnect(
+    websocket: WebSocket,
+) -> None:
+    while True:
+        try:
+            await websocket.receive_text()
+        except WebSocketDisconnect:
+            return
+
+
+@logger.catch
+async def handle_connection(
+    channel_id: UUID,
+    websocket: WebSocket,
+    provider: Annotated[Provider | None, Query()] = None,
+    provider_viewer_id: str | None = None,
+    type: ChatMessageType | None = None,
+) -> None:
     async with database.redis.pubsub() as pubsub:  # type: ignore
         await pubsub.subscribe(f'tbot:live_chat:{channel_id}')  # type: ignore
         while True:
-            data = cast(
-                dict[str, str],
-                await pubsub.get_message(  # type: ignore
-                    ignore_subscribe_messages=True,
-                    timeout=None,  # type: ignore
-                ),
-            )
-            if not data:
-                continue
             try:
+                data = cast(
+                    dict[str, str],
+                    await pubsub.get_message(  # type: ignore
+                        ignore_subscribe_messages=True,
+                        timeout=None,  # type: ignore
+                    ),
+                )
+                if not data:
+                    continue
+
                 message = ChatMessage.model_validate_json(data['data'])
                 if provider and provider_viewer_id:
                     if (
@@ -102,7 +143,5 @@ async def get_chat_ws_route(
                     continue
 
                 await websocket.send_text(message.model_dump_json())
-            except WebSocketDisconnect:
-                return
             except RuntimeError:
                 return
