@@ -95,6 +95,7 @@ def upgrade() -> None:
         'UPDATE chatlogs SET channel_id = (SELECT id FROM channels WHERE twitch_id = '
         'chatlogs.provider_id)'
     )
+    op.execute('DELETE FROM chatlogs WHERE channel_id IS NULL')
     op.alter_column(
         'chatlogs',
         'channel_id',

@@ -30,7 +30,7 @@ def upgrade() -> None:
         ),
         sa.Column('cmds', sa.JSON(), nullable=False, server_default='[]'),
         sa.Column('patterns', sa.JSON(), nullable=False, server_default='[]'),
-        sa.Column('response', sa.String(255), nullable=False),
+        sa.Column('response', sa.String(600), nullable=False),
         sa.Column('group_name', sa.String(255), nullable=False, server_default=''),
         sa.Column('global_cooldown', sa.Integer, nullable=False, server_default='0'),
         sa.Column('chatter_cooldown', sa.Integer, nullable=False, server_default='0'),
@@ -67,7 +67,7 @@ def upgrade() -> None:
             t.enabled,
             t.public,
             t.user_level as access_level,
-            t.created_at,
+            ifnull(t.created_at, now()),
             ifnull(t.updated_at, t.created_at)
         FROM 
             twitch_commands t, 

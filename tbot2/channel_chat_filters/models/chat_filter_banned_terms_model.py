@@ -19,4 +19,4 @@ class MChatFilterBannedTerm(Base):
         nullable=False,
     )
     type: Mapped[str] = mapped_column(sa.String(255), nullable=False)
-    text: Mapped[str] = mapped_column(sa.String(255), nullable=False)
+    text: Mapped[str] = mapped_column(sa.String(2000), nullable=False)

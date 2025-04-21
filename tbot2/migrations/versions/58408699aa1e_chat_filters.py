@@ -34,11 +34,11 @@ def upgrade() -> None:
         sa.Column('enabled', sa.Boolean, nullable=False),
         sa.Column('exclude_access_level', sa.SmallInteger, nullable=False),
         sa.Column('warning_enabled', sa.Boolean, nullable=False),
-        sa.Column('warning_message', sa.String(255), nullable=False),
+        sa.Column('warning_message', sa.String(600), nullable=False),
         sa.Column(
             'warning_expire_duration', sa.Integer, nullable=False, comment='seconds'
         ),
-        sa.Column('timeout_message', sa.String(255), nullable=False),
+        sa.Column('timeout_message', sa.String(600), nullable=False),
         sa.Column('timeout_duration', sa.Integer, nullable=False, comment='seconds'),
         sa.Column('settings', sa.JSON(), nullable=True),
         sa.Column('old_id', sa.Integer, nullable=True),
@@ -49,7 +49,9 @@ def upgrade() -> None:
             (id, old_id, channel_id, type, name, enabled, exclude_access_level, 
             warning_enabled, warning_message, warning_expire_duration, 
             timeout_message, timeout_duration) 
-        select uuid_v7(), f.id, c.id, f.type, f.name, if(f.enabled="Y", 1, 0), 
+        select uuid_v7(), f.id, c.id, f.type, 
+               ifnull(f.name, concat(f.type, ' filter')), 
+               if(f.enabled="Y", 1, 0), 
                f.exclude_user_level, 
                if(f.warning_enabled="Y", 1, 0), f.warning_message, f.warning_expire, 
                f.timeout_message, 
@@ -67,7 +69,7 @@ def upgrade() -> None:
             sa.ForeignKey('chat_filters.id', onupdate='CASCADE', ondelete='CASCADE'),
             nullable=False,
         ),
-        sa.Column('text', sa.String(255), nullable=False),
+        sa.Column('text', sa.String(2000), nullable=False),
         sa.Column('type', sa.String(255), nullable=False),
     )
     op.execute("""

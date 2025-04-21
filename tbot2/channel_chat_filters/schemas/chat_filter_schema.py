@@ -48,7 +48,7 @@ class ChatFilterBase(BaseSchema):
         return FilterMatchResult(filter=self, matched=False)
 
 
-ChatFilterName = Annotated[str, StringConstraints(min_length=1, max_length=500)]
+ChatFilterName = Annotated[str, StringConstraints(min_length=1, max_length=255)]
 ChatFilterWarningMessage = Annotated[
     str, StringConstraints(min_length=0, max_length=500)
 ]

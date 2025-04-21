@@ -10,7 +10,6 @@ from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
-from uuid6 import uuid7
 
 # revision identifiers, used by Alembic.
 revision: str = '17c3698a1737'
@@ -32,49 +31,28 @@ def upgrade() -> None:
         sa.Column('provider', sa.String(255), nullable=False),
         sa.Column('created_by_provider_viewer_id', sa.String(255), nullable=False),
         sa.Column('created_by_display_name', sa.String(200), nullable=False),
-        sa.Column('message', sa.String(255), nullable=False),
+        sa.Column('message', sa.String(600), nullable=False),
         sa.Column('number', sa.Integer(), nullable=False, server_default='1'),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('updated_at', sa.DateTime(), nullable=True),
     )
 
-    conn = op.get_bind()
-    query = conn.execute(
-        sa.text("""
+    op.execute(
+        """
+            INSERT INTO channel_quotes (
+                id, channel_id, provider, created_by_provider_viewer_id,
+                created_by_display_name, message, number, created_at, updated_at
+            ) 
             SELECT 
-                c.id as channel_id, t.message, t.created_by_user_id,
-                t.created_by_user, t.created_at, t.updated_at, t.number
+                uuid_v7(), c.id as channel_id, 'twitch', t.created_by_user_id,
+                t.created_by_user, t.message, t.number, t.created_at, t.updated_at
             FROM 
                 twitch_quotes t, 
                 channels c
             WHERE 
                 t.channel_id = c.twitch_id;
-        """)
+        """
     )
-    results = query.fetchall()
-    for result in results:
-        conn.execute(
-            sa.text("""
-                INSERT INTO channel_quotes (
-                    id, channel_id, provider, created_by_provider_viewer_id,
-                    created_by_display_name, message, number, created_at, updated_at
-                )
-                VALUES (:id, :channel_id, :provider, :created_by_provider_viewer_id,
-                    :created_by_display_name, :message, :number, :created_at, 
-                    :updated_at
-                """),
-            {
-                'id': uuid7(),
-                'channel_id': result[0],
-                'provider': 'twitch',
-                'created_by_provider_viewer_id': result[2],
-                'created_by_display_name': result[3],
-                'message': result[1],
-                'number': result[6],
-                'created_at': result[4],
-                'updated_at': result[5],
-            },
-        )
 
 
 def downgrade() -> None:

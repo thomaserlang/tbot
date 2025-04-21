@@ -17,12 +17,12 @@ class BannedTerm(BaseSchema):
 
 class BannedTermCreate(BaseRequestSchema):
     type: BannedTermType
-    text: Annotated[str, StringConstraints(min_length=1, max_length=1000)]
+    text: Annotated[str, StringConstraints(min_length=1, max_length=2000)]
 
 
 class BannedTermUpdate(BaseRequestSchema):
     type: BannedTermType | None = None
-    text: Annotated[str, StringConstraints(min_length=1, max_length=1000)] | None = None
+    text: Annotated[str, StringConstraints(min_length=1, max_length=2000)] | None = None
 
     @field_validator('type', 'text')
     @classmethod
@@ -33,4 +33,4 @@ class BannedTermUpdate(BaseRequestSchema):
 
 
 class BannedTermTest(BaseRequestSchema):
-    message: Annotated[str, StringConstraints(min_length=1, max_length=1000)]
+    message: Annotated[str, StringConstraints(min_length=1, max_length=2000)]
