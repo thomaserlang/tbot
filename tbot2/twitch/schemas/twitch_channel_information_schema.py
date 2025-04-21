@@ -2,6 +2,8 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field
 
+from tbot2.common import BaseSchema
+
 
 class ContentClassificationLabel(BaseModel):
     """
@@ -11,20 +13,6 @@ class ContentClassificationLabel(BaseModel):
     id: Annotated[str, Field(..., description='ID of the content classification label')]
     is_enabled: Annotated[
         bool, Field(..., description='Whether this label is enabled for the channel')
-    ]
-
-
-class ModifyChannelInformationParams(BaseModel):
-    """
-    Query parameters for the Modify Channel Information request.
-    """
-
-    broadcaster_id: Annotated[
-        str,
-        Field(
-            ...,
-            description='The ID of the broadcaster whose channel you want to update',
-        ),
     ]
 
 
@@ -83,3 +71,17 @@ class ModifyChannelInformationRequest(BaseModel):
         bool | None,
         Field(default=None, description='Whether the channel has branded content'),
     ] = None
+
+
+class ChannelInformation(BaseSchema):
+    broadcaster_id: str
+    broadcaster_login: str
+    broadcaster_name: str
+    game_name: str
+    game_id: str
+    broadcaster_language: str
+    title: str
+    delay: int
+    tags: list[str]
+    content_classification_labels: list[str]
+    is_branded_content: bool

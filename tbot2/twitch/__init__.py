@@ -23,6 +23,12 @@ from .actions.eventsub_actions import (
 from .actions.twitch_channel_follower_action import (
     twitch_channel_follower as twitch_channel_follower,
 )
+from .actions.twitch_channel_information_actions import (
+    get_twitch_channel_information as get_twitch_channel_information,
+)
+from .actions.twitch_channel_information_actions import (
+    update_twitch_channel_information as update_twitch_channel_information,
+)
 from .actions.twitch_chatters_action import get_twitch_chatters as get_twitch_chatters
 from .actions.twitch_lookup_users_action import (
     lookup_twitch_user as lookup_twitch_user,
@@ -36,6 +42,10 @@ from .actions.twitch_mod_user_actions import (
 from .actions.twitch_mod_user_actions import (
     twitch_remove_channel_moderator as twitch_remove_channel_moderator,
 )
+from .actions.twitch_search_categories_actions import get_twitch_game as get_twitch_game
+from .actions.twitch_search_categories_actions import (
+    search_twitch_categories as search_twitch_categories,
+)
 from .actions.twitch_send_message_actions import (
     twitch_bot_send_message as twitch_bot_send_message,
 )
@@ -45,3 +55,11 @@ from .actions.twitch_tasks import (
 from .actions.twitch_warn_chat_user_action import (
     twitch_warn_chat_user as twitch_warn_chat_user,
 )
+from .schemas.twitch_channel_information_schema import (
+    ChannelInformation as ChannelInformation,
+)
+from .schemas.twitch_channel_information_schema import (
+    ModifyChannelInformationRequest as ModifyChannelInformationRequest,
+)
+from .schemas.twitch_game_schema import Game as Game
+from .schemas.twitch_game_schema import SearchCategoryResult as SearchCategoryResult

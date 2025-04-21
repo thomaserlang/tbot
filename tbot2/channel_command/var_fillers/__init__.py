@@ -1,5 +1,6 @@
 from . import accountage_vars as accountage_vars
 from . import add_point_vars as add_point_vars
+from . import category_vars as category_vars
 from . import channel_quote_vars as channel_quote_vars
 from . import countdown_vars as countdown_vars
 from . import faceit_vars as faceit_vars
@@ -17,5 +18,6 @@ from . import slots_vars as slots_vars
 from . import spotify_vars as spotify_vars
 from . import streams_in_a_row_vars as streams_in_a_row_vars
 from . import time_vars as time_vars
+from . import title_vars as title_vars
 from . import user_vars as user_vars
 from . import weather_vars as weather_vars
