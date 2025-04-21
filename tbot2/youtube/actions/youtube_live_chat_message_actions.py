@@ -2,8 +2,6 @@ from loguru import logger
 
 from tbot2.channel import (
     ChannelProvider,
-    SendChannelMessage,
-    on_event_send_message,
 )
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.exceptions import InternalHttpError
@@ -65,15 +63,6 @@ async def send_live_chat_message(
         logger.error(f'send_live_chat_message: {response.status_code} {response.text}')
         return False
     return True
-
-
-@on_event_send_message('youtube')
-async def send_channel_message(data: SendChannelMessage) -> None:
-    await send_live_chat_message(
-        channel_provider=data.channel_provider,
-        message=data.message,
-        live_chat_id=data.live_chat_id,  # type: ignore
-    )
 
 
 async def delete_live_chat_message(

@@ -130,9 +130,7 @@ def fire_event(name: str, *args, **kwargs) -> list[Any]:
     return results
 
 
-async def fire_event_async(
-    name: str, *args: Any, **kwargs: Any
-) -> list[Any | Awaitable[Any]]:
+async def fire_event_async(name: str, *args: Any, **kwargs: Any) -> list[Any]:
     """
     :param name: Name of event to be called
     :param args: List of arguments passed to handler function
@@ -140,7 +138,7 @@ async def fire_event_async(
     """
     if name not in _events:
         return []
-    results: list[Any | Awaitable[Any]] = []
+    results: list[Any] = []
     for event in get_events(name):
         results.append(await event(*args, **kwargs))
     return results

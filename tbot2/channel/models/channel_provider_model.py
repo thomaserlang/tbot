@@ -44,3 +44,4 @@ class MChannelProvider(Base):
     stream_live_at: Mapped[datetime | None] = mapped_column(
         sa.DateTime(), nullable=True
     )
+    stream_chat_id: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)

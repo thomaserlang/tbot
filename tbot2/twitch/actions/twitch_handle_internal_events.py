@@ -1,9 +1,11 @@
 from tbot2.channel import (
     ChannelProvider,
     SendChannelMessage,
+    get_channel_providers,
     on_event_send_message,
     on_event_update_stream_title,
 )
+from tbot2.channel_timer import Timer, is_timer_active, on_handle_timer
 
 from .twitch_channel_actions import (
     ModifyChannelInformationRequest,
@@ -32,3 +34,23 @@ async def update_stream_title(
         ),
     )
     return True
+
+
+@on_handle_timer(provider='twitch')
+async def handle_timer(
+    timer: Timer,
+    message: str,
+) -> None:
+    for channel_provider in await get_channel_providers(
+        channel_id=timer.channel_id,
+        provider='twitch',
+    ):
+        if not await is_timer_active(
+            timer=timer,
+            channel_provider=channel_provider,
+        ):
+            continue
+        await twitch_bot_send_message(
+            channel_provider=channel_provider,
+            message=message,
+        )

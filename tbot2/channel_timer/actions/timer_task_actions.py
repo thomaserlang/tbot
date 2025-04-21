@@ -17,7 +17,7 @@ from ..actions.timer_actions import (
     update_timer_next_run_at,
 )
 
-CHECK_EVERY = 60
+CHECK_EVERY = 60.0
 
 
 async def task_handle_timers() -> None:
@@ -26,19 +26,19 @@ async def task_handle_timers() -> None:
     while True:
         if last_check:
             elapsed = (datetime_now() - last_check).total_seconds()
-            sleep_time = max(0, CHECK_EVERY - elapsed)
+            logger.info(elapsed)
+            sleep_time = max(0.0, CHECK_EVERY - elapsed)
         else:
             sleep_time = CHECK_EVERY
-
         await asyncio.sleep(sleep_time)
-
+        last_check = datetime_now()
         timers = await get_timers(
             enabled=True,
             lte_next_run_at=datetime_now(),
         )
         if not timers:
             logger.debug('No timers to handle')
-            break
+            continue
         await asyncio.gather(*[handle_timer(timer) for timer in timers])
 
 
@@ -73,10 +73,15 @@ async def handle_timer(timer: Timer) -> None:
             last_message_index=last_message_index,
         )
 
-        await fire_event_handle_timer(
+        result = await fire_event_handle_timer(
             timer=timer,
             message=message,
         )
+        if len(result) == 0:
+            logger.warning(
+                'Timer did not return any result',
+                extra={'timer_id': timer.id, 'provider': timer.provider},
+            )
 
     except Exception as e:
         logger.exception(e)
@@ -106,8 +111,8 @@ async def is_timer_active(
 async def fire_event_handle_timer(
     timer: Timer,
     message: str,
-) -> None:
-    await fire_event_async(
+) -> list[None]:
+    return await fire_event_async(
         f'handle_timer.{timer.provider}',
         timer=timer,
         message=message,

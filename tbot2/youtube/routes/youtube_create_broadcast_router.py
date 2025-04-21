@@ -57,6 +57,7 @@ async def youtube_create_broadcast_route(
             data=ChannelProviderRequest(
                 stream_id=broadcast.id,
                 stream_title=broadcast.snippet.title,
+                stream_chat_id=broadcast.snippet.live_chat_id,
             ),
             session=session,
         )

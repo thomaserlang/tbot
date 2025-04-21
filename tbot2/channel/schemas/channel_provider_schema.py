@@ -27,6 +27,7 @@ class ChannelProviderBase(BaseSchema):
     stream_id: str | None
     stream_live: bool = False
     stream_live_at: datetime | None = None
+    stream_chat_id: str | None = None
 
 
 class ChannelProvider(ChannelProviderBase):
@@ -87,3 +88,6 @@ class ChannelProviderRequest(BaseRequestSchema):
     """
     stream_live: bool = False
     stream_live_at: datetime | None = None
+    stream_chat_id: (
+        Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
+    ) = None
