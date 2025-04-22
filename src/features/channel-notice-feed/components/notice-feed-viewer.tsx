@@ -26,7 +26,7 @@ export function NoticeFeedViewer({ channelId }: Props) {
     })
     useEffect(() => {
         if (data.data) {
-            setNotices(pageRecordsFlatten(data.data).reverse())
+            setNotices(pageRecordsFlatten(data.data))
         }
     }, [data.data])
 

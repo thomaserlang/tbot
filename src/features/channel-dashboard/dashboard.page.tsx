@@ -14,7 +14,7 @@ export function Component() {
             <Flex direction="column" h="var(--tbot-content-height)" gap="1rem">
                 <DashboardProviders channelId={channel.id} />
                 <Flex gap="1rem" flex={1}>
-                    <Paper w={300} withBorder p="0.5rem">
+                    <Paper w={350} withBorder p="0.5rem">
                         <NoticeFeedViewer channelId={channel.id} />
                     </Paper>
 

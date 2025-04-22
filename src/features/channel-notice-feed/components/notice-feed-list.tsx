@@ -1,6 +1,7 @@
 import { providerInfo } from '@/constants'
 import { ChatMessage } from '@/features/channel-combined-chat/types/chat-message.type'
-import { Box, Flex, Text } from '@mantine/core'
+import { dateToRelativeTime } from '@/utils/date'
+import { Box, Divider, Flex, Text } from '@mantine/core'
 
 interface Props {
     notices: ChatMessage[]
@@ -8,21 +9,31 @@ interface Props {
 
 export function NoticeFeedList({ notices }: Props) {
     return (
-        <Flex direction="column" gap="1rem">
+        <Flex direction="column" gap="0.75rem">
             {notices.map((notice) => (
-                <Flex gap="0.25rem" align="center" key={notice.id}>
-                    <Text c="dimmed" title={notice.created_at}>
-                        {new Date(notice.created_at).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: false,
-                        })}
-                    </Text>
-                    <Box c={providerInfo[notice.provider].color}>
-                        {providerInfo[notice.provider].chat_icon}
-                    </Box>
-                    <Text>{notice.message}</Text>
-                </Flex>
+                <>
+                    <Flex key={notice.id} direction="column">
+                        <Flex align="center" gap="0.25rem">
+                            <Box
+                                c={providerInfo[notice.provider].color}
+                                mb="-0.5rem"
+                            >
+                                {providerInfo[notice.provider].chat_icon}
+                            </Box>
+                            <Text
+                                size="xs"
+                                c="dimmed"
+                                title={notice.created_at}
+                            >
+                                {dateToRelativeTime(notice.created_at)}
+                            </Text>
+                        </Flex>
+
+                        <Text>{notice.message}</Text>
+                    </Flex>
+
+                    <Divider />
+                </>
             ))}
         </Flex>
     )

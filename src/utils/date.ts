@@ -1,6 +1,8 @@
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(localizedFormat)
+dayjs.extend(relativeTime)
 
 export function strDateFormat(date: string | Date): string {
     if (!date) return ''
@@ -19,4 +21,8 @@ export function timeSinceStart(startDateTime: string | Date): string {
     return `${hours.toString().padStart(2, '0')}:${minutes
         .toString()
         .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+}
+
+export function dateToRelativeTime(date: string | Date): string {
+    return dayjs(date).fromNow()
 }
