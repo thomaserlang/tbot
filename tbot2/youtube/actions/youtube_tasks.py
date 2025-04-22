@@ -17,8 +17,8 @@ from tbot2.channel_stream import (
 from tbot2.common import datetime_now
 from tbot2.database import database
 from tbot2.exceptions import InternalHttpError
-from tbot2.youtube.actions.youtube_handle_message import handle_message
 
+from ..actions.youtube_handle_message import handle_message
 from ..actions.youtube_live_broadcast_actions import (
     get_live_broadcasts,
 )
@@ -26,6 +26,7 @@ from ..actions.youtube_live_chat_message_actions import (
     LiveChatMessages,
     get_live_chat_messages,
 )
+from ..exceptions import YouTubeException
 from ..schemas.youtube_live_broadcast_schema import LiveBroadcast
 
 broadcast_chat_monitor_tasks: dict[str, asyncio.Task[None]] = {}
@@ -76,12 +77,14 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
                 channel_provider=channel_provider,
                 broadcast_status='active',
             )
-        except InternalHttpError as e:
-            if e.status_code == 403:
-                import json
-
-                error = json.loads(e.body)
-                logger.error(error)
+        except YouTubeException as e:
+            if e.error.error.errors:
+                if e.error.error.errors[0].reason == 'liveStreamingNotEnabled':
+                    logger.debug(
+                        'Live streaming is not enabled for this channel, '
+                        'skipping live broadcast check',
+                    )
+                    return
             raise e
 
         except ChannelProviderNotFound as e:

@@ -6,6 +6,7 @@ from tbot2.channel import (
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.exceptions import InternalHttpError
 
+from ..exceptions import YouTubeError, YouTubeException
 from ..http_client import youtube_bot_client, youtube_user_client
 from ..schemas.youtube_live_chat_message_schema import LiveChatMessages
 
@@ -28,6 +29,8 @@ async def get_live_chat_messages(
         },
     )
     if response.status_code >= 400:
+        if response.headers.get('content-type').lower() == 'application/json':
+            raise YouTubeException(YouTubeError.model_validate(response.json()))
         raise InternalHttpError(response.status_code, response.text)
 
     return LiveChatMessages.model_validate(response.json())
