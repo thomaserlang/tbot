@@ -1,4 +1,8 @@
-import { IconBrandTwitch, IconBrandYoutube } from '@tabler/icons-react'
+import {
+    IconBrandDiscord,
+    IconBrandTwitch,
+    IconBrandYoutube,
+} from '@tabler/icons-react'
 import { Provider, ProviderInfo } from './types/provider.type'
 
 export const APP_TITLE = 'HEIMRA'
@@ -44,5 +48,11 @@ export const providerInfo: { [key: string | Provider]: ProviderInfo } = {
         chat: false,
         own_bot: true,
         system_bot: false,
+    },
+    discord: {
+        key: 'discord',
+        name: 'Discord',
+        color: '#7289da',
+        chat_icon: <IconBrandDiscord size={18} />,
     },
 } as const
