@@ -17,7 +17,10 @@ export async function getCommands(
     const r = await api.get<PageCursor<Command>>(
         `/api/2/channels/${channelId}/commands`,
         {
-            params,
+            params: {
+                per_page: 50,
+                ...params,
+            },
         }
     )
     return r.data
