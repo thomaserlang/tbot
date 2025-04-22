@@ -115,20 +115,6 @@ wheels = [
 ]
 
 [[package]]
-name = "asyncclick"
-version = "8.1.8"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "anyio" },
-    { name = "colorama", marker = "sys_platform == 'win32'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/cb/b5/e1e5fdf1c1bb7e6e614987c120a98d9324bf8edfaa5f5cd16a6235c9d91b/asyncclick-8.1.8.tar.gz", hash = "sha256:0f0eb0f280e04919d67cf71b9fcdfb4db2d9ff7203669c40284485c149578e4c", size = 232900 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/14/cc/a436f0fc2d04e57a0697e0f87a03b9eaed03ad043d2d5f887f8eebcec95f/asyncclick-8.1.8-py3-none-any.whl", hash = "sha256:eb1ccb44bc767f8f0695d592c7806fdf5bd575605b4ee246ffd5fadbcfdbd7c6", size = 99093 },
-    { url = "https://files.pythonhosted.org/packages/92/c4/ae9e9d25522c6dc96ff167903880a0fe94d7bd31ed999198ee5017d977ed/asyncclick-8.1.8.0-py3-none-any.whl", hash = "sha256:be146a2d8075d4fe372ff4e877f23c8b5af269d16705c1948123b9415f6fd678", size = 99115 },
-]
-
-[[package]]
 name = "asyncmy"
 version = "0.2.10"
 source = { registry = "https://pypi.org/simple" }
@@ -1001,9 +987,9 @@ dependencies = [
     { name = "alembic" },
     { name = "arq" },
     { name = "async-lru" },
-    { name = "asyncclick" },
     { name = "asyncmy" },
     { name = "authlib" },
+    { name = "click" },
     { name = "fastapi" },
     { name = "httpx", extra = ["http2"] },
     { name = "httpx-auth" },
@@ -1041,9 +1027,9 @@ requires-dist = [
     { name = "alembic", specifier = "==1.14.1" },
     { name = "arq", specifier = "==0.26.3" },
     { name = "async-lru", specifier = "==2.0.5" },
-    { name = "asyncclick", specifier = ">=8.1.8" },
     { name = "asyncmy", specifier = "==0.2.10" },
     { name = "authlib", specifier = "==1.4.0" },
+    { name = "click" },
     { name = "fastapi", specifier = "==0.115.11" },
     { name = "honcho", marker = "extra == 'dev'", specifier = "==2.0.0" },
     { name = "httpx", extras = ["http2"], specifier = "==0.28.1" },
