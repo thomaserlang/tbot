@@ -25,7 +25,6 @@ def api() -> None:
         reload=config.debug,
         proxy_headers=True,
         forwarded_allow_ips='*',
-        log_level=config.logging.level,
     )
 
 
