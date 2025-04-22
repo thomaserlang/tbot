@@ -7,9 +7,10 @@ import {
     useGetChatlogsWS,
 } from '@/features/channel-combined-chat'
 import { pageRecordsFlatten } from '@/utils/page-records'
-import { Flex, ScrollArea, Text } from '@mantine/core'
+import { Flex, Text } from '@mantine/core'
 import { IconNotification } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
+import { VList } from 'virtua'
 import { NoticeFeedList } from './notice-feed-list'
 
 interface Props {
@@ -61,8 +62,8 @@ export function NoticeFeedViewer({ channelId }: Props) {
             </Flex>
         )
     return (
-        <ScrollArea h="100%">
+        <VList style={{ height: '100%' }}>
             <NoticeFeedList notices={notices || []} />
-        </ScrollArea>
+        </VList>
     )
 }
