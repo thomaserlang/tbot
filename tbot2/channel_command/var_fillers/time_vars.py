@@ -22,8 +22,6 @@ async def time_vars(
         raise CommandError(
             'Invalid timezone. Valid list: https://docs.botashell.com/docs/time'
         )
-    dt = pytz.utc.localize(
-        datetime_now(),
-    ).astimezone(pytz.timezone(vars['time'].args[0]))
+    dt = datetime_now().astimezone(pytz.timezone(vars['time'].args[0]))
 
     vars['time'].value = dt.strftime('%H:%M')
