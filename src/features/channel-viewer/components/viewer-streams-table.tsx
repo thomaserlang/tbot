@@ -52,7 +52,11 @@ export function ViewerStreamsTable(props: Props) {
                         title: 'Watchtime',
                         render: (row) =>
                             humanizeDuration(
-                                row.viewer_watchtime.watchtime * 1000
+                                row.viewer_watchtime.watchtime * 1000,
+                                {
+                                    maxDecimalPoints: 0,
+                                    largest: 2,
+                                }
                             ),
                     },
                     {

@@ -17,7 +17,9 @@ interface Props {
 
 const hourHumanizer = humanizeDuration.humanizer({
     units: ['h', 'm'],
+    largest: 1,
     language: 'short',
+    maxDecimalPoints: 0,
     languages: {
         short: {
             h: () => 'h',
