@@ -3,7 +3,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-import asyncclick as click
+import click
 import uvicorn
 from loguru import logger
 
