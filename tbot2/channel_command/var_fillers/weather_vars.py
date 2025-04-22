@@ -54,9 +54,9 @@ async def weather_vars(
     vars['weather.description'].value = (
         data['weather'][0]['description'] if data['weather'] else 'Unknown'
     )
-    vars['weather.temp'].value = data['main']['temp']
-    vars['weather.temp_min'].value = data['main']['temp_min']
-    vars['weather.temp_max'].value = data['main']['temp_max']
+    vars['weather.temp'].value = round(data['main']['temp'])
+    vars['weather.temp_min'].value = round(data['main']['temp_min'])
+    vars['weather.temp_max'].value = round(data['main']['temp_max'])
     vars['weather.humidity'].value = data['main']['humidity']
     vars['weather.city'].value = data['name']
     vars['weather.wind_speed'].value = data['wind']['speed']
