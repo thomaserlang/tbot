@@ -7,7 +7,6 @@ from tbot2.config_settings import config
 
 
 def setup_logger() -> None:
-    logger.remove()
     sentry_sdk.init(
         dsn=config.sentry_dsn,
         send_default_pii=True,
