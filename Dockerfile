@@ -22,6 +22,7 @@ COPY --from=pybuilder --chown=app:app /app /app
 COPY --from=jsbuilder /app/dist /app/dist
 
 ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="."
 
 WORKDIR /app
 
