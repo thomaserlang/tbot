@@ -6,7 +6,7 @@ interface Props {
 }
 export function Logo({ width }: Props) {
     return (
-        <Anchor href="/">
+        <Anchor href="/channels">
             <Image
                 src={logo}
                 alt="HEIMRA"
