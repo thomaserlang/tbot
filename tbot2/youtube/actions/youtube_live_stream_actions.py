@@ -1,6 +1,5 @@
 from tbot2.channel import ChannelProvider
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
-from tbot2.exceptions import InternalHttpError
 
 from ..exceptions import YouTubeError, YouTubeException
 from ..schemas.youtube_live_stream_schema import LiveStream, LiveStreamInsert
@@ -30,9 +29,7 @@ async def get_live_streams(
         params=params,
     )
     if r.status_code >= 400:
-        if r.headers.get('content-type').lower() == 'application/json':
-            raise YouTubeException(YouTubeError.model_validate(r.json()))
-        raise InternalHttpError(r.status_code, r.text)
+        raise YouTubeException(YouTubeError.model_validate(r.json()))
     page = YoutubePage[LiveStream].model_validate(r.json())
     return page.items
 
@@ -51,7 +48,5 @@ async def create_live_stream(
         json=data.model_dump(exclude_unset=True, exclude_none=True, mode='json'),
     )
     if r.status_code >= 400:
-        if r.headers.get('content-type').lower() == 'application/json':
-            raise YouTubeException(YouTubeError.model_validate(r.json()))
-        raise InternalHttpError(r.status_code, r.text)
+        raise YouTubeException(YouTubeError.model_validate(r.json()))
     return LiveStream.model_validate(r.json())

@@ -5,7 +5,7 @@ from loguru import logger
 from tbot2.channel import ChannelProvider
 from tbot2.common import datetime_now
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
-from tbot2.exceptions import ErrorMessage, InternalHttpError
+from tbot2.exceptions import ErrorMessage
 
 from ..exceptions import YouTubeError, YouTubeException
 from ..http_client import youtube_user_client
@@ -75,9 +75,7 @@ async def get_live_broadcasts(
         params=params,
     )
     if r.status_code >= 400:
-        if r.headers.get('content-type').lower() == 'application/json':
-            raise YouTubeException(YouTubeError.model_validate(r.json()))
-        raise InternalHttpError(r.status_code, r.text)
+        raise YouTubeException(YouTubeError.model_validate(r.json()))
     page = YoutubePage[LiveBroadcast].model_validate(r.json())
     return page.items
 
@@ -97,9 +95,7 @@ async def create_live_broadcast(
         json=data.model_dump(exclude_unset=True, exclude_none=True, mode='json'),
     )
     if r.status_code >= 400:
-        if r.headers.get('content-type').lower() == 'application/json':
-            raise YouTubeException(YouTubeError.model_validate(r.json()))
-        raise InternalHttpError(r.status_code, r.text)
+        raise YouTubeException(YouTubeError.model_validate(r.json()))
     return LiveBroadcast.model_validate(r.json())
 
 
@@ -137,9 +133,7 @@ async def update_live_broadcast(
         },
     )
     if r.status_code >= 400:
-        if r.headers.get('content-type').lower() == 'application/json':
-            raise YouTubeException(YouTubeError.model_validate(r.json()))
-        raise InternalHttpError(r.status_code, r.text)
+        raise YouTubeException(YouTubeError.model_validate(r.json()))
     return LiveBroadcast.model_validate(r.json())
 
 
@@ -160,9 +154,7 @@ async def bind_live_broadcast(
         },
     )
     if r.status_code >= 400:
-        if r.headers.get('content-type').lower() == 'application/json':
-            raise YouTubeException(YouTubeError.model_validate(r.json()))
-        raise InternalHttpError(r.status_code, r.text)
+        raise YouTubeException(YouTubeError.model_validate(r.json()))
     return LiveBroadcast.model_validate(r.json())
 
 
@@ -183,9 +175,7 @@ async def transition_live_broadcast(
         },
     )
     if r.status_code >= 400:
-        if r.headers.get('content-type').lower() == 'application/json':
-            raise YouTubeException(YouTubeError.model_validate(r.json()))
-        raise InternalHttpError(r.status_code, r.text)
+        raise YouTubeException(YouTubeError.model_validate(r.json()))
     return LiveBroadcast.model_validate(r.json())
 
 
