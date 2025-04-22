@@ -1,6 +1,7 @@
 import { queryClient } from '@/queryclient'
+import { PageCursor } from '@/types/page-cursor.type'
 import { api } from '@/utils/api'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { InfiniteData, useMutation, useQuery } from '@tanstack/react-query'
 import { ChannelId } from '../channel/types'
 import {
     Command,
@@ -67,9 +68,24 @@ export function useUpdateCommand({
                 getCommandQueryKey(variables.commandId),
                 data
             )
-            queryClient.invalidateQueries({
-                queryKey: getCommandsQueryKey(variables.channelId),
-            })
+            queryClient.setQueryData(
+                getCommandsQueryKey(variables.channelId),
+                (oldData: InfiniteData<PageCursor<Command>>) => {
+                    const pages = oldData.pages.map((page) => {
+                        const newItems = page.records.map((item) =>
+                            item.id === variables.commandId ? data : item
+                        )
+                        return {
+                            ...page,
+                            records: newItems,
+                        }
+                    })
+                    return {
+                        ...oldData,
+                        pages,
+                    }
+                }
+            )
             onSuccess?.(data, variables)
         },
         onError,

@@ -29,7 +29,7 @@ export function EditCommandForm({ command, onUpdated }: Props) {
         },
     })
     const form = useForm<CommandUpdate>({
-        mode: 'uncontrolled',
+        mode: 'controlled',
         initialValues: {
             cmds: command.cmds,
             patterns: command.patterns,

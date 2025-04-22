@@ -8,6 +8,8 @@ import {
     SimpleGrid,
     Switch,
     TagsInput,
+    Text,
+    Textarea,
     TextInput,
 } from '@mantine/core'
 import { UseFormReturnType } from '@mantine/form'
@@ -16,7 +18,6 @@ import {
     IconHourglassEmpty,
     IconLineDotted,
     IconLock,
-    IconMessage,
 } from '@tabler/icons-react'
 import {
     commandActiveModeLabels,
@@ -59,24 +60,32 @@ export function CommandForm({ form }: Props) {
                 }}
                 {...form.getInputProps('patterns')}
             />
-
-            <TextInput
-                leftSection={<IconMessage size={16} />}
-                label={
-                    <>
-                        Response{' '}
-                        <Anchor
-                            href="https://docs.botashell.com"
-                            target="_blank"
-                            size="sm"
-                        >
-                            (Variable docs)
-                        </Anchor>
-                    </>
-                }
-                key={form.key('response')}
-                {...form.getInputProps('response')}
-            />
+            <Flex gap="0.10rem" direction="column">
+                <Textarea
+                    label={
+                        <>
+                            Response{' '}
+                            <Anchor
+                                href="https://docs.botashell.com"
+                                target="_blank"
+                                size="sm"
+                            >
+                                (Variable docs)
+                            </Anchor>
+                        </>
+                    }
+                    autosize
+                    minRows={3}
+                    minLength={1}
+                    maxLength={400}
+                    w="100%"
+                    key={form.key('response')}
+                    {...form.getInputProps('response')}
+                />
+                <Text size="sm" c="dimmed" ml="auto">
+                    {form.values.response?.length}/400
+                </Text>
+            </Flex>
 
             <SimpleGrid cols={{ base: 2, md: 3 }}>
                 <Select

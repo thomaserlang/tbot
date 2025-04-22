@@ -31,7 +31,7 @@ export function CreateCommandForm({ channelId, onCreated }: Props) {
         },
     })
     const form = useForm<CommandCreate>({
-        mode: 'uncontrolled',
+        mode: 'controlled',
         initialValues: {
             cmds: [],
             patterns: [],

@@ -41,7 +41,7 @@ async def get_commands_route(
         .where(
             MCommand.channel_id == channel_id,
         )
-        .order_by(MCommand.updated_at.desc(), MCommand.id)
+        .order_by(MCommand.id.desc())
     )
     return await page_cursor(
         query=stmt,
