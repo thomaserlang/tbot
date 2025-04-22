@@ -1,7 +1,9 @@
 import { Center, Container } from '@mantine/core'
+import { AxiosError } from 'axios'
 import { createContext, useContext } from 'react'
 import { ErrorBox } from '../error-box'
 import { Logo } from '../logo'
+import { PageLoader } from '../page-loader'
 import { useGetCurrentUser } from './current-user.api'
 import { ICurrentUser } from './current-user.type'
 
@@ -14,7 +16,10 @@ export function CurrentUserProvider({
 }) {
     const { data, error } = useGetCurrentUser()
 
-    if (!data && error)
+    if (!data && error) {
+        if (error instanceof AxiosError) {
+            if (error?.response?.status == 401) return <PageLoader />
+        }
         return (
             <Container mt="2rem">
                 <Center mb="2rem">
@@ -23,6 +28,7 @@ export function CurrentUserProvider({
                 <ErrorBox errorObj={error} />
             </Container>
         )
+    }
 
     return (
         <CurrentUserContext.Provider value={data}>
