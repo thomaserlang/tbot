@@ -1,11 +1,16 @@
 import sys
 
+import sentry_sdk
 from loguru import logger
 
 from tbot2.config_settings import config
 
 
 def setup_logger() -> None:
+    sentry_sdk.init(
+        dsn=config.sentry_dsn,
+        send_default_pii=True,
+    )
     logger.remove()
     format = '<green>{time}</green> | <level>{level}</level> | {message} | {extra}'
     if config.debug:

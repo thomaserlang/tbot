@@ -31,6 +31,7 @@ dependencies = [
     "loguru>=0.7.3",
     "types-redis>=4.6.0.20241004",
     "orjson>=3.10.16",
+    "sentry-sdk[fastapi,loguru]==2.26.1",
 ]
 
 [project.optional-dependencies]

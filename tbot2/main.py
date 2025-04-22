@@ -33,7 +33,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     await database.close()
 
 
-app = FastAPI(title=f'{APP_TITLE} API', version='2.0', lifespan=lifespan)
+app = FastAPI(
+    title=f'{APP_TITLE} API',
+    docs_url='/api/2/redoc',
+    version='2.0',
+    lifespan=lifespan,
+)
 app.add_middleware(AuthenticationMiddleware, backend=AuthBackend())
 app.add_middleware(
     CORSMiddleware,
