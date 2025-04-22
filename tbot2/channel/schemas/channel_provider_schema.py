@@ -56,6 +56,8 @@ class ChannelProviderPublic(ChannelProviderBase):
 
     @computed_field
     def scope_needed(self) -> bool:
+        if not channel_provider_scopes.get(self.provider):
+            return False
         required_scopes = set(channel_provider_scopes.get(self.provider, '').split(' '))
         scopes: set[str] = set(self.scope.split(' ')) if self.scope else set()
         return bool(required_scopes - scopes)
