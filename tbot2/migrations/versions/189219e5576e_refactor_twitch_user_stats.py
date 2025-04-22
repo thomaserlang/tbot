@@ -117,7 +117,10 @@ def upgrade() -> None:
     op.execute("""
         CREATE INDEX
             twitch_stream_watchtime_index_3 on twitch_stream_watchtime 
-            (stream_id ASC),
+            (stream_id ASC);
+    """)
+    op.execute("""
+        CREATE INDEX
             `ix_provider_stream_id` on `channel_provider_streams` 
                 (`provider_stream_id` ASC);
     """)
@@ -131,6 +134,7 @@ def upgrade() -> None:
             w.stream_id = p.provider_stream_id;
         """
     )
+    op.drop_index('ix_provider_stream_id', table_name='channel_provider_streams')
 
     op.create_table(
         'channel_provider_viewer_stats',
