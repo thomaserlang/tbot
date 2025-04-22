@@ -18,6 +18,7 @@ from tbot2.config_settings import config
 from tbot2.constants import APP_TITLE
 from tbot2.database import database
 from tbot2.dependecies import PlainResponse
+from tbot2.health.router import health_router
 from tbot2.setup_logger import setup_logger
 from tbot2.spotify.router import spotify_router
 from tbot2.twitch.router import twitch_router
@@ -69,3 +70,4 @@ app.include_router(bot_provider_routes, prefix='/api/2')
 app.include_router(chatlog_router, prefix='/api/2')
 app.include_router(channel_stats_router, prefix='/api/2')
 app.include_router(youtube_router, prefix='/api/2')
+app.include_router(health_router)
