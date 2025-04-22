@@ -5,6 +5,7 @@ from pathlib import Path
 
 import asyncclick as click
 import uvicorn
+from loguru import logger
 
 from tbot2.config_settings import config
 from tbot2.setup_logger import setup_logger
@@ -30,7 +31,8 @@ def api() -> None:
 
 @cli.command()
 @click.option('--revision', '-r', help='revision, default head', default='head')
-def upgrade(revision: str) -> None:
+@click.option('--keep-running', is_flag=True, help='Keep the process running forever')
+async def upgrade(revision: str, keep_running: bool) -> None:
     from alembic import command
     from alembic.config import Config
 
@@ -41,6 +43,11 @@ def upgrade(revision: str) -> None:
         f'mariadb+pymysql://{config.db.user}:{config.db.password}@{config.db.host}:{config.db.port}/{config.db.database}',
     )
     command.upgrade(cfg, revision)
+
+    if keep_running:
+        logger.info('Running forever...')
+        while True:
+            await asyncio.sleep(3600)
 
 
 @asynccontextmanager
