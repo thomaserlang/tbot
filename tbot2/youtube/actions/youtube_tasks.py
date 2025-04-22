@@ -71,10 +71,25 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
     with logger.contextualize(
         channel_provider_id=channel_provider.id,
     ):
-        live_broadcasts = await get_live_broadcasts(
-            channel_provider=channel_provider,
-            broadcast_status='active',
-        )
+        try:
+            live_broadcasts = await get_live_broadcasts(
+                channel_provider=channel_provider,
+                broadcast_status='active',
+            )
+        except InternalHttpError as e:
+            if e.status_code == 403:
+                import json
+
+                error = json.loads(e.body)
+                if error['errors']['reason']['reason'] == 'liveStreamingNotEnabled':
+                    return
+            raise e
+
+        except ChannelProviderNotFound as e:
+            logger.info(
+                f'YouTube channel provider no longer exists on channel {e.channel_id} '
+            )
+            return
         if not live_broadcasts:
             if channel_provider.stream_live:
                 await end_stream(
