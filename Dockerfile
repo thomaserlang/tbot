@@ -16,10 +16,14 @@ ADD . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
-FROM python:3.13-alpine
+FROM python:3.13-slim-bookworm
 
 COPY --from=pybuilder --chown=app:app /app /app
 COPY --from=jsbuilder /app/dist /app/dist
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+WORKDIR /app
 
 ENTRYPOINT ["python", "tbot2/runner.py"]
 
