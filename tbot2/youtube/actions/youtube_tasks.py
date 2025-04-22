@@ -81,7 +81,10 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
                 import json
 
                 error = json.loads(e.body)
-                if error['errors']['reason']['reason'] == 'liveStreamingNotEnabled':
+                if (
+                    error['error']['errors']['reason']['reason']
+                    == 'liveStreamingNotEnabled'
+                ):
                     return
             raise e
 
