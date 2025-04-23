@@ -23,6 +23,9 @@ class TokenData(BaseUser, BaseModel):
     ) -> bool:
         from tbot2.channel import get_channel_user_access_level
 
+        if await self.is_global_admin():
+            return True
+
         user_level = await get_channel_user_access_level(
             user_id=self.user_id,
             channel_id=channel_id,
