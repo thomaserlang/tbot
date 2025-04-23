@@ -74,9 +74,8 @@ async def register_channel_eventsubs(
                 extra={
                     'channel_id': channel_id,
                     'event_type': registration.event_type,
-                    'eventsub_registration': registration,
-                    'bot_provider': bot_provider,
-                    'provider': channel_provider,
+                    'bot_provider_id': bot_provider.id,
+                    'channel_provider_id': channel_provider.id,
                 },
             )
 
