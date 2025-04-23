@@ -1,4 +1,3 @@
-import asyncio
 from typing import Annotated
 from uuid import UUID
 
@@ -8,7 +7,6 @@ from uuid6 import uuid7
 
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.common import ChatMessage, datetime_now
-from tbot2.database import database
 
 from ..schemas.event_channel_moderate_schema import EventChannelModerate
 from ..schemas.event_headers import EventSubHeaders
@@ -398,10 +396,4 @@ async def event_channel_chat_message_route(
             pass
 
     if chat_message:
-        await asyncio.gather(
-            create_chatlog(data=chat_message),
-            database.redis.publish(  # type: ignore
-                f'tbot:live_chat:{chat_message.channel_id}',
-                chat_message.model_dump_json(),
-            ),
-        )
+        await create_chatlog(data=chat_message)
