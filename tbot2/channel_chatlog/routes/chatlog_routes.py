@@ -63,6 +63,7 @@ async def get_chatlogs(
         query=stmt,
         page_query=page_query,
         response_model=Chatlog,
+        count_total=False,
     )
     return page
 
