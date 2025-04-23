@@ -1,6 +1,6 @@
+import { RelativeTimeUpdater } from '@/components/relative-time-updater'
 import { providerInfo } from '@/constants'
-import { ChatMessage } from '@/features/channel-combined-chat/types/chat-message.type'
-import { dateToRelativeTime } from '@/utils/date'
+import { ChatMessage } from '@/features/channel-combined-chat'
 import { Box, Divider, Flex, Text } from '@mantine/core'
 
 interface Props {
@@ -25,7 +25,7 @@ export function NoticeFeedList({ notices }: Props) {
                                 c="dimmed"
                                 title={notice.created_at}
                             >
-                                {dateToRelativeTime(notice.created_at)}
+                                <RelativeTimeUpdater dt={notice.created_at} />
                             </Text>
                         </Flex>
 

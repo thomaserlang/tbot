@@ -41,15 +41,19 @@ export async function getChatlogs(
 interface GetProps {
     channelId: ChannelId
     params?: GetChatlogsParams
+    options?: {
+        refetchInterval?: number
+    }
 }
 
-export function useGetChatlogs({ channelId, params }: GetProps) {
+export function useGetChatlogs({ channelId, params, options }: GetProps) {
     return useInfiniteQuery({
         queryKey: getChatlogsQueryKey(channelId, params),
         queryFn: ({ pageParam }) =>
             getChatlogs(channelId, { ...params, cursor: pageParam }),
         initialPageParam: '',
         getNextPageParam: (lastPage) => lastPage.cursor ?? undefined,
+        ...options,
     })
 }
 
