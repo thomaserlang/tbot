@@ -1,10 +1,15 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
 import { ChannelId } from '@/features/channel'
-import { useGetChatlogs } from '@/features/channel-combined-chat'
+import {
+    ChatMessage,
+    useGetChatlogs,
+    useGetChatlogsWS,
+} from '@/features/channel-combined-chat'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { Flex, ScrollArea, Text } from '@mantine/core'
 import { IconNotification } from '@tabler/icons-react'
+import { useEffect, useState } from 'react'
 import { NoticeFeedList } from './notice-feed-list'
 
 interface Props {
@@ -17,15 +22,31 @@ export function NoticeFeedViewer({ channelId }: Props) {
         params: {
             type: 'notice',
         },
-        options: {
-            refetchInterval: 2000,
+    })
+    useEffect(() => {
+        if (data.data) {
+            setMessages(pageRecordsFlatten(data.data))
+        }
+    }, [data.data])
+
+    useGetChatlogsWS({
+        channelId,
+        params: {
+            type: 'notice',
+        },
+        onMessage: (notice) => {
+            setMessages((prev) => [...(prev || []), notice].slice(-1000))
         },
     })
 
-    if (data.isLoading) return <PageLoader />
-    if (data.error) return <ErrorBox errorObj={data.error} />
+    const [notices, setMessages] = useState<ChatMessage[] | undefined>(
+        undefined
+    )
 
-    if (!data.data?.pages)
+    if (data.isLoading || notices === undefined) return <PageLoader />
+    if (!data.data && data.error) return <ErrorBox errorObj={data.error} />
+
+    if (notices.length === 0)
         return (
             <Flex
                 justify="center"
@@ -42,7 +63,7 @@ export function NoticeFeedViewer({ channelId }: Props) {
         )
     return (
         <ScrollArea h="100%" style={{ contain: 'strict' }}>
-            <NoticeFeedList notices={pageRecordsFlatten(data.data)} />
+            <NoticeFeedList notices={notices} />
         </ScrollArea>
     )
 }

@@ -66,7 +66,7 @@ export function ChatViewer({
     }, [messages])
 
     if (data.isLoading || messages === undefined) return <PageLoader />
-    if (data.error) return <ErrorBox errorObj={data.error} />
+    if (!data.data && data.error) return <ErrorBox errorObj={data.error} />
 
     if (messages.length === 0)
         return (

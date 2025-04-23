@@ -71,7 +71,6 @@ export function useGetChatlogsWS({
     onClose,
     onMessage,
 }: GetChatlogsWSProps) {
-    let timeoutHandler: null | number = null
     useWebSocket(
         `/api/2/channels/${channelId}/chat-ws`,
         {
