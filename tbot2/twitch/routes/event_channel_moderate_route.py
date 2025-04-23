@@ -155,6 +155,25 @@ async def event_channel_chat_message_route(
                     provider='twitch',
                     provider_id=data.event.broadcaster_user_id,
                 )
+        case 'delete':
+            if data.event.delete:
+                chat_message = ChatMessage(
+                    id=uuid7(),
+                    type='mod_action',
+                    sub_type='delete',
+                    channel_id=channel_id,
+                    provider_viewer_id=data.event.moderator_user_id,
+                    viewer_name=data.event.moderator_user_login,
+                    viewer_display_name=data.event.moderator_user_name,
+                    created_at=headers.message_timestamp,
+                    message=(
+                        f'{data.event.moderator_user_name} deleted message: '
+                        f'{data.event.delete.message_body}'
+                    ),
+                    msg_id=headers.message_id,
+                    provider='twitch',
+                    provider_id=data.event.broadcaster_user_id,
+                )
         case 'timeout':
             if data.event.timeout:
                 until = humanize.time.precisedelta(
