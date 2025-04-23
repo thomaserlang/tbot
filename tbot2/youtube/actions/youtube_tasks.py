@@ -1,6 +1,7 @@
 import asyncio
 from uuid import UUID
 
+from httpx import ReadTimeout
 from loguru import logger
 
 from tbot2.channel import (
@@ -174,6 +175,10 @@ async def handle_broadcast_live_chat(
                             f'channel {e.channel_id} '
                         )
                         break
+                    except ReadTimeout:
+                        logger.debug('Read timeout, retrying')
+                        await asyncio.sleep(1)
+                        continue
 
                     await database.redis.set(
                         f'youtube:live_broadcast:{live_chat_id}:page_token',
