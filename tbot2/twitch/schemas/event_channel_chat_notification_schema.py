@@ -19,7 +19,7 @@ class SubNoticeMetadata(BaseSchema):
 class ResubNoticeMetadata(BaseSchema):
     cumulative_months: int
     duration_months: int
-    streak_months: int
+    streak_months: int | None
     sub_tier: SubTier
     is_prime: bool
     is_gift: bool
