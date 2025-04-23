@@ -53,10 +53,10 @@ def upgrade() -> None:
     op.drop_table('twitch_user_stats')
     op.drop_table('twitch_widget_keys')
     op.drop_table('twitch_youtube')
-    op.drop_table('yoyo_lock')
-    op.drop_table('_yoyo_log')
-    op.drop_table('_yoyo_migration')
-    op.drop_table('_yoyo_version')
+    op.drop_table('yoyo_lock', if_exists=True)
+    op.drop_table('_yoyo_log', if_exists=True)
+    op.drop_table('_yoyo_migration', if_exists=True)
+    op.drop_table('_yoyo_version', if_exists=True)
 
 
 def downgrade() -> None:
