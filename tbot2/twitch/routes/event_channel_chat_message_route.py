@@ -11,7 +11,7 @@ from tbot2.channel_chat_filters import matches_filter
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessage, TAccessLevel
 from tbot2.twitch import twitch_warn_chat_user
 
 from ..actions.twitch_ban_user_actions import twitch_ban_user
@@ -19,6 +19,7 @@ from ..actions.twitch_delete_message_actions import twitch_delete_message
 from ..actions.twitch_send_message_actions import twitch_bot_send_message
 from ..schemas.event_channel_chat_message_schema import (
     EventChannelChatMessage,
+    TwitchBadge,
 )
 from ..schemas.event_headers import EventSubHeaders
 from ..schemas.event_notification_schema import (
@@ -64,6 +65,7 @@ async def event_channel_chat_message_route(
         provider_id=data.event.broadcaster_user_id,
         twitch_fragments=data.event.message.fragments,
         twitch_badges=data.event.badges,
+        access_level=badges_to_access_level(data.event.badges),
     )
 
     try:
@@ -141,3 +143,17 @@ async def handle_filter_message(
 
     except Exception as e:
         logger.exception(e)
+
+
+def badges_to_access_level(badges: list[TwitchBadge]) -> TAccessLevel:
+    for badge in badges:
+        match badge.set_id:
+            case 'moderator':
+                return TAccessLevel.MOD
+            case 'broadcaster':
+                return TAccessLevel.OWNER
+            case 'vip':
+                return TAccessLevel.VIP
+            case _:
+                return TAccessLevel.PUBLIC
+    return TAccessLevel.PUBLIC

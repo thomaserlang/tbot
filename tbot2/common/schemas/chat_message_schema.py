@@ -40,6 +40,7 @@ class ChatMessage(BaseRequestSchema):
     msg_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     twitch_badges: list[TwitchBadge] | None = None
     twitch_fragments: list[TwitchMessageFragment] | None = None
+    access_level: TAccessLevel = TAccessLevel.PUBLIC
 
     @field_validator('viewer_color', mode='before')
     @classmethod
@@ -56,18 +57,3 @@ class ChatMessage(BaseRequestSchema):
             for fragment in self.twitch_fragments
             if fragment.type == 'text'
         )
-
-    @property
-    def access_level(self) -> TAccessLevel:
-        if self.twitch_badges:
-            for badge in self.twitch_badges:
-                match badge.set_id:
-                    case 'moderator':
-                        return TAccessLevel.MOD
-                    case 'broadcaster':
-                        return TAccessLevel.OWNER
-                    case 'vip':
-                        return TAccessLevel.VIP
-                    case _:
-                        return TAccessLevel.PUBLIC
-        return TAccessLevel.PUBLIC

@@ -8,7 +8,7 @@ from tbot2.channel_chat_filters import matches_filter
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_command import TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
-from tbot2.common import ChatMessage, datetime_now
+from tbot2.common import ChatMessage, TAccessLevel, datetime_now
 
 from ..actions.youtube_live_chat_ban_actions import live_chat_ban
 from ..actions.youtube_live_chat_message_actions import (
@@ -83,6 +83,7 @@ async def handle_text_message_event(
         msg_id=message.id,
         provider='youtube',
         provider_id=channel_provider.provider_user_id or '',
+        access_level=access_level_from_live_chat_message(message),
     )
 
     try:
@@ -105,6 +106,18 @@ async def handle_text_message_event(
         ),
         create_chatlog(data=chat_message),
     )
+
+
+def access_level_from_live_chat_message(
+    live_chat_message: LiveChatMessage,
+) -> TAccessLevel:
+    if live_chat_message.author_details.is_chat_moderator:
+        return TAccessLevel.MOD
+    if live_chat_message.author_details.is_chat_owner:
+        return TAccessLevel.OWNER
+    if live_chat_message.author_details.is_chat_sponsor:
+        return TAccessLevel.SUB
+    return TAccessLevel.PUBLIC
 
 
 async def handle_filter_message(

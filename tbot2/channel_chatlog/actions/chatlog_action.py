@@ -1,4 +1,3 @@
-
 import sqlalchemy as sa
 
 from tbot2.channel_viewer import ViewerNameHistoryRequest, save_viewers_name_history
@@ -16,6 +15,8 @@ async def create_chatlog(
     session: AsyncSession | None = None,
 ) -> bool:
     data_ = data.model_dump()
+    if 'access_level' in data_:
+        data_.pop('access_level')  # do we wanna save this?
     async with get_session(session) as session:
         await session.execute(
             sa.insert(MChatlog.__table__).values(  # type: ignore
