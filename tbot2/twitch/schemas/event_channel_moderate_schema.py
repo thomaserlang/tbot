@@ -72,8 +72,8 @@ class ModerateMetadataUnbanRequest(ModerateUserBase):
 
 
 class ModerateMetadataWarn(ModerateUserBase):
-    reason: str | None
-    chat_rultes_cited: list[str] | None
+    reason: str | None = None
+    chat_rultes_cited: list[str] | None = None
 
 
 class ModerateMetadataDelete(ModerateUserBase):
