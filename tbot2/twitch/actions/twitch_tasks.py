@@ -3,9 +3,11 @@ from datetime import datetime
 
 from loguru import logger
 
+from tbot2.channel import ChannelProviderNotFound
 from tbot2.channel_points import get_channel_point_settings, inc_bulk_points
 from tbot2.channel_stream import (
     ChannelProviderStream,
+    end_channel_provider_stream,
     get_live_channels_provider_streams,
 )
 from tbot2.channel_viewer import ViewerNameHistoryRequest, inc_stream_viewer_watchtime
@@ -64,5 +66,18 @@ async def update_viewers_stream_data(stream: ChannelProviderStream) -> None:
                 ],
                 watchtime=int(CHECK_EVERY),
             )
+    except ChannelProviderNotFound:
+        logger.info(
+            'Channel provider no longer exists, ending stream',
+            extra={
+                'channel_id': stream.channel_id,
+                'provider_stream_id': stream.provider_stream_id,
+            },
+        )
+        await end_channel_provider_stream(
+            channel_id=stream.channel_id,
+            provider='twitch',
+            ended_at=datetime_now(),
+        )
     except Exception as e:
         logger.exception(e)

@@ -202,6 +202,7 @@ async def end_channel_provider_stream(
         )
         if reset_channel_stream_id:
             data.stream_id = None
+
         await save_channel_provider(
             channel_id=channel_id,
             provider=provider,
