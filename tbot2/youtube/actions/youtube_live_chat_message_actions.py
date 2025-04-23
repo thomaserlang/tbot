@@ -38,9 +38,6 @@ async def send_live_chat_message(
     live_chat_id: str,
     message: str,
 ) -> bool:
-    bot_provider = channel_provider.bot_provider
-    if not bot_provider:
-        bot_provider = await channel_provider.get_default_or_system_bot_provider()
     response = await youtube_bot_client.post(
         url='/liveChat/messages',
         params={

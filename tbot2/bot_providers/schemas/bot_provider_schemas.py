@@ -11,9 +11,9 @@ class BotProvider(BaseSchema):
     id: UUID
     provider: Provider
     provider_user_id: str
-    access_token: str | None
-    refresh_token: str | None
-    expires_at: datetime | None
+    access_token: str
+    refresh_token: str
+    expires_at: datetime
     scope: str | None
     name: str | None
 
