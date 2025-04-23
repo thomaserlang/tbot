@@ -39,7 +39,7 @@ async def event_channel_chat_notification_route(
     ):
         return
 
-    if data.event.notice_type == 'community_sub_gift':
+    if data.event.notice_type in ('community_sub_gift', 'sub_gift'):
         # Handle multiple subs differently with channel.subscription.gift
         return
 
