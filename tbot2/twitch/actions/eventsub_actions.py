@@ -70,13 +70,8 @@ async def register_channel_eventsubs(
             )
         except Exception as e:
             logger.error(
-                f'Failed to register eventsub {registration.event_type}: {e}',
-                extra={
-                    'channel_id': channel_id,
-                    'event_type': registration.event_type,
-                    'bot_provider_id': bot_provider.id,
-                    'channel_provider_id': channel_provider.id,
-                },
+                f'Failed to register eventsub {registration.event_type} {channel_id}'
+                f': {e}',
             )
 
 
