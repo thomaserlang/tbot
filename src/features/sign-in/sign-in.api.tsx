@@ -22,7 +22,7 @@ export function useGetSignInUrl({
                 {
                     params: {
                         redirect_to: `/sign-in/success?next=${encodeURI(
-                            next || '/'
+                            next || '/channels'
                         )}`,
                     },
                 }

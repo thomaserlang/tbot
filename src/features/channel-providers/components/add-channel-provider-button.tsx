@@ -33,19 +33,21 @@ export function AddChannelProviderButton({ channelId }: Props) {
             </Menu.Target>
 
             <Menu.Dropdown>
-                {Object.values(providerInfo).map((provider) => (
-                    <Menu.Item
-                        key={provider.key}
-                        onClick={() => {
-                            add.mutate({
-                                channelId,
-                                provider: provider.key,
-                            })
-                        }}
-                    >
-                        {provider.name}
-                    </Menu.Item>
-                ))}
+                {Object.values(providerInfo)
+                    .filter((f) => f.channelProvider)
+                    .map((provider) => (
+                        <Menu.Item
+                            key={provider.key}
+                            onClick={() => {
+                                add.mutate({
+                                    channelId,
+                                    provider: provider.key,
+                                })
+                            }}
+                        >
+                            {provider.name}
+                        </Menu.Item>
+                    ))}
             </Menu.Dropdown>
         </Menu>
     )

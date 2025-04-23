@@ -12,47 +12,51 @@ export const providerInfo: { [key: string | Provider]: ProviderInfo } = {
         key: 'twitch',
         name: 'Twitch',
         color: '#6441a5',
+        channelProvider: true,
+        signinProvider: true,
         stream: true,
         chat: true,
-        own_bot: true,
-        system_bot: true,
-        dashboard_url:
+        ownBot: true,
+        systemBot: true,
+        dashboardUrl:
             'https://dashboard.twitch.tv/u/{provider_user_name}/stream-manager',
-        embed_url:
+        embedUrl:
             `https://player.twitch.tv/?channel={provider_user_name}` +
             `&parent=${window.location.hostname}&muted=true&autoplay=true`,
-        stream_title_max_length: 140,
-        chat_icon: <IconBrandTwitch size={18} />,
+        streamTitleMaxLength: 140,
+        chatIcon: <IconBrandTwitch size={18} />,
     },
     youtube: {
         key: 'youtube',
         name: 'YouTube',
         color: '#CD201F',
+        channelProvider: true,
+        signinProvider: true,
         stream: true,
         chat: true,
-        own_bot: true,
-        system_bot: true,
-        dashboard_url:
+        ownBot: true,
+        systemBot: true,
+        dashboardUrl:
             'https://studio.youtube.com/channel/{provider_user_id}/livestreaming',
-        broadcast_edit_url:
+        broadcastEditUrl:
             'https://studio.youtube.com/video/{stream_id}/livestreaming',
-        embed_url:
-            'https://www.youtube.com/embed/{stream_id}?mute=1&autoplay=1',
-        stream_title_max_length: 100,
-        chat_icon: <IconBrandYoutube size={18} />,
+        embedUrl: 'https://www.youtube.com/embed/{stream_id}?mute=1&autoplay=1',
+        streamTitleMaxLength: 100,
+        chatIcon: <IconBrandYoutube size={18} />,
     },
     spotify: {
         key: 'spotify',
         name: 'Spotify',
+        channelProvider: true,
         stream: false,
         chat: false,
-        own_bot: true,
-        system_bot: false,
+        ownBot: true,
+        systemBot: false,
     },
     discord: {
         key: 'discord',
         name: 'Discord',
         color: '#7289da',
-        chat_icon: <IconBrandDiscord size={18} />,
+        chatIcon: <IconBrandDiscord size={18} />,
     },
 } as const

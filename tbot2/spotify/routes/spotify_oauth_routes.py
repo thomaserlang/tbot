@@ -121,7 +121,7 @@ async def spotify_auth_route(
         channel_provider_id=channel_provider.id,
         data=ChannelProviderOAuthRequest(
             access_token=response.access_token,
-            refresh_token=response.refresh_token,
+            refresh_token=response.refresh_token or '',
             expires_in=response.expires_in,
         ),
     )

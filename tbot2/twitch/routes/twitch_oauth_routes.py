@@ -146,7 +146,7 @@ async def get_twitch_connect_url_route(
                     'mode': 'connect',
                     'redirect_to': redirect_to.redirect_to,
                 },
-            ).model_dump()
+            ).model_dump(exclude_unset=True)
         )
     )
 
@@ -177,7 +177,7 @@ async def get_twitch_connect_bot_url_route(
                     'mode': 'connect_bot',
                     'redirect_to': redirect_to.redirect_to,
                 },
-            ).model_dump()
+            ).model_dump(exclude_unset=True)
         )
     )
 
@@ -206,7 +206,7 @@ async def get_twitch_system_provider_bot_connect_url_route(
                     'mode': 'connect_system_provider_bot',
                     'redirect_to': redirect_to.redirect_to,
                 },
-            ).model_dump()
+            ).model_dump(exclude_unset=True)
         )
     )
 
@@ -266,7 +266,7 @@ async def twitch_auth_route(
                     channel_provider_id=channel_provider.id,
                     data=ChannelProviderOAuthRequest(
                         access_token=response.access_token,
-                        refresh_token=response.refresh_token,
+                        refresh_token=response.refresh_token or '',
                         expires_in=response.expires_in,
                     ),
                 )
@@ -293,7 +293,7 @@ async def twitch_auth_route(
                 channel_provider_id=channel_provider.id,
                 data=ChannelProviderOAuthRequest(
                     access_token=response.access_token,
-                    refresh_token=response.refresh_token,
+                    refresh_token=response.refresh_token or '',
                     expires_in=response.expires_in,
                 ),
             )

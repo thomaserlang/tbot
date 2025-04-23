@@ -89,7 +89,7 @@ class Oauth2TokenParams(BaseModel):
 
 class Oauth2TokenResponse(BaseModel):
     access_token: Annotated[str, StringConstraints(min_length=1)]
-    refresh_token: Annotated[str, StringConstraints(min_length=1)]
+    refresh_token: Annotated[str, StringConstraints(min_length=1)] | None = None
     token_type: Annotated[str, StringConstraints(min_length=1)]
     expires_in: int
     id_token: dict[str, Any] | None = None

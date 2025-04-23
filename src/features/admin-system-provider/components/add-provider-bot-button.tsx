@@ -29,7 +29,7 @@ export function AddProviderButton() {
 
             <Menu.Dropdown>
                 {Object.values(providerInfo)
-                    .filter((t) => t.system_bot)
+                    .filter((t) => t.systemBot)
                     .map((t) => (
                         <Menu.Item
                             key={t.key}

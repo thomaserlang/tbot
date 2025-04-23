@@ -12,13 +12,13 @@ export function ChannelProviderEmbedLive({
     width = '100%',
     height,
 }: Props) {
-    if (!providerInfo[channelProvider.provider].embed_url) return null
+    if (!providerInfo[channelProvider.provider].embedUrl) return null
     if (!channelProvider.stream_id) return null
     return (
         <iframe
             width={width}
             height={height}
-            src={providerInfo[channelProvider.provider].embed_url?.replace(
+            src={providerInfo[channelProvider.provider].embedUrl?.replace(
                 /{([^{}]+)}/g,
                 (_, key) => (channelProvider[key] as string) || ''
             )}

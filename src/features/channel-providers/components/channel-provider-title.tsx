@@ -8,7 +8,7 @@ interface Props {
 }
 
 export function ChannelProviderTitle({ channelProvider }: Props) {
-    if (!providerInfo[channelProvider.provider].dashboard_url)
+    if (!providerInfo[channelProvider.provider].dashboardUrl)
         return (
             <Text fw={500}>
                 {providerInfo[channelProvider.provider].name ||

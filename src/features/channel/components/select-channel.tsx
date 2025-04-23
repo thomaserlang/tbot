@@ -30,6 +30,7 @@ export function SelectChannel({ onSelect }: Props) {
                     borderRadius="xs"
                     highlightOnHover
                     onScrollToBottom={fetchNextPage}
+                    noRecordsText="No channels"
                     fetching={isLoading || isFetchNextPageError}
                     onRowClick={({ record }) => {
                         onSelect?.(record)

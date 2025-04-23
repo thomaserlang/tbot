@@ -74,7 +74,13 @@ export function ChatViewer({
 
     if (wsMessages?.length === 0 && messages.length === 0)
         return (
-            <Flex justify="center" align="center" direction="column" gap="1rem">
+            <Flex
+                justify="center"
+                align="center"
+                direction="column"
+                gap="1rem"
+                h="100%"
+            >
                 <IconMessage size={80} />
                 <Text size="xl" fw={500}>
                     No chat messages

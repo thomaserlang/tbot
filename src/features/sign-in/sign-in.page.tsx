@@ -1,7 +1,7 @@
-import { APP_TITLE } from '@/constants'
+import { Logo } from '@/components/logo'
+import { providerInfo } from '@/constants'
 import { toastError } from '@/utils/toast'
-import { Button, Container, Flex, Title } from '@mantine/core'
-import { IconBrandTwitch } from '@tabler/icons-react'
+import { Button, Container, Flex, Paper, Title } from '@mantine/core'
 import { useGetSignInUrl } from './sign-in.api'
 
 export function Component() {
@@ -15,28 +15,41 @@ export function Component() {
     })
 
     return (
-        <Container size="xs">
-            <Flex
-                gap="1rem"
-                h="10rem"
-                justify="center"
-                align="center"
-                direction="column"
-            >
-                <Title>{APP_TITLE}</Title>
-                <Button
-                    bg="#6441A5"
-                    leftSection={<IconBrandTwitch />}
-                    loading={signInUrl.isSuccess}
-                    onClick={() => {
-                        signInUrl.mutate({
-                            provider: 'twitch',
-                        })
-                    }}
-                >
-                    Sign in with Twitch
-                </Button>
-            </Flex>
-        </Container>
+        <>
+            <title>Sign in - HEIMRA</title>
+            <Container size="xs" mt="3rem">
+                <Flex gap="1rem" direction="column" align="center">
+                    <Logo width="10rem" />
+                    <Paper withBorder p="1rem">
+                        <Title order={2}>Sign in</Title>
+                        <Flex
+                            gap="1rem"
+                            h="10rem"
+                            justify="center"
+                            align="center"
+                            direction="column"
+                        >
+                            {Object.values(providerInfo)
+                                .filter((f) => f.signinProvider)
+                                .map((provider) => (
+                                    <Button
+                                        bg={provider.color}
+                                        leftSection={provider.chatIcon}
+                                        loading={signInUrl.isSuccess}
+                                        onClick={() => {
+                                            signInUrl.mutate({
+                                                provider: provider.key,
+                                            })
+                                        }}
+                                        w={250}
+                                    >
+                                        Sign in with {provider.name}
+                                    </Button>
+                                ))}
+                        </Flex>
+                    </Paper>
+                </Flex>
+            </Container>
+        </>
     )
 }

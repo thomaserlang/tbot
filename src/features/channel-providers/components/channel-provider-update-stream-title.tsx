@@ -30,7 +30,7 @@ export function ChannelProviderUpdateStreamTitle({ channelProvider }: Props) {
         <form
             onSubmit={form.onSubmit((values) => {
                 for (const p of channelProviders.data?.filter(
-                    (f) => providerInfo[f.provider].stream_title_max_length
+                    (f) => providerInfo[f.provider].streamTitleMaxLength
                 ) || []) {
                     if (!form.values.update_all && p.id !== channelProvider.id)
                         continue
@@ -77,7 +77,7 @@ export function ChannelProviderUpdateStreamTitle({ channelProvider }: Props) {
                     <Text size="sm" c="dimmed" ml="auto">
                         {form.values.stream_title.length}/
                         {providerInfo[channelProvider.provider]
-                            .stream_title_max_length || 100}
+                            .streamTitleMaxLength || 100}
                     </Text>
                 </Flex>
                 <Flex gap="0.5rem" align="center">
