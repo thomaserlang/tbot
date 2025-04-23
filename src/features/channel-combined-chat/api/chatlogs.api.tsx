@@ -3,8 +3,6 @@ import { ChannelId } from '@/features/channel/types'
 import { PageCursor } from '@/types/page-cursor.type'
 import { Provider } from '@/types/provider.type'
 import { api } from '@/utils/api'
-import { notifications } from '@mantine/notifications'
-import { IconCheck } from '@tabler/icons-react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import useWebSocket from 'react-use-websocket'
 import { ChatMessage } from '../types/chat-message.type'
@@ -73,6 +71,7 @@ export function useGetChatlogsWS({
     onClose,
     onMessage,
 }: GetChatlogsWSProps) {
+    let timeoutHandler: null | number = null
     useWebSocket(
         `/api/2/channels/${channelId}/chat-ws`,
         {
@@ -84,30 +83,9 @@ export function useGetChatlogsWS({
             reconnectInterval: 1000,
             reconnectAttempts: Infinity,
             onOpen: () => {
-                notifications.update({
-                    id: 'chat-reconnect',
-                    title: 'Connected to chat',
-                    color: 'green',
-                    message: '',
-                    autoClose: 2000,
-                    loading: false,
-                    withCloseButton: false,
-                })
                 onOpen?.()
             },
             onClose: (event) => {
-                if (event.code !== 1005)
-                    notifications.show({
-                        id: 'chat-reconnect',
-                        color: 'blue',
-                        loading: true,
-                        title: 'Disconnected from chat',
-                        message: 'Trying to reconnect',
-                        autoClose: false,
-                        withCloseButton: true,
-                        position: 'bottom-right',
-                        icon: <IconCheck size={18} />,
-                    })
                 onClose?.(event)
             },
             onMessage: (message) => {
