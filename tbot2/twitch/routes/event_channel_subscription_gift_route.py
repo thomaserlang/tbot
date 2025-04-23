@@ -41,7 +41,7 @@ async def event_channel_chat_subscription_gift_route(
         viewer_display_name=data.event.user_name,
         created_at=headers.message_timestamp,
         message=(
-            f'{data.event.user_name} is gifting {data.event.total} '
+            f'{data.event.user_name} gifted {data.event.total} '
             f'tier {data.event.tier[:1]} subs'
         ),
         msg_id=headers.message_id,
