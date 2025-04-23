@@ -125,19 +125,19 @@ class EventChannelModerate(BaseSchema):
             'warn',
         ]
     )
-    followers: ModerateMetadataFollowers | None
-    slow: ModerateMetadataSlow | None
-    vip: ModerateMetadataVip | None
-    unvip: ModerateMetadataUnvip | None
-    warn: ModerateMetadataWarn | None
-    mod: ModerateMetadataMod | None
-    unmod: ModerateMetadataUnmod | None
-    ban: ModerateMetadataBan | None
-    unban: ModerateMetadataUnban | None
-    timeout: ModerateMetadataTimeout | None
-    untimeout: ModerateMetadataUntimeout | None
-    raid: ModerateMetadataRaid | None
-    unraid: ModerateMetadataUnraid | None
-    delete: ModerateMetadataDelete | None
-    automod_terms: ModerateMetadataAutomodTerms | None
-    unban_request: ModerateMetadataUnbanRequest | None
+    followers: ModerateMetadataFollowers | None = None
+    slow: ModerateMetadataSlow | None = None
+    vip: ModerateMetadataVip | None = None
+    unvip: ModerateMetadataUnvip | None = None
+    warn: ModerateMetadataWarn | None = None
+    mod: ModerateMetadataMod | None = None
+    unmod: ModerateMetadataUnmod | None = None
+    ban: ModerateMetadataBan | None = None
+    unban: ModerateMetadataUnban | None = None
+    timeout: ModerateMetadataTimeout | None = None
+    untimeout: ModerateMetadataUntimeout | None = None
+    raid: ModerateMetadataRaid | None = None
+    unraid: ModerateMetadataUnraid | None = None
+    delete: ModerateMetadataDelete | None = None
+    automod_terms: ModerateMetadataAutomodTerms | None = None
+    unban_request: ModerateMetadataUnbanRequest | None = None
