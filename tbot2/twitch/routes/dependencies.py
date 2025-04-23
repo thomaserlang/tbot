@@ -8,7 +8,7 @@ from loguru import logger
 from tbot2.config_settings import config
 from tbot2.dependecies import PlainResponse
 
-from ..schemas.event_headers import EventSubHeaders
+from ..schemas.event_headers_schema import EventSubHeaders
 from ..schemas.event_notification_schema import EventSubNotification
 
 

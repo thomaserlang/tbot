@@ -103,6 +103,13 @@ def get_eventsub_registrations(
             },
         ),
         EventSubRegistration(
+            event_type='channel.subscription.gift',
+            version='1',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+            },
+        ),
+        EventSubRegistration(
             event_type='stream.online',
             version='1',
             condition={

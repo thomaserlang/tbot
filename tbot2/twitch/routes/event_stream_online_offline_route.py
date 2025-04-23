@@ -8,7 +8,7 @@ from tbot2.channel_stream import (
     end_channel_provider_stream,
 )
 
-from ..schemas.event_headers import EventSubHeaders
+from ..schemas.event_headers_schema import EventSubHeaders
 from ..schemas.event_notification_schema import (
     EventSubNotification,
 )

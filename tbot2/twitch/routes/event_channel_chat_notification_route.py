@@ -10,7 +10,7 @@ from tbot2.common import ChatMessage
 from ..schemas.event_channel_chat_notification_schema import (
     EventChannelChatNotification,
 )
-from ..schemas.event_headers import EventSubHeaders
+from ..schemas.event_headers_schema import EventSubHeaders
 from ..schemas.event_notification_schema import (
     EventSubNotification,
 )
@@ -37,6 +37,10 @@ async def event_channel_chat_notification_route(
         data.event.source_broadcaster_user_id
         and data.event.source_broadcaster_user_id != data.event.broadcaster_user_id
     ):
+        return
+
+    if data.event.notice_type == 'community_sub_gift':
+        # Handle multiple subs differently with channel.subscription.gift
         return
 
     messages: list[ChatMessage] = [

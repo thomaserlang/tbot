@@ -9,7 +9,7 @@ from tbot2.channel_chatlog import create_chatlog
 from tbot2.common import ChatMessage, datetime_now
 
 from ..schemas.event_channel_moderate_schema import EventChannelModerate
-from ..schemas.event_headers import EventSubHeaders
+from ..schemas.event_headers_schema import EventSubHeaders
 from ..schemas.event_notification_schema import (
     EventSubNotification,
 )

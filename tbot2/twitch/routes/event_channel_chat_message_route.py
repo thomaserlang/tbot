@@ -21,7 +21,7 @@ from ..schemas.event_channel_chat_message_schema import (
     EventChannelChatMessage,
     TwitchBadge,
 )
-from ..schemas.event_headers import EventSubHeaders
+from ..schemas.event_headers_schema import EventSubHeaders
 from ..schemas.event_notification_schema import (
     EventSubNotification,
 )
