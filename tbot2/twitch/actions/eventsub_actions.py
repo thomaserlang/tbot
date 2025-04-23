@@ -31,18 +31,18 @@ async def register_channel_eventsubs(
     event_type: str | None = None,
 ) -> None:
     logger.info(f'Registering eventsub for channel {channel_id}')
-    provider = await get_channel_provider(
+    channel_provider = await get_channel_provider(
         channel_id=channel_id,
         provider='twitch',
     )
-    if not provider:
+    if not channel_provider:
         logger.error(
             f'Failed to register eventsub for channel {channel_id}: '
             'no oauth provider found'
         )
         return
 
-    bot_provider = provider.bot_provider
+    bot_provider = channel_provider.bot_provider
 
     if not bot_provider:
         bot_provider = await get_channel_bot_provider(
@@ -57,7 +57,7 @@ async def register_channel_eventsubs(
             return
 
     registrations = get_eventsub_registrations(
-        broadcaster_user_id=provider.provider_user_id or '',
+        broadcaster_user_id=channel_provider.provider_user_id or '',
         twitch_bot_user_id=bot_provider.provider_user_id or '',
     )
     for registration in registrations:
@@ -69,7 +69,16 @@ async def register_channel_eventsubs(
                 channel_id=channel_id,
             )
         except Exception as e:
-            logger.error(f'Failed to register eventsub {registration.event_type}: {e}')
+            logger.error(
+                f'Failed to register eventsub {registration.event_type}: {e}',
+                extra={
+                    'channel_id': channel_id,
+                    'event_type': registration.event_type,
+                    'eventsub_registration': registration,
+                    'bot_provider': bot_provider,
+                    'provider': channel_provider,
+                },
+            )
 
 
 def get_eventsub_registrations(
@@ -79,6 +88,14 @@ def get_eventsub_registrations(
     return [
         EventSubRegistration(
             event_type='channel.chat.message',
+            version='1',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+                'user_id': twitch_bot_user_id,
+            },
+        ),
+        EventSubRegistration(
+            event_type='channel.chat.notification',
             version='1',
             condition={
                 'broadcaster_user_id': broadcaster_user_id,
@@ -97,14 +114,6 @@ def get_eventsub_registrations(
             version='1',
             condition={
                 'broadcaster_user_id': broadcaster_user_id,
-            },
-        ),
-        EventSubRegistration(
-            event_type='channel.chat.notification',
-            version='1',
-            condition={
-                'broadcaster_user_id': broadcaster_user_id,
-                'user_id': broadcaster_user_id,
             },
         ),
         EventSubRegistration(

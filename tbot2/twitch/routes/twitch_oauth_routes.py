@@ -1,3 +1,4 @@
+import asyncio
 from typing import Annotated
 from urllib import parse
 from uuid import UUID
@@ -340,8 +341,13 @@ async def twitch_auth_route(
                     twitch_user_id=twitch_user.id,
                     broadcaster_id=provider.provider_user_id or '',
                 )
-            await refresh_channel_eventsubs(
-                channel_id=channel_id, event_type='channel.chat.message'
+            await asyncio.gather(
+                refresh_channel_eventsubs(
+                    channel_id=channel_id, event_type='channel.chat.message'
+                ),
+                refresh_channel_eventsubs(
+                    channel_id=channel_id, event_type='channel.chat.notification'
+                ),
             )
 
         case 'connect_system_provider_bot':
@@ -357,7 +363,10 @@ async def twitch_auth_route(
                     system_default=True,
                 ),
             )
-            await refresh_all_eventsubs(event_type='channel.chat.message')
+            await asyncio.gather(
+                refresh_all_eventsubs(event_type='channel.chat.message'),
+                refresh_all_eventsubs(event_type='channel.chat.notification'),
+            )
 
         case _:
             raise HTTPException(
