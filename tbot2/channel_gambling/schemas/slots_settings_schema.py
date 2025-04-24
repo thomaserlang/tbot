@@ -13,18 +13,18 @@ class SlotsSettingsUpdate(BaseRequestSchema):
     min_bet: Annotated[int, Field(ge=1, le=4294967295)] = 5
     max_bet: Annotated[int, Field(ge=0, le=4294967295)] = 0
     win_message: Annotated[str, Field(min_length=1, max_length=250)] = (
-        '@{user} {emotes} you won {bet} {points_name} '
+        '{emotes} you won {bet} {points_name} '
         'and now have {points} {points_name}'
     )
     lose_message: Annotated[str, Field(min_length=1, max_length=250)] = (
-        '@{user} {emotes} you lost {bet} {points_name}'
+        '{emotes} you lost {bet} {points_name}'
     )
     allin_win_message: Annotated[str, Field(min_length=1, max_length=250)] = (
-        '@{user} {emotes} you WON {bet} {points_name} and '
+        '{emotes} you WON {bet} {points_name} and '
         'now have {points} {points_name} EZ'
     )
     allin_lose_message: Annotated[str, Field(min_length=1, max_length=250)] = (
-        '@{user} {emotes} you lost {bet} {points_name} PepeLaugh'
+        '{emotes} you lost {bet} {points_name} PepeLaugh'
     )
 
 

@@ -25,13 +25,12 @@ async def get_slots_settings(
                 payout_percent=95,
                 min_bet=5,
                 max_bet=0,
-                win_message='@{user} {emotes} you won {bet} {points_name} '
+                win_message='{emotes} you won {bet} {points_name} '
                 'and now have {points} {points_name}',
-                lose_message='@{user} {emotes} you lost {bet} {points_name}',
-                allin_win_message='@{user} {emotes} you WON {bet} {points_name} '
+                lose_message='{emotes} you lost {bet} {points_name}',
+                allin_win_message='{emotes} you WON {bet} {points_name} '
                 'and now have {points} {points_name} EZ',
-                allin_lose_message='@{user} {emotes} you lost {bet} {points_name} '
-                'PepeLaugh',
+                allin_lose_message='{emotes} you lost {bet} {points_name} PepeLaugh',
             )
         return SlotsSettings.model_validate(result)
 

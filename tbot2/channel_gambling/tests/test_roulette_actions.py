@@ -66,7 +66,7 @@ async def test_roulette_actions(db: None) -> None:
             bet=50,
         )
         assert result.won
-        assert result.message == '@{user}, You won 50 points and now have 150 points'
+        assert result.message == 'You won 50 points and now have 150 points'
 
     def mock_lose_random_int() -> int:
         return 100
@@ -82,7 +82,7 @@ async def test_roulette_actions(db: None) -> None:
             bet=50,
         )
         assert not result.won
-        assert result.message == '@{user}, You lost 50 points and now have 100 points'
+        assert result.message == 'You lost 50 points and now have 100 points'
 
     with patch(
         'tbot2.channel_gambling.actions.roulette_actions.random_int',
@@ -95,7 +95,7 @@ async def test_roulette_actions(db: None) -> None:
             bet='50%',
         )
         assert result.won
-        assert result.message == '@{user}, You won 50 points and now have 150 points'
+        assert result.message == 'You won 50 points and now have 150 points'
 
     with patch(
         'tbot2.channel_gambling.actions.roulette_actions.random_int',
@@ -108,7 +108,7 @@ async def test_roulette_actions(db: None) -> None:
             bet='all',
         )
         assert result.won
-        assert result.message == '@{user}, You won 150 points and now have 300 points'
+        assert result.message == 'You won 150 points and now have 300 points'
 
     with patch(
         'tbot2.channel_gambling.actions.roulette_actions.random_int',
@@ -121,7 +121,7 @@ async def test_roulette_actions(db: None) -> None:
             bet='all',
         )
         assert not result.won
-        assert result.message == '@{user}, You lost 300 points and now have 0 points'
+        assert result.message == 'You lost 300 points and now have 0 points'
 
 
 if __name__ == '__main__':

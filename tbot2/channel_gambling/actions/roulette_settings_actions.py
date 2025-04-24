@@ -23,13 +23,13 @@ async def get_roulette_settings(
             return RouletteSettings(
                 channel_id=channel_id,
                 win_chance=45,
-                win_message='@{user}, You won {bet} {points_name} and '
+                win_message='You won {bet} {points_name} and '
                 'now have {points} {points_name}',
-                lose_message='@{user}, You lost {bet} {points_name} and '
+                lose_message='You lost {bet} {points_name} and '
                 'now have {points} {points_name}',
-                allin_win_message='@{user}, You won {bet} {points_name} and '
+                allin_win_message='You won {bet} {points_name} and '
                 'now have {points} {points_name}',
-                allin_lose_message='@{user}, You lost {bet} {points_name} and '
+                allin_lose_message='You lost {bet} {points_name} and '
                 'now have {points} {points_name}',
                 min_bet=5,
                 max_bet=0,
