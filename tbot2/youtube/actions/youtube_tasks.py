@@ -1,7 +1,7 @@
 import asyncio
 from uuid import UUID
 
-from httpx import ReadTimeout
+from httpx import LocalProtocolError, ReadTimeout
 from loguru import logger
 
 from tbot2.channel import (
@@ -170,7 +170,11 @@ async def handle_broadcast_live_chat(
                         page_token=page_token or '',
                     )
                 except ReadTimeout:
-                    logger.debug('Read timeout, retrying')
+                    logger.info('Read timeout, retrying')
+                    await asyncio.sleep(1)
+                    continue
+                except LocalProtocolError:
+                    logger.info('Local protocol error, retrying')
                     await asyncio.sleep(1)
                     continue
                 except YouTubeException as e:
