@@ -8,12 +8,10 @@ import uvicorn
 from loguru import logger
 
 from tbot2.config_settings import config
-from tbot2.setup_logger import setup_logger
 
 
 @click.group()
-def cli() -> None:
-    setup_logger()
+def cli() -> None: ...
 
 
 @cli.command()

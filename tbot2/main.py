@@ -19,7 +19,6 @@ from tbot2.constants import APP_TITLE
 from tbot2.database import database
 from tbot2.dependecies import PlainResponse
 from tbot2.health.router import health_router
-from tbot2.setup_logger import setup_logger
 from tbot2.spotify.router import spotify_router
 from tbot2.twitch.router import twitch_router
 from tbot2.user.router import user_router
@@ -28,7 +27,6 @@ from tbot2.youtube.router import youtube_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
-    setup_logger()
     await database.setup()
     yield
     await database.close()
