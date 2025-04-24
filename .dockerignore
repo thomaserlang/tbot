@@ -1,6 +1,6 @@
 *
 
-!/src
+!/ui
 !/tbot2
 !/uv.lock
 !/vite.config.ts
@@ -10,4 +10,3 @@
 !/postcss.config.cjs
 !/package.json
 !/package-lock.json
-!/index.html

@@ -20,7 +20,7 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./ui/src/*"]
     },
     "plugins": [
       {
@@ -28,7 +28,7 @@
       }
     ]
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/node_modules/*", "public"],
+  "include": ["./ui/src"],
+  "exclude": ["node_modules", "**/node_modules/*", "/ui/public"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

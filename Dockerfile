@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM python:3.13-slim-bookworm
 
 COPY --from=pybuilder --chown=app:app /app /app
-COPY --from=jsbuilder /app/dist /app/dist
+COPY --from=jsbuilder /app/ui/dist /app/dist
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH="."
