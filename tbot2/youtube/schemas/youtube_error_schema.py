@@ -5,7 +5,7 @@ class YouTubeSubSubError(BaseSchema):
     message: str
     domain: str
     reason: str
-    extendedHelp: str
+    extendedHelp: str | None = None
 
 
 class YouTubeSubError(BaseSchema):
