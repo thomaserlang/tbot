@@ -3,7 +3,7 @@ from datetime import datetime
 
 from loguru import logger
 
-from tbot2.channel import ChannelProviderNotFound
+from tbot2.channel import ChannelProviderOAuthNotFound
 from tbot2.channel_points import get_channel_point_settings, inc_bulk_points
 from tbot2.channel_stream import (
     ChannelProviderStream,
@@ -66,7 +66,7 @@ async def update_viewers_stream_data(stream: ChannelProviderStream) -> None:
                 ],
                 watchtime=int(CHECK_EVERY),
             )
-    except ChannelProviderNotFound:
+    except ChannelProviderOAuthNotFound:
         logger.info(
             'Channel provider no longer exists, ending stream',
             extra={

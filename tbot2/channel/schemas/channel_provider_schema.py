@@ -29,6 +29,15 @@ class ChannelProviderBase(BaseSchema):
     stream_live_at: datetime | None = None
     stream_chat_id: str | None = None
 
+    @computed_field  # type: ignore[misc]
+    @property
+    def scope_needed(self) -> bool:
+        if not channel_provider_scopes.get(self.provider):
+            return False
+        required_scopes = set(channel_provider_scopes.get(self.provider, '').split(' '))
+        scopes: set[str] = set(self.scope.split(' ')) if self.scope else set()
+        return bool(required_scopes - scopes)
+
 
 class ChannelProvider(ChannelProviderBase):
     bot_provider: BotProvider | None
@@ -53,14 +62,6 @@ class ChannelProvider(ChannelProviderBase):
 
 class ChannelProviderPublic(ChannelProviderBase):
     bot_provider: BotProviderPublic | None
-
-    @computed_field
-    def scope_needed(self) -> bool:
-        if not channel_provider_scopes.get(self.provider):
-            return False
-        required_scopes = set(channel_provider_scopes.get(self.provider, '').split(' '))
-        scopes: set[str] = set(self.scope.split(' ')) if self.scope else set()
-        return bool(required_scopes - scopes)
 
 
 class ChannelProviderRequest(BaseRequestSchema):

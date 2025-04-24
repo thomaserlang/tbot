@@ -6,7 +6,6 @@ from loguru import logger
 
 from tbot2.channel import (
     ChannelProvider,
-    ChannelProviderNotFound,
     ChannelProviderRequest,
     get_channels_providers,
     save_channel_provider,
@@ -17,7 +16,6 @@ from tbot2.channel_stream import (
 )
 from tbot2.common import datetime_now
 from tbot2.database import database
-from tbot2.exceptions import InternalHttpError
 
 from ..actions.youtube_handle_message import handle_message
 from ..actions.youtube_live_broadcast_actions import (
@@ -43,6 +41,12 @@ async def task_youtube_live() -> None:
         current_chat_ids: set[str] = set()
 
         async for channel_provider in get_channels_providers(provider='youtube'):
+            if channel_provider.scope_needed:
+                logger.debug(
+                    'Channel provider needs scope, skipping',
+                    extra={'channel_provider_id': channel_provider.id},
+                )
+                continue
             channel_provider_ids[channel_provider.id] = asyncio.create_task(
                 check_for_live_broadcasts(channel_provider)
             )
@@ -88,11 +92,6 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
                     return
             raise e
 
-        except ChannelProviderNotFound as e:
-            logger.info(
-                f'YouTube channel provider no longer exists on channel {e.channel_id} '
-            )
-            return
         if not live_broadcasts:
             if channel_provider.stream_live:
                 await end_stream(
@@ -170,25 +169,26 @@ async def handle_broadcast_live_chat(
                         live_chat_id=live_chat_id,
                         page_token=page_token or '',
                     )
-                except ChannelProviderNotFound as e:
-                    logger.info(
-                        f'YouTube channel provider no longer exists on '
-                        f'channel {e.channel_id} '
-                    )
-                    break
                 except ReadTimeout:
                     logger.debug('Read timeout, retrying')
                     await asyncio.sleep(1)
                     continue
-                except InternalHttpError as e:
+                except YouTubeException as e:
+                    for error in e.error.error.errors:
+                        if error.reason == 'liveChatEnded':
+                            await end_stream(
+                                channel_provider=channel_provider,
+                            )
+                            return
+
                     logger.error(
                         'Error getting live chat messages',
                         extra={
-                            'error': e.body,
+                            'error': e.error,
                         },
                     )
                     if e.status_code in (403, 404):
-                        break
+                        return
                     await asyncio.sleep(60)
                     continue
 

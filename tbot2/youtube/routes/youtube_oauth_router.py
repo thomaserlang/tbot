@@ -44,18 +44,6 @@ client = AsyncClient(
 
 SCOPE_OPENID = 'email https://www.googleapis.com/auth/youtube.readonly'
 
-bot_provider_scopes['youtube'] = ' '.join(
-    {
-        'https://www.googleapis.com/auth/youtube',
-    }
-)
-
-channel_provider_scopes['youtube'] = ' '.join(
-    {
-        'https://www.googleapis.com/auth/youtube',
-    }
-)
-
 
 @router.get('/youtube/sign-in-url')
 async def youtube_sign_in_route(

@@ -24,6 +24,9 @@ from .actions.channel_provider_actions import (
     on_delete_channel_provider as on_delete_channel_provider,
 )
 from .actions.channel_provider_actions import (
+    reset_channel_provider_live_state as reset_channel_provider_live_state,
+)
+from .actions.channel_provider_actions import (
     save_channel_provider as save_channel_provider,
 )
 from .actions.channel_provider_events import (
@@ -50,7 +53,7 @@ from .actions.channel_user_access_level_actions import (
 from .actions.channel_user_access_level_actions import (
     set_channel_user_access_level as set_channel_user_access_level,
 )
-from .exceptions import ChannelProviderNotFound as ChannelProviderNotFound
+from .exceptions import ChannelProviderOAuthNotFound as ChannelProviderOAuthNotFound
 from .models.channel_model import MChannel as MChannel
 from .models.channel_provider_model import (
     MChannelProvider as MChannelProvider,

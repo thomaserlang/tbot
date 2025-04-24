@@ -126,6 +126,28 @@ async def save_channel_provider(
         return ChannelProvider.model_validate(channel_provider)
 
 
+async def reset_channel_provider_live_state(
+    channel_id: UUID,
+    provider: Provider,
+    reset_channel_stream_id: bool = False,
+    session: AsyncSession | None = None,
+) -> ChannelProvider:
+    async with get_session(session) as session:
+        data = ChannelProviderRequest(
+            stream_live=False,
+            stream_live_at=None,
+        )
+        if reset_channel_stream_id:
+            data.stream_id = None
+            data.stream_chat_id = None
+
+        return await save_channel_provider(
+            channel_id=channel_id,
+            provider=provider,
+            data=data,
+        )
+
+
 async def delete_channel_provider(
     *, channel_provider_id: UUID, session: AsyncSession | None = None
 ) -> bool:

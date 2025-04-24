@@ -11,7 +11,7 @@ from tbot2.bot_providers import (
     save_bot_provider,
 )
 from tbot2.channel import (
-    ChannelProviderNotFound,
+    ChannelProviderOAuthNotFound,
     ChannelProviderOAuthRequest,
     get_channel_bot_provider,
     get_channel_provider_oauth,
@@ -65,7 +65,9 @@ class ChannelProviderOAuthHelper(Auth):
             provider=self.provider,
         )
         if not channel_provider_oauth:
-            raise ChannelProviderNotFound(channel_id=channel_id, provider=self.provider)
+            raise ChannelProviderOAuthNotFound(
+                channel_id=channel_id, provider=self.provider
+            )
 
         expires_in = (
             channel_provider_oauth.expires_at.astimezone(tz=UTC) - datetime_now()
@@ -109,7 +111,9 @@ class ChannelProviderOAuthHelper(Auth):
             provider=self.provider,
         )
         if not channel_provider_oauth:
-            raise ChannelProviderNotFound(channel_id=channel_id, provider=self.provider)
+            raise ChannelProviderOAuthNotFound(
+                channel_id=channel_id, provider=self.provider
+            )
         async with AsyncClient() as client:
             response = await client.post(
                 self.token_url,

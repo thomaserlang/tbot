@@ -11,14 +11,12 @@ def setup_logger() -> None:
         dsn=config.sentry_dsn,
         send_default_pii=True,
     )
-    format = '<green>{time}</green> | <level>{level}</level> | {message} | {extra}'
-    if config.debug:
-        format = (
-            '<green>{time:HH:mm:ss.SSS}</green> | '
-            '<level>{level}</level> | '
-            '{message} | {extra} | '
-            '<light-blue>{module}.{function}:{line}</light-blue>'
-        )
+    format = (
+        '<green>{time:HH:mm:ss.SSS}</green> | '
+        '<level>{level}</level> | '
+        '{message} | {extra} | '
+        '<light-blue>{module}.{function}:{line}</light-blue>'
+    )
     logger.add(
         sys.stderr,
         colorize=True,

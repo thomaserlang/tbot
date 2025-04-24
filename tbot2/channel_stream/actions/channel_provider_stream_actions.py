@@ -4,7 +4,11 @@ from uuid import UUID
 import sqlalchemy as sa
 from uuid6 import uuid7
 
-from tbot2.channel import ChannelProviderRequest, save_channel_provider
+from tbot2.channel import (
+    ChannelProviderRequest,
+    reset_channel_provider_live_state,
+    save_channel_provider,
+)
 from tbot2.common import Provider, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
@@ -180,9 +184,7 @@ async def end_channel_provider_stream(
             provider_id=provider_id,
             session=session,
         )
-        if not stream:
-            return None
-        if not stream.ended_at:
+        if stream and not stream.ended_at:
             stmt = (
                 sa.update(MChannelProviderStream.__table__)  # type: ignore
                 .where(
@@ -197,18 +199,11 @@ async def end_channel_provider_stream(
             await session.execute(stmt)
             stream.ended_at = ended_at
 
-        data = ChannelProviderRequest(
-            stream_live=False,
-            stream_live_at=None,
-        )
-        if reset_channel_stream_id:
-            data.stream_id = None
-            data.stream_chat_id = None
-
-        await save_channel_provider(
+        await reset_channel_provider_live_state(
             channel_id=channel_id,
             provider=provider,
-            data=data,
+            reset_channel_stream_id=reset_channel_stream_id,
+            session=session,
         )
         return stream
 

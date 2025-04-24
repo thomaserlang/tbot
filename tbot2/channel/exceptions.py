@@ -5,7 +5,7 @@ from tbot2.config_settings import config
 from tbot2.exceptions import ErrorMessage
 
 
-class ChannelProviderNotFound(ErrorMessage):
+class ChannelProviderOAuthNotFound(ErrorMessage):
     def __init__(self, channel_id: UUID, provider: Provider) -> None:
         super().__init__(
             f'{provider} must be added as a provider: '
