@@ -32,15 +32,20 @@ async def event_channel_chat_notification_route(
         await request.body()
     )
 
-    # Don't handle messages from shared channels
     if (
         data.event.source_broadcaster_user_id
         and data.event.source_broadcaster_user_id != data.event.broadcaster_user_id
     ):
         return
 
-    if data.event.notice_type in ('community_sub_gift', 'sub_gift'):
-        # Handle multiple subs differently with channel.subscription.gift
+    if (
+        data.event.notice_type == 'sub_gift'
+        and data.event.sub_gift
+        and data.event.sub_gift.community_gift_id
+    ):
+        # Figure out how to handle multiple sub_gift events without spamming the chat
+        # Save it somehow to the event so it's possible to see
+        # which users got gifted
         return
 
     messages: list[ChatMessage] = [
