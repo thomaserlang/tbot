@@ -182,19 +182,20 @@ async def end_channel_provider_stream(
         )
         if not stream:
             return None
-        stmt = (
-            sa.update(MChannelProviderStream.__table__)  # type: ignore
-            .where(
-                MChannelProviderStream.id == stream.id,
+        if not stream.ended_at:
+            stmt = (
+                sa.update(MChannelProviderStream.__table__)  # type: ignore
+                .where(
+                    MChannelProviderStream.id == stream.id,
+                )
+                .values(ended_at=ended_at)
             )
-            .values(ended_at=ended_at)
-        )
-        if provider_stream_id:
-            stmt = stmt.where(
-                MChannelProviderStream.provider_stream_id == provider_stream_id
-            )
-        await session.execute(stmt)
-        stream.ended_at = ended_at
+            if provider_stream_id:
+                stmt = stmt.where(
+                    MChannelProviderStream.provider_stream_id == provider_stream_id
+                )
+            await session.execute(stmt)
+            stream.ended_at = ended_at
 
         data = ChannelProviderRequest(
             stream_live=False,
@@ -202,6 +203,7 @@ async def end_channel_provider_stream(
         )
         if reset_channel_stream_id:
             data.stream_id = None
+            data.stream_chat_id = None
 
         await save_channel_provider(
             channel_id=channel_id,

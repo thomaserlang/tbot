@@ -154,6 +154,7 @@ async def handle_broadcast_live_chat(
     live_chat_id: str,
 ) -> None:
     with logger.contextualize(
+        channel_provider_id=channel_provider.id,
         live_chat_id=live_chat_id,
     ):
         logger.debug('Monitoring for events')
@@ -162,57 +163,61 @@ async def handle_broadcast_live_chat(
                 f'youtube:live_broadcast:{live_chat_id}:page_token'
             )
             while True:
+                messages: LiveChatMessages | None = None
                 try:
-                    try:
-                        messages = await get_live_chat_messages(
-                            channel_provider=channel_provider,
-                            live_chat_id=live_chat_id,
-                            page_token=page_token or '',
-                        )
-                    except ChannelProviderNotFound as e:
-                        logger.info(
-                            f'YouTube channel provider no longer exists on '
-                            f'channel {e.channel_id} '
-                        )
-                        break
-                    except ReadTimeout:
-                        logger.debug('Read timeout, retrying')
-                        await asyncio.sleep(1)
-                        continue
-
-                    await database.redis.set(
-                        f'youtube:live_broadcast:{live_chat_id}:page_token',
-                        messages.next_page_token,
-                        ex=60,
+                    messages = await get_live_chat_messages(
+                        channel_provider=channel_provider,
+                        live_chat_id=live_chat_id,
+                        page_token=page_token or '',
                     )
-                    page_token = messages.next_page_token
-                    logger.trace(
-                        f'Got {len(messages.items)} messages, next page token: '
-                        f'{page_token}, waiting for '
-                        f'{messages.polling_interval_millis}ms'
+                except ChannelProviderNotFound as e:
+                    logger.info(
+                        f'YouTube channel provider no longer exists on '
+                        f'channel {e.channel_id} '
                     )
-
-                    if messages.offline_at:
-                        logger.info(
-                            f'Live chat is offline, stopping monitoring {live_chat_id}'
-                        )
-                        await end_stream(channel_provider=channel_provider)
-                        break
-
-                    await asyncio.gather(
-                        handle_messages(
-                            channel_provider=channel_provider,
-                            messages=messages,
-                        ),
-                        asyncio.sleep(messages.polling_interval_millis / 1000),
-                    )
+                    break
+                except ReadTimeout:
+                    logger.debug('Read timeout, retrying')
+                    await asyncio.sleep(1)
+                    continue
                 except InternalHttpError as e:
+                    logger.error(
+                        'Error getting live chat messages',
+                        extra={
+                            'error': e.body,
+                        },
+                    )
                     if e.status_code in (403, 404):
-                        logger.error(e.body)
                         break
-                    else:
-                        logger.error(f'Error getting live chat messages: {e.body}')
-                        await asyncio.sleep(60)
+                    await asyncio.sleep(60)
+                    continue
+
+                await database.redis.set(
+                    f'youtube:live_broadcast:{live_chat_id}:page_token',
+                    messages.next_page_token,
+                    ex=60,
+                )
+                page_token = messages.next_page_token
+                logger.trace(
+                    f'Got {len(messages.items)} messages, next page token: '
+                    f'{page_token}, waiting for '
+                    f'{messages.polling_interval_millis}ms'
+                )
+
+                if messages.offline_at:
+                    logger.info(
+                        f'Live chat is offline, stopping monitoring {live_chat_id}'
+                    )
+                    await end_stream(channel_provider=channel_provider)
+                    break
+
+                await asyncio.gather(
+                    handle_messages(
+                        channel_provider=channel_provider,
+                        messages=messages,
+                    ),
+                    asyncio.sleep(messages.polling_interval_millis / 1000),
+                )
 
         finally:
             if live_chat_id in broadcast_chat_monitor_tasks:
