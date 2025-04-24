@@ -27,14 +27,14 @@ format = (
     '<green>{time}</green> | '
     '<level>{level}</level> | '
     '{message} | {extra} | '
-    '<light-blue>{module}.{function}:{line}</light-blue>'
+    '<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>'
 )
 if config.debug:
     format = (
         '<green>{time:HH:mm:ss.SSS}</green> | '
         '<level>{level}</level> | '
         '{message} | {extra} | '
-        '<light-blue>{module}.{function}:{line}</light-blue>'
+        '<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>'
     )
 
 logger.add(
