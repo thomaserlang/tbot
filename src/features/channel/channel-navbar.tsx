@@ -11,6 +11,7 @@ import {
     IconMessage,
     IconPokerChip,
     IconQuote,
+    IconSettings,
     IconShieldCog,
     IconUsers,
 } from '@tabler/icons-react'
@@ -112,6 +113,12 @@ export function ChannelNavbar() {
                     label="User Access"
                     leftSection={<IconLock size={20} />}
                     disabled
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/settings`}
+                    label="Channel Settings"
+                    leftSection={<IconSettings size={20} />}
                 />
             </Box>
         </>

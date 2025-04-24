@@ -13,8 +13,8 @@ export function toastSuccess(message: string) {
 
 export function toastError(errorObj: any) {
     notifications.show({
-        title: 'Error',
-        message: errorMessageFromResponse(errorObj),
+        title: errorMessageFromResponse(errorObj),
+        message: '',
         color: 'red',
         autoClose: 20000,
         withBorder: true,

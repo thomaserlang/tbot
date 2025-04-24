@@ -24,9 +24,9 @@ export function errorMessageFromResponse(errorObj: any): ReactNode {
     if (errorObj.isAxiosError) {
         const e: AxiosError = errorObj
         const data = e.response?.data as any
-        if (data?.message) return <>{data?.message}</>
+        if (data?.detail) return <>{data?.detail}</>
 
         return <>{e.message}</>
     }
-    return <>{errorObj.message}</>
+    return <>{errorObj.detail}</>
 }

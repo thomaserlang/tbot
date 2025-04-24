@@ -44,6 +44,11 @@ const protectedRoutes: RouteObject[] = [
                     import('./features/channel-dashboard/dashboard.page'),
             },
             {
+                path: 'settings',
+                lazy: () =>
+                    import('./features/channel-settings/channel-settings.page'),
+            },
+            {
                 path: 'providers',
                 lazy: () =>
                     import(

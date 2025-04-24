@@ -114,3 +114,9 @@ async def update_user(
                 raise ValueError('User could not be updated') from e
 
             raise
+
+
+async def delete_user(*, user_id: UUID, session: AsyncSession | None = None) -> bool:
+    async with get_session(session) as session:
+        r = await session.execute(sa.delete(MUser).where(MUser.id == user_id))
+        return r.rowcount > 0

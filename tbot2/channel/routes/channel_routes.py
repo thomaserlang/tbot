@@ -11,7 +11,7 @@ from tbot2.common import TAccessLevel, TokenData
 from tbot2.dependecies import Annotated, authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQuery, page_cursor
 
-from ..actions.channel_actions import get_channel
+from ..actions.channel_actions import delete_channel, get_channel
 from ..schemas.channel_schemas import Channel
 
 router = APIRouter()
@@ -38,6 +38,37 @@ async def get_channel_route(
             detail='Channel not found',
         )
     return channel
+
+
+@router.delete(
+    '/channels/{channel_id}',
+    name='Delete Channel',
+)
+async def delete_channel_route(
+    channel_id: UUID,
+    channel_name: str,
+    token_data: Annotated[TokenData, Security(authenticated)],
+) -> None:
+    await token_data.channel_require_access(
+        channel_id=channel_id,
+        access_level=TAccessLevel.OWNER,
+    )
+    channel = await get_channel(
+        id=channel_id,
+    )
+    if not channel:
+        raise HTTPException(
+            status_code=404,
+            detail='Channel not found',
+        )
+    if channel.display_name.lower() != channel_name:
+        raise HTTPException(
+            status_code=400,
+            detail='Channel name does not match',
+        )
+    await delete_channel(
+        channel_id=channel_id,
+    )
 
 
 @router.get(

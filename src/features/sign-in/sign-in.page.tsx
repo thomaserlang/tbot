@@ -33,6 +33,7 @@ export function Component() {
                                 .filter((f) => f.signinProvider)
                                 .map((provider) => (
                                     <Button
+                                        key={provider.key}
                                         bg={provider.color}
                                         leftSection={provider.chatIcon}
                                         loading={signInUrl.isSuccess}

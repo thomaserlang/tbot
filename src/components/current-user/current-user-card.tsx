@@ -1,7 +1,9 @@
 import { setAccessToken } from '@/utils/api'
 import { Avatar, Flex, Menu, Text } from '@mantine/core'
-import { IconChevronDown, IconLogout } from '@tabler/icons-react'
+import { openModal } from '@mantine/modals'
+import { IconChevronDown, IconLogout, IconSettings } from '@tabler/icons-react'
 import { useCurrentUser } from './current-user.provider'
+import { UserSettingsView } from './settings/user-settings-view'
 
 export function CurrentUserCard() {
     const user = useCurrentUser()
@@ -32,6 +34,19 @@ export function CurrentUserCard() {
                     }}
                 >
                     Sign out
+                </Menu.Item>
+                <Menu.Item
+                    leftSection={<IconSettings size={14} />}
+                    onClick={() => {
+                        openModal({
+                            title: 'Settings',
+                            children: <UserSettingsView />,
+                            size: 'lg',
+                            zIndex: 200,
+                        })
+                    }}
+                >
+                    Settings
                 </Menu.Item>
             </Menu.Dropdown>
         </Menu>

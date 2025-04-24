@@ -1,7 +1,7 @@
 import { CurrentUserCard, useCurrentUser } from '@/components/current-user'
 import { Logo } from '@/components/logo'
 import { SelectChannel } from '@/features/channel'
-import { Container, Flex } from '@mantine/core'
+import { Container, Flex, Paper } from '@mantine/core'
 import { Navigate, useNavigate } from 'react-router-dom'
 
 export function Component() {
@@ -11,12 +11,12 @@ export function Component() {
         return <Navigate to={`/channels/${user.default_channel_id}`} />
     }
     return (
-        <Container>
-            <Flex h={50} align="center" mb="1rem">
+        <Container size="xs">
+            <Flex h={50} mt="1rem" align="center" mb="1rem">
                 <Logo width="7rem" />
-                <Flex ml="auto" mr="0.5rem">
+                <Paper bg="none" ml="auto" p="0.3rem 0.5rem" withBorder>
                     <CurrentUserCard />
-                </Flex>
+                </Paper>
             </Flex>
             <SelectChannel
                 onSelect={(channel) => {

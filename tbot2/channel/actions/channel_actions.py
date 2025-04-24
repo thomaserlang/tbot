@@ -53,10 +53,9 @@ async def update_channel(
         return channel
 
 
-async def delete_channel(*, id: UUID, session: AsyncSession | None = None) -> bool:
+async def delete_channel(
+    *, channel_id: UUID, session: AsyncSession | None = None
+) -> bool:
     async with get_session(session) as session:
-        channel = await get_channel(id=id, session=session)
-        if not channel:
-            return False
-        await session.execute(sa.delete(MChannel).where(MChannel.id == id))
-        return True
+        r = await session.execute(sa.delete(MChannel).where(MChannel.id == channel_id))
+        return r.rowcount > 0
