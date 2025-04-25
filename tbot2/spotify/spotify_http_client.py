@@ -2,6 +2,7 @@ import sys
 
 from httpx import AsyncClient
 
+from tbot2.common.utils.httpx_retry import retry_transport
 from tbot2.common.utils.oauth_auth import ChannelProviderOAuthHelper
 from tbot2.config_settings import config
 
@@ -19,4 +20,6 @@ spotify_client = AsyncClient(
         'Accept': 'application/json',
         'Content-Type': 'application/json',
     },
+    transport=retry_transport,
+    http2=True,
 )

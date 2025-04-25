@@ -2,6 +2,7 @@ import sys
 
 from httpx import AsyncClient
 
+from tbot2.common.utils.httpx_retry import retry_transport
 from tbot2.common.utils.oauth_auth import (
     ChannelProviderBotOAuthHelper,
     ChannelProviderOAuthHelper,
@@ -22,6 +23,8 @@ youtube_user_client = AsyncClient(
     if 'pytest' not in sys.modules
     else None,
     http2=True,
+    timeout=15,
+    transport=retry_transport,
 )
 
 
@@ -39,4 +42,5 @@ youtube_bot_client = AsyncClient(
     if 'pytest' not in sys.modules
     else None,
     http2=True,
+    transport=retry_transport,
 )

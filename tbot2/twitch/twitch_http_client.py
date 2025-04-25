@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from twitchAPI.object.base import TwitchObject
 from twitchAPI.twitch import Twitch
 
+from tbot2.common.utils.httpx_retry import retry_transport
 from tbot2.common.utils.oauth_auth import (
     ChannelProviderBotOAuthHelper,
     ChannelProviderOAuthHelper,
@@ -36,6 +37,7 @@ twitch_app_client = AsyncClient(
     },
     auth=TwitchOauth2ClientCredentials() if 'pytest' not in sys.modules else None,
     http2=True,
+    transport=retry_transport,
 )
 
 twitch_user_client = AsyncClient(
@@ -52,6 +54,7 @@ twitch_user_client = AsyncClient(
     if 'pytest' not in sys.modules
     else None,
     http2=True,
+    transport=retry_transport,
 )
 
 twitch_bot_client = AsyncClient(
@@ -68,6 +71,7 @@ twitch_bot_client = AsyncClient(
     if 'pytest' not in sys.modules
     else None,
     http2=True,
+    transport=retry_transport,
 )
 
 twitch_client = Twitch(

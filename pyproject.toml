@@ -32,6 +32,7 @@ dependencies = [
     "types-redis>=4.6.0.20241004",
     "orjson>=3.10.16",
     "sentry-sdk[fastapi,loguru]==2.26.1",
+    "httpx-retries>=0.3.2",
 ]
 
 [project.optional-dependencies]
