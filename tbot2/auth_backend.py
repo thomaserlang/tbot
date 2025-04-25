@@ -49,6 +49,6 @@ class AuthBackend(AuthenticationBackend):
 async def create_token_str(token_data: TokenData) -> str:
     payload: dict[str, Any] = {
         'context': token_data.model_dump_json(),
-        'exp': datetime_now() + timedelta(hours=12),
+        'exp': datetime_now() + timedelta(days=30),
     }
     return jwt.encode(payload, config.secret, algorithm='HS256')
