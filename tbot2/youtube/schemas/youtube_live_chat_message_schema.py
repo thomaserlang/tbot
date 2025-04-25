@@ -138,7 +138,7 @@ class Snippet(BaseSchema):
     """
     published_at: Annotated[datetime, Field(alias='publishedAt')]
     has_display_content: Annotated[bool, Field(alias='hasDisplayContent')]
-    display_message: Annotated[str, Field(alias='displayMessage')]
+    display_message: Annotated[str, Field(alias='displayMessage')] = ''
     text_message_details: Annotated[
         TextMessageDetails | None, Field(alias='textMessageDetails')
     ] = None
