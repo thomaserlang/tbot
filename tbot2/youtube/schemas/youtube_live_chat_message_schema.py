@@ -137,7 +137,7 @@ class Snippet(BaseSchema):
       created a live poll.
     """
     published_at: Annotated[datetime, Field(alias='publishedAt')]
-    has_display_content: Annotated[bool, Field(alias='hasDisplayContent')]
+    has_display_content: Annotated[bool, Field(alias='hasDisplayContent')] = False
     display_message: Annotated[str, Field(alias='displayMessage')] = ''
     text_message_details: Annotated[
         TextMessageDetails | None, Field(alias='textMessageDetails')
