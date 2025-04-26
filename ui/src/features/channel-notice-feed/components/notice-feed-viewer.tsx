@@ -31,6 +31,7 @@ export function NoticeFeedViewer({ channelId }: Props) {
 
     useGetChatlogsWS({
         channelId,
+        connect: true,
         params: {
             type: 'notice',
         },

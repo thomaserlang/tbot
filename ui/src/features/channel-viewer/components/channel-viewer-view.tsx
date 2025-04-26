@@ -88,7 +88,7 @@ export function ChannelViewerView(props: Props) {
                 <Paper h="15rem" pl="0.5rem" withBorder>
                     <ChatViewer
                         channelId={props.channelId}
-                        liveUpdates={false}
+                        liveUpdates={true}
                         params={{
                             provider: props.provider,
                             provider_viewer_id: props.providerViewerId,
