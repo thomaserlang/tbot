@@ -19,9 +19,8 @@ async def followage_vars(
 ) -> None:
     followed_at = await twitch_followed_at(chat_message=chat_message, command=command)
 
-    vars['followage'].value = (
-        humanize.time.precisedelta(datetime_now() - followed_at, format='%0.0f')
-        + ' ago'
+    vars['followage'].value = humanize.time.precisedelta(
+        datetime_now() - followed_at, format='%0.0f', minimum_unit='days'
     )
     vars['followage_date'].value = humanize.naturaldate(followed_at)
     vars['followage_datetime'].value = followed_at.strftime('%Y-%m-%d %H:%M:%S UTC')

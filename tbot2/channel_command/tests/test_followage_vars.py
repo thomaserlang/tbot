@@ -37,7 +37,7 @@ async def test_followage_vars(mocker: MockFixture) -> None:
     mock_datetime = mocker.patch(
         'tbot2.channel_command.var_fillers.followage_vars.datetime_now'
     )
-    mock_datetime.return_value = datetime(2024, 5, 24, 22, 22, 8, tzinfo=UTC)
+    mock_datetime.return_value = datetime(2024, 5, 24, 22, 15, 8, tzinfo=UTC)
 
     await followage_vars(
         chat_message=ChatMessage(  # type: ignore
@@ -57,7 +57,7 @@ async def test_followage_vars(mocker: MockFixture) -> None:
         vars=vars,
     )
 
-    assert vars['followage'].value == '7 years and 2 days ago'
+    assert vars['followage'].value == '7 years and 2 days'
     assert vars['followage_date'].value == 'May 24 2017'
     assert vars['followage_datetime'].value == '2017-05-24 22:22:08 UTC'
 
@@ -97,7 +97,7 @@ async def test_followage_vars(mocker: MockFixture) -> None:
         command=TCommand(args=['testuser'], name='followage'),
         vars=vars,
     )
-    assert vars['followage'].value == '7 years and 2 days ago'
+    assert vars['followage'].value == '7 years and 2 days'
     assert lookup_twitch_users.called
     assert lookup_twitch_users.call_args.kwargs['logins'] == ['testuser']
 
