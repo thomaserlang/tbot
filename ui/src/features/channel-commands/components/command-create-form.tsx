@@ -42,7 +42,7 @@ export function CreateCommandForm({ channelId, onCreated }: Props) {
             mod_cooldown: 0,
             enabled: true,
             public: true,
-            access_level: AccessLevel.PUBLIC,
+            access_level: AccessLevel.PUBLIC.toString(),
             provider: 'all',
         },
     })
