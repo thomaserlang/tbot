@@ -91,7 +91,7 @@ async def handle_text_message_event(
             chat_message=chat_message,
         ):
             await send_live_chat_message(
-                channel_provider=channel_provider,
+                channel_id=channel_provider.channel_id,
                 live_chat_id=message.snippet.live_chat_id,
                 message=response.response,
             )
@@ -131,7 +131,7 @@ async def handle_filter_message(
             return
         if match.action == 'warning':
             await delete_live_chat_message(
-                channel_provider=channel_provider,
+                channel_id=channel_provider.channel_id,
                 message_id=chat_message.msg_id,
             )
             if match.filter.warning_message:
@@ -142,7 +142,7 @@ async def handle_filter_message(
                 )
                 message = f'@{chat_message.viewer_name}, {message}'
                 await send_live_chat_message(
-                    channel_provider=channel_provider,
+                    channel_id=channel_provider.channel_id,
                     live_chat_id=live_chat_id,
                     message=message,
                 )

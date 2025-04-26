@@ -1,8 +1,7 @@
+from uuid import UUID
+
 from loguru import logger
 
-from tbot2.channel_provider import (
-    ChannelProvider,
-)
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..exceptions import YouTubeError, YouTubeException
@@ -11,7 +10,7 @@ from ..schemas.youtube_live_chat_message_schema import LiveChatMessages
 
 
 async def get_live_chat_messages(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
     live_chat_id: str,
     page_token: str,
 ) -> LiveChatMessages:
@@ -24,7 +23,7 @@ async def get_live_chat_messages(
         '/liveChat/messages',
         params=params,
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
     if response.status_code >= 400:
@@ -34,7 +33,7 @@ async def get_live_chat_messages(
 
 
 async def send_live_chat_message(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
     live_chat_id: str,
     message: str,
 ) -> bool:
@@ -53,7 +52,7 @@ async def send_live_chat_message(
             },
         },
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
     if response.status_code >= 400:
@@ -63,7 +62,7 @@ async def send_live_chat_message(
 
 
 async def delete_live_chat_message(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
     message_id: str,
 ) -> bool:
     response = await youtube_bot_client.delete(
@@ -72,7 +71,7 @@ async def delete_live_chat_message(
             'id': message_id,
         },
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
     if response.status_code >= 400:

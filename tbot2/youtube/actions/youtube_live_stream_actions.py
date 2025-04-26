@@ -1,4 +1,5 @@
-from tbot2.channel_provider import ChannelProvider
+from uuid import UUID
+
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..exceptions import YouTubeError, YouTubeException
@@ -10,7 +11,7 @@ PART = {'id', 'snippet', 'status', 'cdn', 'contentDetails'}
 
 
 async def get_live_streams(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
     mine: bool | None = None,
     id: str | None = None,
 ) -> list[LiveStream]:
@@ -24,7 +25,7 @@ async def get_live_streams(
     r = await youtube_user_client.get(
         '/liveStreams',
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
         params=params,
     )
@@ -34,13 +35,11 @@ async def get_live_streams(
     return page.items
 
 
-async def create_live_stream(
-    channel_provider: ChannelProvider, data: LiveStreamInsert
-) -> LiveStream:
+async def create_live_stream(channel_id: UUID, data: LiveStreamInsert) -> LiveStream:
     r = await youtube_user_client.post(
         '/liveStreams',
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
         params={
             'part': ','.join(PART),

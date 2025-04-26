@@ -19,7 +19,7 @@ from ..actions.youtube_live_chat_message_actions import (
 async def send_channel_message(data: SendChannelMessage) -> None:
     if data.channel_provider.stream_chat_id:
         await send_live_chat_message(
-            channel_provider=data.channel_provider,
+            channel_id=data.channel_provider.channel_id,
             message=data.message,
             live_chat_id=data.channel_provider.stream_chat_id,
         )
@@ -36,7 +36,8 @@ async def update_stream_title(
     stream_title: str,
 ) -> bool:
     await update_live_broadcast(
-        channel_provider=channel_provider,
+        channel_id=channel_provider.channel_id,
+        live_broadcast_id=channel_provider.stream_id or '',
         snippet_title=stream_title[:100],
     )
     return True
@@ -58,7 +59,7 @@ async def handle_timer(
             ):
                 continue
             await send_live_chat_message(
-                channel_provider=channel_provider,
+                channel_id=channel_provider.channel_id,
                 message=message,
                 live_chat_id=channel_provider.stream_chat_id,
             )

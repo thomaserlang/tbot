@@ -49,7 +49,7 @@ async def youtube_create_broadcast_route(
         )
 
     broadcast = await create_new_broadcast_from_previous(
-        channel_provider=channel_provider,
+        channel_id=channel_provider.channel_id,
     )
     async with get_session() as session:
         await save_channel_provider(

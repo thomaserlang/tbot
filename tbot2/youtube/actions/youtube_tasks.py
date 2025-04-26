@@ -78,7 +78,7 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
     ):
         try:
             live_broadcasts = await get_live_broadcasts(
-                channel_provider=channel_provider,
+                channel_id=channel_provider.channel_id,
                 broadcast_status='active',
             )
         except YouTubeException as e:
@@ -164,7 +164,7 @@ async def handle_broadcast_live_chat(
                 messages: LiveChatMessages | None = None
                 try:
                     messages = await get_live_chat_messages(
-                        channel_provider=channel_provider,
+                        channel_id=channel_provider.channel_id,
                         live_chat_id=live_chat_id,
                         page_token=page_token or '',
                     )
@@ -240,7 +240,7 @@ async def end_stream(
     logger.debug('Ending stream')
     if not live_broadcast:
         live_broadcasts = await get_live_broadcasts(
-            channel_provider=channel_provider,
+            channel_id=channel_provider.channel_id,
             broadcast_status='completed',
         )
         if not live_broadcasts:

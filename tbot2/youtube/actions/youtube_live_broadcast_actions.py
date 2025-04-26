@@ -1,8 +1,8 @@
 from typing import Literal
+from uuid import UUID
 
 from loguru import logger
 
-from tbot2.channel_provider import ChannelProvider
 from tbot2.common import datetime_now
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.exceptions import ErrorMessage
@@ -23,7 +23,7 @@ PART = {'id', 'snippet', 'status', 'content_details', 'monetizationDetails'}
 
 
 async def get_live_broadcasts(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
     broadcast_status: Literal['active', 'all', 'completed', 'upcoming'] | None = None,
     id: str | None = None,
     mine: bool | None = None,
@@ -70,7 +70,7 @@ async def get_live_broadcasts(
     r = await youtube_user_client.get(
         '/liveBroadcasts',
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
         params=params,
     )
@@ -81,13 +81,13 @@ async def get_live_broadcasts(
 
 
 async def create_live_broadcast(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
     data: LiveBroadcastInsert,
 ) -> LiveBroadcast:
     r = await youtube_user_client.post(
         '/liveBroadcasts',
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
         params={
             'part': ','.join(PART),
@@ -100,20 +100,17 @@ async def create_live_broadcast(
 
 
 async def update_live_broadcast(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
+    live_broadcast_id: str,
     snippet_title: str | None = None,
 ) -> LiveBroadcast:
     """
     TODO: Better way to patch the existing broadcast since values not
     specified gets reset to default
     """
-    if not channel_provider.stream_id:
-        raise ErrorMessage('No stream id found in channel provider')
-    broadcasts = await get_live_broadcasts(
-        channel_provider=channel_provider, id=channel_provider.stream_id
-    )
+    broadcasts = await get_live_broadcasts(channel_id=channel_id, id=live_broadcast_id)
     if not broadcasts:
-        raise ErrorMessage(f'{channel_provider.stream_id} not found in live broadcasts')
+        raise ErrorMessage(f'{live_broadcast_id} not found in live broadcasts')
     request = LiveBroadcastUpdate.model_validate(broadcasts[0])
 
     if snippet_title:
@@ -122,13 +119,13 @@ async def update_live_broadcast(
     r = await youtube_user_client.put(
         '/liveBroadcasts',
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
         params={
             'part': ','.join(PART),
         },
         json={
-            'id': channel_provider.stream_id,
+            'id': live_broadcast_id,
             **request.model_dump(exclude_unset=True, exclude_none=True, mode='json'),
         },
     )
@@ -138,14 +135,14 @@ async def update_live_broadcast(
 
 
 async def bind_live_broadcast(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
     live_broadcast_id: str,
     stream_id: str,
 ) -> LiveBroadcast:
     r = await youtube_user_client.post(
         '/liveBroadcasts/bind',
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
         params={
             'part': ','.join(PART),
@@ -159,14 +156,14 @@ async def bind_live_broadcast(
 
 
 async def transition_live_broadcast(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
     live_broadcast_id: str,
     status: Literal['live', 'complete'] = 'live',
 ) -> LiveBroadcast:
     r = await youtube_user_client.post(
         '/liveBroadcasts/transition',
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
         params={
             'part': ','.join(PART),
@@ -180,13 +177,13 @@ async def transition_live_broadcast(
 
 
 async def create_new_broadcast_from_previous(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
     live_broadcast: LiveBroadcast | None = None,
     bind_to_prev_stream: bool = True,
 ) -> LiveBroadcast:
     if not live_broadcast:
         live_broadcasts = await get_live_broadcasts(
-            channel_provider=channel_provider,
+            channel_id=channel_id,
             broadcast_status='completed',
         )
         if not live_broadcasts:
@@ -200,7 +197,7 @@ async def create_new_broadcast_from_previous(
         broadcast_insert.content_details.enable_auto_stop = True
 
     new_broadcast = await create_live_broadcast(
-        channel_provider=channel_provider,
+        channel_id=channel_id,
         data=broadcast_insert,
     )
     logger.debug(f'Created new broadcast {new_broadcast.id}')
@@ -210,13 +207,13 @@ async def create_new_broadcast_from_previous(
 
     if bind_to_prev_stream:
         live_streams = await get_live_streams(
-            channel_provider=channel_provider,
+            channel_id=channel_id,
             id=live_broadcast.content_details.bound_stream_id,
             mine=True if not live_broadcast.content_details.bound_stream_id else None,
         )
         if live_streams:
             await bind_live_broadcast(
-                channel_provider=channel_provider,
+                channel_id=channel_id,
                 live_broadcast_id=new_broadcast.id,
                 stream_id=live_streams[0].id,
             )
