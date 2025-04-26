@@ -2,7 +2,7 @@ from typing import Any, Literal
 
 from loguru import logger
 
-from tbot2.channel import ChannelProvider
+from tbot2.channel_provider import ChannelProvider
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..actions.youtube_live_chat_message_actions import youtube_bot_client

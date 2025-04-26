@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Body, HTTPException, Security
 
-from tbot2.channel import ChannelScope
+from tbot2.channel_provider.types import ChannelProviderScope
 from tbot2.common import TAccessLevel, TokenData
 from tbot2.contexts import get_session
 from tbot2.dependecies import authenticated
@@ -30,10 +30,10 @@ router = APIRouter()
     '/channels/{channel_id}/providers',
     name='Get Channel Providers',
 )
-async def get_channel_providers_route(
+async def get_channel_route(
     channel_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_READ])
+        TokenData, Security(authenticated, scopes=[ChannelProviderScope.READ])
     ],
 ) -> list[ChannelProviderPublic]:
     await token_data.channel_require_access(
@@ -53,7 +53,7 @@ async def get_channel_provider_route(
     channel_id: UUID,
     channel_provider_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_READ])
+        TokenData, Security(authenticated, scopes=[ChannelProviderScope.READ])
     ],
 ) -> ChannelProviderPublic:
     await token_data.channel_require_access(
@@ -82,7 +82,7 @@ async def delete_channel_provider_route(
     channel_id: UUID,
     channel_provider_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelProviderScope.WRITE])
     ],
 ) -> None:
     await token_data.channel_require_access(
@@ -111,7 +111,7 @@ async def disconnect_channel_provider_bot_route(
     channel_id: UUID,
     channel_provider_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelProviderScope.WRITE])
     ],
 ) -> None:
     await token_data.channel_require_access(
@@ -134,7 +134,7 @@ async def update_stream_title_route(
     channel_id: UUID,
     channel_provider_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelProviderScope.WRITE])
     ],
     stream_title: Annotated[str, Body(embed=True, min_length=1, max_length=140)],
 ) -> ChannelProviderPublic:

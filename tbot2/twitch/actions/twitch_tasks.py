@@ -3,8 +3,8 @@ from datetime import datetime
 
 from loguru import logger
 
-from tbot2.channel import ChannelProviderOAuthNotFound
 from tbot2.channel_points import get_channel_point_settings, inc_bulk_points
+from tbot2.channel_provider import ChannelProviderOAuthNotFound
 from tbot2.channel_stream import (
     ChannelProviderStream,
     end_channel_provider_stream,

@@ -2,7 +2,7 @@ from uuid import UUID
 
 from loguru import logger
 
-from tbot2.channel import get_channel_bot_provider
+from tbot2.channel_provider import get_channel_bot_provider
 from tbot2.constants import APP_TITLE, TBOT_CHANNEL_ID_HEADER
 
 from ..twitch_http_client import twitch_bot_client

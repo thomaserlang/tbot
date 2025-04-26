@@ -23,6 +23,10 @@ from .actions.channel_stream_actions import (
 from .actions.channel_stream_actions import (
     get_or_create_channel_stream as get_or_create_channel_stream,
 )
+from .models.channel_provider_stream_model import (
+    MChannelProviderStream as MChannelProviderStream,
+)
+from .models.channel_stream_model import MChannelStream as MChannelStream
 from .schemas.channel_provider_stream_schema import (
     ChannelProviderStream as ChannelProviderStream,
 )

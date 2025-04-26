@@ -4,7 +4,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from uuid6 import uuid7
 
-from tbot2.channel import (
+from tbot2.channel_provider import (
     ChannelProviderRequest,
     reset_channel_provider_live_state,
     save_channel_provider,

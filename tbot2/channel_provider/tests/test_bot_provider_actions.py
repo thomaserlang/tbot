@@ -5,7 +5,7 @@ from tbot2.bot_providers import (
     BotProviderRequest,
     save_bot_provider,
 )
-from tbot2.channel import (
+from tbot2.channel_provider import (
     ChannelProviderRequest,
     get_channel_bot_provider,
     save_channel_provider,

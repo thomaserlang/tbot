@@ -5,7 +5,7 @@ from uuid import UUID
 from loguru import logger
 
 from tbot2.bot_providers import BotProvider
-from tbot2.channel import (
+from tbot2.channel_provider import (
     ChannelProvider,
     get_channel_bot_provider,
     get_channel_provider,

@@ -6,10 +6,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, Security
 from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
 
-from tbot2.channel import (
+from tbot2.channel_provider import (
     ChannelProviderOAuthRequest,
     ChannelProviderRequest,
-    ChannelScope,
+    ChannelProviderScope,
     save_channel_provider,
     save_channel_provider_oauth,
 )
@@ -48,7 +48,7 @@ async def spotify_connect_route(
     request: Request,
     channel_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelProviderScope.WRITE])
     ],
     redirect_to: Annotated[RedirectUrl, Depends()],
 ) -> ConnectUrl:

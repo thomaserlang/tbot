@@ -1,4 +1,4 @@
-from tbot2.channel import (
+from tbot2.channel_provider import (
     ChannelProvider,
     SendChannelMessage,
     get_channel_providers,

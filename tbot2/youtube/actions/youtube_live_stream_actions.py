@@ -1,4 +1,4 @@
-from tbot2.channel import ChannelProvider
+from tbot2.channel_provider import ChannelProvider
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..exceptions import YouTubeError, YouTubeException

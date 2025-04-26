@@ -46,7 +46,9 @@ class ChannelProvider(ChannelProviderBase):
         self,
         session: AsyncSession | None = None,
     ) -> BotProvider:
-        from tbot2.channel import get_channel_bot_provider
+        from ..actions.channel_bot_provider_actions import (
+            get_channel_bot_provider,
+        )
 
         bot_provider = self.bot_provider
         if not bot_provider:

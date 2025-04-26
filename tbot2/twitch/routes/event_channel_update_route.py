@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request
 
-from tbot2.channel import ChannelProviderRequest, save_channel_provider
+from tbot2.channel_provider import ChannelProviderRequest, save_channel_provider
 
 from ..schemas.event_channel_update_schema import EventChannelUpdate
 from ..schemas.event_headers_schema import EventSubHeaders

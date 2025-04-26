@@ -11,6 +11,7 @@ from tbot2.channel.router import channel_router
 from tbot2.channel_chat_filters.router import chat_filter_router
 from tbot2.channel_chatlog.router import chatlog_router
 from tbot2.channel_command.router import command_router
+from tbot2.channel_provider.router import channel_provider_router
 from tbot2.channel_quote.router import channel_quotes_router
 from tbot2.channel_timer.router import channel_timer_router
 from tbot2.channel_user_access.router import channel_user_access_router
@@ -66,6 +67,7 @@ app.include_router(spotify_router, prefix='/api/2')
 app.include_router(channel_router, prefix='/api/2')
 app.include_router(channel_timer_router, prefix='/api/2')
 app.include_router(channel_stats_router, prefix='/api/2')
+app.include_router(channel_provider_router, prefix='/api/2')
 app.include_router(channel_user_access_router, prefix='/api/2')
 app.include_router(bot_provider_routes, prefix='/api/2')
 app.include_router(chatlog_router, prefix='/api/2')

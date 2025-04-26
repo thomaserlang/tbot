@@ -6,7 +6,7 @@ from async_lru import alru_cache
 from loguru import logger
 
 from tbot2.bot_providers import BotProvider
-from tbot2.channel import get_channel_bot_provider
+from tbot2.channel_provider import get_channel_bot_provider
 from tbot2.channel_stream import get_current_channel_provider_stream
 from tbot2.common import ChatMessage, check_pattern_match
 from tbot2.contexts import AsyncSession, get_session

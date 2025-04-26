@@ -3,11 +3,11 @@ import asyncio
 from loguru import logger
 from uuid6 import uuid7
 
-from tbot2.channel import ChannelProvider
 from tbot2.channel_chat_filters import matches_filter
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_command import TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
+from tbot2.channel_provider import ChannelProvider
 from tbot2.common import ChatMessage, TAccessLevel, datetime_now
 
 from ..actions.youtube_live_chat_ban_actions import live_chat_ban

@@ -14,10 +14,10 @@ from tbot2.bot_providers import (
     get_system_bot_provider,
     save_bot_provider,
 )
-from tbot2.channel import (
+from tbot2.channel_provider import (
     ChannelProviderOAuthRequest,
     ChannelProviderRequest,
-    ChannelScope,
+    ChannelProviderScope,
     get_channel_provider,
     save_channel_provider,
     save_channel_provider_oauth,
@@ -81,7 +81,8 @@ async def get_twitch_connect_url_route(
     channel_id: UUID,
     request: Request,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+        TokenData,
+        Security(authenticated, scopes=[ChannelProviderScope.WRITE]),
     ],
     redirect_to: Annotated[RedirectUrl, Depends()],
 ) -> ConnectUrl:
@@ -112,7 +113,8 @@ async def get_twitch_connect_bot_url_route(
     channel_id: UUID,
     request: Request,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+        TokenData,
+        Security(authenticated, scopes=[ChannelProviderScope.WRITE]),
     ],
     redirect_to: Annotated[RedirectUrl, Depends()],
 ) -> ConnectUrl:

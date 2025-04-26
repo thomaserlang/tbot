@@ -10,7 +10,7 @@ from tbot2.bot_providers import (
     BotProviderRequest,
     save_bot_provider,
 )
-from tbot2.channel import (
+from tbot2.channel_provider import (
     ChannelProviderOAuthNotFound,
     ChannelProviderOAuthRequest,
     get_channel_bot_provider,

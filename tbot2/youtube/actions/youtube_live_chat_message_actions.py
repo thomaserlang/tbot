@@ -1,6 +1,6 @@
 from loguru import logger
 
-from tbot2.channel import (
+from tbot2.channel_provider import (
     ChannelProvider,
 )
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER

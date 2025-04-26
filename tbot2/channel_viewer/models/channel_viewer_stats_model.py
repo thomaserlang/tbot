@@ -5,11 +5,8 @@ from uuid import UUID
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from tbot2.channel_stream import MChannelProviderStream
 from tbot2.model_base import Base
-
-from ...channel_stream.models.channel_provider_stream_model import (
-    MChannelProviderStream,
-)
 
 
 class MChannelViewerStats(Base):

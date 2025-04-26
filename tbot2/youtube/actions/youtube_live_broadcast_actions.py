@@ -2,7 +2,7 @@ from typing import Literal
 
 from loguru import logger
 
-from tbot2.channel import ChannelProvider
+from tbot2.channel_provider import ChannelProvider
 from tbot2.common import datetime_now
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.exceptions import ErrorMessage

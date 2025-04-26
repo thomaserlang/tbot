@@ -8,10 +8,10 @@ from httpx import AsyncClient
 
 from tbot2.auth_backend import create_token_str
 from tbot2.bot_providers import BotProviderRequest, save_bot_provider
-from tbot2.channel import (
+from tbot2.channel_provider import (
     ChannelProviderOAuthRequest,
     ChannelProviderRequest,
-    ChannelScope,
+    ChannelProviderScope,
     save_channel_provider,
     save_channel_provider_oauth,
 )
@@ -72,7 +72,7 @@ async def youtube_connect_route(
     request: Request,
     channel_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelProviderScope.WRITE])
     ],
     redirect_to: Annotated[RedirectUrl, Depends()],
 ) -> ConnectUrl:
@@ -104,7 +104,7 @@ async def get_youtube_connect_bot_url_route(
     channel_id: UUID,
     request: Request,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelProviderScope.WRITE])
     ],
     redirect_to: Annotated[RedirectUrl, Depends()],
 ) -> ConnectUrl:

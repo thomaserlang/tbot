@@ -3,10 +3,10 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Security
 
-from tbot2.channel import (
+from tbot2.channel_provider import (
     ChannelProviderPublic,
     ChannelProviderRequest,
-    ChannelScope,
+    ChannelProviderScope,
     get_channel_provider_by_id,
     save_channel_provider,
 )
@@ -29,7 +29,8 @@ async def youtube_create_broadcast_route(
     channel_id: UUID,
     channel_provider_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[ChannelScope.PROVIDERS_WRITE])
+        TokenData,
+        Security(authenticated, scopes=[ChannelProviderScope.WRITE]),
     ],
 ) -> ChannelProviderPublic:
     await token_data.channel_require_access(
