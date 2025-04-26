@@ -75,7 +75,7 @@ async def ban_user(
     data: EventBanUser,
 ) -> bool:
     return await live_chat_ban(
-        channel_id=data.channel_provider.id,
+        channel_id=data.channel_provider.channel_id,
         live_chat_id=data.channel_provider.stream_chat_id or '',
         type='permanent' if not data.ban_duration else 'temporary',
         banned_youtube_user_channel_id=data.provider_viewer_id,
