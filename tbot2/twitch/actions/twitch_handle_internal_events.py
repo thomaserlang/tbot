@@ -36,7 +36,7 @@ async def update_stream_title(
     stream_title: str,
 ) -> bool:
     await update_twitch_channel_information(
-        channel_id=channel_provider.id,
+        channel_id=channel_provider.channel_id,
         broadcaster_id=channel_provider.provider_user_id or '',
         data=ModifyChannelInformationRequest(
             title=stream_title,

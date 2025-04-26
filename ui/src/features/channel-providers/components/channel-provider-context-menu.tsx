@@ -34,7 +34,6 @@ function getUrl(channelProvider: ChannelProvider) {
         channelProvider.stream_id &&
         providerInfo[channelProvider.provider].broadcastEditUrl
     ) {
-        console.log(providerInfo[channelProvider.provider].broadcastEditUrl)
         return providerInfo[channelProvider.provider].broadcastEditUrl?.replace(
             /{([^{}]+)}/g,
             (_, key) => (channelProvider[key] as string) || ''

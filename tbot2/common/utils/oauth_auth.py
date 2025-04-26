@@ -64,6 +64,7 @@ class ChannelProviderOAuthHelper(Auth):
             channel_id=channel_id,
             provider=self.provider,
         )
+
         if not channel_provider_oauth:
             raise ChannelProviderOAuthNotFound(
                 channel_id=channel_id, provider=self.provider

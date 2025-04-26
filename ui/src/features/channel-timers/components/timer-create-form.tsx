@@ -19,7 +19,6 @@ export function CreateTimerForm({ channelId, onCreated }: Props) {
         onError: (error) => {
             if (error instanceof AxiosError) {
                 if (error.status === 422) {
-                    console.log(error.response?.data.detail)
                     for (const e of error.response?.data.detail) {
                         form.setFieldError(
                             e.loc.slice(1).join('.'),
