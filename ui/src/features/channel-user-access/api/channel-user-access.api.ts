@@ -52,9 +52,10 @@ interface DeleteProps {
 
 export async function deleteChannelUserAccess({
     channelUserAccessId,
+    channelId,
 }: DeleteProps) {
     const r = await api.delete(
-        `/api/2/channel-user-access/${channelUserAccessId}`
+        `/api/2/channels/${channelId}/users-access/${channelUserAccessId}`
     )
     return r.data
 }

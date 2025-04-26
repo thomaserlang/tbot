@@ -12,13 +12,17 @@ export function toastSuccess(message: string) {
 }
 
 export function toastError(errorObj: any) {
-    notifications.show({
-        title: errorMessageFromResponse(errorObj),
-        message: '',
-        color: 'red',
-        autoClose: 20000,
-        withBorder: true,
-    })
+    try {
+        notifications.show({
+            title: errorMessageFromResponse(errorObj),
+            message: '',
+            color: 'red',
+            autoClose: 10000,
+            withBorder: true,
+        })
+    } catch (e) {
+        console.error('Error showing toast', e)
+    }
 }
 
 export async function toastPromise({

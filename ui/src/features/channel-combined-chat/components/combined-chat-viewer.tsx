@@ -49,7 +49,7 @@ export function CombinedChatViewer({ channelId, hideTitle }: Props) {
                 <ChannelViewerModal
                     channelId={channelId}
                     provider={showViewer.provider}
-                    viewerId={showViewer.provider_viewer_id}
+                    providerViewerId={showViewer.provider_viewer_id}
                     opened={true}
                     onClose={() => {
                         setShowViewer(null)

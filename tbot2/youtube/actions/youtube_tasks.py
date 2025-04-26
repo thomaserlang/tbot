@@ -175,6 +175,11 @@ async def handle_broadcast_live_chat(
                                 channel_provider=channel_provider,
                             )
                             return
+                        if error.reason == 'liveChatNotFound':
+                            await end_stream(
+                                channel_provider=channel_provider,
+                            )
+                            return
 
                     logger.error(
                         'Error getting live chat messages',

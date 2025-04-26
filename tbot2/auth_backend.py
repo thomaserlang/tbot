@@ -6,7 +6,7 @@ from fastapi.security.utils import get_authorization_scheme_param
 from starlette.authentication import AuthCredentials, AuthenticationBackend
 from starlette.requests import HTTPConnection
 
-from tbot2.common import TokenData, datetime_now
+from tbot2.common import Scope, TokenData, datetime_now
 from tbot2.config_settings import config
 
 
@@ -41,6 +41,7 @@ class AuthBackend(AuthenticationBackend):
                 algorithms=['HS256'],
             )
             token_data = TokenData.model_validate_json(payload['context'])
+            token_data.scopes = Scope.get_all_scopes()
             return AuthCredentials(token_data.scopes), token_data
         except jwt.PyJWTError:
             return None

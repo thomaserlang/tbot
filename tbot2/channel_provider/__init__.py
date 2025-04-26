@@ -25,23 +25,27 @@ from .actions.channel_provider_actions import (
 from .actions.channel_provider_actions import (
     save_channel_provider as save_channel_provider,
 )
-from .actions.channel_provider_events import (
-    fire_event_send_message as fire_event_send_message,
-)
-from .actions.channel_provider_events import (
-    fire_event_update_stream_title as fire_event_update_stream_title,
-)
-from .actions.channel_provider_events import (
-    on_event_send_message as on_event_send_message,
-)
-from .actions.channel_provider_events import (
-    on_event_update_stream_title as on_event_update_stream_title,
-)
 from .actions.channel_provider_oauth_actions import (
     get_channel_provider_oauth as get_channel_provider_oauth,
 )
 from .actions.channel_provider_oauth_actions import (
     save_channel_provider_oauth as save_channel_provider_oauth,
+)
+from .event_types import fire_event_ban_user as fire_event_ban_user
+from .event_types import (
+    fire_event_send_message as fire_event_send_message,
+)
+from .event_types import fire_event_unban_user as fire_event_unban_user
+from .event_types import (
+    fire_event_update_stream_title as fire_event_update_stream_title,
+)
+from .event_types import on_event_ban_user as on_event_ban_user
+from .event_types import (
+    on_event_send_message as on_event_send_message,
+)
+from .event_types import on_event_unban_user as on_event_unban_user
+from .event_types import (
+    on_event_update_stream_title as on_event_update_stream_title,
 )
 from .exceptions import ChannelProviderOAuthNotFound as ChannelProviderOAuthNotFound
 from .models.channel_provider_model import (
@@ -62,7 +66,11 @@ from .schemas.channel_provider_schema import (
 from .schemas.channel_provider_schema import (
     ChannelProviderRequest as ChannelProviderRequest,
 )
-from .schemas.channel_send_message_schema import (
+from .schemas.event_ban_user_schema import EventBanUser as EventBanUser
+from .schemas.event_ban_user_schema import (
+    EventUnbanUser as EventUnbanUser,
+)
+from .schemas.event_send_message_schema import (
     SendChannelMessage as SendChannelMessage,
 )
 from .types import ChannelProviderScope as ChannelProviderScope

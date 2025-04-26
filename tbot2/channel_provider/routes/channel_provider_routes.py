@@ -17,7 +17,7 @@ from ..actions.channel_provider_actions import (
     get_channel_providers,
     save_channel_provider,
 )
-from ..actions.channel_provider_events import fire_event_update_stream_title
+from ..event_types import fire_event_update_stream_title
 from ..schemas.channel_provider_schema import (
     ChannelProviderPublic,
     ChannelProviderRequest,

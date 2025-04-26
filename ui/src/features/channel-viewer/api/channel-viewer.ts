@@ -7,18 +7,18 @@ import { ChannelViewer, ProviderViewerId } from '../types/viewer.type'
 export function getChannelViewerQueryKey(
     provider: Provider,
     channelId: ChannelId,
-    viewerId: ProviderViewerId
+    providerViewerId: ProviderViewerId
 ) {
-    return ['chanel-viewer', provider, channelId, viewerId]
+    return ['chanel-viewer', provider, channelId, providerViewerId]
 }
 
 export async function getChannelViewer(
     provider: Provider,
     channelId: ChannelId,
-    viewerId: ProviderViewerId
+    providerViewerId: ProviderViewerId
 ) {
     const r = await api.get<ChannelViewer>(
-        `/api/2/channels/${channelId}/viewers/${provider}/${viewerId}`
+        `/api/2/channels/${channelId}/viewers/${provider}/${providerViewerId}`
     )
     return r.data
 }
@@ -26,16 +26,20 @@ export async function getChannelViewer(
 interface GetProps {
     provider: Provider
     channelId: ChannelId
-    viewerId: ProviderViewerId
+    providerViewerId: ProviderViewerId
 }
 
 export function useGetChannelViewer({
     provider,
     channelId,
-    viewerId,
+    providerViewerId,
 }: GetProps) {
     return useQuery({
-        queryKey: getChannelViewerQueryKey(provider, channelId, viewerId),
-        queryFn: () => getChannelViewer(provider, channelId, viewerId),
+        queryKey: getChannelViewerQueryKey(
+            provider,
+            channelId,
+            providerViewerId
+        ),
+        queryFn: () => getChannelViewer(provider, channelId, providerViewerId),
     })
 }

@@ -1,11 +1,19 @@
 from tbot2.channel_provider import (
     ChannelProvider,
+    EventBanUser,
+    EventUnbanUser,
     SendChannelMessage,
     get_channel_providers,
+    on_event_ban_user,
     on_event_send_message,
+    on_event_unban_user,
     on_event_update_stream_title,
 )
 from tbot2.channel_timer import Timer, is_timer_active, on_handle_timer
+from tbot2.twitch.actions.twitch_ban_user_actions import (
+    twitch_ban_user,
+    twitch_unban_user,
+)
 
 from .twitch_channel_information_actions import (
     ModifyChannelInformationRequest,
@@ -55,3 +63,26 @@ async def handle_timer(
             channel_provider=channel_provider,
             message=message,
         )
+
+
+@on_event_ban_user('twitch')
+async def ban_user(
+    data: EventBanUser,
+) -> bool:
+    return await twitch_ban_user(
+        channel_id=data.channel_provider.channel_id,
+        broadcaster_id=data.channel_provider.provider_user_id or '',
+        twitch_user_id=data.provider_viewer_id,
+        duration=data.ban_duration,
+    )
+
+
+@on_event_unban_user('twitch')
+async def unban_user(
+    data: EventUnbanUser,
+) -> bool:
+    return await twitch_unban_user(
+        channel_id=data.channel_provider.channel_id,
+        broadcaster_id=data.channel_provider.provider_user_id or '',
+        twitch_user_id=data.provider_viewer_id,
+    )

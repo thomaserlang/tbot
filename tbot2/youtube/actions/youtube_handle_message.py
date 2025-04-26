@@ -149,7 +149,7 @@ async def handle_filter_message(
 
         elif match.action == 'timeout':
             await live_chat_ban(
-                channel_provider=channel_provider,
+                channel_id=channel_provider.channel_id,
                 live_chat_id=live_chat_id,
                 type='temporary',
                 ban_duration_seconds=match.filter.timeout_duration,

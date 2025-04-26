@@ -27,7 +27,7 @@ export function errorMessageFromResponse(errorObj: any): ReactNode {
         const data = error.response?.data as any
         if (error.status === 422) {
             for (const e of data.detail) {
-                if (e.loc.length > 1) {
+                if (e.loc.length >= 1) {
                     return (
                         <>
                             {e.msg.replace('String', '')} {e.loc[1]}
@@ -36,7 +36,7 @@ export function errorMessageFromResponse(errorObj: any): ReactNode {
                 }
             }
         }
-        if (data?.detail) return <>{data?.detail}</>
+        if (data?.detail) return <>{String(data?.detail)}</>
 
         return <>{error.message}</>
     }

@@ -7,12 +7,13 @@ import { Box, Divider, Flex, Modal, Paper, Text } from '@mantine/core'
 import humanizeDuration from 'humanize-duration'
 import { useGetChannelViewer } from '../api/channel-viewer'
 import { ProviderViewerId } from '../types/viewer.type'
+import { ModerationButtons } from './moderation-buttons'
 import { ViewerStreamsTable } from './viewer-streams-table'
 
 interface Props {
     provider: Provider
     channelId: ChannelId
-    viewerId: ProviderViewerId
+    providerViewerId: ProviderViewerId
 }
 
 const hourHumanizer = humanizeDuration.humanizer({
@@ -76,6 +77,12 @@ export function ChannelViewerView(props: Props) {
                 <Divider orientation="vertical" />
             </Flex>
 
+            <ModerationButtons
+                channelId={props.channelId}
+                provider={props.provider}
+                providerViewerId={props.providerViewerId}
+            />
+
             <Box>
                 <Text fw={700}>Chatlog</Text>
                 <Paper h="15rem" pl="0.5rem" withBorder>
@@ -84,7 +91,7 @@ export function ChannelViewerView(props: Props) {
                         liveUpdates={false}
                         params={{
                             provider: props.provider,
-                            provider_viewer_id: props.viewerId,
+                            provider_viewer_id: props.providerViewerId,
                         }}
                     />
                 </Paper>
@@ -97,7 +104,7 @@ export function ChannelViewerView(props: Props) {
                         <ViewerStreamsTable
                             channelId={props.channelId}
                             provider={props.provider}
-                            providerViewerId={props.viewerId}
+                            providerViewerId={props.providerViewerId}
                         />
                     </Box>
                 </Box>

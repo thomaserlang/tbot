@@ -1,15 +1,15 @@
 from typing import Any, Literal
+from uuid import UUID
 
 from loguru import logger
 
-from tbot2.channel_provider import ChannelProvider
 from tbot2.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..actions.youtube_live_chat_message_actions import youtube_bot_client
 
 
 async def live_chat_ban(
-    channel_provider: ChannelProvider,
+    channel_id: UUID,
     live_chat_id: str,
     type: Literal['permanent', 'temporary'],
     banned_youtube_user_channel_id: str,
@@ -34,7 +34,7 @@ async def live_chat_ban(
         },
         json=data,
         headers={
-            TBOT_CHANNEL_ID_HEADER: str(channel_provider.channel_id),
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
     )
     if response.status_code >= 400:

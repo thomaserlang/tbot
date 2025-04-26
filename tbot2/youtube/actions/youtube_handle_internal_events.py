@@ -2,14 +2,19 @@ from loguru import logger
 
 from tbot2.channel_provider import (
     ChannelProvider,
+    EventBanUser,
+    EventUnbanUser,
     SendChannelMessage,
     get_channel_providers,
+    on_event_ban_user,
     on_event_send_message,
+    on_event_unban_user,
     on_event_update_stream_title,
 )
 from tbot2.channel_timer import Timer, is_timer_active, on_handle_timer
 
 from ..actions.youtube_live_broadcast_actions import update_live_broadcast
+from ..actions.youtube_live_chat_ban_actions import live_chat_ban
 from ..actions.youtube_live_chat_message_actions import (
     send_live_chat_message,
 )
@@ -63,3 +68,25 @@ async def handle_timer(
                 message=message,
                 live_chat_id=channel_provider.stream_chat_id,
             )
+
+
+@on_event_ban_user('youtube')
+async def ban_user(
+    data: EventBanUser,
+) -> bool:
+    return await live_chat_ban(
+        channel_id=data.channel_provider.id,
+        live_chat_id=data.channel_provider.stream_chat_id or '',
+        type='permanent' if not data.ban_duration else 'temporary',
+        banned_youtube_user_channel_id=data.provider_viewer_id,
+        ban_duration_seconds=data.ban_duration,
+    )
+
+
+@on_event_unban_user('youtube')
+async def unban_user(
+    data: EventUnbanUser,
+) -> bool:
+    # TODO: We need to log the ban/timeout since it seems
+    # the only way to unban is to have the ban id from youtube.
+    return False
