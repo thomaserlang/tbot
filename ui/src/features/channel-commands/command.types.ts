@@ -44,7 +44,7 @@ export interface CommandCreate {
     active_mode?: CommandActiveMode
     enabled?: boolean
     public?: boolean
-    access_level?: AccessLevel
+    access_level?: AccessLevel | string
     provider?: 'all' | Provider
 }
 

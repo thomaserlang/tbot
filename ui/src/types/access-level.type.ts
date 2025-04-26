@@ -7,11 +7,7 @@ export enum AccessLevel {
     OWNER = 9,
 }
 
-export const accessLevelLabels: { [level: string]: string } = {
-    [AccessLevel.PUBLIC.toString()]: 'Everyone',
-    [AccessLevel.SUB.toString()]: 'Subscriber',
-    [AccessLevel.VIP.toString()]: 'VIP',
-    [AccessLevel.MOD.toString()]: 'Moderator',
-    [AccessLevel.ADMIN.toString()]: 'Admin',
-    [AccessLevel.OWNER.toString()]: 'Owner',
-} as const
+export interface AccessLevelInfo {
+    value: number
+    label: string
+}

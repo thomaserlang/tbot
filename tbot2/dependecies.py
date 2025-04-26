@@ -37,5 +37,10 @@ async def authenticated(
     Usage: token_data: Annotated[TokenData, Security(authenticated, scopes=['SCOPE'])]
     """
     if security_scopes.scopes and not token_data.has_any_scope(security_scopes.scopes):  # type: ignore
-        raise HTTPException(status_code=403, detail='Not enough permissions')
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                f'Required scopes: {[str(scope) for scope in security_scopes.scopes]}'
+            ),
+        )
     return token_data

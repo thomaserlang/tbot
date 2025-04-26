@@ -11,10 +11,12 @@ from ..schemas.channel_schemas import Channel, ChannelCreate, ChannelUpdate
 
 
 async def get_channel(
-    *, id: UUID, session: AsyncSession | None = None
+    *, channel_id: UUID, session: AsyncSession | None = None
 ) -> Channel | None:
     async with get_session(session) as session:
-        result = await session.scalar(sa.select(MChannel).where(MChannel.id == id))
+        result = await session.scalar(
+            sa.select(MChannel).where(MChannel.id == channel_id)
+        )
         if result:
             return Channel.model_validate(result)
 
@@ -29,7 +31,7 @@ async def create_channel(
             sa.insert(MChannel).values(id=id, created_at=datetime_now(), **data_)
         )
 
-        channel = await get_channel(id=id, session=session)
+        channel = await get_channel(channel_id=id, session=session)
         if not channel:
             raise Exception('Failed to create channel')
         return channel
@@ -37,17 +39,17 @@ async def create_channel(
 
 async def update_channel(
     *,
-    id: UUID,
+    channel_id: UUID,
     data: ChannelUpdate,
     session: AsyncSession | None = None,
 ) -> Channel:
     async with get_session(session) as session:
         data_ = data.model_dump(exclude_unset=True)
         await session.execute(
-            sa.update(MChannel).where(MChannel.id == id).values(**data_)
+            sa.update(MChannel).where(MChannel.id == channel_id).values(**data_)
         )
 
-        channel = await get_channel(id=id, session=session)
+        channel = await get_channel(channel_id=channel_id, session=session)
         if not channel:
             raise Exception('Failed to update channel')
         return channel

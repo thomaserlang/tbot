@@ -13,6 +13,7 @@ from tbot2.channel_chatlog.router import chatlog_router
 from tbot2.channel_command.router import command_router
 from tbot2.channel_quote.router import channel_quotes_router
 from tbot2.channel_timer.router import channel_timer_router
+from tbot2.channel_user_access.router import channel_user_access_router
 from tbot2.channel_viewer.router import channel_stats_router
 from tbot2.config_settings import config
 from tbot2.constants import APP_TITLE
@@ -64,8 +65,9 @@ app.include_router(user_router, prefix='/api/2')
 app.include_router(spotify_router, prefix='/api/2')
 app.include_router(channel_router, prefix='/api/2')
 app.include_router(channel_timer_router, prefix='/api/2')
+app.include_router(channel_stats_router, prefix='/api/2')
+app.include_router(channel_user_access_router, prefix='/api/2')
 app.include_router(bot_provider_routes, prefix='/api/2')
 app.include_router(chatlog_router, prefix='/api/2')
-app.include_router(channel_stats_router, prefix='/api/2')
 app.include_router(youtube_router, prefix='/api/2')
 app.include_router(health_router)

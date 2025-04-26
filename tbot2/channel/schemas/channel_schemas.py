@@ -33,6 +33,3 @@ class Channel(BaseSchema):
     id: UUID
     display_name: str
     created_at: datetime
-    bot_active: bool
-    bot_muted: bool
-    bot_chatlog_enabled: bool

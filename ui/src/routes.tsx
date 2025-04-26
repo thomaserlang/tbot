@@ -21,6 +21,13 @@ const protectedRoutes: RouteObject[] = [
         lazy: () => import('./features/channel/channels.page'),
     },
     {
+        path: '/channel-invite/:channelUserInviteId',
+        lazy: () =>
+            import(
+                './features/channel-user-access/channel-user-invite-accept.page'
+            ),
+    },
+    {
         path: '/channels/:channelId',
         element: (
             <ChannelShell>
@@ -93,6 +100,13 @@ const protectedRoutes: RouteObject[] = [
                 lazy: () =>
                     import(
                         './features/channel-combined-chat/combined-chat.page'
+                    ),
+            },
+            {
+                path: 'user-access',
+                lazy: () =>
+                    import(
+                        './features/channel-user-access/channel-user-access.page'
                     ),
             },
         ],

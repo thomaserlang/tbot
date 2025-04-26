@@ -8,8 +8,8 @@ from tbot2.channel import (
     Channel,
     ChannelCreate,
     create_channel,
-    set_channel_user_access_level,
 )
+from tbot2.channel_user_access import set_channel_user_access_level
 from tbot2.common import Scope, TAccessLevel, TokenData
 from tbot2.user import User, UserCreate, create_user
 

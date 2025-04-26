@@ -112,7 +112,6 @@ export function ChannelNavbar() {
                     to={`/channels/${channel.id}/user-access`}
                     label="User Access"
                     leftSection={<IconLock size={20} />}
-                    disabled
                 />
                 <NavLink
                     component={RouterNavLink}

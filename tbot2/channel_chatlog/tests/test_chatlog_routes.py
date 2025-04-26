@@ -48,7 +48,7 @@ async def test_create_chatlog(client: AsyncClient) -> None:
     )
     assert r.status_code == 200
     data = r.json()
-    assert data['total'] == 2
+    assert data['total'] is None
     assert data['records'][0]['message'] == 'test2'
     assert data['records'][1]['message'] == 'test'
 
@@ -61,7 +61,7 @@ async def test_create_chatlog(client: AsyncClient) -> None:
     )
     assert r.status_code == 200
     data = r.json()
-    assert data['total'] == 1
+    assert data['total'] is None
     assert data['records'][0]['message'] == 'test'
 
 

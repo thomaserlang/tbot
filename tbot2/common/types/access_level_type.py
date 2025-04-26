@@ -8,3 +8,4 @@ class TAccessLevel(IntEnum):
     MOD = 7
     ADMIN = 8
     OWNER = 9
+    GLOBAL_ADMIN = 1000

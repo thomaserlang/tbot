@@ -4,7 +4,7 @@ import sqlalchemy as sa
 from fastapi import APIRouter, Depends, HTTPException, Security
 
 from tbot2.channel.models.channel_model import MChannel
-from tbot2.channel.models.channel_user_access_levels_model import (
+from tbot2.channel_user_access.models.channel_user_access_levels_model import (
     MChannelUserAccessLevel,
 )
 from tbot2.common import TAccessLevel, TokenData
@@ -30,7 +30,7 @@ async def get_channel_route(
         access_level=TAccessLevel.MOD,
     )
     channel = await get_channel(
-        id=channel_id,
+        channel_id=channel_id,
     )
     if not channel:
         raise HTTPException(
@@ -54,7 +54,7 @@ async def delete_channel_route(
         access_level=TAccessLevel.OWNER,
     )
     channel = await get_channel(
-        id=channel_id,
+        channel_id=channel_id,
     )
     if not channel:
         raise HTTPException(

@@ -7,7 +7,7 @@ export function filterToBaseRequest(filter: ChatFilter): ChatFilterRequestBase {
         type: filter.type,
         provider: filter.provider,
         enabled: filter.enabled,
-        exclude_access_level: filter.exclude_access_level,
+        exclude_access_level: filter.exclude_access_level.toString(),
         warning_enabled: filter.warning_enabled,
         warning_message: filter.warning_message,
         warning_expire_duration: filter.warning_expire_duration,

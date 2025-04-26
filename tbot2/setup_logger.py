@@ -10,19 +10,21 @@ from tbot2.config_settings import config
 
 logger.remove()
 
-sentry_sdk.init(
-    dsn=config.sentry_dsn,
-    send_default_pii=True,
-    integrations=[
-        LoguruIntegration(
-            level=LoggingLevels.INFO.value,
-            event_level=LoggingLevels.ERROR.value,
-            event_format='{message}',
-        ),
-        StarletteIntegration(),
-        FastApiIntegration(),
-    ],
-)
+if 'pytest' not in sys.modules:
+    sentry_sdk.init(
+        dsn=config.sentry_dsn,
+        send_default_pii=True,
+        integrations=[
+            LoguruIntegration(
+                level=LoggingLevels.INFO.value,
+                event_level=LoggingLevels.ERROR.value,
+                event_format='{message}',
+            ),
+            StarletteIntegration(),
+            FastApiIntegration(),
+        ],
+    )
+    
 format = (
     '<green>{time}</green> | '
     '<level>{level}</level> | '

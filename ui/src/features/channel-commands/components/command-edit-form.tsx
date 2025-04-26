@@ -40,7 +40,7 @@ export function EditCommandForm({ command, onUpdated }: Props) {
             mod_cooldown: command.mod_cooldown,
             enabled: command.enabled,
             public: command.public,
-            access_level: command.access_level,
+            access_level: command.access_level.toString(),
             provider: command.provider,
             group_name: command.group_name,
         },

@@ -26,7 +26,7 @@ export interface ChatFilterRequestBase {
     name?: string
     provider?: 'all' | Provider
     enabled?: boolean
-    exclude_access_level?: AccessLevel
+    exclude_access_level?: AccessLevel | string
     warning_enabled?: boolean
     warning_message?: string
     warning_expire_duration?: number

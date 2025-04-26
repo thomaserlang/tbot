@@ -3,11 +3,9 @@ import {
     IconBrandTwitch,
     IconBrandYoutube,
 } from '@tabler/icons-react'
-import { Provider, ProviderInfo } from './types/provider.type'
+import { Provider, ProviderInfo } from '../types/provider.type'
 
-export const APP_TITLE = 'HEIMRA'
-
-export const providerInfo: { [key: string | Provider]: ProviderInfo } = {
+export const providerInfo: { [key in Provider]: ProviderInfo } = {
     twitch: {
         key: 'twitch',
         name: 'Twitch',

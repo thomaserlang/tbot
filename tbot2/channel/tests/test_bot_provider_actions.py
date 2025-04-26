@@ -23,6 +23,9 @@ async def test_bot_provider_actions(client: AsyncClient) -> None:
             name='System Bot',
             provider_user_id='1111',
             system_default=True,
+            access_token='123',
+            refresh_token='123',
+            expires_in=123,
         ),
     )
 
@@ -31,6 +34,9 @@ async def test_bot_provider_actions(client: AsyncClient) -> None:
             provider='twitch',
             name='Test Bot',
             provider_user_id='123',
+            access_token='123',
+            refresh_token='123',
+            expires_in=123,
         ),
     )
 
@@ -39,6 +45,9 @@ async def test_bot_provider_actions(client: AsyncClient) -> None:
             provider='twitch',
             name='Test Bot 2',
             provider_user_id='55555',
+            access_token='123',
+            refresh_token='123',
+            expires_in=123,
         ),
     )
 

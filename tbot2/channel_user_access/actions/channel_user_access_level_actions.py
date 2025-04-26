@@ -7,7 +7,7 @@ from tbot2.common import TAccessLevel
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.channel_user_access_levels_model import MChannelUserAccessLevel
-from ..schemas.channel_access_level_schemas import ChannelUserAccessLevel
+from ..schemas.channel_user_access_level_schemas import ChannelUserAccessLevel
 
 
 async def get_channel_user_access_level(
@@ -26,6 +26,21 @@ async def get_channel_user_access_level(
         if result:
             return ChannelUserAccessLevel.model_validate(result)
         return None
+
+
+async def get_channel_user_access_level_by_id(
+    *,
+    channel_user_access_id: UUID,
+    session: AsyncSession | None = None,
+) -> ChannelUserAccessLevel | None:
+    async with get_session(session) as session:
+        result = await session.scalar(
+            sa.select(MChannelUserAccessLevel).where(
+                MChannelUserAccessLevel.id == channel_user_access_id,
+            )
+        )
+        if result:
+            return ChannelUserAccessLevel.model_validate(result)
 
 
 async def set_channel_user_access_level(
@@ -56,3 +71,17 @@ async def set_channel_user_access_level(
                 )
                 .values(access_level=access_level.value)
             )
+
+
+async def delete_channel_user_access_level(
+    *,
+    channel_user_access_id: UUID,
+    session: AsyncSession | None = None,
+) -> bool:
+    async with get_session(session) as session:
+        result = await session.execute(
+            sa.delete(MChannelUserAccessLevel).where(
+                MChannelUserAccessLevel.id == channel_user_access_id
+            )
+        )
+        return result.rowcount > 0

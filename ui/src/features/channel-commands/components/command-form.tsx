@@ -1,5 +1,4 @@
-import { providerInfo } from '@/constants'
-import { accessLevelLabels } from '@/types/access-level.type'
+import { accessLevelInfo, providerInfo } from '@/constants'
 import {
     Anchor,
     Flex,
@@ -92,12 +91,11 @@ export function CommandForm({ form }: Props) {
                     leftSection={<IconLock size={16} />}
                     label="Access level"
                     key={form.key('access_level')}
-                    data={Object.keys(accessLevelLabels).map((key) => ({
-                        value: key,
-                        label: accessLevelLabels[key],
+                    data={Object.values(accessLevelInfo).map((accessLevel) => ({
+                        value: accessLevel.value.toString(),
+                        label: accessLevel.label,
                     }))}
                     {...form.getInputProps('access_level')}
-                    defaultValue={form.values.access_level?.toString()}
                 />
 
                 <Select

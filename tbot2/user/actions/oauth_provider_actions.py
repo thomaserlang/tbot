@@ -9,9 +9,7 @@ from tbot2.channel import (
     Channel,
     ChannelCreate,
     create_channel,
-    set_channel_user_access_level,
 )
-from tbot2.channel_command import CommandError
 from tbot2.common import Provider, Scope, TAccessLevel, TokenData, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
@@ -41,6 +39,8 @@ async def get_or_create_user(
     """
     Returns a tuple of TokenData and a boolean indicating if the user was created.
     """
+    from tbot2.channel_user_access import set_channel_user_access_level
+
     async with get_session(session) as session:
         p = await get_oauth_provider_by_provider_user_id(
             provider=provider,
@@ -90,7 +90,7 @@ async def get_or_create_user(
         else:
             user = await get_user(user_id=p.user_id, session=session)
             if not user:
-                raise CommandError('User not found')
+                raise Exception('User not found')
             return GetOrCreateUserResult(
                 user=user,
                 channel=None,

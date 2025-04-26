@@ -20,11 +20,11 @@ class TokenData(BaseUser, BaseModel):
 
     async def channel_require_access(
         self, *, channel_id: UUID, access_level: TAccessLevel
-    ) -> bool:
-        from tbot2.channel import get_channel_user_access_level
+    ) -> TAccessLevel:
+        from tbot2.channel_user_access import get_channel_user_access_level
 
         if await self.is_global_admin():
-            return True
+            return TAccessLevel.GLOBAL_ADMIN
 
         user_level = await get_channel_user_access_level(
             user_id=self.user_id,
@@ -35,7 +35,7 @@ class TokenData(BaseUser, BaseModel):
                 status_code=403,
                 detail='Insufficient access level',
             )
-        return True
+        return user_level.access_level
 
     def has_any_scope(self, scopes: list[Scope]) -> bool:
         return any(scope in self.scopes for scope in scopes)

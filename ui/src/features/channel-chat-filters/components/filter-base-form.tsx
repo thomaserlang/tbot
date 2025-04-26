@@ -1,5 +1,4 @@
-import { providerInfo } from '@/constants'
-import { accessLevelLabels } from '@/types/access-level.type'
+import { accessLevelInfo, providerInfo } from '@/constants'
 import {
     Flex,
     NumberInput,
@@ -32,17 +31,15 @@ export function FilterForm({ form }: Props) {
                 <Select
                     leftSection={<IconLock size={16} />}
                     label="Exclude"
-                    key={form.key('exclude_access_level')}
-                    data={Object.keys(accessLevelLabels).map((key) => ({
-                        value: key,
-                        label: accessLevelLabels[key],
+                    data={Object.values(accessLevelInfo).map((accessLevel) => ({
+                        value: accessLevel.value.toString(),
+                        label: accessLevel.label,
                     }))}
+                    key={form.key('exclude_access_level')}
                     {...form.getInputProps('exclude_access_level')}
-                    defaultValue={form.values.exclude_access_level?.toString()}
                 />
                 <Select
                     label="Provider"
-                    key={form.key('provider')}
                     data={Object.values({
                         all: { key: 'all', name: 'All', chat: true },
                         ...providerInfo,
@@ -52,6 +49,7 @@ export function FilterForm({ form }: Props) {
                             value: value.key,
                             label: value.name,
                         }))}
+                    key={form.key('provider')}
                     {...form.getInputProps('provider')}
                 />
             </SimpleGrid>
