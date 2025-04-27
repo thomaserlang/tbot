@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import ConfigDict, Field, StringConstraints
+from pydantic import Field, StringConstraints
 
 from tbot2.common import BaseRequestSchema, BaseSchema
 
@@ -25,10 +25,6 @@ class RouletteSettingsUpdate(BaseRequestSchema):
 
 
 class RouletteSettings(BaseSchema):
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
-
     channel_id: UUID
     win_chance: int
     win_message: str

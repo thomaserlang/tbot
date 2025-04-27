@@ -1,6 +1,6 @@
 import { ChannelId } from '@/features/channel/types'
 import { AccessLevel } from '@/types/access-level.type'
-import { set_form_errors } from '@/utils/form'
+import { setFormErrors } from '@/utils/form'
 import { Alert, Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useCreateCommand } from '../command.api'
@@ -18,7 +18,7 @@ export function CreateCommandForm({ channelId, onCreated }: Props) {
             onCreated(data)
         },
         onError: (error) => {
-            if (error.status === 422) set_form_errors(form, error.response.data)
+            if (error.status === 422) setFormErrors(form, error.response.data)
         },
     })
     const form = useForm<CommandCreate>({

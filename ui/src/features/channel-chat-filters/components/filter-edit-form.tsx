@@ -1,4 +1,4 @@
-import { set_form_errors } from '@/utils/form'
+import { setFormErrors } from '@/utils/form'
 import { Alert, Button, Flex } from '@mantine/core'
 import { UseFormReturnType } from '@mantine/form'
 import { ChatFilter } from '../filter-registry'
@@ -24,7 +24,7 @@ export function EditFilterForm<F extends ChatFilter>({
             onUpdated?.(data as F)
         },
         onError: (error) => {
-            if (error.status === 422) set_form_errors(form, error.response.data)
+            if (error.status === 422) setFormErrors(form, error.response.data)
         },
     })
 

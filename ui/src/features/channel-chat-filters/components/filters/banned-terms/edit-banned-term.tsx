@@ -1,5 +1,5 @@
 import { ChannelId } from '@/features/channel/types'
-import { set_form_errors } from '@/utils/form'
+import { setFormErrors } from '@/utils/form'
 import { Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { BannedTermForm } from './banned-term-form'
@@ -19,7 +19,7 @@ export function EditBannedTerm({ channelId, bannedTerm, onUpdated }: Props) {
             close()
         },
         onError: (error) => {
-            if (error.status === 422) set_form_errors(form, error.response.data)
+            if (error.status === 422) setFormErrors(form, error.response.data)
         },
     })
 

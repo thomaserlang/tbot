@@ -109,6 +109,27 @@ const protectedRoutes: RouteObject[] = [
                         './features/channel-user-access/channel-user-access.page'
                     ),
             },
+            {
+                path: 'gambling/point-settings',
+                lazy: () =>
+                    import(
+                        './features/channel-points/channel-point-settings.page'
+                    ),
+            },
+            {
+                path: 'gambling/roulette-settings',
+                lazy: () =>
+                    import(
+                        './features/channel-gambling-roulette/roulette-settings.page'
+                    ),
+            },
+            {
+                path: 'gambling/slots-settings',
+                lazy: () =>
+                    import(
+                        './features/channel-gambling-slots/slots-settings.page'
+                    ),
+            },
         ],
     },
     {

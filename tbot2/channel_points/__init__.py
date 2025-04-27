@@ -25,3 +25,4 @@ from .schemas.channel_point_settings_schema import (
 )
 from .schemas.chatter_points_schema import ChatterPoints as ChatterPoints
 from .schemas.chatter_points_schema import ChatterPointsRank as ChatterPointsRank
+from .types import ChannelPointSettingScope as ChannelPointSettingScope

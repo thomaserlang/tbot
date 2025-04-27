@@ -86,23 +86,22 @@ export function ChannelNavbar() {
                     to={`/channels/${channel.id}/gambling`}
                     label="Gambling"
                     leftSection={<IconCoin size={20} />}
-                    disabled
                 >
                     <NavLink
                         component={RouterNavLink}
-                        to={`/channels/${channel.id}/gambling/points`}
-                        label="Points Settings"
+                        to={`/channels/${channel.id}/gambling/point-settings`}
+                        label="Point Settings"
                         leftSection={<IconPokerChip size={20} />}
                     />
                     <NavLink
                         component={RouterNavLink}
-                        to={`/channels/${channel.id}/gambling/slots`}
+                        to={`/channels/${channel.id}/gambling/slots-settings`}
                         label="Slots Settings"
                         leftSection={<IconPokerChip size={20} />}
                     />
                     <NavLink
                         component={RouterNavLink}
-                        to={`/channels/${channel.id}/gambling/roulette`}
+                        to={`/channels/${channel.id}/gambling/roulette-settings`}
                         label="Roulette Settings"
                         leftSection={<IconPokerChip size={20} />}
                     />

@@ -1,4 +1,4 @@
-import { set_form_errors } from '@/utils/form'
+import { setFormErrors } from '@/utils/form'
 import { Alert, Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useUpdateTimer } from '../timer.api'
@@ -16,7 +16,7 @@ export function EditTimerForm({ timer, onUpdated }: Props) {
             onUpdated?.(data)
         },
         onError: (error) => {
-            if (error.status === 422) set_form_errors(form, error.response.data)
+            if (error.status === 422) setFormErrors(form, error.response.data)
         },
     })
     const form = useForm<TimerUpdate>({
