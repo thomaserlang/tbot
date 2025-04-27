@@ -51,6 +51,7 @@ export function ButtonAction({ provider, onDeleted }: Props) {
 
             <Button
                 color="red"
+                variant="outline"
                 loading={deleteProvider.isPending}
                 onClick={() => {
                     openConfirmModal({
@@ -71,7 +72,7 @@ export function ButtonAction({ provider, onDeleted }: Props) {
                     })
                 }}
             >
-                Delete
+                Delete provider
             </Button>
         </Flex>
     )

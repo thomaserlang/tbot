@@ -12,7 +12,7 @@ export function ChannelUserCreateInviteButton({ channelId }: Props) {
 
     return (
         <>
-            <Button variant="outline" onClick={open}>
+            <Button variant="light" onClick={open}>
                 Create invite
             </Button>
             <Modal opened={opened} onClose={close} title="Create invite link">

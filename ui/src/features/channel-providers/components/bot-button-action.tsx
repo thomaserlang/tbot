@@ -35,6 +35,7 @@ export function BotButtonAction({ provider }: Props) {
             {provider.bot_provider && (
                 <Button
                     color="red"
+                    variant="outline"
                     loading={disconnectBotUrl.isPending}
                     onClick={() => {
                         openConfirmModal({
@@ -58,13 +59,14 @@ export function BotButtonAction({ provider }: Props) {
                         })
                     }}
                 >
-                    Disconnect bot {provider.bot_provider.name}
+                    Disconnect {provider.bot_provider.name}
                 </Button>
             )}
 
             {!provider.bot_provider && (
                 <Button
                     color="blue"
+                    variant="light"
                     loading={connectBotUrl.isPending}
                     onClick={() => {
                         connectBotUrl.mutate({
