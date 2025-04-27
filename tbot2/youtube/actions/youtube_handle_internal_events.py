@@ -12,6 +12,7 @@ from tbot2.channel_provider import (
     on_event_update_stream_title,
 )
 from tbot2.channel_timer import Timer, is_timer_active, on_handle_timer
+from tbot2.common import ErrorMessage
 
 from ..actions.youtube_live_broadcast_actions import update_live_broadcast
 from ..actions.youtube_live_chat_ban_actions import live_chat_ban
@@ -87,6 +88,7 @@ async def ban_user(
 async def unban_user(
     data: EventUnbanUser,
 ) -> bool:
-    # TODO: We need to log the ban/timeout since it seems
-    # the only way to unban is to have the ban id from youtube.
-    return False
+    raise ErrorMessage(
+        'Unban of user on YouTube is currently not supported',
+        type='not_supported',
+    )
