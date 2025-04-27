@@ -79,18 +79,17 @@ export function ChannelNavbar() {
                     to={`/channels/${channel.id}/quotes`}
                     label="Quotes"
                     leftSection={<IconQuote size={20} />}
-                    disabled
                 />
                 <NavLink
                     component={RouterNavLink}
                     to={`/channels/${channel.id}/gambling`}
-                    label="Gambling"
+                    label="Gambling Settings"
                     leftSection={<IconCoin size={20} />}
                 >
                     <NavLink
                         component={RouterNavLink}
                         to={`/channels/${channel.id}/gambling/point-settings`}
-                        label="Point Settings"
+                        label="Points Settings"
                         leftSection={<IconPokerChip size={20} />}
                     />
                     <NavLink

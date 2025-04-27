@@ -130,6 +130,14 @@ const protectedRoutes: RouteObject[] = [
                         './features/channel-gambling-slots/slots-settings.page'
                     ),
             },
+            {
+                path: 'quotes',
+                lazy: () => import('./features/channel-quotes/quotes.page'),
+            },
+            {
+                path: 'quotes/:channelQuoteId',
+                lazy: () => import('./features/channel-quotes/quotes.page'),
+            },
         ],
     },
     {

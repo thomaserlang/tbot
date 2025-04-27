@@ -2,7 +2,7 @@ import pytest
 from httpx import AsyncClient
 
 from tbot2.channel_quote import ChannelQuoteCreate, ChannelQuoteUpdate
-from tbot2.channel_quote.types import TChannelQuoteScope
+from tbot2.channel_quote.types import ChannelQuoteScope
 from tbot2.testbase import run_file, user_signin
 
 
@@ -10,7 +10,7 @@ from tbot2.testbase import run_file, user_signin
 async def test_channel_quote_routes(client: AsyncClient) -> None:
     user = await user_signin(
         client,
-        scopes=[TChannelQuoteScope.READ, TChannelQuoteScope.WRITE],
+        scopes=[ChannelQuoteScope.READ, ChannelQuoteScope.WRITE],
     )
 
     response = await client.get(f'/api/2/channels/{user.channel.id}/quotes')

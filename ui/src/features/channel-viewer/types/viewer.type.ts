@@ -2,7 +2,7 @@ import { ChannelProviderStream } from '@/features/channel-stream'
 import { Provider } from '@/types/provider.type'
 import { Branded } from '@/utils/brand'
 
-export type ProviderViewerId = Branded<string, 'ChatterId'>
+export type ProviderViewerId = Branded<string, 'ProviderViewerId'>
 
 export interface ViewerName {
     provider: Provider

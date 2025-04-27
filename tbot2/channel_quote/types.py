@@ -1,6 +1,6 @@
 from tbot2.common import Scope
 
 
-class TChannelQuoteScope(Scope):
+class ChannelQuoteScope(Scope):
     READ = 'channel_quote:read'
     WRITE = 'channel_quote:write'

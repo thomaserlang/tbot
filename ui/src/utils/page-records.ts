@@ -19,3 +19,36 @@ export function pageRecordsFlatten<T = Record<string, unknown>, L = unknown>(
     if (!data) return []
     return data.pages.map((p) => p.records).flat()
 }
+
+export function removeRecord<T>(
+    oldData: InfiniteData<PageCursor<T>> | undefined,
+    matchFn: (item: T) => boolean
+): InfiniteData<PageCursor<T>> | undefined {
+    if (!oldData) return oldData
+    const pages = oldData.pages.map((page) => ({
+        ...page,
+        records: page.records.filter((item) => matchFn(item)),
+    }))
+    return {
+        ...oldData,
+        pages,
+    }
+}
+
+export function updateRecord<T>(
+    oldData: InfiniteData<PageCursor<T>> | undefined,
+    updatedRecord: T,
+    matchFn: (item: T) => boolean
+): InfiniteData<PageCursor<T>> | undefined {
+    if (!oldData) return oldData
+    const pages = oldData.pages.map((page) => ({
+        ...page,
+        records: page.records.map((item) =>
+            matchFn(item) ? updatedRecord : item
+        ),
+    }))
+    return {
+        ...oldData,
+        pages,
+    }
+}

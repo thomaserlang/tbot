@@ -4,7 +4,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from fastapi import APIRouter, Depends, HTTPException, Security
 
-from tbot2.channel_quote.types import TChannelQuoteScope
+from tbot2.channel_quote.types import ChannelQuoteScope
 from tbot2.common import TAccessLevel, TokenData
 from tbot2.dependecies import authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQuery, page_cursor
@@ -32,7 +32,7 @@ async def get_channel_quotes_route(
     channel_id: UUID,
     page: Annotated[PageCursorQuery, Depends()],
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChannelQuoteScope.READ])
+        TokenData, Security(authenticated, scopes=[ChannelQuoteScope.READ])
     ],
 ) -> PageCursor[ChannelQuote]:
     await token_data.channel_require_access(
@@ -63,7 +63,7 @@ async def get_channel_quote_route(
     channel_id: UUID,
     quote_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChannelQuoteScope.READ])
+        TokenData, Security(authenticated, scopes=[ChannelQuoteScope.READ])
     ],
 ) -> ChannelQuote:
     await token_data.channel_require_access(
@@ -90,7 +90,7 @@ async def get_channel_quote_by_number_route(
     channel_id: UUID,
     number: int,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChannelQuoteScope.READ])
+        TokenData, Security(authenticated, scopes=[ChannelQuoteScope.READ])
     ],
 ) -> ChannelQuote:
     await token_data.channel_require_access(
@@ -119,7 +119,7 @@ async def create_channel_quote_route(
     channel_id: UUID,
     data: ChannelQuoteCreate,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChannelQuoteScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelQuoteScope.WRITE])
     ],
 ) -> ChannelQuote:
     await token_data.channel_require_access(
@@ -143,7 +143,7 @@ async def update_channel_quote_route(
     quote_id: UUID,
     data: ChannelQuoteUpdate,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChannelQuoteScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelQuoteScope.WRITE])
     ],
 ) -> ChannelQuote:
     await token_data.channel_require_access(
@@ -170,18 +170,13 @@ async def update_channel_quote_route(
 @router.delete(
     '/channels/{channel_id}/quotes/{quote_id}',
     name='Delete Channel Quote',
-    responses={
-        204: {
-            'model': None,
-        },
-    },
     status_code=204,
 )
 async def delete_channel_quote_route(
     channel_id: UUID,
     quote_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[TChannelQuoteScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelQuoteScope.WRITE])
     ],
 ) -> None:
     await token_data.channel_require_access(

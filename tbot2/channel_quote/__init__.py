@@ -18,4 +18,4 @@ from .schemas.channel_quote_request_schemas import (
     ChannelQuoteUpdate as ChannelQuoteUpdate,
 )
 from .schemas.channel_quote_schema import ChannelQuote as ChannelQuote
-from .types import TChannelQuoteScope as TChannelQuoteScope
+from .types import ChannelQuoteScope as ChannelQuoteScope

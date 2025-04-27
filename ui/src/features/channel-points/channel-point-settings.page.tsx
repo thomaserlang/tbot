@@ -7,10 +7,10 @@ export function Component() {
 
     return (
         <>
-            <title>Point Settings</title>
+            <title>Points Settings</title>
             <Container size="xs">
                 <Title order={2} mb="md">
-                    Point Settings
+                    Points Settings
                 </Title>
                 <ChannelPointSettingsView channelId={channel.id} />
             </Container>
