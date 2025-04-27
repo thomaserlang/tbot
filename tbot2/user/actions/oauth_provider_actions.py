@@ -10,7 +10,14 @@ from tbot2.channel import (
     ChannelCreate,
     create_channel,
 )
-from tbot2.common import Provider, Scope, TAccessLevel, TokenData, datetime_now
+from tbot2.common import (
+    ErrorMessage,
+    Provider,
+    Scope,
+    TAccessLevel,
+    TokenData,
+    datetime_now,
+)
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.oauth_provider_model import MUserOAuthProvider
@@ -134,8 +141,10 @@ async def create_user_oauth_provider(
                 user_id=user_id, provider=provider, session=session
             )
             if p:
-                raise ValueError(
-                    f"OAuth provider '{provider}' already connected for this user"
+                raise ErrorMessage(
+                    f'{provider} already connected for this user',
+                    status_code=400,
+                    type='oauth_provider_already_connected',
                 ) from None
 
             p = await get_oauth_provider_by_provider_user_id(
@@ -144,8 +153,10 @@ async def create_user_oauth_provider(
                 session=session,
             )
             if p:
-                raise ValueError(
-                    f'This {provider} account is already connected to a different user'
+                raise ErrorMessage(
+                    f'{provider} already connected to a different user',
+                    status_code=400,
+                    type='oauth_provider_already_connected',
                 ) from None
 
             raise
