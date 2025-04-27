@@ -1,8 +1,12 @@
 *
 
-!/tbot
-!/requirements.txt
-!/package-lock.json
+!/ui
+!/tbot2
+!/uv.lock
+!/vite.config.ts
+!/tsconfig.json
+!/tsconfig.node.json
+!/pyproject.toml
+!/postcss.config.cjs
 !/package.json
-!/webpack.config.js
-!/.babelrc
+!/package-lock.json

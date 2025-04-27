@@ -1,0 +1,65 @@
+import { ChannelId } from '@/features/channel/types'
+import { AccessLevel } from '@/types/access-level.type'
+import { set_form_errors } from '@/utils/form'
+import { Alert, Button, Flex } from '@mantine/core'
+import { useForm } from '@mantine/form'
+import { useCreateCommand } from '../command.api'
+import { Command, CommandCreate } from '../command.types'
+import { CommandForm } from './command-form'
+
+interface Props {
+    channelId: ChannelId
+    onCreated: (command: Command) => void
+}
+
+export function CreateCommandForm({ channelId, onCreated }: Props) {
+    const create = useCreateCommand({
+        onSuccess: (data) => {
+            onCreated(data)
+        },
+        onError: (error) => {
+            if (error.status === 422) set_form_errors(form, error.response.data)
+        },
+    })
+    const form = useForm<CommandCreate>({
+        mode: 'controlled',
+        initialValues: {
+            cmds: [],
+            patterns: [],
+            response: '',
+            active_mode: 'always',
+            global_cooldown: 5,
+            chatter_cooldown: 15,
+            mod_cooldown: 0,
+            enabled: true,
+            public: true,
+            access_level: AccessLevel.PUBLIC.toString(),
+            provider: 'all',
+        },
+    })
+
+    return (
+        <form
+            onSubmit={form.onSubmit((values) => {
+                create.mutate({
+                    channelId,
+                    data: values,
+                })
+            })}
+        >
+            <Flex gap="1rem" direction="column">
+                <CommandForm form={form} />
+
+                {create.isError && (
+                    <Alert color="red" title="Failed to create the command" />
+                )}
+
+                <Flex>
+                    <Button ml="auto" type="submit" loading={create.isPending}>
+                        Save
+                    </Button>
+                </Flex>
+            </Flex>
+        </form>
+    )
+}

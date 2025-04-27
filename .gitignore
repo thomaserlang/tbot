@@ -59,8 +59,10 @@ docs/_build/
 
 *.swp
 *.orig
-.vscode/settings.json
-.vscode/launch.json
+
+.env
+
+.venv/
 
 tbot/web/static/ui
 tbot/web/templates/ui

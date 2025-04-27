@@ -1,10 +1,9 @@
-version: '2'
 services:
   mariadb:
-    image: "mariadb:latest"
+    image: "mariadb:11.7-noble"
     command: 
       - "--character-set-server=utf8mb4"
-      - "--collation-server=utf8mb4_unicode_ci"
+      - "--collation-server=utf8mb4_uca1400_ai_ci"
     environment:
       - MYSQL_ROOT_PASSWORD=123456
       - MYSQL_DATABASE=tbot
@@ -13,7 +12,7 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
   redis:
-    image: "redis:latest"    
+    image: "redis:7"    
     ports:
       - "6379:6379"
   nginx: 
