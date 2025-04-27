@@ -18,21 +18,7 @@ class TBotBaseException(Exception):
         self.code = code
 
 
-class ErrorMessage(TBotBaseException):
-    def __init__(
-        self,
-        message: str,
-        *,
-        type: str = '',
-        code: int = 500,
-        errors: list[SubError] | None = None,
-    ) -> None:
-        super().__init__(
-            message,
-            type=type,
-            code=code,
-            errors=errors,
-        )
+class ErrorMessage(TBotBaseException): ...
 
 
 class ExternalApiError(ErrorMessage):
