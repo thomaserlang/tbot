@@ -28,7 +28,7 @@ async def weather_vars(
     chat_message: ChatMessage, command: TCommand, vars: MessageVars
 ) -> None:
     if not config.openweathermap_apikey:
-        raise ValueError('`openweathermap_apikey` is missing in the config')
+        raise CommandError('OpenWeatherMap API key is not set')
 
     city = (
         ' '.join(command.args)

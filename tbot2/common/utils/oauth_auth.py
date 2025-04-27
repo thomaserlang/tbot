@@ -17,7 +17,7 @@ from tbot2.channel_provider import (
     get_channel_provider_oauth,
     save_channel_provider_oauth,
 )
-from tbot2.common import Provider, datetime_now
+from tbot2.common import ErrorMessage, Provider, datetime_now
 from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.common.exceptions import ExternalApiError
 from tbot2.database import database
@@ -193,7 +193,11 @@ class ChannelProviderBotOAuthHelper(Auth):
             channel_id=channel_id,
         )
         if not bot_provider:
-            raise ValueError(f'No bot provider found for {self.provider}')
+            raise ErrorMessage(
+                f'No bot provider found for {self.provider}',
+                code=500,
+                type='bot_provider_not_found',
+            )
 
         expires_in = (
             bot_provider.expires_at.astimezone(tz=UTC) - datetime_now()
@@ -237,7 +241,11 @@ class ChannelProviderBotOAuthHelper(Auth):
             provider=self.provider,
         )
         if not bot_provider:
-            raise ValueError(f'No bot provider found for {self.provider}')
+            raise ErrorMessage(
+                f'No bot provider found for {self.provider}',
+                code=500,
+                type='bot_provider_not_found',
+            )
         async with AsyncClient() as client:
             response = await client.post(
                 self.token_url,

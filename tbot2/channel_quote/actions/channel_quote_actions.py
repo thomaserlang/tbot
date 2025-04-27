@@ -4,7 +4,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from uuid6 import uuid7
 
-from tbot2.common import datetime_now
+from tbot2.common import ErrorMessage, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.channel_quote_model import MChannelQuote
@@ -77,7 +77,11 @@ async def create_channel_quote(
             )
         )
         if number is None:
-            raise ValueError('No number')
+            raise ErrorMessage(
+                'Failed to get channel quote number',
+                code=500,
+                type='channel_quote_number_error',
+            )
 
         uuid = uuid7()
         await session.execute(
@@ -114,7 +118,11 @@ async def update_channel_quote(
         )
 
         if result.rowcount == 0:
-            raise ValueError('Unknown channel quote')
+            raise ErrorMessage(
+                'Failed to update channel quote',
+                code=400,
+                type='channel_quote_not_found',
+            )
 
         quote = await get_channel_quote(quote_id=quote_id, session=session)
         if not quote:
@@ -130,7 +138,11 @@ async def delete_channel_quote(
     async with get_session(session) as session:
         quote = await get_channel_quote(quote_id=quote_id, session=session)
         if not quote:
-            raise ValueError('Unknown channel quote')
+            raise ErrorMessage(
+                'Failed to delete channel quote',
+                code=400,
+                type='channel_quote_not_found',
+            )
 
         r = await session.execute(
             sa.delete(MChannelQuote).where(MChannelQuote.id == quote_id)

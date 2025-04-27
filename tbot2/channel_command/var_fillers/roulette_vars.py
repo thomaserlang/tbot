@@ -20,4 +20,4 @@ async def roulette_vars(
         )
         vars['gamble_roulette'].value = result.message
     except ErrorMessage as e:
-        raise CommandSyntaxError(e) from e
+        raise CommandSyntaxError(e.message) from e

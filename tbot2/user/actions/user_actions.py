@@ -5,6 +5,7 @@ import sqlalchemy as sa
 from sqlalchemy.exc import IntegrityError
 from uuid6 import uuid7
 
+from tbot2.common import ErrorMessage
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.user_model import MUser
@@ -58,7 +59,7 @@ async def create_user(
             )
             user = await get_user(user_id=user_id, session=session)
             if not user:
-                raise ValueError('User could not be created')
+                raise Exception('User could not be created')
 
             return user
         except IntegrityError as e:
@@ -66,13 +67,21 @@ async def create_user(
                 sa.select(MUser.id).where(MUser.username == data.username)
             )
             if result:
-                raise ValueError(f"Username '{data.username}' already exists") from e
+                raise ErrorMessage(
+                    f"Username '{data.username}' already exists",
+                    code=400,
+                    type='username_already_exists',
+                ) from e
 
             result = await session.scalar(
                 sa.select(MUser.id).where(MUser.email == data.email)
             )
             if result:
-                raise ValueError(f"Email '{data.email}' already exists") from e
+                raise ErrorMessage(
+                    f"Email '{data.email}' already exists",
+                    code=400,
+                    type='email_already_exists',
+                ) from e
 
             raise
 
@@ -92,7 +101,7 @@ async def update_user(
             )
             user = await get_user(user_id=user_id, session=session)
             if not user:
-                raise ValueError('User could not be updated')
+                raise Exception('User could not be updated')
             return user
         except IntegrityError as e:
             if data.username:
@@ -100,18 +109,24 @@ async def update_user(
                     username=data.username, session=session
                 )
                 if user:
-                    raise ValueError(
-                        f"Username '{data.username}' already exists"
+                    raise ErrorMessage(
+                        f"Username '{data.username}' already exists",
+                        code=400,
+                        type='username_already_exists',
                     ) from e
 
             if data.email:
                 user = await get_user_by_email(email=data.email, session=session)
                 if user:
-                    raise ValueError(f"Email '{data.email}' already exists") from e
+                    raise ErrorMessage(
+                        f"Email '{data.email}' already exists",
+                        code=400,
+                        type='email_already_exists',
+                    ) from e
 
             user = await get_user(user_id=user_id, session=session)
             if not user:
-                raise ValueError('User could not be updated') from e
+                raise Exception('User could not be updated') from e
 
             raise
 

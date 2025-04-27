@@ -3,6 +3,7 @@ from uuid import UUID
 import sqlalchemy as sa
 
 from tbot2.channel_stream import get_channel_provider_stream
+from tbot2.common import ErrorMessage
 from tbot2.contexts import AsyncSession, get_session
 
 from ..actions.provider_viewer_name_actions import save_viewers_name_history
@@ -58,8 +59,10 @@ async def inc_stream_viewer_watchtime(
         )
         provider_viewer_ids = {viewer.provider_viewer_id for viewer in provider_viewers}
         if not stream:
-            raise ValueError(
-                f'Channel provider stream {channel_provider_stream_id} not found'
+            raise ErrorMessage(
+                'Channel provider stream not found',
+                code=404,
+                type='channel_provider_stream_not_found',
             )
         r = await session.execute(
             sa.update(MChannelProviderStreamViewerWatchtime.__table__)  # type: ignore

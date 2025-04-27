@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from uuid6 import uuid7
 
 from tbot2.channel_timer.models.timer_model import MChannelTimer
-from tbot2.common import datetime_now
+from tbot2.common import ErrorMessage, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..schemas.timer_schemas import Timer, TimerCreate, TimerUpdate
@@ -86,7 +86,11 @@ async def update_timer(
             session=session,
         )
         if not timer:
-            raise ValueError('Timer not found')
+            raise ErrorMessage(
+                'Timer not found',
+                code=404,
+                type='timer_not_found',
+            )
 
         if (data.interval and timer.interval != data.interval) or (
             data.enabled and not timer.enabled
@@ -124,7 +128,11 @@ async def delete_timer(
             session=session,
         )
         if not timer:
-            raise ValueError('Timer not found')
+            raise ErrorMessage(
+                'Timer not found',
+                code=404,
+                type='timer_not_found',
+            )
         await session.execute(
             sa.delete(MChannelTimer.__table__).where(MChannelTimer.id == timer_id)  # type: ignore
         )

@@ -111,7 +111,7 @@ async def create_channel_provider_stream(
             channel_provider_stream_id=id, session=session
         )
         if not stream:
-            raise ValueError('Failed to create channel provider stream')
+            raise Exception('Failed to create channel provider stream')
 
         data = ChannelProviderRequest(
             stream_live=True,

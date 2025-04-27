@@ -66,14 +66,14 @@ async def disconnect_channel_bot_provider(
             raise ErrorMessage(
                 f'Failed to disconnect channel bot provider {channel_provider_id}: '
                 'no provider found',
-                status_code=400,
+                code=400,
                 type='channel_provider_not_found',
             )
         if not channel_provider.bot_provider:
             raise ErrorMessage(
                 f'Failed to disconnect channel bot provider {channel_provider_id}: '
                 'no bot provider found',
-                status_code=400,
+                code=400,
                 type='bot_provider_not_found',
             )
 

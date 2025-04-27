@@ -24,18 +24,18 @@ class ErrorMessage(TBotBaseException):
         message: str,
         *,
         type: str = '',
-        status_code: int = 500,
+        code: int = 500,
         errors: list[SubError] | None = None,
     ) -> None:
         super().__init__(
             message,
             type=type,
-            code=status_code,
+            code=code,
             errors=errors,
         )
 
 
-class ExternalApiError(TBotBaseException):
+class ExternalApiError(ErrorMessage):
     def __init__(
         self,
         message: str,

@@ -4,7 +4,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from uuid6 import uuid7
 
-from tbot2.common import datetime_now
+from tbot2.common import ErrorMessage, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
 from ..models.channel_stream_model import MChannelStream
@@ -55,8 +55,14 @@ async def get_or_create_channel_stream(
                 )
             )
         except sa.exc.IntegrityError as e:
-            raise ValueError('Channel not found') from e
+            raise ErrorMessage(
+                'Channel not found',
+                code=400,
+                type='channel_not_found',
+            ) from e
         stream = await get_channel_stream(channel_stream_id=id, session=session)
         if not stream:
-            raise ValueError('Failed to create channel stream')
+            raise Exception(
+                'Channel stream could not be created',
+            )
         return stream

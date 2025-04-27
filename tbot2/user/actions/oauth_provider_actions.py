@@ -143,7 +143,7 @@ async def create_user_oauth_provider(
             if p:
                 raise ErrorMessage(
                     f'{provider} already connected for this user',
-                    status_code=400,
+                    code=400,
                     type='oauth_provider_already_connected',
                 ) from None
 
@@ -155,7 +155,7 @@ async def create_user_oauth_provider(
             if p:
                 raise ErrorMessage(
                     f'{provider} already connected to a different user',
-                    status_code=400,
+                    code=400,
                     type='oauth_provider_already_connected',
                 ) from None
 
