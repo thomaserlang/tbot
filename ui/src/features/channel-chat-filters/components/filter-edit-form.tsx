@@ -1,6 +1,6 @@
+import { set_form_errors } from '@/utils/form'
 import { Alert, Button, Flex } from '@mantine/core'
 import { UseFormReturnType } from '@mantine/form'
-import { AxiosError } from 'axios'
 import { ChatFilter } from '../filter-registry'
 import { useUpdateChatFilter } from '../filter.api'
 import { ChatFilterRequestBase } from '../filter.types'
@@ -24,16 +24,7 @@ export function EditFilterForm<F extends ChatFilter>({
             onUpdated?.(data as F)
         },
         onError: (error) => {
-            if (error instanceof AxiosError) {
-                if (error.status === 422) {
-                    for (const e of error.response?.data.detail) {
-                        form.setFieldError(
-                            e.loc[1],
-                            e.msg.replace('String', '')
-                        )
-                    }
-                }
-            }
+            if (error.status === 422) set_form_errors(form, error.response.data)
         },
     })
 

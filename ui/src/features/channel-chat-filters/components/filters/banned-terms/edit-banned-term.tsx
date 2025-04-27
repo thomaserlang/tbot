@@ -1,7 +1,7 @@
 import { ChannelId } from '@/features/channel/types'
+import { set_form_errors } from '@/utils/form'
 import { Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { AxiosError } from 'axios'
 import { BannedTermForm } from './banned-term-form'
 import { useUpdateBannedTerm } from './banned-term.api'
 import { BannedTerm, BannedTermRequest } from './banned-terms.types'
@@ -19,16 +19,7 @@ export function EditBannedTerm({ channelId, bannedTerm, onUpdated }: Props) {
             close()
         },
         onError: (error) => {
-            if (error instanceof AxiosError) {
-                if (error.status === 422) {
-                    for (const e of error.response?.data.detail) {
-                        form.setFieldError(
-                            e.loc[1],
-                            e.msg.replace('String', '')
-                        )
-                    }
-                }
-            }
+            if (error.status === 422) set_form_errors(form, error.response.data)
         },
     })
 

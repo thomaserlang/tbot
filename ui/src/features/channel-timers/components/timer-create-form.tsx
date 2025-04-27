@@ -1,7 +1,7 @@
 import { ChannelId } from '@/features/channel/types'
+import { set_form_errors } from '@/utils/form'
 import { Alert, Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { AxiosError } from 'axios'
 import { useCreateTimer } from '../timer.api'
 import { Timer, TimerCreate } from '../timer.types'
 import { TimerForm } from './timer-form'
@@ -17,16 +17,7 @@ export function CreateTimerForm({ channelId, onCreated }: Props) {
             onCreated(data)
         },
         onError: (error) => {
-            if (error instanceof AxiosError) {
-                if (error.status === 422) {
-                    for (const e of error.response?.data.detail) {
-                        form.setFieldError(
-                            e.loc.slice(1).join('.'),
-                            e.msg.replace('String', '')
-                        )
-                    }
-                }
-            }
+            if (error.status === 422) set_form_errors(form, error.response.data)
         },
     })
     const form = useForm<TimerCreate>({

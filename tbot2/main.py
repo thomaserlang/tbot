@@ -2,7 +2,10 @@ from collections.abc import AsyncGenerator
 
 from fastapi import FastAPI, Request, Response
 from fastapi.concurrency import asynccontextmanager
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from tbot2.auth_backend import AuthBackend
@@ -16,7 +19,9 @@ from tbot2.channel_quote.router import channel_quotes_router
 from tbot2.channel_timer.router import channel_timer_router
 from tbot2.channel_user_access.router import channel_user_access_router
 from tbot2.channel_viewer.router import channel_stats_router
+from tbot2.common import Error, TBotBaseException
 from tbot2.common.constants import APP_TITLE
+from tbot2.common.utils.pydantic_response import request_validation_error_to_error
 from tbot2.config_settings import config
 from tbot2.database import database
 from tbot2.dependecies import PlainResponse
@@ -36,9 +41,36 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
 
 app = FastAPI(
     title=f'{APP_TITLE} API',
-    docs_url='/api/2/redoc',
+    redoc_url='/api/2/docs',
+    openapi_url='/api/2/openapi.json',
     version='2.0',
     lifespan=lifespan,
+    responses={
+        422: {
+            'model': Error,
+            'description': 'Validation error',
+        },
+        500: {
+            'model': Error,
+            'description': 'Internal server error',
+        },
+        400: {
+            'model': Error,
+            'description': 'Bad request',
+        },
+        401: {
+            'model': Error,
+            'description': 'Unauthorized',
+        },
+        403: {
+            'model': Error,
+            'description': 'Forbidden',
+        },
+        404: {
+            'model': Error,
+            'description': 'Not found',
+        },
+    },
 )
 app.add_middleware(AuthenticationMiddleware, backend=AuthBackend())
 app.add_middleware(
@@ -48,16 +80,6 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
-
-
-@app.exception_handler(PlainResponse)
-async def plain_response_handler(_: Request, exc: PlainResponse) -> Response:
-    return Response(
-        content=exc.content,
-        status_code=exc.status_code,
-    )
-
-
 app.include_router(twitch_router, prefix='/api/2')
 app.include_router(channel_quotes_router, prefix='/api/2')
 app.include_router(command_router, prefix='/api/2')
@@ -73,3 +95,60 @@ app.include_router(bot_provider_routes, prefix='/api/2')
 app.include_router(chatlog_router, prefix='/api/2')
 app.include_router(youtube_router, prefix='/api/2')
 app.include_router(health_router)
+
+
+@app.exception_handler(PlainResponse)
+async def plain_response_handler(_: Request, exc: PlainResponse) -> Response:
+    return Response(
+        content=exc.content,
+        status_code=exc.status_code,
+    )
+
+
+@app.exception_handler(TBotBaseException)
+async def api_error(request: Request, exc: TBotBaseException) -> JSONResponse:
+    return JSONResponse(
+        status_code=exc.code,
+        content=Error(
+            code=exc.code,
+            message=exc.message,
+            type=exc.type,
+            errors=exc.errors,
+        ).model_dump(),
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=422,
+        content=request_validation_error_to_error(exc).model_dump(),
+    )
+
+
+@app.exception_handler(Exception)
+async def generic_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    return JSONResponse(
+        status_code=500,
+        content=Error(
+            code=500,
+            message='Internal server error',
+            type='internal_server_error',
+            errors=[],
+        ).model_dump(),
+    )
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=Error(
+            code=exc.status_code,
+            message=exc.detail,
+            type='not_found',
+            errors=[],
+        ).model_dump(),
+    )

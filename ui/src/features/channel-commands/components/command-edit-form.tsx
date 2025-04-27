@@ -1,6 +1,6 @@
+import { set_form_errors } from '@/utils/form'
 import { Alert, Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { AxiosError } from 'axios'
 import { useUpdateCommand } from '../command.api'
 import { Command, CommandUpdate } from '../command.types'
 import { CommandForm } from './command-form'
@@ -16,16 +16,7 @@ export function EditCommandForm({ command, onUpdated }: Props) {
             onUpdated?.(data)
         },
         onError: (error) => {
-            if (error instanceof AxiosError) {
-                if (error.status === 422) {
-                    for (const e of error.response?.data.detail) {
-                        form.setFieldError(
-                            e.loc[1],
-                            e.msg.replace('String', '')
-                        )
-                    }
-                }
-            }
+            if (error.status === 422) set_form_errors(form, error.response.data)
         },
     })
     const form = useForm<CommandUpdate>({

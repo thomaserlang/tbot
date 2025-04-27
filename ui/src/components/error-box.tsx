@@ -22,23 +22,8 @@ export function errorMessageFromResponse(errorObj: any): ReactNode {
     if (typeof errorObj === 'string') return <>{errorObj}</>
 
     if (errorObj.isAxiosError) {
-        const error: AxiosError = errorObj
-
-        const data = error.response?.data as any
-        if (error.status === 422) {
-            for (const e of data.detail) {
-                if (e.loc.length >= 1) {
-                    return (
-                        <>
-                            {e.msg.replace('String', '')} {e.loc[1]}
-                        </>
-                    )
-                }
-            }
-        }
-        if (data?.detail) return <>{String(data?.detail)}</>
-
-        return <>{error.message}</>
+        const error = errorObj.response?.data as APIError
+        if (error?.message) return <>{error.message}</>
     }
-    return <>{errorObj.detail}</>
+    return <>{errorObj.message}</>
 }

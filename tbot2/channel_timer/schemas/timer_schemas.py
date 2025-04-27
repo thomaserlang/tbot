@@ -58,7 +58,7 @@ class TimerCreate(BaseRequestSchema):
     def check_messages(cls, values: list[str] | None) -> list[str] | None:
         if values is None:
             return None
-        return [message.strip() for message in values if message.strip()]
+        return [message.strip() for message in values]
 
 
 class TimerUpdate(BaseRequestSchema):
@@ -93,4 +93,4 @@ class TimerUpdate(BaseRequestSchema):
     def check_messages(cls, values: list[str] | None) -> list[str] | None:
         if values is None:
             return None
-        return [message.strip() for message in values if message.strip()]
+        return [message.strip() for message in values]

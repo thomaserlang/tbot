@@ -1,8 +1,13 @@
+from .exceptions import ErrorMessage as ErrorMessage
+from .exceptions import ExternalApiError as ExternalApiError
+from .exceptions import TBotBaseException as TBotBaseException
 from .schemas.base_request_schema import BaseRequestSchema as BaseRequestSchema
 from .schemas.base_schema import BaseSchema as BaseSchema
 from .schemas.chat_message_schema import ChatMessage as ChatMessage
 from .schemas.chat_message_schema import ChatMessageType as ChatMessageType
 from .schemas.connect_url_schema import ConnectUrl as ConnectUrl
+from .schemas.error_schema import Error as Error
+from .schemas.error_schema import SubError as SubError
 from .schemas.oauth2_client_schemas import (
     Oauth2AuthorizeParams as Oauth2AuthorizeParams,
 )

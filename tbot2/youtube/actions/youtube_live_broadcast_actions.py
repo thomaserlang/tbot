@@ -125,7 +125,7 @@ async def update_live_broadcast(
             'part': ','.join(PART),
         },
         json={
-            'id2': live_broadcast_id,
+            'id': live_broadcast_id,
             **request.model_dump(exclude_unset=True, exclude_none=True, mode='json'),
         },
     )
