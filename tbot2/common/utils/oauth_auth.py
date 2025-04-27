@@ -126,7 +126,11 @@ class ChannelProviderOAuthHelper(Auth):
                 },
             )
             if response.status_code >= 400:
-                raise ExternalApiError(response.status_code, response.text)
+                raise ExternalApiError(
+                    f'Error: {response.status_code}',
+                    response=response,
+                    request=response.request,
+                )
             data = response.json()
 
             await save_channel_provider_oauth(
@@ -179,7 +183,7 @@ class ChannelProviderBotOAuthHelper(Auth):
 
     async def get_access_token(self, channel_id: UUID) -> str:
         access_token = await database.redis.get(
-            f'channel_provider_bot_oauth:v2:{self.provider}:{channel_id}',
+            f'channel_provider_bot_oauth:{self.provider}:{channel_id}',
         )
         if access_token:
             return access_token
@@ -208,7 +212,7 @@ class ChannelProviderBotOAuthHelper(Auth):
         self, channel_id: UUID, access_token: str, expires_in: float
     ) -> None:
         await database.redis.set(
-            f'channel_provider_bot_oauth:v2:{self.provider}:{channel_id}',
+            f'channel_provider_bot_oauth:{self.provider}:{channel_id}',
             access_token,
             ex=int(expires_in),
         )
@@ -216,7 +220,7 @@ class ChannelProviderBotOAuthHelper(Auth):
     async def refresh_token(self, channel_id: UUID) -> str:
         logger.debug('Refreshing token', channel_id=channel_id, provider=self.provider)
         async with database.redis.lock(
-            f'lock_channel_provider_bot_oauth:v2:{self.provider}:{channel_id}',
+            f'lock_channel_provider_bot_oauth:{self.provider}:{channel_id}',
             timeout=2.0,
         ) as lock:
             if await lock.owned():
@@ -245,7 +249,11 @@ class ChannelProviderBotOAuthHelper(Auth):
                 },
             )
             if response.status_code >= 400:
-                raise ExternalApiError(response.status_code, response.text)
+                raise ExternalApiError(
+                    f'Error: {response.status_code}',
+                    response=response,
+                    request=response.request,
+                )
             data = response.json()
 
             await save_bot_provider(

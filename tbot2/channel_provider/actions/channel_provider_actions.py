@@ -7,6 +7,7 @@ from uuid6 import uuid7
 from tbot2.common import Provider
 from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
+from tbot2.database import database
 
 from ..models.channel_provider_model import (
     MChannelProvider,
@@ -103,6 +104,11 @@ async def save_channel_provider(
             )
             .values(**data_)
         )
+
+        if data.bot_provider_id:
+            await database.redis.delete(
+                f'channel_provider_bot_oauth:{provider}:{channel_id}',
+            )
 
         if r.rowcount == 0:
             id = uuid7()

@@ -2,9 +2,10 @@ from collections.abc import Awaitable, Callable
 from uuid import UUID
 
 import sqlalchemy as sa
+from loguru import logger
 
 from tbot2.bot_providers import BotProvider, MBotProvider, delete_bot_provider
-from tbot2.common import Provider
+from tbot2.common import ErrorMessage, Provider
 from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 
@@ -60,15 +61,20 @@ async def disconnect_channel_bot_provider(
             channel_provider_id=channel_provider_id,
             session=session,
         )
-        if not channel_provider or not channel_provider.channel_id != channel_id:
-            raise ValueError(
+        logger.info(channel_provider)
+        if not channel_provider or channel_provider.channel_id != channel_id:
+            raise ErrorMessage(
                 f'Failed to disconnect channel bot provider {channel_provider_id}: '
-                'no provider found'
+                'no provider found',
+                status_code=400,
+                type='channel_provider_not_found',
             )
         if not channel_provider.bot_provider:
-            raise ValueError(
+            raise ErrorMessage(
                 f'Failed to disconnect channel bot provider {channel_provider_id}: '
-                'no bot provider found'
+                'no bot provider found',
+                status_code=400,
+                type='bot_provider_not_found',
             )
 
         await save_channel_provider(

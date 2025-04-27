@@ -38,7 +38,7 @@ async def ban_user_route(
     channel_provider = await get_channel_provider_by_id(
         channel_provider_id=channel_provider_id,
     )
-    if not channel_provider or not channel_provider.channel_id == channel_id:
+    if not channel_provider or channel_provider.channel_id != channel_id:
         raise HTTPException(status_code=404, detail='Channel provider not found')
 
     results = await fire_event_ban_user(
@@ -77,7 +77,7 @@ async def unban_user_route(
     channel_provider = await get_channel_provider_by_id(
         channel_provider_id=channel_provider_id,
     )
-    if not channel_provider or not channel_provider.channel_id == channel_id:
+    if not channel_provider or channel_provider.channel_id != channel_id:
         raise HTTPException(status_code=404, detail='Channel provider not found')
 
     results = await fire_event_unban_user(

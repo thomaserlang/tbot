@@ -5,6 +5,7 @@ import sqlalchemy as sa
 
 from tbot2.common import Provider, datetime_now
 from tbot2.contexts import AsyncSession, get_session
+from tbot2.database import database
 
 from ..models.channel_provider_model import MChannelProvider
 from ..models.channel_provider_oauth_model import MChannelProviderOAuth
@@ -70,4 +71,16 @@ async def save_channel_provider_oauth(
                     **data_,
                 ),
             )
+        else:
+            from .channel_provider_actions import get_channel_provider_by_id
+
+            channel_provider = await get_channel_provider_by_id(
+                channel_provider_id=channel_provider_id,
+                session=session,
+            )
+            if channel_provider:
+                await database.redis.delete(
+                    f'channel_provider_oauth:{channel_provider.provider}:{channel_provider.channel_id}',
+                )
+
         return True
