@@ -100,9 +100,9 @@ export function SlotsSettingsForm({ settings }: Props) {
                     />
 
                     <Textarea
-                        label="All in Lose message"
-                        key={form.key('allin_lose_win_message')}
-                        {...form.getInputProps('allin_lose_win_message')}
+                        label="All in lose message"
+                        key={form.key('allin_lose_message')}
+                        {...form.getInputProps('allin_lose_message')}
                     />
                 </SimpleGrid>
 
