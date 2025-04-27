@@ -23,7 +23,7 @@ export function ProvidersView({ channelProviders: channelProviders }: Props) {
     }
 
     return (
-        <Flex gap="2rem" wrap={'wrap'}>
+        <Flex gap="1rem" wrap={'wrap'}>
             {channelProviders.map((channelProvider) => (
                 <Paper key={channelProvider.id} withBorder p="0.5rem" w={300}>
                     <Text fw={500} size="lg">
