@@ -1,18 +1,14 @@
 from tbot2.common import BaseSchema
 
 
-class YouTubeSubSubError(BaseSchema):
+class YouTubeSubError(BaseSchema):
     message: str
     domain: str
     reason: str
     extendedHelp: str | None = None
 
 
-class YouTubeSubError(BaseSchema):
+class YouTubeError(BaseSchema):
     code: int
     message: str
-    errors: list[YouTubeSubSubError]
-
-
-class YouTubeError(BaseSchema):
-    error: YouTubeSubError
+    errors: list[YouTubeSubError]

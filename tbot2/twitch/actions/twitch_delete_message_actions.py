@@ -1,9 +1,8 @@
 from uuid import UUID
 
-from loguru import logger
-
 from tbot2.channel_provider import get_channel_bot_provider
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.twitch.exceptions import TwitchException
 
 from ..twitch_http_client import twitch_bot_client
 
@@ -34,6 +33,8 @@ async def twitch_delete_message(
         },
     )
     if response.status_code >= 400:
-        logger.error(f'twitch_delete_message: {response.status_code} {response.text}')
-        return False
+        raise TwitchException(
+            response=response,
+            request=response.request,
+        )
     return True

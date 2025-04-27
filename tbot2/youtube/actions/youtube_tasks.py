@@ -82,8 +82,8 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
                 broadcast_status='active',
             )
         except YouTubeException as e:
-            if e.error.error.errors:
-                if e.error.error.errors[0].reason == 'liveStreamingNotEnabled':
+            if e.error.errors:
+                if e.error.errors[0].reason == 'liveStreamingNotEnabled':
                     logger.debug(
                         'Live streaming is not enabled for this channel, '
                         'skipping live broadcast check',
@@ -169,7 +169,7 @@ async def handle_broadcast_live_chat(
                         page_token=page_token or '',
                     )
                 except YouTubeException as e:
-                    for error in e.error.error.errors:
+                    for error in e.error.errors:
                         if error.reason == 'liveChatEnded':
                             await end_stream(
                                 channel_provider=channel_provider,
@@ -187,7 +187,7 @@ async def handle_broadcast_live_chat(
                             'error': e.error,
                         },
                     )
-                    if e.status_code in (403, 404):
+                    if e.error.code in (403, 404):
                         return
                     await asyncio.sleep(60)
                     continue

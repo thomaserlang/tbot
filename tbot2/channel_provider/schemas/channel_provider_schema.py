@@ -11,8 +11,8 @@ from tbot2.common import (
     Provider,
     channel_provider_scopes,
 )
+from tbot2.common.exceptions import ErrorMessage
 from tbot2.contexts import AsyncSession
-from tbot2.exceptions import ErrorMessage
 
 
 class ChannelProviderBase(BaseSchema):

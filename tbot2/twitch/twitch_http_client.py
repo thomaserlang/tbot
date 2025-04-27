@@ -7,13 +7,13 @@ from pydantic import BaseModel
 from twitchAPI.object.base import TwitchObject
 from twitchAPI.twitch import Twitch
 
+from tbot2.common.exceptions import ErrorMessage
 from tbot2.common.utils.httpx_retry import retry_transport
 from tbot2.common.utils.oauth_auth import (
     ChannelProviderBotOAuthHelper,
     ChannelProviderOAuthHelper,
 )
 from tbot2.config_settings import config
-from tbot2.exceptions import ErrorMessage
 
 
 class TwitchOauth2ClientCredentials(OAuth2ClientCredentials):

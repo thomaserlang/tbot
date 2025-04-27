@@ -1,6 +1,6 @@
 from tbot2.channel_gambling import slots
 from tbot2.common import ChatMessage
-from tbot2.exceptions import ErrorMessage
+from tbot2.common.exceptions import ErrorMessage
 
 from ..exceptions import CommandSyntaxError
 from ..types import MessageVars, TCommand

@@ -18,9 +18,9 @@ from tbot2.channel_provider import (
     save_channel_provider_oauth,
 )
 from tbot2.common import Provider, datetime_now
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.common.exceptions import ExternalApiError
 from tbot2.database import database
-from tbot2.exceptions import InternalHttpError
 
 
 class ChannelProviderOAuthHelper(Auth):
@@ -126,7 +126,7 @@ class ChannelProviderOAuthHelper(Auth):
                 },
             )
             if response.status_code >= 400:
-                raise InternalHttpError(response.status_code, response.text)
+                raise ExternalApiError(response.status_code, response.text)
             data = response.json()
 
             await save_channel_provider_oauth(
@@ -245,7 +245,7 @@ class ChannelProviderBotOAuthHelper(Auth):
                 },
             )
             if response.status_code >= 400:
-                raise InternalHttpError(response.status_code, response.text)
+                raise ExternalApiError(response.status_code, response.text)
             data = response.json()
 
             await save_bot_provider(

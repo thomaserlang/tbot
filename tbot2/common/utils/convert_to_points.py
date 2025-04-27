@@ -1,4 +1,4 @@
-from tbot2.exceptions import ErrorMessage
+from tbot2.common.exceptions import ErrorMessage
 
 
 def convert_to_points(points_str: str | int, user_points: int) -> int:

@@ -2,9 +2,9 @@ from uuid import UUID
 
 from twitchAPI.twitch import ChannelFollower
 
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER
-from tbot2.exceptions import ErrorMessage
+from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 
+from ..exceptions import TwitchException
 from ..twitch_http_client import twitch_user_client
 
 
@@ -22,7 +22,10 @@ async def twitch_channel_follower(
         },
     )
     if response.status_code >= 400:
-        raise ErrorMessage(f'{response.status_code} {response.text}')
+        raise TwitchException(
+            response=response,
+            request=response.request,
+        )
     data = response.json()
     if not data['data']:
         return

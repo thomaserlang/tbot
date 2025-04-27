@@ -13,8 +13,8 @@ from tbot2.channel_provider import (
     on_delete_channel_provider,
     on_disconnect_channel_bot_provider,
 )
+from tbot2.common.exceptions import ErrorMessage
 from tbot2.config_settings import config
-from tbot2.exceptions import ErrorMessage
 
 from ..schemas.event_notification_schema import (
     EventSubRegistration,

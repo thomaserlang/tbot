@@ -16,8 +16,8 @@ from tbot2.channel_quote.router import channel_quotes_router
 from tbot2.channel_timer.router import channel_timer_router
 from tbot2.channel_user_access.router import channel_user_access_router
 from tbot2.channel_viewer.router import channel_stats_router
+from tbot2.common.constants import APP_TITLE
 from tbot2.config_settings import config
-from tbot2.constants import APP_TITLE
 from tbot2.database import database
 from tbot2.dependecies import PlainResponse
 from tbot2.health.router import health_router

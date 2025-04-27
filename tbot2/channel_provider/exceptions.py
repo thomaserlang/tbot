@@ -1,8 +1,8 @@
 from uuid import UUID
 
 from tbot2.common import Provider
+from tbot2.common.exceptions import ErrorMessage
 from tbot2.config_settings import config
-from tbot2.exceptions import ErrorMessage
 
 
 class ChannelProviderOAuthNotFound(ErrorMessage):

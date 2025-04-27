@@ -3,10 +3,10 @@ from uuid import UUID
 
 from twitchAPI.twitch import Chatter
 
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER
-from tbot2.exceptions import ErrorMessage
+from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..actions.twitch_channel_follower_action import twitch_user_client
+from ..exceptions import TwitchException
 from ..twitch_http_client import get_twitch_pagination_yield
 
 
@@ -25,5 +25,8 @@ async def get_twitch_chatters(
         },
     )
     if response.status_code >= 400:
-        raise ErrorMessage(f'{response.status_code} {response.text}')
+        raise TwitchException(
+            response=response,
+            request=response.request,
+        )
     return get_twitch_pagination_yield(response, schema=Chatter)

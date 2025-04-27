@@ -1,10 +1,8 @@
 from uuid import UUID
 
-from loguru import logger
+from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER
-
-from ..exceptions import YouTubeError, YouTubeException
+from ..exceptions import YouTubeException
 from ..http_client import youtube_bot_client, youtube_user_client
 from ..schemas.youtube_live_chat_message_schema import LiveChatMessages
 
@@ -27,7 +25,7 @@ async def get_live_chat_messages(
         },
     )
     if response.status_code >= 400:
-        raise YouTubeException(YouTubeError.model_validate(response.json()))
+        raise YouTubeException(response=response, request=response.request)
 
     return LiveChatMessages.model_validate(response.json())
 
@@ -56,8 +54,7 @@ async def send_live_chat_message(
         },
     )
     if response.status_code >= 400:
-        logger.error(f'send_live_chat_message: {response.status_code} {response.text}')
-        return False
+        raise YouTubeException(response=response, request=response.request)
     return True
 
 
@@ -75,6 +72,5 @@ async def delete_live_chat_message(
         },
     )
     if response.status_code >= 400:
-        logger.error(f'bot_delete_message: {response.status_code} {response.text}')
-        return False
+        raise YouTubeException(response=response, request=response.request)
     return True

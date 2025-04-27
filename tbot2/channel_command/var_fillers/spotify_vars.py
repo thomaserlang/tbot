@@ -1,5 +1,5 @@
 from tbot2.common import ChatMessage
-from tbot2.exceptions import ErrorMessage
+from tbot2.common.exceptions import ErrorMessage
 from tbot2.spotify import (
     get_spotify_currently_playing,
     get_spotify_playlist,

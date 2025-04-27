@@ -1,6 +1,6 @@
-from tbot2.exceptions import ErrorMessage
 from tbot2.twitch.schemas.twitch_chat_badge_schema import ChatBadge
 
+from ..exceptions import TwitchException
 from ..twitch_http_client import twitch_app_client
 
 
@@ -12,7 +12,10 @@ async def twitch_channel_badges(broadcaster_id: str) -> list[ChatBadge] | None:
         },
     )
     if response.status_code >= 400:
-        raise ErrorMessage(f'{response.status_code} {response.text}')
+        raise TwitchException(
+            response=response,
+            request=response.request,
+        )
     data = response.json()
     if not data['data']:
         return
@@ -24,8 +27,11 @@ async def twitch_global_badges() -> list[ChatBadge] | None:
         '/chat/badges/global',
     )
     if response.status_code >= 400:
-        raise ErrorMessage(f'{response.status_code} {response.text}')
+        raise TwitchException(
+            response=response,
+            request=response.request,
+        )
     data = response.json()
     if not data['data']:
-        return 
+        return
     return [ChatBadge.model_validate(badge) for badge in data['data']]

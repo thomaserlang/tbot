@@ -5,7 +5,7 @@ import pytest
 from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_gambling import slots
 from tbot2.channel_points import inc_points
-from tbot2.exceptions import ErrorMessage
+from tbot2.common.exceptions import ErrorMessage
 from tbot2.testbase import run_file
 
 

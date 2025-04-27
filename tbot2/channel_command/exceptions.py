@@ -1,4 +1,4 @@
-from tbot2.exceptions import ErrorMessage
+from tbot2.common.exceptions import ErrorMessage
 
 
 class CommandError(ErrorMessage): ...

@@ -1,10 +1,9 @@
 from uuid import UUID
 
-from loguru import logger
-
 from tbot2.channel_provider import get_channel_bot_provider
-from tbot2.constants import APP_TITLE, TBOT_CHANNEL_ID_HEADER
+from tbot2.common.constants import APP_TITLE, TBOT_CHANNEL_ID_HEADER
 
+from ..exceptions import TwitchException
 from ..twitch_http_client import twitch_bot_client
 
 
@@ -43,6 +42,8 @@ async def twitch_warn_chat_user(
         json=data,
     )
     if response.status_code >= 400:
-        logger.error(f'twitch_warn_chat_user: {response.status_code} {response.text}')
-        return False
+        raise TwitchException(
+            response=response,
+            request=response.request,
+        )
     return True

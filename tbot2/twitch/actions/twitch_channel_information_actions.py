@@ -1,8 +1,8 @@
 from uuid import UUID
 
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER
-from tbot2.exceptions import InternalHttpError
+from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 
+from ..exceptions import TwitchException
 from ..schemas.twitch_channel_information_schema import (
     ChannelInformation,
     ModifyChannelInformationRequest,
@@ -24,9 +24,9 @@ async def update_twitch_channel_information(
         },
     )
     if response.status_code >= 400:
-        raise InternalHttpError(
-            status_code=response.status_code,
-            body=f'{response.text}',
+        raise TwitchException(
+            response=response,
+            request=response.request,
         )
     return True
 
@@ -44,9 +44,9 @@ async def get_twitch_channel_information(
         },
     )
     if response.status_code >= 400:
-        raise InternalHttpError(
-            status_code=response.status_code,
-            body=f'{response.text}',
+        raise TwitchException(
+            response=response,
+            request=response.request,
         )
     data = response.json()
     if not data['data']:

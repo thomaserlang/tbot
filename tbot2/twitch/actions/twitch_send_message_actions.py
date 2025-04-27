@@ -1,9 +1,6 @@
-from loguru import logger
+from tbot2.channel_provider import ChannelProvider
 
-from tbot2.channel_provider import (
-    ChannelProvider,
-)
-
+from ..exceptions import TwitchException
 from ..twitch_http_client import twitch_app_client
 
 
@@ -26,6 +23,8 @@ async def twitch_bot_send_message(
         json=data,
     )
     if response.status_code >= 400:
-        logger.error(f'twitch_bot_send_message: {response.status_code} {response.text}')
-        return False
+        raise TwitchException(
+            response=response,
+            request=response.request,
+        )
     return True

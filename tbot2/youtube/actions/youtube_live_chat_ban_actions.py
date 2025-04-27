@@ -1,11 +1,10 @@
 from typing import Any, Literal
 from uuid import UUID
 
-from loguru import logger
-
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..actions.youtube_live_chat_message_actions import youtube_bot_client
+from ..exceptions import YouTubeException
 
 
 async def live_chat_ban(
@@ -38,6 +37,5 @@ async def live_chat_ban(
         },
     )
     if response.status_code >= 400:
-        logger.error(f'bot_ban_user: {response.status_code} {response.text}')
-        return False
+        raise YouTubeException(response=response, request=response.request)
     return True

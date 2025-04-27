@@ -4,10 +4,10 @@ from uuid import UUID
 from loguru import logger
 
 from tbot2.common import datetime_now
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER
-from tbot2.exceptions import ErrorMessage
+from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.common.exceptions import ErrorMessage
 
-from ..exceptions import YouTubeError, YouTubeException
+from ..exceptions import YouTubeException
 from ..http_client import youtube_user_client
 from ..schemas.youtube_live_broadcast_schema import (
     LiveBroadcast,
@@ -67,16 +67,16 @@ async def get_live_broadcasts(
         params['broadcastType'] = broadcast_type
     params['maxResults'] = 2
 
-    r = await youtube_user_client.get(
+    response = await youtube_user_client.get(
         '/liveBroadcasts',
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
         },
         params=params,
     )
-    if r.status_code >= 400:
-        raise YouTubeException(YouTubeError.model_validate(r.json()))
-    page = YoutubePage[LiveBroadcast].model_validate(r.json())
+    if response.status_code >= 400:
+        raise YouTubeException(response=response, request=response.request)
+    page = YoutubePage[LiveBroadcast].model_validate(response.json())
     return page.items
 
 
@@ -84,7 +84,7 @@ async def create_live_broadcast(
     channel_id: UUID,
     data: LiveBroadcastInsert,
 ) -> LiveBroadcast:
-    r = await youtube_user_client.post(
+    response = await youtube_user_client.post(
         '/liveBroadcasts',
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
@@ -94,9 +94,9 @@ async def create_live_broadcast(
         },
         json=data.model_dump(exclude_unset=True, exclude_none=True, mode='json'),
     )
-    if r.status_code >= 400:
-        raise YouTubeException(YouTubeError.model_validate(r.json()))
-    return LiveBroadcast.model_validate(r.json())
+    if response.status_code >= 400:
+        raise YouTubeException(response=response, request=response.request)
+    return LiveBroadcast.model_validate(response.json())
 
 
 async def update_live_broadcast(
@@ -116,7 +116,7 @@ async def update_live_broadcast(
     if snippet_title:
         request.snippet.title = snippet_title
 
-    r = await youtube_user_client.put(
+    response = await youtube_user_client.put(
         '/liveBroadcasts',
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
@@ -125,13 +125,13 @@ async def update_live_broadcast(
             'part': ','.join(PART),
         },
         json={
-            'id': live_broadcast_id,
+            'id2': live_broadcast_id,
             **request.model_dump(exclude_unset=True, exclude_none=True, mode='json'),
         },
     )
-    if r.status_code >= 400:
-        raise YouTubeException(YouTubeError.model_validate(r.json()))
-    return LiveBroadcast.model_validate(r.json())
+    if response.status_code >= 400:
+        raise YouTubeException(response=response, request=response.request)
+    return LiveBroadcast.model_validate(response.json())
 
 
 async def bind_live_broadcast(
@@ -139,7 +139,7 @@ async def bind_live_broadcast(
     live_broadcast_id: str,
     stream_id: str,
 ) -> LiveBroadcast:
-    r = await youtube_user_client.post(
+    response = await youtube_user_client.post(
         '/liveBroadcasts/bind',
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
@@ -150,9 +150,9 @@ async def bind_live_broadcast(
             'streamId': stream_id,
         },
     )
-    if r.status_code >= 400:
-        raise YouTubeException(YouTubeError.model_validate(r.json()))
-    return LiveBroadcast.model_validate(r.json())
+    if response.status_code >= 400:
+        raise YouTubeException(response=response, request=response.request)
+    return LiveBroadcast.model_validate(response.json())
 
 
 async def transition_live_broadcast(
@@ -160,7 +160,7 @@ async def transition_live_broadcast(
     live_broadcast_id: str,
     status: Literal['live', 'complete'] = 'live',
 ) -> LiveBroadcast:
-    r = await youtube_user_client.post(
+    response = await youtube_user_client.post(
         '/liveBroadcasts/transition',
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
@@ -171,9 +171,9 @@ async def transition_live_broadcast(
             'broadcastStatus': status,
         },
     )
-    if r.status_code >= 400:
-        raise YouTubeException(YouTubeError.model_validate(r.json()))
-    return LiveBroadcast.model_validate(r.json())
+    if response.status_code >= 400:
+        raise YouTubeException(response=response, request=response.request)
+    return LiveBroadcast.model_validate(response.json())
 
 
 async def create_new_broadcast_from_previous(

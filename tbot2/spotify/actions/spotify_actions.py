@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from tbot2.constants import TBOT_CHANNEL_ID_HEADER
-from tbot2.exceptions import ErrorMessage
+from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
+from tbot2.common.exceptions import ErrorMessage
 from tbot2.spotify.schemas.spotify_schema import (
     SpotifyCurrentlyPlaying,
     SpotifyCursorPaging,

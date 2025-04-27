@@ -1,5 +1,5 @@
-from tbot2.exceptions import InternalHttpError
 
+from ..exceptions import TwitchException
 from ..schemas.twitch_game_schema import Game, SearchCategoryResult
 from ..twitch_http_client import twitch_app_client
 
@@ -14,9 +14,9 @@ async def get_twitch_game(
         },
     )
     if response.status_code >= 400:
-        raise InternalHttpError(
-            status_code=response.status_code,
-            body=f'{response.text}',
+        raise TwitchException(
+            response=response,
+            request=response.request,
         )
     data = response.json()
     if not data['data']:
@@ -34,9 +34,9 @@ async def search_twitch_categories(
         },
     )
     if response.status_code >= 400:
-        raise InternalHttpError(
-            status_code=response.status_code,
-            body=f'{response.text}',
+        raise TwitchException(
+            response=response,
+            request=response.request,
         )
     data = response.json()
     return [SearchCategoryResult.model_validate(item) for item in data['data']]

@@ -3,8 +3,8 @@ from uuid import UUID
 
 from tbot2.channel_points import get_channel_point_settings, get_points, inc_points
 from tbot2.common import Provider, convert_to_points
+from tbot2.common.exceptions import ErrorMessage
 from tbot2.common.utils.fill_from_dict import fill_from_dict
-from tbot2.exceptions import ErrorMessage
 
 from ..actions.chatter_gambling_stats_actions import (
     inc_chatter_gambling_stats,
