@@ -185,6 +185,24 @@ async def youtube_auth_route(
 
     response = Oauth2TokenResponse.model_validate(response.json())
 
+    r = await client.get(
+        url='https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true',
+        headers={
+            'Authorization': f'Bearer {response.access_token}',
+        },
+    )
+    if r.status_code >= 400:
+        raise HTTPException(status_code=r.status_code, detail=r.text)
+
+    channels = YoutubePage[YoutubeChannel].model_validate(r.json())
+
+    if not channels.items:
+        raise HTTPException(
+            status_code=400,
+            detail='No channels found',
+        )
+    channel = channels.items[0]
+
     match params.state['mode']:
         case 'sign_in':
             if not response.id_token:
@@ -192,23 +210,6 @@ async def youtube_auth_route(
                     status_code=400,
                     detail='No id_token in response',
                 )
-
-            r = await client.get(
-                url='https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true',
-                headers={
-                    'Authorization': f'Bearer {response.access_token}',
-                },
-            )
-            if r.status_code >= 400:
-                raise HTTPException(status_code=r.status_code, detail=r.text)
-
-            channels = YoutubePage[YoutubeChannel].model_validate(r.json())
-            if not channels.items:
-                raise HTTPException(
-                    status_code=400,
-                    detail='No channels found',
-                )
-            channel = channels.items[0]
 
             async with get_session() as session:
                 result = await get_or_create_user(
@@ -240,21 +241,6 @@ async def youtube_auth_route(
             )
 
         case 'connect':
-            r = await client.get(
-                url='https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true',
-                headers={
-                    'Authorization': f'Bearer {response.access_token}',
-                },
-            )
-            if r.status_code >= 400:
-                raise HTTPException(status_code=r.status_code, detail=r.text)
-
-            channels = YoutubePage[YoutubeChannel].model_validate(r.json())
-            if not channels.items:
-                raise HTTPException(
-                    status_code=400,
-                    detail='No channels found',
-                )
             channel = channels.items[0]
             channel_provider = await save_channel_provider(
                 channel_id=UUID(params.state['channel_id']),
@@ -275,23 +261,28 @@ async def youtube_auth_route(
                 ),
             )
 
-        case 'connect_system_provider_bot':
-            r = await client.get(
-                url='https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true',
-                headers={
-                    'Authorization': f'Bearer {response.access_token}',
-                },
+        case 'connect_bot':
+            channel_id = UUID(params.state['channel_id'])
+            bot_provider = await save_bot_provider(
+                data=BotProviderRequest(
+                    provider='youtube',
+                    provider_user_id=channel.id,
+                    access_token=response.access_token,
+                    refresh_token=response.refresh_token,
+                    expires_in=response.expires_in,
+                    scope=params.scope,
+                    name=channel.snippet.title,
+                ),
             )
-            if r.status_code >= 400:
-                raise HTTPException(status_code=r.status_code, detail=r.text)
-            channels = YoutubePage[YoutubeChannel].model_validate(r.json())
-            if not channels.items:
-                raise HTTPException(
-                    status_code=400,
-                    detail='No channels found',
-                )
-            channel = channels.items[0]
+            await save_channel_provider(
+                channel_id=channel_id,
+                provider='youtube',
+                data=ChannelProviderRequest(
+                    bot_provider_id=bot_provider.id,
+                ),
+            )
 
+        case 'connect_system_provider_bot':
             await save_bot_provider(
                 data=BotProviderRequest(
                     provider='youtube',
