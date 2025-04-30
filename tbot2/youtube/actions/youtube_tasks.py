@@ -47,7 +47,7 @@ async def task_youtube_live() -> None:
                 )
                 continue
             channel_provider_ids[channel_provider.id] = asyncio.create_task(
-                check_for_live_broadcasts(channel_provider)
+                check_for_broadcast(channel_provider)
             )
 
             if channel_provider.stream_chat_id:
@@ -72,7 +72,7 @@ async def task_youtube_live() -> None:
 
 
 @logger.catch
-async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
+async def check_for_broadcast(channel_provider: ChannelProvider) -> None:
     with logger.contextualize(
         channel_provider_id=channel_provider.id,
     ):
