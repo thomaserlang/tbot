@@ -33,7 +33,11 @@ export async function getEmotes({
     return {
         emotes: emotes,
         emoteIds: Object.keys(emotes),
-        regex: new RegExp(`(${Object.keys(emotes).join('|')})`),
+        regex: new RegExp(
+            `(?:^|\\s)(${Object.keys(emotes)
+                .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+                .join('|')})(?=$|\\s)`
+        ),
     } as EmotesResponse
 }
 
