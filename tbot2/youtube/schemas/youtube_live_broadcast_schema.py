@@ -123,27 +123,27 @@ class LiveBroadcastInsertSnippet(BaseRequestSchema):
 
     title: Annotated[
         str,
-        Field(alias='title', description='The broadcast’s title (1–100 characters).'),
+        Field(alias='title', description="The broadcast's title (1-100 characters)."),
     ]
     scheduled_start_time: Annotated[
         datetime | None,
         Field(
             alias='scheduledStartTime',
-            description='The time the broadcast is scheduled to start (ISO 8601).',
+            description='The time the broadcast is scheduled to start (ISO 8601).',
         ),
     ]
     description: Annotated[
         str | None,
         Field(
             alias='description',
-            description='The broadcast’s description (up to 5000 characters).',
+            description="The broadcast's description (up to 5000 characters).",
         ),
     ] = None
     scheduled_end_time: Annotated[
         datetime | None,
         Field(
             alias='scheduledEndTime',
-            description='The time the broadcast is scheduled to end (ISO 8601).',
+            description='The time the broadcast is scheduled to end (ISO 8601).',
         ),
     ] = None
 
@@ -157,7 +157,7 @@ class LiveBroadcastInsertStatus(BaseRequestSchema):
         str,
         Field(
             alias='privacyStatus',
-            description='Broadcast’s privacy setting (private, public, or unlisted).',
+            description="Broadcast's privacy setting (private, public, or unlisted).",
         ),
     ]
     self_declared_made_for_kids: Annotated[
@@ -171,7 +171,7 @@ class LiveBroadcastInsertStatus(BaseRequestSchema):
 
 class MonitorStream(BaseRequestSchema):
     """
-    Settings for the broadcast’s monitor stream.
+    Settings for the broadcast's monitor stream.
     """
 
     enable_monitor_stream: Annotated[
@@ -199,7 +199,7 @@ class LiveBroadcastInsertContentDetails(BaseRequestSchema):
         MonitorStream | None,
         Field(
             alias='monitorStream',
-            description='Settings for the broadcast’s monitor stream.',
+            description="Settings for the broadcast's monitor stream.",
         ),
     ] = None
     enable_auto_start: Annotated[

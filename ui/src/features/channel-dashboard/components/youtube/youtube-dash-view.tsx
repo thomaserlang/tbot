@@ -1,12 +1,10 @@
 import { ChannelProviderDashComponentProps } from '../../types'
-import { YoutubeCreateBroadcastButton } from './youtube-create-broadcast-button'
+import { BroadcastScheduleButton } from './broadcast-schedule-button'
 
 export function YoutubeDashView(props: ChannelProviderDashComponentProps) {
     return (
         <>
-            <YoutubeCreateBroadcastButton
-                channelProvider={props.channelProvider}
-            />
+            <BroadcastScheduleButton channelProvider={props.channelProvider} />
         </>
     )
 }

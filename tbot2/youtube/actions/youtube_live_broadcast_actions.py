@@ -6,6 +6,7 @@ from loguru import logger
 from tbot2.common import datetime_now
 from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.common.exceptions import ErrorMessage
+from tbot2.common.utils.update_model import update_model
 
 from ..exceptions import YouTubeException
 from ..http_client import youtube_user_client
@@ -178,23 +179,31 @@ async def transition_live_broadcast(
 
 async def create_new_broadcast_from_previous(
     channel_id: UUID,
-    live_broadcast: LiveBroadcast | None = None,
+    prev_live_broadcast: LiveBroadcast | None = None,
+    overwrite_data: LiveBroadcastInsert | None = None,
     bind_to_prev_stream: bool = True,
 ) -> LiveBroadcast:
-    if not live_broadcast:
+    if not prev_live_broadcast:
         live_broadcasts = await get_live_broadcasts(
             channel_id=channel_id,
             broadcast_status='completed',
         )
         if not live_broadcasts:
             raise ValueError('No active broadcasts found')
-        live_broadcast = live_broadcasts[0]
-    broadcast_insert = LiveBroadcastInsert.model_validate(live_broadcast)
+        prev_live_broadcast = live_broadcasts[0]
+    broadcast_insert = LiveBroadcastInsert.model_validate(prev_live_broadcast)
     broadcast_insert.snippet.scheduled_start_time = datetime_now()
     broadcast_insert.snippet.scheduled_end_time = None
     if broadcast_insert.content_details:
         broadcast_insert.content_details.enable_auto_start = True
         broadcast_insert.content_details.enable_auto_stop = True
+
+    if overwrite_data:
+        logger.info(overwrite_data.model_dump())
+        broadcast_insert = update_model(
+            original=broadcast_insert,
+            updates=overwrite_data,
+        )
 
     new_broadcast = await create_live_broadcast(
         channel_id=channel_id,
@@ -202,14 +211,16 @@ async def create_new_broadcast_from_previous(
     )
     logger.debug(f'Created new broadcast {new_broadcast.id}')
 
-    if not live_broadcast.content_details:
+    if not prev_live_broadcast.content_details:
         raise ValueError('No content details in live broadcast')
 
     if bind_to_prev_stream:
         live_streams = await get_live_streams(
             channel_id=channel_id,
-            id=live_broadcast.content_details.bound_stream_id,
-            mine=True if not live_broadcast.content_details.bound_stream_id else None,
+            id=prev_live_broadcast.content_details.bound_stream_id,
+            mine=True
+            if not prev_live_broadcast.content_details.bound_stream_id
+            else None,
         )
         if live_streams:
             await bind_live_broadcast(

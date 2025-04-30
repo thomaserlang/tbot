@@ -6,20 +6,23 @@ import {
 } from '@/features/channel-providers'
 import { api } from '@/utils/api'
 import { useMutation } from '@tanstack/react-query'
-
-async function youtubeCreateBroadcast(
-    channelId: ChannelId,
-    channelProviderId: ChannelProviderId
-) {
-    const r = await api.post<ChannelProvider>(
-        `/api/2/channels/${channelId}/providers/${channelProviderId}/youtube/broadcast`
-    )
-    return r.data
-}
+import { LiveBroadcastInsert } from './youtube.types'
 
 interface CreateParams {
     channelId: ChannelId
     channelProviderId: ChannelProviderId
+    data?: LiveBroadcastInsert
+}
+async function youtubeCreateBroadcast({
+    channelId,
+    channelProviderId,
+    data,
+}: CreateParams) {
+    const r = await api.post<ChannelProvider>(
+        `/api/2/channels/${channelId}/providers/${channelProviderId}/youtube/broadcast`,
+        data
+    )
+    return r.data
 }
 
 export function useCreateBroadcast({
@@ -30,9 +33,7 @@ export function useCreateBroadcast({
     onError?: (error: unknown) => void
 } = {}) {
     return useMutation({
-        mutationFn: async ({ channelId, channelProviderId }: CreateParams) => {
-            return youtubeCreateBroadcast(channelId, channelProviderId)
-        },
+        mutationFn: youtubeCreateBroadcast,
         onSuccess: (data, variables) => {
             updateChannelProviderCache(data)
             onSuccess?.(data, variables)

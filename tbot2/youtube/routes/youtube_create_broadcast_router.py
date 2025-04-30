@@ -17,6 +17,7 @@ from tbot2.dependecies import authenticated
 from ..actions.youtube_live_broadcast_actions import (
     create_new_broadcast_from_previous,
 )
+from ..schemas.youtube_live_broadcast_schema import LiveBroadcastInsert
 
 router = APIRouter()
 
@@ -32,6 +33,7 @@ async def youtube_create_broadcast_route(
         TokenData,
         Security(authenticated, scopes=[ChannelProviderScope.WRITE]),
     ],
+    data: LiveBroadcastInsert,
 ) -> ChannelProviderPublic:
     await token_data.channel_require_access(
         channel_id=channel_id,
@@ -47,9 +49,9 @@ async def youtube_create_broadcast_route(
             status_code=404,
             detail='Channel provider not found',
         )
-
     broadcast = await create_new_broadcast_from_previous(
         channel_id=channel_provider.channel_id,
+        overwrite_data=data,
     )
     async with get_session() as session:
         await save_channel_provider(
