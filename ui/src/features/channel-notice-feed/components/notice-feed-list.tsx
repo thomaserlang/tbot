@@ -2,6 +2,7 @@ import { RelativeTimeUpdater } from '@/components/relative-time-updater'
 import { providerInfo } from '@/constants'
 import { ChatMessage } from '@/features/channel-combined-chat'
 import { Box, Divider, Flex, Text } from '@mantine/core'
+import { Fragment } from 'react/jsx-runtime'
 
 interface Props {
     notices: ChatMessage[]
@@ -11,8 +12,8 @@ export function NoticeFeedList({ notices }: Props) {
     return (
         <Flex direction="column" gap="0.75rem">
             {notices.map((notice) => (
-                <>
-                    <Flex key={notice.id} direction="column">
+                <Fragment key={notice.id}>
+                    <Flex direction="column">
                         <Flex align="center" gap="0.25rem">
                             <Box
                                 c={providerInfo[notice.provider].color}
@@ -33,7 +34,7 @@ export function NoticeFeedList({ notices }: Props) {
                     </Flex>
 
                     <Divider />
-                </>
+                </Fragment>
             ))}
         </Flex>
     )

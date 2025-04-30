@@ -85,5 +85,8 @@ export function getEmoteUrl(emote: TwitchFragmentEmote, size: number): string {
     if (emote.externalType === '7tv') {
         return `https://cdn.7tv.app/emote/${emote.id}/${size}x.webp`
     }
+    if (emote.externalType === 'bttv') {
+        return `https://cdn.betterttv.net/emote/${emote.id}/${size}x.webp`
+    }
     return ''
 }

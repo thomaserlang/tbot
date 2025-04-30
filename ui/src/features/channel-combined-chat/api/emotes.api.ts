@@ -22,8 +22,10 @@ export async function getEmotes({
     const r = await Promise.all([
         get7tvUserEmotes({ provider, providerId }),
         get7tvGlobalEmotes(),
+        getBTTVUserEmotes({ provider, providerId }),
+        getBTTVGlobalEmotes(),
     ])
-    const emotes = [...r[0], ...r[1]].reduce((acc, emote) => {
+    const emotes = r.flat().reduce((acc, emote) => {
         acc[emote.emote_set_id] = emote
         return acc
     }, {} as EmoteMap)
@@ -39,27 +41,83 @@ async function get7tvUserEmotes({
     provider,
     providerId,
 }: GetProps): Promise<TwitchFragmentEmote[]> {
-    const r = await axios.get(
-        `https://7tv.io/v3/users/${provider}/${providerId}`
-    )
-    return r.data.emote_set.emotes.map((emote: any) => ({
-        id: emote.id,
-        emote_set_id: emote.name,
-        owner_id: emote.id,
-        format: emote.animated ? ['animated'] : ['static'],
-        externalType: '7tv',
-    })) as TwitchFragmentEmote[]
+    try {
+        const r = await axios.get(
+            `https://7tv.io/v3/users/${provider}/${providerId}`,
+            {
+                validateStatus: () => true,
+            }
+        )
+        return r.data.emote_set.emotes.map((emote: any) => ({
+            id: emote.id,
+            emote_set_id: emote.name,
+            owner_id: emote.id,
+            format: emote.animated ? ['animated'] : ['static'],
+            externalType: '7tv',
+        })) as TwitchFragmentEmote[]
+    } catch (e) {
+        return []
+    }
 }
 
 async function get7tvGlobalEmotes(): Promise<TwitchFragmentEmote[]> {
-    const r = await axios.get(`https://7tv.io/v3/emote-sets/global`)
-    return r.data.emotes.map((emote: any) => ({
-        id: emote.id,
-        emote_set_id: emote.name,
-        owner_id: emote.id,
-        format: emote.animated ? ['animated'] : ['static'],
-        externalType: '7tv',
-    })) as TwitchFragmentEmote[]
+    try {
+        const r = await axios.get(`https://7tv.io/v3/emote-sets/global`)
+        return r.data.emotes.map((emote: any) => ({
+            id: emote.id,
+            emote_set_id: emote.name,
+            owner_id: emote.id,
+            format: emote.animated ? ['animated'] : ['static'],
+            externalType: '7tv',
+        })) as TwitchFragmentEmote[]
+    } catch (e) {
+        return []
+    }
+}
+
+async function getBTTVGlobalEmotes(): Promise<TwitchFragmentEmote[]> {
+    try {
+        const r = await axios.get(
+            `https://api.betterttv.net/3/cached/emotes/global`
+        )
+        return r.data.map((emote: any) => ({
+            id: emote.id,
+            emote_set_id: emote.code,
+            owner_id: emote.id,
+            format: emote.animated ? ['animated'] : ['static'],
+            externalType: 'bttv',
+        })) as TwitchFragmentEmote[]
+    } catch (e) {
+        return []
+    }
+}
+
+async function getBTTVUserEmotes({
+    provider,
+    providerId,
+}: GetProps): Promise<TwitchFragmentEmote[]> {
+    try {
+        const r = await axios.get(
+            `https://api.betterttv.net/3/cached/users/${provider}/${providerId}`
+        )
+        const sharedEmotes = r.data.sharedEmotes.map((emote: any) => ({
+            id: emote.id,
+            emote_set_id: emote.code,
+            owner_id: emote.id,
+            format: emote.animated ? ['animated'] : ['static'],
+            externalType: 'bttv',
+        })) as TwitchFragmentEmote[]
+        const channelEmotes = r.data.channelEmotes.map((emote: any) => ({
+            id: emote.id,
+            emote_set_id: emote.code,
+            owner_id: emote.id,
+            format: emote.animated ? ['animated'] : ['static'],
+            externalType: 'bttv',
+        })) as TwitchFragmentEmote[]
+        return [...sharedEmotes, ...channelEmotes]
+    } catch (e) {
+        return []
+    }
 }
 
 export function useGetEmotes({ provider, providerId }: GetProps) {
@@ -67,6 +125,5 @@ export function useGetEmotes({ provider, providerId }: GetProps) {
         queryKey: ['emotes', provider, providerId],
         queryFn: () => getEmotes({ provider, providerId }),
         staleTime: 1000 * 60 * 5,
-        enabled: provider == 'twitch',
     })
 }
