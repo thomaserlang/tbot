@@ -77,10 +77,8 @@ export function ChannelProviderLiveStatus({ channelProvider }: Props) {
                 </HoverCard.Target>
                 <HoverCard.Dropdown>
                     <Text size="sm">
-                        Everything looks ready for you to go live.
-                    </Text>
-                    <Text size="sm">
-                        Live status can be a few minutes delayed.
+                        Everything looks ready for you to go live. Live status
+                        can be a few minutes delayed.
                     </Text>
                 </HoverCard.Dropdown>
             </HoverCard>

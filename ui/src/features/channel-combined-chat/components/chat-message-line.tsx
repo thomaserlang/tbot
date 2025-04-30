@@ -70,7 +70,7 @@ export function providerLogo(provider: Provider) {
             title={providerInfo[provider].name || ''}
             c={providerInfo[provider].color}
         >
-            {providerInfo[provider].chatIcon}
+            {providerInfo[provider].icon}
         </Box>
     )
 }

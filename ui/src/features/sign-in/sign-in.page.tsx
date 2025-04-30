@@ -35,7 +35,7 @@ export function Component() {
                                     <Button
                                         key={provider.key}
                                         bg={provider.color}
-                                        leftSection={provider.chatIcon}
+                                        leftSection={provider.icon}
                                         loading={signInUrl.isSuccess}
                                         onClick={() => {
                                             signInUrl.mutate({

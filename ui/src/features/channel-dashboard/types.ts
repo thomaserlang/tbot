@@ -1,5 +1,5 @@
 import { ChannelProvider } from '../channel-providers'
 
-export interface ChannelProviderDashComponentProps {
+export interface ChannelProviderDashboardProps {
     channelProvider: ChannelProvider
 }

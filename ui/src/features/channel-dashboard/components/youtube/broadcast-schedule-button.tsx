@@ -28,9 +28,11 @@ export function BroadcastScheduleButton({ channelProvider }: Props) {
     return (
         <>
             <Button
+                variant="light"
                 loading={create.isPending}
                 onClick={open}
                 leftSection={<IconCalendar size={16} />}
+                size="xs"
             >
                 Schedule Broadcast
             </Button>

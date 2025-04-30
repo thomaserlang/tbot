@@ -19,7 +19,7 @@ export function NoticeFeedList({ notices }: Props) {
                                 c={providerInfo[notice.provider].color}
                                 mb="-0.5rem"
                             >
-                                {providerInfo[notice.provider].chatIcon}
+                                {providerInfo[notice.provider].icon}
                             </Box>
                             <Text
                                 size="xs"

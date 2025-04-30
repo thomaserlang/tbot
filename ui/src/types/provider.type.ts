@@ -17,5 +17,5 @@ export interface ProviderInfo {
     embedUrl?: string
     broadcastEditUrl?: string
     streamTitleMaxLength?: number
-    chatIcon?: ReactNode
+    icon?: ReactNode
 }
