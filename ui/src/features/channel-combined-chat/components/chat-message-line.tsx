@@ -19,6 +19,9 @@ export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
                 component="span"
                 mr="0.25rem"
                 c="dimmed"
+                style={{
+                    'font-variant-numeric': 'tabular-nums',
+                }}
                 title={chatMessage.created_at}
             >
                 {new Date(chatMessage.created_at).toLocaleTimeString([], {

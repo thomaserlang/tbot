@@ -31,6 +31,8 @@ export function ChatViewer({
     onViewerClick,
 }: Props) {
     const viewport = useRef<VListHandle>(null)
+    const [autoScroll, setAutoScroll] = useState(true)
+    const [wsMessages, setWsMessages] = useState<ChatMessage[]>([])
     const data = useGetChatlogs({
         channelId,
         params,
@@ -44,15 +46,22 @@ export function ChatViewer({
             data.refetch()
         },
         onMessage: (message) => {
-            setWsMessages((prev) => [...(prev || []), message].slice(-250))
+            setWsMessages((prev) => [...prev, message].slice(-500))
         },
     })
 
-    const [autoScroll, setAutoScroll] = useState(true)
-    const [wsMessages, setWsMessages] = useState<ChatMessage[]>([])
+    const scrollToBottom = () => {
+        viewport.current?.scrollToIndex(allMessages.length - 1, {
+            align: 'end',
+        })
+    }
+
     useEffect(() => {
         if (autoScroll) scrollToBottom()
     }, [wsMessages, data.data])
+
+    if (data.isLoading) return <PageLoader />
+    if (!data.data && data.error) return <ErrorBox errorObj={data.error} />
 
     const messages = pageRecordsFlatten(data.data).reverse()
     const allMessages = [
@@ -62,15 +71,6 @@ export function ChatViewer({
                 !messages.some((message) => message.id === wsMessage.id)
         ),
     ]
-
-    const scrollToBottom = () => {
-        viewport.current?.scrollToIndex(allMessages.length - 1, {
-            align: 'end',
-        })
-    }
-
-    if (data.isLoading) return <PageLoader />
-    if (!data.data && data.error) return <ErrorBox errorObj={data.error} />
 
     if (wsMessages?.length === 0 && messages.length === 0)
         return (

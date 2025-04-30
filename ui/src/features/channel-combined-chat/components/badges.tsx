@@ -24,6 +24,8 @@ export function Badges({ channelId, badges }: Props) {
                         title={badgeVersion.title}
                         src={badgeVersion.image_url_1x}
                         alt={badgeVersion.id}
+                        width={18}
+                        height={18}
                         className={classes['chat-badge']}
                     />
                 )
