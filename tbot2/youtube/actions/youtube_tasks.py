@@ -82,6 +82,12 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
                 broadcast_status='active',
             )
             if not live_broadcasts:
+                if channel_provider.stream_live:
+                    await end_stream(
+                        channel_provider=channel_provider,
+                    )
+                    return
+
                 live_broadcasts = await get_live_broadcasts(
                     channel_id=channel_provider.channel_id,
                     broadcast_status='upcoming',
@@ -96,13 +102,6 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
                     )
                     return
             raise e
-
-        if not live_broadcasts:
-            if channel_provider.stream_live:
-                await end_stream(
-                    channel_provider=channel_provider,
-                )
-            return
 
         for live_broadcast in live_broadcasts:
             if channel_provider.stream_id != live_broadcast.id:
