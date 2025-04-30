@@ -76,19 +76,14 @@ async def check_for_broadcast(channel_provider: ChannelProvider) -> None:
     with logger.contextualize(
         channel_provider_id=channel_provider.id,
     ):
+        upcoming_live_broadcasts: list[LiveBroadcast] = []
         try:
-            live_broadcasts = await get_live_broadcasts(
+            active_live_broadcasts = await get_live_broadcasts(
                 channel_id=channel_provider.channel_id,
                 broadcast_status='active',
             )
-            if not live_broadcasts:
-                if channel_provider.stream_live:
-                    await end_stream(
-                        channel_provider=channel_provider,
-                    )
-                    return
-
-                live_broadcasts = await get_live_broadcasts(
+            if not active_live_broadcasts:
+                upcoming_live_broadcasts = await get_live_broadcasts(
                     channel_id=channel_provider.channel_id,
                     broadcast_status='upcoming',
                 )
@@ -103,7 +98,11 @@ async def check_for_broadcast(channel_provider: ChannelProvider) -> None:
                     return
             raise e
 
-        for live_broadcast in live_broadcasts:
+        if not active_live_broadcasts and channel_provider.stream_live:
+            await end_stream(channel_provider=channel_provider)
+            return
+
+        for live_broadcast in active_live_broadcasts or upcoming_live_broadcasts:
             if channel_provider.stream_id != live_broadcast.id:
                 await save_channel_provider(
                     channel_id=channel_provider.channel_id,
