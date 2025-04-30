@@ -17,7 +17,7 @@ export function YoutubeDashView(props: ChannelProviderDashboardProps) {
                 variant="default"
                 size="xs"
             >
-                Dashboard
+                Studio
             </Button>
 
             <BroadcastScheduleButton channelProvider={props.channelProvider} />
