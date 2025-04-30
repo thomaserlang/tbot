@@ -16,6 +16,7 @@ export function YoutubeDashView(props: ChannelProviderDashboardProps) {
                 leftSection={providerInfo[props.channelProvider.provider].icon}
                 variant="default"
                 size="xs"
+                title="Open YouTube Studio and create a broadcast without a start time"
             >
                 Studio
             </Button>
