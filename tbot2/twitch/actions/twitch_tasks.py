@@ -4,7 +4,7 @@ from datetime import datetime
 from loguru import logger
 
 from tbot2.channel_points import get_channel_point_settings, inc_bulk_points
-from tbot2.channel_provider import ChannelProviderOAuthNotFound
+from tbot2.channel_provider import ChannelProviderOAuthNotFound, get_channel_provider
 from tbot2.channel_stream import (
     ChannelProviderStream,
     end_channel_provider_stream,
@@ -42,6 +42,31 @@ async def update_viewers_stream_data(stream: ChannelProviderStream) -> None:
             'Updating viewer stream data for '
             f'{stream.channel_id} {stream.provider_stream_id}'
         )
+        channel_provider = await get_channel_provider(
+            channel_id=stream.channel_id,
+            provider='twitch',
+            provider_id=stream.provider_id,
+        )
+        if not channel_provider:
+            logger.info(
+                'Channel provider not found',
+                extra={
+                    'channel_id': stream.channel_id,
+                },
+            )
+            return
+        if (
+            channel_provider.scope
+            and 'moderator:read:chatters' not in channel_provider.scope
+        ):
+            logger.info(
+                'Channel provider does not have moderator:read:chatters scope',
+                extra={
+                    'channel_id': stream.channel_id,
+                },
+            )
+            return
+        
         point_settings = await get_channel_point_settings(channel_id=stream.channel_id)
         async for chatters in await get_twitch_chatters(
             channel_id=stream.channel_id,
@@ -68,7 +93,7 @@ async def update_viewers_stream_data(stream: ChannelProviderStream) -> None:
             )
     except ChannelProviderOAuthNotFound:
         logger.info(
-            'Channel provider no longer exists, ending stream',
+            'Channel provider oauth no longer exists, ending stream',
             extra={
                 'channel_id': stream.channel_id,
                 'provider_stream_id': stream.provider_stream_id,
