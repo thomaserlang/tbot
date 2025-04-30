@@ -28,7 +28,7 @@ async def get_live_broadcasts(
     broadcast_status: Literal['active', 'all', 'completed', 'upcoming'] | None = None,
     id: str | None = None,
     mine: bool | None = None,
-    broadcast_type: Literal['all', 'event', 'persistent'] = 'all',
+    broadcast_type: Literal['all', 'event', 'persistent'] = 'event',
 ) -> list[LiveBroadcast]:
     """
     Get live broadcasts for a channel.

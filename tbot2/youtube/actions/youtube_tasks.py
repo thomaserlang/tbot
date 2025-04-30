@@ -28,7 +28,7 @@ from ..exceptions import YouTubeException
 from ..schemas.youtube_live_broadcast_schema import LiveBroadcast
 
 broadcast_chat_monitor_tasks: dict[str, asyncio.Task[None]] = {}
-CHECK_EVERY = 15
+CHECK_EVERY = 30.0
 
 
 async def task_youtube_live() -> None:
@@ -81,6 +81,12 @@ async def check_for_live_broadcasts(channel_provider: ChannelProvider) -> None:
                 channel_id=channel_provider.channel_id,
                 broadcast_status='active',
             )
+            if not live_broadcasts:
+                live_broadcasts = await get_live_broadcasts(
+                    channel_id=channel_provider.channel_id,
+                    broadcast_status='upcoming',
+                )
+
         except YouTubeException as e:
             if e.error.errors:
                 if e.error.errors[0].reason == 'liveStreamingNotEnabled':
