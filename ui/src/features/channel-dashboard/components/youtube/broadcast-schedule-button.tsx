@@ -23,8 +23,6 @@ export function BroadcastScheduleButton({ channelProvider }: Props) {
         },
     })
 
-    if (channelProvider.stream_id) return
-
     return (
         <>
             <Button

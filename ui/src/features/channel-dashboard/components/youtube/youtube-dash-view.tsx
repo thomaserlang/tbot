@@ -5,6 +5,8 @@ import { ChannelProviderDashboardProps } from '../../types'
 import { BroadcastScheduleButton } from './broadcast-schedule-button'
 
 export function YoutubeDashView(props: ChannelProviderDashboardProps) {
+    if (props.channelProvider.stream_id) return
+
     return (
         <Flex gap="0.5rem">
             <Button
