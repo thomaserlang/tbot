@@ -116,7 +116,11 @@ export function useUpdateQuote({
                     channelId: variables.channelId,
                 }),
                 (oldData: InfiniteData<PageCursor<ChannelQuote>>) =>
-                    updateRecord(oldData, data, (item) => item.id === data.id)
+                    updateRecord({
+                        oldData,
+                        data,
+                        matchFn: (item) => item.id === data.id,
+                    })
             )
             onSuccess?.(data, variables)
         },
@@ -150,10 +154,10 @@ export function useDeleteQuote({
                     channelId: variables.channelId,
                 }),
                 (oldData: InfiniteData<PageCursor<ChannelQuote>>) =>
-                    removeRecord(
+                    removeRecord({
                         oldData,
-                        (item) => item.id !== variables.channelQuoteId
-                    )
+                        matchFn: (item) => item.id !== variables.channelQuoteId,
+                    })
             )
             queryClient.removeQueries({
                 queryKey: getQuoteQueryKey({

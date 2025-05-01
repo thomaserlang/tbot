@@ -20,7 +20,7 @@ export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
                 mr="0.25rem"
                 c="dimmed"
                 style={{
-                    'font-variant-numeric': 'tabular-nums',
+                    fontVariantNumeric: 'tabular-nums',
                 }}
                 title={chatMessage.created_at}
             >

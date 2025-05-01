@@ -1,7 +1,7 @@
 import { useCurrentChannel } from '@/features/channel/current-channel.provider'
 import { useDocumentTitle } from '@/utils/document-title'
 import { Container } from '@mantine/core'
-import { CombinedChatViewer } from './components/combined-chat-viewer'
+import { CombinedChatView } from './components/combined-chat-view'
 
 export function Component() {
     const channel = useCurrentChannel()
@@ -9,7 +9,7 @@ export function Component() {
 
     return (
         <Container size="lg" h="var(--tbot-content-height)">
-            <CombinedChatViewer channelId={channel.id} />
+            <CombinedChatView channelId={channel.id} />
         </Container>
     )
 }

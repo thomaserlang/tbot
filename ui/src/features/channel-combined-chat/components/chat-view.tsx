@@ -12,7 +12,6 @@ import {
     useGetChatlogs,
     useGetChatlogsWS,
 } from '../api/chatlogs.api'
-import { ChatMessage } from '../types/chat-message.type'
 import { ChatMessages } from './chat-messages'
 import { LoadMoreButton } from './load-more-button'
 import { ResumeChatButton } from './resume-chat-button'
@@ -24,7 +23,7 @@ interface Props {
     onViewerClick?: (viewer: ViewerName) => void
 }
 
-export function ChatViewer({
+export function ChatView({
     channelId,
     liveUpdates,
     params,
@@ -32,47 +31,32 @@ export function ChatViewer({
 }: Props) {
     const viewport = useRef<VListHandle>(null)
     const [autoScroll, setAutoScroll] = useState(true)
-    const [wsMessages, setWsMessages] = useState<ChatMessage[]>([])
     const data = useGetChatlogs({
         channelId,
         params,
     })
-
     useGetChatlogsWS({
         channelId,
         connect: liveUpdates,
         params,
-        onOpen: () => {
-            data.refetch()
-        },
-        onMessage: (message) => {
-            setWsMessages((prev) => [...prev, message].slice(-500))
-        },
     })
 
     const scrollToBottom = () => {
-        viewport.current?.scrollToIndex(allMessages.length - 1, {
+        viewport.current?.scrollToIndex(messages.length - 1, {
             align: 'end',
         })
     }
 
     useEffect(() => {
         if (autoScroll) scrollToBottom()
-    }, [wsMessages, data.data])
+    }, [data.data])
 
     if (data.isLoading) return <PageLoader />
     if (!data.data && data.error) return <ErrorBox errorObj={data.error} />
 
     const messages = pageRecordsFlatten(data.data).reverse()
-    const allMessages = [
-        ...messages,
-        ...wsMessages.filter(
-            (wsMessage) =>
-                !messages.some((message) => message.id === wsMessage.id)
-        ),
-    ]
 
-    if (wsMessages?.length === 0 && messages.length === 0)
+    if (messages.length === 0)
         return (
             <Flex
                 justify="center"
@@ -109,7 +93,7 @@ export function ChatViewer({
                 )}
                 {data.isFetchingNextPage && <PageLoader />}
                 <ChatMessages
-                    messages={allMessages}
+                    messages={messages}
                     onViewerClick={onViewerClick}
                 />
             </VList>

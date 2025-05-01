@@ -20,14 +20,24 @@ export function pageRecordsFlatten<T = Record<string, unknown>, L = unknown>(
     return data.pages.map((p) => p.records).flat()
 }
 
-export function removeRecord<T>(
-    oldData: InfiniteData<PageCursor<T>> | undefined,
-    matchFn: (item: T) => boolean
-): InfiniteData<PageCursor<T>> | undefined {
+export function addRecord<T = Record<string, unknown>, L = any>({
+    oldData,
+    data,
+    maxSize,
+}: {
+    oldData: InfiniteData<PageCursor<T, L>> | undefined
+    data: T
+    maxSize?: number
+}): InfiniteData<PageCursor<T, L>> | undefined {
     if (!oldData) return oldData
-    const pages = oldData.pages.map((page) => ({
+    const pages = oldData.pages.map((page, index) => ({
         ...page,
-        records: page.records.filter((item) => matchFn(item)),
+        records:
+            index === 0
+                ? maxSize
+                    ? [data, ...page.records.slice(0, maxSize - 1)]
+                    : [data, ...page.records]
+                : page.records,
     }))
     return {
         ...oldData,
@@ -35,17 +45,37 @@ export function removeRecord<T>(
     }
 }
 
-export function updateRecord<T>(
-    oldData: InfiniteData<PageCursor<T>> | undefined,
-    updatedRecord: T,
+export function updateRecord<T = Record<string, unknown>, L = any>({
+    oldData,
+    data,
+    matchFn,
+}: {
+    oldData: InfiniteData<PageCursor<T, L>> | undefined
+    data: T
     matchFn: (item: T) => boolean
-): InfiniteData<PageCursor<T>> | undefined {
+}): InfiniteData<PageCursor<T, L>> | undefined {
     if (!oldData) return oldData
     const pages = oldData.pages.map((page) => ({
         ...page,
-        records: page.records.map((item) =>
-            matchFn(item) ? updatedRecord : item
-        ),
+        records: page.records.map((item) => (matchFn(item) ? data : item)),
+    }))
+    return {
+        ...oldData,
+        pages,
+    }
+}
+
+export function removeRecord<T = Record<string, unknown>, L = any>({
+    oldData,
+    matchFn,
+}: {
+    oldData: InfiniteData<PageCursor<T, L>> | undefined
+    matchFn: (item: T) => boolean
+}): InfiniteData<PageCursor<T, L>> | undefined {
+    if (!oldData) return oldData
+    const pages = oldData.pages.map((page) => ({
+        ...page,
+        records: page.records.filter((item) => matchFn(item)),
     }))
     return {
         ...oldData,

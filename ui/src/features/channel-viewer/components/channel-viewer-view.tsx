@@ -1,6 +1,6 @@
 import { PageLoader } from '@/components/page-loader'
 import { ChannelId } from '@/features/channel'
-import { ChatViewer } from '@/features/channel-combined-chat'
+import { ChatView } from '@/features/channel-combined-chat'
 import { Provider } from '@/types/provider.type'
 import { strDateFormat } from '@/utils/date'
 import { Box, Divider, Flex, Modal, Paper, Text } from '@mantine/core'
@@ -86,7 +86,7 @@ export function ChannelViewerView(props: Props) {
             <Box>
                 <Text fw={700}>Chatlog</Text>
                 <Paper h="15rem" pl="0.5rem" withBorder>
-                    <ChatViewer
+                    <ChatView
                         channelId={props.channelId}
                         liveUpdates={true}
                         params={{

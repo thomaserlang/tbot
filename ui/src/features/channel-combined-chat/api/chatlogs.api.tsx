@@ -1,9 +1,11 @@
 import { ProviderViewerId } from '@/features/channel-viewer/types/viewer.type'
 import { ChannelId } from '@/features/channel/types'
+import { queryClient } from '@/queryclient'
 import { PageCursor } from '@/types/page-cursor.type'
 import { Provider } from '@/types/provider.type'
 import { api } from '@/utils/api'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { addRecord } from '@/utils/page-records'
+import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query'
 import useWebSocket from 'react-use-websocket'
 import { ChatMessage } from '../types/chat-message.type'
 
@@ -59,17 +61,11 @@ interface GetChatlogsWSProps {
     channelId: ChannelId
     params?: GetChatlogsParams
     connect?: boolean
-    onOpen?: () => void
-    onClose?: (event: CloseEvent) => void
-    onMessage?: (message: ChatMessage) => void
 }
 export function useGetChatlogsWS({
     channelId,
     params,
     connect,
-    onOpen,
-    onClose,
-    onMessage,
 }: GetChatlogsWSProps) {
     useWebSocket(
         `/api/2/channels/${channelId}/chat-ws`,
@@ -82,16 +78,27 @@ export function useGetChatlogsWS({
             reconnectInterval: 1000,
             reconnectAttempts: Infinity,
             onOpen: () => {
-                onOpen?.()
-            },
-            onClose: (event) => {
-                onClose?.(event)
+                queryClient.refetchQueries({
+                    queryKey: getChatlogsQueryKey(channelId, params),
+                })
             },
             onMessage: (message) => {
-                if (message.type === 'message') {
-                    const data = JSON.parse(message.data)
-                    onMessage?.(data)
-                }
+                const msg = JSON.parse(message.data) as ChatMessage
+
+                queryClient.setQueryData(
+                    getChatlogsQueryKey(channelId, params),
+                    (oldData: InfiniteData<PageCursor<ChatMessage>>) => {
+                        const exists = oldData.pages[0].records.find(
+                            (item) => item.id === msg.id
+                        )
+                        if (!exists)
+                            return addRecord({
+                                oldData,
+                                data: msg,
+                                maxSize: 500,
+                            })
+                    }
+                )
             },
         },
         connect

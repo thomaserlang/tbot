@@ -1,1 +1,1 @@
-export * from './components/notice-feed-viewer'
+export * from './components/notice-feed-view'

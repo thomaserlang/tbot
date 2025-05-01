@@ -6,14 +6,14 @@ import {
 import { ChannelId } from '@/features/channel/types'
 import { Box, Divider, Flex, Title } from '@mantine/core'
 import { useState } from 'react'
-import { ChatViewer } from './chat-viewer'
+import { ChatView } from './chat-view'
 
 interface Props {
     channelId: ChannelId
     hideTitle?: boolean
 }
 
-export function CombinedChatViewer({ channelId, hideTitle }: Props) {
+export function CombinedChatView({ channelId, hideTitle }: Props) {
     const [showViewer, setShowViewer] = useState<ViewerName | null>(null)
 
     return (
@@ -25,7 +25,7 @@ export function CombinedChatViewer({ channelId, hideTitle }: Props) {
                     </Flex>
                 )}
 
-                <ChatViewer
+                <ChatView
                     channelId={channelId}
                     onViewerClick={(viewer) => {
                         setShowViewer(viewer)
