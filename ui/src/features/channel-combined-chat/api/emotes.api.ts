@@ -29,15 +29,14 @@ export async function getEmotes({
         acc[emote.emote_set_id] = emote
         return acc
     }, {} as EmoteMap)
-
+    const escaped = Object.keys(emotes).map((emote) => {
+        return emote.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
+    })
+    const alt = `(?:${escaped.join('|')})`
     return {
         emotes: emotes,
         emoteIds: Object.keys(emotes),
-        regex: new RegExp(
-            `(?:^|\\s)(${Object.keys(emotes)
-                .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-                .join('|')})(?=$|\\s)`
-        ),
+        regex: new RegExp(RegExp(`((?<!\\S)${alt}(?!\\S))`, 'g')),
     } as EmotesResponse
 }
 
