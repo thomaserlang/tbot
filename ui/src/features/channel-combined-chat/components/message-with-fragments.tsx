@@ -43,7 +43,7 @@ function assembleFragments(fragments: TwitchMessageFragment[]) {
             {fragment.type === 'emote' && fragment.emote && (
                 <img
                     key={`${ix}-${fragment.emote.id}`}
-                    src={getEmoteUrl(fragment.emote, 2)}
+                    src={getEmoteUrl(fragment.emote, 1)}
                     alt={fragment.text}
                     title={fragment.text}
                     className={classes.emote}
@@ -83,10 +83,10 @@ export function getEmoteUrl(emote: TwitchFragmentEmote, size: number): string {
         return `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/${size}.0`
     }
     if (emote.externalType === '7tv') {
-        return `https://cdn.7tv.app/emote/${emote.id}/${size}x.webp`
+        return `https://cdn.7tv.app/emote/${emote.id}/${size + 1}x.webp`
     }
     if (emote.externalType === 'bttv') {
-        return `https://cdn.betterttv.net/emote/${emote.id}/${size}x.webp`
+        return `https://cdn.betterttv.net/emote/${emote.id}/${size + 1}x.webp`
     }
     return ''
 }
