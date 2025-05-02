@@ -9,7 +9,7 @@ from ..var_filler import fills_vars
 
 @fills_vars(
     provider='twitch',
-    vars=('permit',),
+    vars=('permit_manager',),
 )
 async def permit_manager_var(
     chat_message: ChatMessage, command: TCommand, vars: MessageVars
@@ -30,5 +30,5 @@ async def permit_manager_var(
         seconds=60,
     )
     vars[
-        'permit'
+        'permit_manager'
     ].value = f'@{chatter.display_name}, you have a permit for the next 60 seconds.'
