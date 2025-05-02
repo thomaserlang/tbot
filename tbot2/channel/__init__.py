@@ -6,3 +6,4 @@ from .models.channel_model import MChannel as MChannel
 from .schemas.channel_schemas import Channel as Channel
 from .schemas.channel_schemas import ChannelCreate as ChannelCreate
 from .schemas.channel_schemas import ChannelUpdate as ChannelUpdate
+from .types import ChannelScope as ChannelScope

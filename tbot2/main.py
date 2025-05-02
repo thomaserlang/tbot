@@ -154,7 +154,7 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
         content=Error(
             code=exc.status_code,
             message=exc.detail,
-            type='not_found',
+            type='',
             errors=[],
         ).model_dump(),
     )

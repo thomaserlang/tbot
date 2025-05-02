@@ -1,14 +1,12 @@
-from collections.abc import Awaitable, Callable
 from uuid import UUID
 
 import sqlalchemy as sa
-from loguru import logger
 
 from tbot2.bot_providers import BotProvider, MBotProvider, delete_bot_provider
 from tbot2.common import ErrorMessage, Provider
-from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 
+from ..event_types import fire_disconnect_channel_bot_provider
 from ..models.channel_provider_model import MChannelProvider
 from ..schemas.channel_provider_schema import ChannelProviderRequest
 from .channel_provider_actions import (
@@ -61,7 +59,6 @@ async def disconnect_channel_bot_provider(
             channel_provider_id=channel_provider_id,
             session=session,
         )
-        logger.info(channel_provider)
         if not channel_provider or channel_provider.channel_id != channel_id:
             raise ErrorMessage(
                 f'Failed to disconnect channel bot provider {channel_provider_id}: '
@@ -100,30 +97,3 @@ async def disconnect_channel_bot_provider(
             channel_id=channel_id,
             bot_provider=channel_provider.bot_provider,
         )
-
-
-def on_disconnect_channel_bot_provider(
-    priority: int = 128,
-) -> Callable[
-    [Callable[[UUID, BotProvider], Awaitable[None]]],
-    Callable[[UUID, BotProvider], Awaitable[None]],
-]:
-    def decorator(
-        func: Callable[[UUID, BotProvider], Awaitable[None]],
-    ) -> Callable[[UUID, BotProvider], Awaitable[None]]:
-        add_event_handler('disconnect_channel_bot_provider', func, priority)
-        return func
-
-    return decorator
-
-
-async def fire_disconnect_channel_bot_provider(
-    *,
-    channel_id: UUID,
-    bot_provider: BotProvider,
-) -> None:
-    await fire_event_async(
-        'disconnect_channel_bot_provider',
-        channel_id=channel_id,
-        bot_provider=bot_provider,
-    )

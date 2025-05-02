@@ -1,14 +1,14 @@
-from collections.abc import AsyncGenerator, Awaitable, Callable
+from collections.abc import AsyncGenerator
 from uuid import UUID
 
 import sqlalchemy as sa
 from uuid6 import uuid7
 
 from tbot2.common import Provider
-from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 from tbot2.database import database
 
+from ..event_types import fire_event_delete_channel_provider
 from ..models.channel_provider_model import (
     MChannelProvider,
 )
@@ -175,28 +175,3 @@ async def delete_channel_provider(
             )
             return True
         return False
-
-
-def on_delete_channel_provider(
-    priority: int = 128,
-) -> Callable[
-    [Callable[[ChannelProvider], Awaitable[None]]],
-    Callable[[ChannelProvider], Awaitable[None]],
-]:
-    def decorator(
-        func: Callable[[ChannelProvider], Awaitable[None]],
-    ) -> Callable[[ChannelProvider], Awaitable[None]]:
-        add_event_handler('delete_channel_provider', func, priority)
-        return func
-
-    return decorator
-
-
-async def fire_event_delete_channel_provider(
-    *,
-    channel_provider: ChannelProvider,
-) -> None:
-    await fire_event_async(
-        'delete_channel_provider',
-        channel_provider=channel_provider,
-    )

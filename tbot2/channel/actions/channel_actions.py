@@ -3,9 +3,10 @@ from uuid import UUID
 import sqlalchemy as sa
 from uuid6 import uuid7
 
-from tbot2.common import datetime_now
+from tbot2.common import ErrorMessage, datetime_now
 from tbot2.contexts import AsyncSession, get_session
 
+from ..event_types import fire_deleting_channel
 from ..models.channel_model import MChannel
 from ..schemas.channel_schemas import Channel, ChannelCreate, ChannelUpdate
 
@@ -59,5 +60,9 @@ async def delete_channel(
     *, channel_id: UUID, session: AsyncSession | None = None
 ) -> bool:
     async with get_session(session) as session:
+        channel = await get_channel(channel_id=channel_id, session=session)
+        if not channel:
+            raise ErrorMessage('Channel not found', code=404, type='channel_not_found')
+        await fire_deleting_channel(channel_id=channel_id, session=session)
         r = await session.execute(sa.delete(MChannel).where(MChannel.id == channel_id))
         return r.rowcount > 0

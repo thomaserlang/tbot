@@ -1,9 +1,9 @@
 from uuid import UUID
 
-from fastapi import HTTPException
 from pydantic import BaseModel
 from starlette.authentication import BaseUser
 
+from tbot2.common import ErrorMessage
 from tbot2.config_settings import config
 
 from ..types.access_level_type import TAccessLevel
@@ -31,9 +31,10 @@ class TokenData(BaseUser, BaseModel):
             channel_id=channel_id,
         )
         if user_level is None or user_level.access_level < access_level.value:
-            raise HTTPException(
-                status_code=403,
-                detail='Insufficient access level',
+            raise ErrorMessage(
+                code=403,
+                type='access_denied',
+                message='You do not have access to this channel',
             )
         return user_level.access_level
 
