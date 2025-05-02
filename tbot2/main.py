@@ -29,6 +29,7 @@ from tbot2.database import database
 from tbot2.dependecies import PlainResponse
 from tbot2.health.router import health_router
 from tbot2.spotify.router import spotify_router
+from tbot2.tiktok.router import tiktok_router
 from tbot2.twitch.router import twitch_router
 from tbot2.user.router import user_router
 from tbot2.youtube.router import youtube_router
@@ -98,6 +99,7 @@ app.include_router(channel_gambling_router, prefix='/api/2')
 app.include_router(bot_provider_routes, prefix='/api/2')
 app.include_router(chatlog_router, prefix='/api/2')
 app.include_router(youtube_router, prefix='/api/2')
+app.include_router(tiktok_router, prefix='/api/2')
 app.include_router(health_router)
 
 

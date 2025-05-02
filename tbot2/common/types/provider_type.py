@@ -5,6 +5,7 @@ Provider = Literal[
     'discord',
     'youtube',
     'spotify',
+    'tiktok',
 ]
 
 channel_provider_scopes: dict[Provider, str] = {}

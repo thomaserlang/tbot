@@ -31,6 +31,11 @@ class ConfigSpotifyConfig(BaseModel):
     client_secret: str = ''
 
 
+class ConfigTiktokConfig(BaseModel):
+    client_id: str = ''
+    client_secret: str = ''
+
+
 class ConfigLoggingModel(BaseModel):
     level: Literal['notset', 'trace', 'debug', 'info', 'warn', 'error', 'critical'] = (
         'info'
@@ -119,6 +124,7 @@ class ConfigSettings(BaseYamlSettings):
     discord: ConfigDiscordModel = ConfigDiscordModel()
     youtube: ConfigYoutubeModel = ConfigYoutubeModel()
     spotify: ConfigSpotifyConfig = ConfigSpotifyConfig()
+    tiktok: ConfigTiktokConfig = ConfigTiktokConfig()
     logging: ConfigLoggingModel = ConfigLoggingModel()
     db: ConfigDBModel = ConfigDBModel()
     redis: ConfigRedisModel = ConfigRedisModel()

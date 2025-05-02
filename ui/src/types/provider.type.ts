@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 
-export type Provider = 'twitch' | 'youtube' | 'discord' | 'spotify'
+export type Provider = 'twitch' | 'youtube' | 'discord' | 'spotify' | 'tiktok'
 
 export interface ProviderInfo {
     [key: string]: string | boolean | Provider | undefined | number | ReactNode

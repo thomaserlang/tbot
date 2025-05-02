@@ -1,5 +1,6 @@
 import {
     IconBrandDiscord,
+    IconBrandTiktok,
     IconBrandTwitch,
     IconBrandYoutube,
 } from '@tabler/icons-react'
@@ -41,6 +42,18 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
         embedUrl: 'https://www.youtube.com/embed/{stream_id}?mute=1&autoplay=1',
         streamTitleMaxLength: 100,
         icon: <IconBrandYoutube size={18} />,
+    },
+    tiktok: {
+        key: 'tiktok',
+        name: 'TikTok',
+        color: '#010101',
+        channelProvider: false,
+        signinProvider: false,
+        stream: false,
+        chat: false,
+        ownBot: false,
+        systemBot: false,
+        icon: <IconBrandTiktok size={18} />,
     },
     spotify: {
         key: 'spotify',
