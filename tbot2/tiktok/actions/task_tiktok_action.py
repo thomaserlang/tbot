@@ -4,7 +4,13 @@ from uuid import UUID
 
 from loguru import logger
 from TikTokLive import TikTokLiveClient  # type: ignore
-from TikTokLive.events import CommentEvent, ConnectEvent, GiftEvent  # type: ignore
+from TikTokLive.client.errors import UserNotFoundError  # type: ignore
+from TikTokLive.events import (  # type: ignore
+    CommentEvent,
+    ConnectEvent,
+    GiftEvent,
+    LiveEndEvent,
+)
 from uuid6 import uuid7
 
 from tbot2.channel_chatlog import create_chatlog
@@ -20,42 +26,43 @@ from tbot2.common import ChatMessage, datetime_now
 
 channel_monitor_tasks: dict[UUID, asyncio.Task[None]] = {}
 
-CHECK_EVERY = 30.0
+CHECK_EVERY = 60.0
 
 
 async def task_tiktok() -> None:
     logger.info('Checking for live tiktok streams')
     while True:
-        await asyncio.sleep(CHECK_EVERY)
+        try:
+            current_channels: set[UUID] = set()
+            async for channel_provider in get_channels_providers(provider='tiktok'):
+                if channel_provider.scope_needed:
+                    logger.debug(
+                        'Channel provider needs scope, skipping',
+                        extra={'channel_provider_id': channel_provider.id},
+                    )
+                    continue
 
-        current_channels: set[UUID] = set()
-        async for channel_provider in get_channels_providers(provider='tiktok'):
-            if channel_provider.scope_needed:
-                logger.debug(
-                    'Channel provider needs scope, skipping',
-                    extra={'channel_provider_id': channel_provider.id},
+                current_channels.add(channel_provider.channel_id)
+                if channel_provider.channel_id in channel_monitor_tasks:
+                    logger.debug(
+                        'Channel already being handled',
+                        extra={'channel_provider_id': channel_provider.id},
+                    )
+                    continue
+                channel_monitor_tasks[channel_provider.channel_id] = (
+                    asyncio.create_task(handle_channel(channel_provider))
                 )
-                continue
 
-            current_channels.add(channel_provider.channel_id)
-            if channel_provider.channel_id in channel_monitor_tasks:
-                logger.debug(
-                    'Channel already being handled',
-                    extra={'channel_provider_id': channel_provider.id},
-                )
-                continue
-            channel_monitor_tasks[channel_provider.channel_id] = asyncio.create_task(
-                handle_channel(channel_provider)
-            )
-
-        # Remove no longer channels
-        for channel_id in list(channel_monitor_tasks.keys()):
-            if channel_id not in current_channels:
-                logger.debug(
-                    'Cancelling channel monitor', extra={'channel_id': channel_id}
-                )
-                channel_monitor_tasks[channel_id].cancel()
-                del channel_monitor_tasks[channel_id]
+            # Remove no longer channels
+            for channel_id in list(channel_monitor_tasks.keys()):
+                if channel_id not in current_channels:
+                    logger.debug(
+                        'Cancelling channel monitor', extra={'channel_id': channel_id}
+                    )
+                    channel_monitor_tasks[channel_id].cancel()
+                    del channel_monitor_tasks[channel_id]
+        finally:
+            await asyncio.sleep(CHECK_EVERY)
 
 
 @logger.catch
@@ -66,6 +73,7 @@ async def handle_channel(
         logger.debug('Handling tiktok channel')
         try:
             client = TikTokLiveClient(unique_id=f'@{channel_provider.provider_user_id}')
+
             if not await client.is_live():
                 if channel_provider.stream_live:
                     await end_channel_provider_stream(
@@ -73,7 +81,6 @@ async def handle_channel(
                         provider='tiktok',
                         provider_id=channel_provider.provider_user_id,
                         ended_at=datetime_now(),
-                        reset_channel_stream_id=True,
                     )
                 return
 
@@ -111,10 +118,10 @@ async def handle_channel(
 
             async def on_gift(event: GiftEvent) -> None:
                 message: str | None = None
-                if event.gift.streakable and not event.streaking:
+                if event.gift.streakable and not event.streaking:  # type: ignore
                     message = f'{event.user.nickname} gifted {event.repeat_count} '
                     '{event.gift.name}'
-                elif not event.gift.streakable:
+                elif not event.gift.streakable:  # type: ignore
                     message = f'{event.user.nickname} gifted {event.gift.name}'
                 if message:
                     await create_chatlog(
@@ -133,10 +140,28 @@ async def handle_channel(
                         )
                     )
 
+            async def on_live_end(event: LiveEndEvent) -> None:
+                await end_channel_provider_stream(
+                    channel_id=channel_provider.channel_id,
+                    provider='tiktok',
+                    provider_id=channel_provider.provider_user_id,
+                    ended_at=datetime_now(),
+                )
+                await client.disconnect()
+
             client.add_listener(ConnectEvent, on_connect)  # type: ignore
             client.add_listener(CommentEvent, on_comment)  # type: ignore
             client.add_listener(GiftEvent, on_gift)  # type: ignore
+            client.add_listener(LiveEndEvent, on_live_end)  # type: ignore
             await client.connect()  # type: ignore
+        except UserNotFoundError as e:
+            logger.debug(str(e))
+        except Exception as e:
+            logger.error(
+                'Failed to create tiktok client',
+                extra={'error': str(e)},
+            )
+            return
         finally:
             if channel_provider.id in channel_monitor_tasks:
                 del channel_monitor_tasks[channel_provider.id]

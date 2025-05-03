@@ -34,41 +34,48 @@ CHECK_EVERY = 30.0
 async def task_youtube_live() -> None:
     logger.info('Checking for live youtube channels')
     while True:
-        await asyncio.sleep(CHECK_EVERY)
+        try:
+            channel_provider_ids: dict[UUID, asyncio.Task[None]] = {}
+            current_chat_ids: set[str] = set()
 
-        channel_provider_ids: dict[UUID, asyncio.Task[None]] = {}
-        current_chat_ids: set[str] = set()
-
-        async for channel_provider in get_channels_providers(provider='youtube'):
-            if channel_provider.scope_needed:
-                logger.debug(
-                    'Channel provider needs scope, skipping',
-                    extra={'channel_provider_id': channel_provider.id},
-                )
-                continue
-            channel_provider_ids[channel_provider.id] = asyncio.create_task(
-                check_for_broadcast(channel_provider)
-            )
-
-            if channel_provider.stream_chat_id:
-                if channel_provider.stream_chat_id not in broadcast_chat_monitor_tasks:
-                    task = asyncio.create_task(
-                        handle_broadcast_live_chat(
-                            channel_provider=channel_provider,
-                            live_chat_id=channel_provider.stream_chat_id,
-                        )
+            async for channel_provider in get_channels_providers(provider='youtube'):
+                if channel_provider.scope_needed:
+                    logger.debug(
+                        'Channel provider needs scope, skipping',
+                        extra={'channel_provider_id': channel_provider.id},
                     )
-                    broadcast_chat_monitor_tasks[channel_provider.stream_chat_id] = task
-                current_chat_ids.add(channel_provider.stream_chat_id)
-
-        # Remove no longer monitored live chats
-        for chat_id in list(broadcast_chat_monitor_tasks.keys()):
-            if chat_id not in current_chat_ids:
-                logger.debug(
-                    'Cancelling chat live monitor', extra={'stream_chat_id': chat_id}
+                    continue
+                channel_provider_ids[channel_provider.id] = asyncio.create_task(
+                    check_for_broadcast(channel_provider)
                 )
-                broadcast_chat_monitor_tasks[chat_id].cancel()
-                del broadcast_chat_monitor_tasks[chat_id]
+
+                if channel_provider.stream_chat_id:
+                    if (
+                        channel_provider.stream_chat_id
+                        not in broadcast_chat_monitor_tasks
+                    ):
+                        task = asyncio.create_task(
+                            handle_broadcast_live_chat(
+                                channel_provider=channel_provider,
+                                live_chat_id=channel_provider.stream_chat_id,
+                            )
+                        )
+                        broadcast_chat_monitor_tasks[
+                            channel_provider.stream_chat_id
+                        ] = task
+                    current_chat_ids.add(channel_provider.stream_chat_id)
+
+            # Remove no longer monitored live chats
+            for chat_id in list(broadcast_chat_monitor_tasks.keys()):
+                if chat_id not in current_chat_ids:
+                    logger.debug(
+                        'Cancelling chat live monitor',
+                        extra={'stream_chat_id': chat_id},
+                    )
+                    broadcast_chat_monitor_tasks[chat_id].cancel()
+                    del broadcast_chat_monitor_tasks[chat_id]
+        finally:
+            await asyncio.sleep(CHECK_EVERY)
 
 
 @logger.catch
