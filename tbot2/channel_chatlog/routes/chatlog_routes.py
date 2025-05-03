@@ -125,9 +125,9 @@ async def handle_connection(
             try:
                 data = cast(
                     dict[str, str],
-                    await pubsub.get_message(  # type: ignore
+                    await pubsub.get_message(
                         ignore_subscribe_messages=True,
-                        timeout=None,  # type: ignore
+                        timeout=None,
                     ),
                 )
                 if not data:

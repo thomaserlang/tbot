@@ -11,7 +11,7 @@ async def create_permit(
     provider_viewer_id: str,
     seconds: int = 60,
 ) -> None:
-    await database.redis.set(  # type: ignore
+    await database.redis.set(
         f'tbot:permit:{channel_id}:{provider}:{provider_viewer_id}',
         '1',
         ex=seconds,
@@ -25,7 +25,7 @@ async def has_permit(
     provider_viewer_id: str,
 ) -> bool:
     return (
-        await database.redis.exists(  # type: ignore
+        await database.redis.exists(
             f'tbot:permit:{channel_id}:{provider}:{provider_viewer_id}',
         )
     ) > 0
@@ -38,7 +38,7 @@ async def delete_permit(
     provider_viewer_id: str,
 ) -> bool:
     return (
-        await database.redis.delete(  # type: ignore
+        await database.redis.delete(
             f'tbot:permit:{channel_id}:{provider}:{provider_viewer_id}',
         )
     ) > 0

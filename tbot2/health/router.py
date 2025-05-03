@@ -52,7 +52,7 @@ async def redis_check() -> HealthResponse:
         service='Redis',
     )
     try:
-        await database.redis.ping()
+        await database.redis.ping()  # type: ignore
     except Exception as e:
         r.error = True
         r.message = f'Error: {str(e)}'

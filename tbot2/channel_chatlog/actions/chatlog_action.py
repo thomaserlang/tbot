@@ -37,7 +37,7 @@ async def create_chatlog(
         )
 
     if publish:
-        await database.redis.publish(
+        await database.redis.publish(  # type: ignore
             f'tbot:live_chat:{data.channel_id}', json_dumps(data_)
         )
     return True
