@@ -31,7 +31,7 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture) -> None:
             profile_image_url='',
             offline_image_url='',
             view_count=0,
-            created_at='2017-05-24T22:22:08Z',
+            created_at=datetime(2017, 5, 24, 22, 22, 8, tzinfo=UTC),
         ),
         TwitchUser(
             id='test_chatter4',
@@ -43,7 +43,7 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture) -> None:
             profile_image_url='',
             offline_image_url='',
             view_count=0,
-            created_at='2017-05-24T22:22:08Z',
+            created_at=datetime(2017, 5, 24, 22, 22, 8, tzinfo=UTC),
         ),
         TwitchUser(
             id='test_chatter3',
@@ -55,7 +55,7 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture) -> None:
             profile_image_url='',
             offline_image_url='',
             view_count=0,
-            created_at='2017-05-24T22:22:08Z',
+            created_at=datetime(2017, 5, 24, 22, 22, 8, tzinfo=UTC),
         ),
         TwitchUser(
             id='test_chatter2',
@@ -67,7 +67,7 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture) -> None:
             profile_image_url='',
             offline_image_url='',
             view_count=0,
-            created_at='2017-05-24T22:22:08Z',
+            created_at=datetime(2017, 5, 24, 22, 22, 8, tzinfo=UTC),
         ),
         TwitchUser(
             id='test_chatter',
@@ -79,7 +79,7 @@ async def test_points_ranking_vars(db: None, mocker: MockFixture) -> None:
             profile_image_url='',
             offline_image_url='',
             view_count=0,
-            created_at='2017-05-24T22:22:08Z',
+            created_at=datetime(2017, 5, 24, 22, 22, 8, tzinfo=UTC),
         ),
     ]
 

@@ -2,13 +2,13 @@ from datetime import UTC, datetime
 
 import pytest
 from pytest_mock import MockFixture
-from twitchAPI.twitch import TwitchUser
 from uuid6 import uuid7
 
 from tbot2.channel_command import MessageVar, TCommand
 from tbot2.channel_command.var_fillers.accountage_vars import accountage_vars
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessage, datetime_now
 from tbot2.testbase import run_file
+from tbot2.twitch import TwitchUser
 
 
 @pytest.mark.asyncio
@@ -27,7 +27,7 @@ async def test_accountage_vars(mocker: MockFixture) -> None:
             profile_image_url='',
             offline_image_url='',
             view_count=0,
-            created_at='2017-05-24T22:22:08Z',
+            created_at=datetime(2017, 5, 24, 22, 22, 8, tzinfo=UTC),
         )
     ]
 
@@ -52,7 +52,7 @@ async def test_accountage_vars(mocker: MockFixture) -> None:
         chat_message=ChatMessage(  # type: ignore
             id=uuid7(),
             type='message',
-            created_at=datetime.now(tz=UTC),
+            created_at=datetime_now(),
             provider='twitch',
             provider_id='1234',
             channel_id=channel_id,
@@ -82,7 +82,7 @@ async def test_accountage_vars(mocker: MockFixture) -> None:
             profile_image_url='',
             offline_image_url='',
             view_count=0,
-            created_at='2017-05-24T22:22:08Z',
+            created_at=datetime(2017, 5, 24, 22, 22, 8, tzinfo=UTC),
         )
     ]
 
@@ -90,7 +90,7 @@ async def test_accountage_vars(mocker: MockFixture) -> None:
         chat_message=ChatMessage(  # type: ignore
             id=uuid7(),
             type='message',
-            created_at=datetime.now(tz=UTC),
+            created_at=datetime_now(),
             provider='twitch',
             provider_id='1234',
             channel_id=channel_id,

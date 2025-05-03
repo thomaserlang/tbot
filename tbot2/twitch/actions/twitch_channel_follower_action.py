@@ -1,10 +1,9 @@
 from uuid import UUID
 
-from twitchAPI.twitch import ChannelFollower
-
 from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..exceptions import TwitchException
+from ..schemas.twitch_channel_follower_schema import ChannelFollower
 from ..twitch_http_client import twitch_user_client
 
 
@@ -29,4 +28,4 @@ async def twitch_channel_follower(
     data = response.json()
     if not data['data']:
         return
-    return ChannelFollower(**data['data'][0])
+    return ChannelFollower.model_validate(data['data'][0])

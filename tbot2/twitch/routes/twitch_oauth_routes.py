@@ -6,7 +6,6 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Security
 from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
-from twitchAPI.twitch import TwitchUser
 
 from tbot2.auth_backend import create_token_str
 from tbot2.bot_providers import (
@@ -37,6 +36,7 @@ from tbot2.common.schemas.connect_url_schema import RedirectUrl
 from tbot2.common.utils.request_url_for import request_url_for
 from tbot2.config_settings import config
 from tbot2.dependecies import authenticated
+from tbot2.twitch import TwitchUser
 from tbot2.user import UserCreate, get_or_create_user
 
 from ..actions.eventsub_actions import (
@@ -196,7 +196,7 @@ async def twitch_auth_route(
             'Authorization': f'Bearer {response.access_token}',
         },
     )
-    twitch_user = TwitchUser(**r.json()['data'][0])
+    twitch_user = TwitchUser.model_validate(r.json()['data'][0])
 
     match params.state['mode']:
         case 'sign_in':

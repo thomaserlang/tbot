@@ -1,5 +1,3 @@
-from twitchAPI.twitch import TwitchUser as TwitchUser
-
 from . import scopes as scopes
 from .actions import twitch_handle_internal_events as twitch_handle_internal_events
 from .actions.eventsub_actions import (
@@ -56,11 +54,14 @@ from .actions.twitch_tasks import (
 from .actions.twitch_warn_chat_user_action import (
     twitch_warn_chat_user as twitch_warn_chat_user,
 )
+from .schemas.twitch_channel_follower_schema import ChannelFollower as ChannelFollower
 from .schemas.twitch_channel_information_schema import (
     ChannelInformation as ChannelInformation,
 )
 from .schemas.twitch_channel_information_schema import (
     ModifyChannelInformationRequest as ModifyChannelInformationRequest,
 )
+from .schemas.twitch_chatter_schema import Chatter as Chatter
 from .schemas.twitch_game_schema import Game as Game
 from .schemas.twitch_game_schema import SearchCategoryResult as SearchCategoryResult
+from .schemas.twitch_user_schema import TwitchUser as TwitchUser

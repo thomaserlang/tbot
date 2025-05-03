@@ -4,8 +4,6 @@ import typing
 from httpx import AsyncClient, Response
 from httpx_auth import OAuth2ClientCredentials
 from pydantic import BaseModel
-from twitchAPI.object.base import TwitchObject
-from twitchAPI.twitch import Twitch
 
 from tbot2.common.exceptions import ErrorMessage
 from tbot2.common.utils.httpx_retry import retry_transport
@@ -74,12 +72,7 @@ twitch_bot_client = AsyncClient(
     transport=retry_transport,
 )
 
-twitch_client = Twitch(
-    app_id=config.twitch.client_id, app_secret=config.twitch.client_secret
-)
-
-
-T = typing.TypeVar('T')
+T = typing.TypeVar('T', bound=BaseModel)
 
 
 async def get_twitch_pagination_yield(
@@ -87,14 +80,8 @@ async def get_twitch_pagination_yield(
     schema: type[T],
 ) -> typing.AsyncGenerator[list[T]]:
     data = response.json()
-    if issubclass(schema, TwitchObject):
-        yield [schema(**item) for item in data['data']]
-    elif issubclass(schema, BaseModel):
-        yield [schema.model_validate(item) for item in data['data']]
-    else:
-        raise Exception(
-            f'Invalid schema type: {schema}. Must be either BaseModel or TwitchObject.'
-        )
+
+    yield [schema.model_validate(item) for item in data['data']]
 
     pagination = data.get('pagination')
     while pagination:
@@ -108,14 +95,5 @@ async def get_twitch_pagination_yield(
         if response.status_code >= 400:
             raise ErrorMessage(f'{response.status_code} {response.text}')
         data = response.json()
-        if issubclass(schema, TwitchObject):
-            yield [schema(**item) for item in data['data']]
-        elif issubclass(schema, BaseModel):  # type: ignore
-            yield [schema.model_validate(item) for item in data['data']]
-        else:
-            raise Exception(
-                f'Invalid schema type: {schema}. Must be either '
-                'BaseModel or TwitchObject.'
-            )
-
+        yield [schema.model_validate(item) for item in data['data']]
         pagination = data.get('pagination')

@@ -1,11 +1,10 @@
 from uuid import UUID
 
-from twitchAPI.twitch import TwitchUser
-
 from tbot2.common import safe_username
 from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..exceptions import TwitchException
+from ..schemas.twitch_user_schema import TwitchUser
 from ..twitch_http_client import twitch_app_client
 
 
@@ -38,7 +37,7 @@ async def lookup_twitch_users(
     data = response.json()
     if not data['data']:
         return []
-    return [TwitchUser(**user) for user in data['data']]
+    return [TwitchUser.model_validate(user) for user in data['data']]
 
 
 async def lookup_twitch_user(

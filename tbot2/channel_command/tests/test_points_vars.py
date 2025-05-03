@@ -31,7 +31,7 @@ async def test_points_vars(db: None, mocker: MockFixture) -> None:
             profile_image_url='',
             offline_image_url='',
             view_count=0,
-            created_at='2017-05-24T22:22:08Z',
+            created_at=datetime(2017, 5, 24, 22, 22, 8, tzinfo=UTC),
         ),
     ]
 

@@ -2,13 +2,13 @@ from datetime import UTC, datetime
 
 import pytest
 from pytest_mock import MockFixture
-from twitchAPI.twitch import ChannelFollower, TwitchUser
 from uuid6 import uuid7
 
 from tbot2.channel_command import MessageVar, TCommand
 from tbot2.channel_command.var_fillers.followage_vars import followage_vars
 from tbot2.common import ChatMessage
 from tbot2.testbase import run_file
+from tbot2.twitch import ChannelFollower, TwitchUser
 
 
 @pytest.mark.asyncio
@@ -17,11 +17,10 @@ async def test_followage_vars(mocker: MockFixture) -> None:
         'tbot2.channel_command.var_fillers.followage_vars.twitch_channel_follower'
     )
     twitch_channel_follower.return_value = ChannelFollower(
-        from_id='1234',
-        from_name='test',
-        to_id='1234',
-        to_name='test',
-        followed_at='2017-05-24T22:22:08Z',
+        user_id='1234',
+        user_name='testuser',
+        user_login='testuser',
+        followed_at=datetime(2017, 5, 24, 22, 22, 8, tzinfo=UTC),
     )
 
     vars = {
@@ -76,7 +75,7 @@ async def test_followage_vars(mocker: MockFixture) -> None:
             profile_image_url='',
             offline_image_url='',
             view_count=0,
-            created_at='2017-05-24T22:22:08Z',
+            created_at=datetime(2017, 5, 24, 22, 22, 8, tzinfo=UTC),
         )
     ]
 

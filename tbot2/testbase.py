@@ -1,6 +1,6 @@
+from dataclasses import dataclass
 from typing import Any, TypeVar
 
-from attr import dataclass
 from httpx import AsyncClient
 
 from tbot2.auth_backend import create_token_str

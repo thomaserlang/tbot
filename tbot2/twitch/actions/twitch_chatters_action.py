@@ -1,12 +1,11 @@
 from collections.abc import AsyncGenerator
 from uuid import UUID
 
-from twitchAPI.twitch import Chatter
-
 from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..actions.twitch_channel_follower_action import twitch_user_client
 from ..exceptions import TwitchException
+from ..schemas.twitch_chatter_schema import Chatter
 from ..twitch_http_client import get_twitch_pagination_yield
 
 
