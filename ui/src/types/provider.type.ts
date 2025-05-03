@@ -10,7 +10,8 @@ export interface ProviderInfo {
     signinProvider?: boolean
     color?: string
     stream?: boolean
-    chat?: boolean
+    chat_read?: boolean
+    chat_write?: boolean
     ownBot?: boolean
     systemBot?: boolean
     dashboardUrl?: string

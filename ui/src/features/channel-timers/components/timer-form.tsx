@@ -67,7 +67,7 @@ export function TimerForm({ form }: Props) {
                         all: { key: 'all', name: 'All', chat: true },
                         ...providerInfo,
                     })
-                        .filter((t) => t.chat)
+                        .filter((t) => t.chat_read)
                         .map((value) => ({
                             value: value.key,
                             label: value.name,
