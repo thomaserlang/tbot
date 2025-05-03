@@ -116,7 +116,6 @@ function UnbanButton(props: IProps) {
         },
     })
     const doUnbanUser = () => {
-        console.log(channelProviders.data)
         channelProviders.data
             ?.filter((provider) => provider.provider === props.provider)
             .map((channelProvider) => {
