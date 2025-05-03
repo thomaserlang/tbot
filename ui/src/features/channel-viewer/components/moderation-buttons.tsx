@@ -14,6 +14,14 @@ interface IProps {
 }
 
 export function ModerationButtons(props: IProps) {
+    const channelProviders = useGetChannelProviders({
+        channelId: props.channelId,
+    })
+    const channelProvider = channelProviders.data?.find(
+        (provider) => provider.provider === props.provider
+    )
+    if (!channelProvider) return null
+
     return (
         <Flex gap="0.5rem">
             <BanButton {...props} />
@@ -108,6 +116,7 @@ function UnbanButton(props: IProps) {
         },
     })
     const doUnbanUser = () => {
+        console.log(channelProviders.data)
         channelProviders.data
             ?.filter((provider) => provider.provider === props.provider)
             .map((channelProvider) => {
