@@ -44,10 +44,6 @@ async def task_tiktok() -> None:
 
                 current_channels.add(channel_provider.channel_id)
                 if channel_provider.channel_id in channel_monitor_tasks:
-                    logger.debug(
-                        'Channel already being handled',
-                        extra={'channel_provider_id': channel_provider.id},
-                    )
                     continue
                 channel_monitor_tasks[channel_provider.channel_id] = (
                     asyncio.create_task(handle_channel(channel_provider))
@@ -156,6 +152,7 @@ async def handle_channel(
             await client.connect()  # type: ignore
         except UserNotFoundError as e:
             logger.debug(str(e))
+            return
         except Exception as e:
             logger.error(
                 'Failed to create tiktok client',
