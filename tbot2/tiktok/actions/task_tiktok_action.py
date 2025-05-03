@@ -119,10 +119,10 @@ async def handle_channel(
             async def on_gift(event: GiftEvent) -> None:
                 message: str | None = None
                 if event.gift.streakable and not event.streaking:  # type: ignore
-                    message = f'{event.user.nickname} gifted {event.repeat_count} '
-                    '{event.gift.name}'
+                    message = f'{event.user.nickname} sent {event.repeat_count} '
+                    f'{event.gift.name}'
                 elif not event.gift.streakable:  # type: ignore
-                    message = f'{event.user.nickname} gifted {event.gift.name}'
+                    message = f'{event.user.nickname} sent {event.gift.name}'
                 if message:
                     await create_chatlog(
                         data=ChatMessage(
