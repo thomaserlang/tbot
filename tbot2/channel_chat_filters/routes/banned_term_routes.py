@@ -7,8 +7,8 @@ from fastapi import APIRouter, Security
 from uuid6 import uuid7
 
 from tbot2.channel_chat_filters.models.chat_filter_model import MChatFilter
-from tbot2.common import ChatMessage, TAccessLevel, TokenData
-from tbot2.dependecies import Depends, HTTPException, authenticated
+from tbot2.common import ChatMessage, ErrorMessage, TAccessLevel, TokenData
+from tbot2.dependecies import Depends, authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQuery, page_cursor
 
 from ..actions.banned_term_actions import (
@@ -92,13 +92,17 @@ async def get_banned_term_route(
         term_id=banned_term_id,
     )
     if not term:
-        raise HTTPException(status_code=404, detail='Not found')
+        raise ErrorMessage(
+            'Banned term not found', code=404, type='banned_term_not_found'
+        )
 
     filter = await get_chat_filter(
         filter_id=filter_id,
     )
     if not filter or filter.channel_id != channel_id:
-        raise HTTPException(status_code=404, detail='Not found')
+        raise ErrorMessage(
+            'Chat filter not found', code=404, type='chat_filter_not_found'
+        )
 
     return term
 
@@ -124,7 +128,9 @@ async def create_banned_term_route(
         filter_id=filter_id,
     )
     if not filter or filter.channel_id != channel_id:
-        raise HTTPException(status_code=404, detail='Not found')
+        raise ErrorMessage(
+            'Chat filter not found', code=404, type='chat_filter_not_found'
+        )
 
     term = await create_banned_term(
         filter_id=filter.id,
@@ -155,13 +161,17 @@ async def update_banned_term_route(
         filter_id=filter_id,
     )
     if not filter or filter.channel_id != channel_id:
-        raise HTTPException(status_code=404, detail='Not found')
+        raise ErrorMessage(
+            'Chat filter not found', code=404, type='chat_filter_not_found'
+        )
 
     term = await get_banned_term(
         term_id=banned_term_id,
     )
     if not term:
-        raise HTTPException(status_code=404, detail='Not found')
+        raise ErrorMessage(
+            'Banned term not found', code=404, type='banned_term_not_found'
+        )
 
     term = await update_banned_term(
         term_id=banned_term_id,
@@ -192,7 +202,9 @@ async def delete_banned_term_route(
         filter_id=filter_id,
     )
     if not filter or filter.channel_id != channel_id:
-        raise HTTPException(status_code=404, detail='Not found')
+        raise ErrorMessage(
+            'Chat filter not found', code=404, type='chat_filter_not_found'
+        )
 
     await delete_banned_term(
         term_id=banned_term_id,
@@ -220,7 +232,9 @@ async def banned_term_test_route(
         model=ChatFilterBannedTerms,
     )
     if not filter or filter.channel_id != channel_id:
-        raise HTTPException(status_code=404, detail='Not found')
+        raise ErrorMessage(
+            'Chat filter not found', code=404, type='chat_filter_not_found'
+        )
 
     result = await filter.check_message(
         message=ChatMessage(

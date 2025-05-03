@@ -9,6 +9,9 @@ from .actions.channel_provider_actions import (
     get_channel_provider_by_id as get_channel_provider_by_id,
 )
 from .actions.channel_provider_actions import (
+    get_channel_provider_by_provider_id as get_channel_provider_by_provider_id,
+)
+from .actions.channel_provider_actions import (
     get_channel_providers as get_channel_providers,
 )
 from .actions.channel_provider_actions import (

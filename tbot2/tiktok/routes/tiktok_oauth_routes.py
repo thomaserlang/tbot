@@ -71,6 +71,15 @@ async def tiktok_connect_route(
     await token_data.channel_require_access(
         channel_id=channel_id, access_level=TAccessLevel.ADMIN
     )
+    # since we only need the tiktok username and tiktok has requirements
+    # we currently can't comply with, just send the user to a form
+    # to enter their tiktok username
+    return ConnectUrl(
+        url=parse.urljoin(
+            str(config.base_url),
+            f'/channels/{channel_id}/providers/register/tiktok',
+        )
+    )
     params = Oauth2AuthorizeParams(
         client_id=config.tiktok.client_id,
         response_type='code',

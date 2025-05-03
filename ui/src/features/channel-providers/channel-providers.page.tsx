@@ -9,10 +9,14 @@ import { ChannelProviderId } from './channel-provider.types'
 import { AddChannelProviderButton } from './components/add-channel-provider-button'
 import { ChannelProviderModal } from './components/channel-provider-modal'
 import { ProvidersView } from './components/channel-providers-view'
+import { TiktokUsernameModal } from './components/tiktok-username-modal'
 
 export function Component() {
     const channel = useCurrentChannel()
-    const { providerId } = useParams<{ providerId?: ChannelProviderId }>()
+    const { channelProviderId, provider } = useParams<{
+        channelProviderId?: ChannelProviderId
+        provider?: string
+    }>()
     const { data, isLoading, error } = useGetChannelProviders({
         channelId: channel.id,
     })
@@ -34,10 +38,20 @@ export function Component() {
                 {data && <ProvidersView channelProviders={data} />}
             </Flex>
 
-            {providerId && (
+            {channelProviderId && (
                 <ChannelProviderModal
                     channelId={channel.id}
-                    channelProviderId={providerId}
+                    channelProviderId={channelProviderId}
+                    onClose={() => {
+                        navigate(`/channels/${channel.id}/providers`)
+                    }}
+                />
+            )}
+
+            {provider && (
+                <TiktokUsernameModal
+                    channelId={channel.id}
+                    opened={!!provider}
                     onClose={() => {
                         navigate(`/channels/${channel.id}/providers`)
                     }}

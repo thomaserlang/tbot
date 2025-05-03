@@ -63,7 +63,14 @@ const protectedRoutes: RouteObject[] = [
                     ),
             },
             {
-                path: 'providers/:providerId',
+                path: 'providers/register/:provider',
+                lazy: () =>
+                    import(
+                        './features/channel-providers/channel-providers.page'
+                    ),
+            },
+            {
+                path: 'providers/:channelProviderId',
                 lazy: () =>
                     import(
                         './features/channel-providers/channel-providers.page'

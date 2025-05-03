@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+from loguru import logger
 
 from tbot2.channel_viewer import ViewerNameHistoryRequest, save_viewers_name_history
 from tbot2.common import ChatMessage
@@ -18,11 +19,19 @@ async def create_chatlog(
     if 'access_level' in data_:
         data_.pop('access_level')  # do we wanna save this?
     async with get_session(session) as session:
-        await session.execute(
-            sa.insert(MChatlog.__table__).values(  # type: ignore
-                **data_,
+        try:
+            await session.execute(
+                sa.insert(MChatlog.__table__).values(  # type: ignore
+                    **data_,
+                )
             )
-        )
+        except sa.exc.IntegrityError as e:
+            if 'uq_chatlogs_msg_id' in str(e):
+                logger.info(
+                    'Duplicate message id, ignoring', extra={'msg_id': data.msg_id}
+                )
+                return False
+            raise e
 
         await save_viewers_name_history(
             provider=data.provider,

@@ -77,6 +77,7 @@ def refresh_twitch_eventsubs() -> None:
 @cli.command()
 def tasks() -> None:
     from tbot2.channel_timer import task_handle_timers
+    from tbot2.tiktok import task_tiktok
     from tbot2.twitch import task_update_live_streams
     from tbot2.youtube import task_youtube_live
 
@@ -86,6 +87,7 @@ def tasks() -> None:
                 task_update_live_streams(),
                 task_handle_timers(),
                 task_youtube_live(),
+                task_tiktok(),
             )
 
     with asyncio.Runner() as runner:

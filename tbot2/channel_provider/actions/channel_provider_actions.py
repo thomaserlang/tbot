@@ -50,6 +50,20 @@ async def get_channel_provider_by_id(
             return ChannelProvider.model_validate(channel_provider)
 
 
+async def get_channel_provider_by_provider_id(
+    *, provider: Provider, provider_id: str, session: AsyncSession | None = None
+) -> ChannelProvider | None:
+    async with get_session(session) as session:
+        channel_provider = await session.scalar(
+            sa.select(MChannelProvider).where(
+                MChannelProvider.provider == provider,
+                MChannelProvider.provider_user_id == provider_id,
+            )
+        )
+        if channel_provider:
+            return ChannelProvider.model_validate(channel_provider)
+
+
 async def get_channel_providers(
     *,
     channel_id: UUID,
