@@ -41,10 +41,10 @@ export function FilterForm({ form }: Props) {
                 <Select
                     label="Provider"
                     data={Object.values({
-                        all: { key: 'all', name: 'All', chat: true },
+                        all: { key: 'all', name: 'All', chat_write: true },
                         ...providerInfo,
                     })
-                        .filter((t) => t.chat_read)
+                        .filter((t) => t.chat_write)
                         .map((value) => ({
                             value: value.key,
                             label: value.name,
