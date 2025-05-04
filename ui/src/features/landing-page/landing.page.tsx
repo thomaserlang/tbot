@@ -80,7 +80,7 @@ export function Component() {
             <Container size="lg">
                 <Flex ml="2rem" mt="2rem" gap="2rem" align="center">
                     <Logo width={300} />
-                    <Text fw={500} fz={40}>
+                    <Text c="#fff" fw={500} fz={40}>
                         Work smarter, not harder
                     </Text>
                 </Flex>
