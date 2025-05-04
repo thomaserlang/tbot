@@ -1,8 +1,8 @@
 import { Logo } from '@/components/logo'
 import {
-    Box,
     Button,
     Container,
+    Flex,
     Grid,
     SimpleGrid,
     Text,
@@ -78,9 +78,12 @@ export function Component() {
                 content="Multiplartform streaming, Your own bot name, Combined Chat, Chat Filter, Commands/Timers"
             />
             <Container size="lg">
-                <Box ml="2rem" mt="2rem">
+                <Flex ml="2rem" mt="2rem" gap="2rem" align="center">
                     <Logo width={300} />
-                </Box>
+                    <Text fw={500} fz={40}>
+                        Work smarter, not harder
+                    </Text>
+                </Flex>
                 <div className={classes.wrapper}>
                     <Grid gutter={80}>
                         <Grid.Col span={{ base: 12, md: 5 }}>
