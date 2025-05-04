@@ -78,9 +78,9 @@ export function Component() {
                 content="Multiplartform streaming, Your own bot name, Combined Chat, Chat Filter, Commands/Timers"
             />
             <Container size="lg">
-                <Flex ml="2rem" mt="2rem" gap="2rem" align="center">
+                <Flex ml="2rem" mt="2rem" direction="column" wrap={'wrap'}>
                     <Logo width={300} />
-                    <Text c="#fff" fw={500} fz={40}>
+                    <Text c="dimmed" fw={500} fz={25}>
                         Work smarter, not harder
                     </Text>
                 </Flex>
@@ -96,7 +96,8 @@ export function Component() {
                                 simplicity and ease of use.
                                 <br />
                                 <br />
-                                Twitch and YouTube support and more to come.
+                                Twitch, YouTube and TikTok support and more to
+                                come.
                             </Text>
 
                             <Button
