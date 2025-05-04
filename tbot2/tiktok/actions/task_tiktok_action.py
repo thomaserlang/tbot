@@ -47,21 +47,25 @@ async def task_tiktok() -> None:
                     )
                     continue
 
-                current_channels.add(channel_provider.channel_id)
+                current_channels.add(channel_provider.id)
                 if channel_provider.channel_id in channel_monitor_tasks:
                     continue
-                channel_monitor_tasks[channel_provider.channel_id] = (
-                    asyncio.create_task(handle_channel(channel_provider))
+                channel_monitor_tasks[channel_provider.id] = asyncio.create_task(
+                    handle_channel(channel_provider)
                 )
 
             # Remove no longer channels
-            for channel_id in list(channel_monitor_tasks.keys()):
-                if channel_id not in current_channels:
+            for channel_provider_id in list(channel_monitor_tasks.keys()):
+                if channel_provider_id not in current_channels:
                     logger.debug(
-                        'Cancelling channel monitor', extra={'channel_id': channel_id}
+                        'Cancelling channel monitor',
+                        extra={'channel_id': channel_provider_id},
                     )
-                    channel_monitor_tasks[channel_id].cancel()
-                    del channel_monitor_tasks[channel_id]
+                    channel_monitor_tasks[channel_provider_id].cancel()
+                    del channel_monitor_tasks[channel_provider_id]
+            for channel_provider_id in channel_monitor_tasks:
+                if channel_monitor_tasks[channel_provider_id].done():
+                    del channel_monitor_tasks[channel_provider_id]
         finally:
             await asyncio.sleep(CHECK_EVERY)
 
@@ -101,6 +105,7 @@ async def handle_channel(
                     )
 
             async def on_comment(event: CommentEvent) -> None:
+                logger.info(event)
                 await create_chatlog(
                     data=ChatMessageRequest(
                         id=uuid7(),
@@ -148,7 +153,7 @@ async def handle_channel(
                     ),
                     ChatMessagePartRequest(
                         type='text',
-                        text=f' x{event.repeat_count} ({diamonds} diamonds)',
+                        text=f' x{event.repeat_count} ({diamonds} {name})',
                     ),
                 ]
                 await create_chatlog(

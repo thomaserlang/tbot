@@ -74,6 +74,10 @@ async def task_youtube_live() -> None:
                     )
                     broadcast_chat_monitor_tasks[chat_id].cancel()
                     del broadcast_chat_monitor_tasks[chat_id]
+
+            for id in broadcast_chat_monitor_tasks:
+                if broadcast_chat_monitor_tasks[id].done():
+                    del broadcast_chat_monitor_tasks[id]
         finally:
             await asyncio.sleep(CHECK_EVERY)
 
