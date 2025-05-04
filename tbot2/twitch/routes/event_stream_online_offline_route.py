@@ -16,7 +16,7 @@ from ..schemas.event_stream_online_offline_schema import (
     EventStreamOffline,
     EventStreamOnline,
 )
-from .dependencies import validate_twitch_webhook_signature
+from ..twitch_event_dependencies import validate_twitch_webhook_signature
 
 router = APIRouter()
 

@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 from uuid import UUID
 
 from loguru import logger
@@ -22,7 +21,12 @@ from tbot2.channel_stream import (
     end_channel_provider_stream,
     get_or_create_channel_provider_stream,
 )
-from tbot2.common import ChatMessage, datetime_now
+from tbot2.common import (
+    ChatMessagePartRequest,
+    ChatMessageRequest,
+    GiftPartRequest,
+    datetime_now,
+)
 from tbot2.message_parse import message_to_parts
 
 channel_monitor_tasks: dict[UUID, asyncio.Task[None]] = {}
@@ -93,12 +97,12 @@ async def handle_channel(
                         provider='tiktok',
                         provider_id=channel_provider.provider_user_id or '',
                         provider_stream_id=str(event.room_id),
-                        started_at=datetime.datetime.now(),
+                        started_at=datetime_now(),
                     )
 
             async def on_comment(event: CommentEvent) -> None:
                 await create_chatlog(
-                    data=ChatMessage(
+                    data=ChatMessageRequest(
                         id=uuid7(),
                         type='message',
                         created_at=datetime_now(),
@@ -119,34 +123,50 @@ async def handle_channel(
                 )
 
             async def on_gift(event: GiftEvent) -> None:
-                message: str | None = None
-                if event.gift.streakable and not event.streaking:  # type: ignore
-                    message = f'{event.user.nickname} sent {event.repeat_count} '
-                    f'{event.gift.name}'
-                elif not event.gift.streakable:  # type: ignore
-                    message = f'{event.user.nickname} sent {event.gift.name}'
-                if message:
-                    await create_chatlog(
-                        data=ChatMessage(
-                            id=uuid7(),
-                            type='notice',
-                            created_at=datetime_now(),
-                            channel_id=channel_provider.channel_id,
-                            provider='tiktok',
-                            provider_id=client.unique_id,
-                            provider_viewer_id=event.user.unique_id,
-                            viewer_display_name=event.user.nickname,
-                            viewer_name=event.user.unique_id,
-                            message=message,
-                            parts=await message_to_parts(
-                                message=message,
-                                provider='tiktok',
-                                provider_user_id=channel_provider.provider_user_id
-                                or '',
-                            ),
-                            msg_id=str(event.base_message.message_id),
-                        )
+                if event.gift.streakable and event.streaking:  # type: ignore
+                    return  # wait til streak ends
+                diamonds = event.gift.diamond_count * event.repeat_count
+                name = 'diamonds' if diamonds > 1 else 'diamond'
+                message = (
+                    f'{event.user.nickname} sent {event.gift.name} '
+                    f'x{event.repeat_count} ({diamonds} {name})'
+                )
+                parts: list[ChatMessagePartRequest] = [
+                    ChatMessagePartRequest(
+                        type='text',
+                        text=f'{event.user.nickname} sent ',
+                    ),
+                    ChatMessagePartRequest(
+                        type='gift',
+                        text=event.gift.name,
+                        gift=GiftPartRequest(
+                            id=str(event.gift.id),
+                            type='gift',
+                            name=event.gift.name,
+                            count=event.gift.diamond_count,
+                        ),
+                    ),
+                    ChatMessagePartRequest(
+                        type='text',
+                        text=f' x{event.repeat_count} ({diamonds} diamonds)',
+                    ),
+                ]
+                await create_chatlog(
+                    data=ChatMessageRequest(
+                        id=uuid7(),
+                        type='notice',
+                        created_at=datetime_now(),
+                        channel_id=channel_provider.channel_id,
+                        provider='tiktok',
+                        provider_id=client.unique_id,
+                        provider_viewer_id=event.user.unique_id,
+                        viewer_display_name=event.user.nickname,
+                        viewer_name=event.user.unique_id,
+                        message=message,
+                        parts=parts,
+                        msg_id=str(event.base_message.message_id),
                     )
+                )
 
             async def on_live_end(event: LiveEndEvent) -> None:
                 await end_channel_provider_stream(

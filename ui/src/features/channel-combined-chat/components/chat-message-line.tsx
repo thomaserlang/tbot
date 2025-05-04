@@ -5,7 +5,7 @@ import { Box, Text } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
 import { Badges } from './badges'
 import classes from './chat-message-line.module.css'
-import { MessageWithFragments } from './message-with-fragments'
+import { MessageLine } from './message-line'
 
 interface Props {
     chatMessage: ChatMessage
@@ -56,7 +56,7 @@ export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
             </span>
             :
             <span className={classes.text}>
-                <MessageWithFragments chatMessage={chatMessage} />
+                <MessageLine chatMessage={chatMessage} />
             </span>
         </Box>
     )

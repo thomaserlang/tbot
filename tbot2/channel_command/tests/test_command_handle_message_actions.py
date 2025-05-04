@@ -4,7 +4,7 @@ from uuid6 import uuid7
 
 from tbot2.channel_command import CommandCreate, create_command, handle_message_response
 from tbot2.channel_command import var_fillers as var_fillers
-from tbot2.common import ChatMessage, datetime_now
+from tbot2.common import ChatMessageRequest, datetime_now
 from tbot2.testbase import run_file, user_signin
 
 
@@ -22,7 +22,7 @@ async def test_handle_message(db: None) -> None:
     )
 
     response = await handle_message_response(
-        chat_message=ChatMessage(
+        chat_message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),
@@ -42,7 +42,7 @@ async def test_handle_message(db: None) -> None:
 
     # test pattern
     response = await handle_message_response(
-        chat_message=ChatMessage(
+        chat_message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),
@@ -68,7 +68,7 @@ async def test_handle_message(db: None) -> None:
         ),
     )
     response = await handle_message_response(
-        chat_message=ChatMessage(
+        chat_message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),
@@ -87,7 +87,7 @@ async def test_handle_message(db: None) -> None:
     assert response.response == 'Message from: Test User'
 
     response = await handle_message_response(
-        chat_message=ChatMessage(
+        chat_message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),

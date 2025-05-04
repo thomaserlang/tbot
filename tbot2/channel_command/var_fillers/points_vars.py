@@ -1,5 +1,5 @@
 from tbot2.channel_points import get_points_rank, get_total_point_users
-from tbot2.common import ChatMessage, safe_username
+from tbot2.common import ChatMessageRequest, safe_username
 from tbot2.twitch import lookup_twitch_user
 
 from ..exceptions import CommandError
@@ -12,7 +12,7 @@ from ..var_filler import fills_vars
     vars=('points', 'points_rank', 'total_point_users'),
 )
 async def chatter_point_vars(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     for_provider_viewer_id = chat_message.provider_viewer_id
     if len(command.args) > 0:

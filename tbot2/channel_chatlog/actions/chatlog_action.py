@@ -2,8 +2,7 @@ import sqlalchemy as sa
 from loguru import logger
 
 from tbot2.channel_viewer import ViewerNameHistoryRequest, save_viewers_name_history
-from tbot2.common import ChatMessage, ChatMessagePart
-from tbot2.common.utils.json_utils import json_dumps
+from tbot2.common import ChatMessage, ChatMessagePartRequest, ChatMessageRequest
 from tbot2.contexts import AsyncSession, get_session
 from tbot2.database import database
 
@@ -11,7 +10,7 @@ from ..models.chatlog_model import MChatlog
 
 
 async def create_chatlog(
-    data: ChatMessage,
+    data: ChatMessageRequest,
     publish: bool = True,
     session: AsyncSession | None = None,
 ) -> bool:
@@ -21,7 +20,7 @@ async def create_chatlog(
 
     if not data.parts:
         data_['parts'] = [
-            ChatMessagePart(
+            ChatMessagePartRequest(
                 type='text',
                 text=data.message,
             ).model_dump(exclude_unset=True)
@@ -58,6 +57,7 @@ async def create_chatlog(
 
     if publish:
         await database.redis.publish(  # type: ignore
-            f'tbot:live_chat:{data.channel_id}', json_dumps(data_)
+            f'tbot:live_chat:{data.channel_id}',
+            ChatMessage.model_validate(data).model_dump_json(),
         )
     return True

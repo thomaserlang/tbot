@@ -6,7 +6,7 @@ from uuid6 import uuid7
 
 from tbot2.channel_command import MessageVar, TCommand
 from tbot2.channel_command.var_fillers.accountage_vars import accountage_vars
-from tbot2.common import ChatMessage, datetime_now
+from tbot2.common import ChatMessageRequest, datetime_now
 from tbot2.testbase import run_file
 from tbot2.twitch import TwitchUser
 
@@ -49,7 +49,7 @@ async def test_accountage_vars(mocker: MockFixture) -> None:
     channel_id = uuid7()
 
     await accountage_vars(
-        chat_message=ChatMessage(  # type: ignore
+        chat_message=ChatMessageRequest(  # type: ignore
             id=uuid7(),
             type='message',
             created_at=datetime_now(),
@@ -87,7 +87,7 @@ async def test_accountage_vars(mocker: MockFixture) -> None:
     ]
 
     await accountage_vars(
-        chat_message=ChatMessage(  # type: ignore
+        chat_message=ChatMessageRequest(  # type: ignore
             id=uuid7(),
             type='message',
             created_at=datetime_now(),

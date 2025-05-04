@@ -5,7 +5,7 @@ from uuid import UUID
 
 from async_lru import alru_cache
 
-from tbot2.common import ChatMessage, check_pattern_match
+from tbot2.common import ChatMessageRequest, check_pattern_match
 
 from ..actions.banned_term_actions import BannedTerm, get_banned_terms
 from ..schemas.chat_filter_schema import (
@@ -33,7 +33,7 @@ class ChatFilterBannedTermsUpdate(ChatFilterBaseUpdate):
 class ChatFilterBannedTerms(ChatFilterBase):
     type: Literal['banned_terms']
 
-    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
+    async def check_message(self, message: ChatMessageRequest) -> FilterMatchResult:
         banned_terms = await get_banned_terms_cached(filter_id=self.id)
         for term in banned_terms:
             if term.type == 'regex':

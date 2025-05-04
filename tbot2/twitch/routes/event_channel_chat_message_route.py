@@ -12,7 +12,7 @@ from tbot2.channel_command import CommandError, TCommand, handle_message_respons
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_provider import get_channel_provider
 from tbot2.common import (
-    ChatMessage,
+    ChatMessageRequest,
     TAccessLevel,
 )
 from tbot2.message_parse import message_to_parts
@@ -33,7 +33,7 @@ from ..schemas.event_headers_schema import EventSubHeaders
 from ..schemas.event_notification_schema import (
     EventSubNotification,
 )
-from .dependencies import validate_twitch_webhook_signature
+from ..twitch_event_dependencies import validate_twitch_webhook_signature
 
 router = APIRouter()
 
@@ -58,7 +58,7 @@ async def event_channel_chat_message_route(
     ):
         return
 
-    chat_message = ChatMessage(
+    chat_message = ChatMessageRequest(
         id=uuid7(),
         type='message',
         channel_id=channel_id,
@@ -110,7 +110,7 @@ async def event_channel_chat_message_route(
 
 
 async def handle_filter_message(
-    chat_message: ChatMessage,
+    chat_message: ChatMessageRequest,
 ) -> None:
     try:
         match = await matches_filter(chat_message=chat_message)

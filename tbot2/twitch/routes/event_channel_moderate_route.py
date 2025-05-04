@@ -6,14 +6,14 @@ from fastapi import APIRouter, Depends, Request
 from uuid6 import uuid7
 
 from tbot2.channel_chatlog import create_chatlog
-from tbot2.common import ChatMessage, datetime_now
+from tbot2.common import ChatMessageRequest, datetime_now
 
 from ..schemas.event_channel_moderate_schema import EventChannelModerate
 from ..schemas.event_headers_schema import EventSubHeaders
 from ..schemas.event_notification_schema import (
     EventSubNotification,
 )
-from .dependencies import validate_twitch_webhook_signature
+from ..twitch_event_dependencies import validate_twitch_webhook_signature
 
 router = APIRouter()
 
@@ -38,12 +38,12 @@ async def event_channel_chat_message_route(
     ):
         return
 
-    chat_message: ChatMessage | None = None
+    chat_message: ChatMessageRequest | None = None
 
     match data.event.action:
         case 'mod':
             if data.event.mod:
-                chat_message = ChatMessage(
+                chat_message = ChatMessageRequest(
                     id=uuid7(),
                     type='mod_action',
                     sub_type='mod',
@@ -62,7 +62,7 @@ async def event_channel_chat_message_route(
                 )
         case 'unmod':
             if data.event.unmod:
-                chat_message = ChatMessage(
+                chat_message = ChatMessageRequest(
                     id=uuid7(),
                     type='mod_action',
                     sub_type='unmod',
@@ -81,7 +81,7 @@ async def event_channel_chat_message_route(
                 )
         case 'vip':
             if data.event.vip:
-                chat_message = ChatMessage(
+                chat_message = ChatMessageRequest(
                     id=uuid7(),
                     type='mod_action',
                     sub_type='vip',
@@ -100,7 +100,7 @@ async def event_channel_chat_message_route(
                 )
         case 'unvip':
             if data.event.unvip:
-                chat_message = ChatMessage(
+                chat_message = ChatMessageRequest(
                     id=uuid7(),
                     type='mod_action',
                     sub_type='unmod',
@@ -119,7 +119,7 @@ async def event_channel_chat_message_route(
                 )
         case 'ban':
             if data.event.ban:
-                chat_message = ChatMessage(
+                chat_message = ChatMessageRequest(
                     id=uuid7(),
                     type='mod_action',
                     sub_type='ban',
@@ -138,7 +138,7 @@ async def event_channel_chat_message_route(
                 )
         case 'unban':
             if data.event.unban:
-                chat_message = ChatMessage(
+                chat_message = ChatMessageRequest(
                     id=uuid7(),
                     type='mod_action',
                     sub_type='unban',
@@ -157,7 +157,7 @@ async def event_channel_chat_message_route(
                 )
         case 'delete':
             if data.event.delete:
-                chat_message = ChatMessage(
+                chat_message = ChatMessageRequest(
                     id=uuid7(),
                     type='mod_action',
                     sub_type='delete',
@@ -179,7 +179,7 @@ async def event_channel_chat_message_route(
                 until = humanize.time.precisedelta(
                     datetime_now() - data.event.timeout.expires_at, format='%0.0f'
                 )
-                chat_message = ChatMessage(
+                chat_message = ChatMessageRequest(
                     id=uuid7(),
                     type='mod_action',
                     sub_type='timeout',
@@ -198,7 +198,7 @@ async def event_channel_chat_message_route(
                 )
         case 'untimeout':
             if data.event.untimeout:
-                chat_message = ChatMessage(
+                chat_message = ChatMessageRequest(
                     id=uuid7(),
                     type='mod_action',
                     sub_type='untimeout',
@@ -217,7 +217,7 @@ async def event_channel_chat_message_route(
                 )
         case 'warn':
             if data.event.warn:
-                chat_message = ChatMessage(
+                chat_message = ChatMessageRequest(
                     id=uuid7(),
                     type='mod_action',
                     sub_type='warn',
@@ -235,7 +235,7 @@ async def event_channel_chat_message_route(
                     provider_id=data.event.broadcaster_user_id,
                 )
         case 'clear':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='clear',
@@ -250,7 +250,7 @@ async def event_channel_chat_message_route(
                 provider_id=data.event.broadcaster_user_id,
             )
         case 'emoteonly':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='emoteonly',
@@ -265,7 +265,7 @@ async def event_channel_chat_message_route(
                 provider_id=data.event.broadcaster_user_id,
             )
         case 'emoteonlyoff':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='emoteonlyoff',
@@ -282,7 +282,7 @@ async def event_channel_chat_message_route(
                 provider_id=data.event.broadcaster_user_id,
             )
         case 'followers':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='followers',
@@ -297,7 +297,7 @@ async def event_channel_chat_message_route(
                 provider_id=data.event.broadcaster_user_id,
             )
         case 'followersoff':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='followersoff',
@@ -314,7 +314,7 @@ async def event_channel_chat_message_route(
                 provider_id=data.event.broadcaster_user_id,
             )
         case 'uniquechat':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='uniquechat',
@@ -331,7 +331,7 @@ async def event_channel_chat_message_route(
                 provider_id=data.event.broadcaster_user_id,
             )
         case 'uniquechatoff':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='uniquechatoff',
@@ -348,7 +348,7 @@ async def event_channel_chat_message_route(
                 provider_id=data.event.broadcaster_user_id,
             )
         case 'slow':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='slow',
@@ -363,7 +363,7 @@ async def event_channel_chat_message_route(
                 provider_id=data.event.broadcaster_user_id,
             )
         case 'slowoff':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='slowoff',
@@ -378,7 +378,7 @@ async def event_channel_chat_message_route(
                 provider_id=data.event.broadcaster_user_id,
             )
         case 'subscribers':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='subscribers',
@@ -395,7 +395,7 @@ async def event_channel_chat_message_route(
                 provider_id=data.event.broadcaster_user_id,
             )
         case 'subscribersoff':
-            chat_message = ChatMessage(
+            chat_message = ChatMessageRequest(
                 id=uuid7(),
                 type='mod_action',
                 sub_type='subscribersoff',

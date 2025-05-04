@@ -1,5 +1,5 @@
 from tbot2.channel_points import get_channel_point_settings, inc_bulk_points, inc_points
-from tbot2.common import ChatMessage, safe_username
+from tbot2.common import ChatMessageRequest, safe_username
 from tbot2.twitch import get_twitch_chatters, lookup_twitch_user
 
 from ..exceptions import CommandError, CommandSyntaxError
@@ -9,7 +9,7 @@ from ..var_filler import fills_vars
 
 @fills_vars(provider='twitch', vars=('add_points',))
 async def add_points_vars(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     if len(command.args) != 2:
         raise CommandSyntaxError(f'Syntax: !{command.name} <user> <points>')

@@ -1,4 +1,4 @@
-from tbot2.common import ChatMessagePart, EmotePart
+from tbot2.common import ChatMessagePartRequest, EmotePartRequest
 from tbot2.message_parse.emotes_to_parts import (
     EmotesCached,
     text_to_emote_parts,
@@ -9,25 +9,25 @@ from tbot2.testbase import run_file
 def test_text_to_emote_parts() -> None:
     emotes = EmotesCached(
         emotes={
-            'LUL': EmotePart(
+            'LUL': EmotePartRequest(
                 id='1',
                 name='LUL',
                 animated=False,
                 emote_provider='twitch',
             ),
-            'D:': EmotePart(
+            'D:': EmotePartRequest(
                 id='2',
                 name='D:',
                 animated=False,
                 emote_provider='twitch',
             ),
-            'Kappa': EmotePart(
+            'Kappa': EmotePartRequest(
                 id='3',
                 name='Kappa',
                 animated=False,
                 emote_provider='twitch',
             ),
-            's!': EmotePart(
+            's!': EmotePartRequest(
                 id='4',
                 name='s!',
                 animated=False,
@@ -43,52 +43,52 @@ def test_text_to_emote_parts() -> None:
     )
 
     assert r == [
-        ChatMessagePart(
+        ChatMessagePartRequest(
             type='emote',
             text='LUL',
-            emote=EmotePart(
+            emote=EmotePartRequest(
                 id='1',
                 name='LUL',
                 animated=False,
                 emote_provider='twitch',
             ),
         ),
-        ChatMessagePart(
+        ChatMessagePartRequest(
             type='text',
             text=' test D:D: ',
         ),
-        ChatMessagePart(
+        ChatMessagePartRequest(
             type='emote',
             text='Kappa',
-            emote=EmotePart(
+            emote=EmotePartRequest(
                 id='3',
                 name='Kappa',
                 animated=False,
                 emote_provider='twitch',
             ),
         ),
-        ChatMessagePart(
+        ChatMessagePartRequest(
             type='text',
             text=' ',
         ),
-        ChatMessagePart(
+        ChatMessagePartRequest(
             type='emote',
             text='s!',
-            emote=EmotePart(
+            emote=EmotePartRequest(
                 id='4',
                 name='s!',
                 animated=False,
                 emote_provider='twitch',
             ),
         ),
-        ChatMessagePart(
+        ChatMessagePartRequest(
             type='text',
             text=' test helps! ',
         ),
-        ChatMessagePart(
+        ChatMessagePartRequest(
             type='emote',
             text='D:',
-            emote=EmotePart(
+            emote=EmotePartRequest(
                 id='2',
                 name='D:',
                 animated=False,
@@ -103,10 +103,10 @@ def test_text_to_emote_parts() -> None:
     )
 
     assert r == [
-        ChatMessagePart(
+        ChatMessagePartRequest(
             type='emote',
             text='LUL',
-            emote=EmotePart(
+            emote=EmotePartRequest(
                 id='1',
                 name='LUL',
                 animated=False,

@@ -1,5 +1,5 @@
 from tbot2.channel_chat_filters import create_permit
-from tbot2.common import ChatMessage, safe_username
+from tbot2.common import ChatMessageRequest, safe_username
 from tbot2.twitch import lookup_twitch_user
 
 from ..exceptions import CommandError, CommandSyntaxError
@@ -12,7 +12,7 @@ from ..var_filler import fills_vars
     vars=('permit_manager',),
 )
 async def permit_manager_var(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     if len(command.args) != 1:
         raise CommandSyntaxError(f'Syntax: !{command.name} <user>')

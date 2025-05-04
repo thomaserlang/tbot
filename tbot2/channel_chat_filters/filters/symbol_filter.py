@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 
 from pydantic import Field
 
-from tbot2.common.schemas.chat_message_schema import ChatMessage
+from tbot2.common.schemas.chat_message_request_schema import ChatMessageRequest
 
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
@@ -42,7 +42,7 @@ class ChatFilterSymbol(ChatFilterBase):
     type: Literal['symbol']
     settings: ChatFilterSymbolSettings
 
-    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
+    async def check_message(self, message: ChatMessageRequest) -> FilterMatchResult:
         symbols = findall(r'[^ \w]', message.message_without_parts())
         return FilterMatchResult(
             filter=self, matched=len(symbols) > self.settings.max_symbols

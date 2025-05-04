@@ -10,7 +10,7 @@ from ..schemas.event_headers_schema import EventSubHeaders
 from ..schemas.event_notification_schema import (
     EventSubNotification,
 )
-from .dependencies import validate_twitch_webhook_signature
+from ..twitch_event_dependencies import validate_twitch_webhook_signature
 
 router = APIRouter()
 

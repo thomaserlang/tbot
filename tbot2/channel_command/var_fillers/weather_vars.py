@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 from tbot2.config_settings import config
 
 from ..exceptions import CommandError, CommandSyntaxError
@@ -25,7 +25,7 @@ weather_client = AsyncClient(base_url='https://api.openweathermap.org/data/2.5')
     ),
 )
 async def weather_vars(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     if not config.openweathermap_apikey:
         raise CommandError('OpenWeatherMap API key is not set')

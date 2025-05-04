@@ -7,13 +7,18 @@ import sqlalchemy as sa
 from fastapi import APIRouter, Query, Security, WebSocket, WebSocketDisconnect
 from loguru import logger
 
-from tbot2.common import ChatMessage, ChatMessageType, Provider, TAccessLevel, TokenData
+from tbot2.common import (
+    ChatMessage,
+    ChatMessageType,
+    Provider,
+    TAccessLevel,
+    TokenData,
+)
 from tbot2.database import database
 from tbot2.dependecies import authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQueryDep, page_cursor
 
 from ..models.chatlog_model import MChatlog
-from ..schemas.chatlog_schema import Chatlog
 from ..types import ChatlogsScope
 
 router = APIRouter()
@@ -33,7 +38,7 @@ async def get_chatlogs(
     provider_viewer_id: str | None = None,
     type: ChatMessageType | None = None,
     lte_created_at: datetime | None = None,
-) -> PageCursor[Chatlog]:
+) -> PageCursor[ChatMessage]:
     await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
@@ -62,7 +67,7 @@ async def get_chatlogs(
     page = await page_cursor(
         query=stmt,
         page_query=page_query,
-        response_model=Chatlog,
+        response_model=ChatMessage,
         count_total=False,
     )
     return page

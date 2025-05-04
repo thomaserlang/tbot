@@ -8,7 +8,7 @@ from loguru import logger
 from tbot2.bot_providers import BotProvider
 from tbot2.channel_provider import get_channel_bot_provider
 from tbot2.channel_stream import get_current_channel_provider_stream
-from tbot2.common import ChatMessage, check_pattern_match
+from tbot2.common import ChatMessageRequest, check_pattern_match
 from tbot2.common.exceptions import ErrorMessage
 from tbot2.contexts import AsyncSession, get_session
 
@@ -26,7 +26,7 @@ class MessageResponse:
 
 
 async def handle_message_response(
-    chat_message: ChatMessage,
+    chat_message: ChatMessageRequest,
     session: AsyncSession | None = None,
 ) -> MessageResponse | None:
     async with get_session(session) as session:
@@ -77,7 +77,7 @@ async def handle_message_response(
 
 async def _check_active_mode(
     command: Command,
-    chat_message: ChatMessage,
+    chat_message: ChatMessageRequest,
     session: AsyncSession,
 ) -> bool:
     if command.active_mode == 'always':
@@ -95,7 +95,7 @@ async def _check_active_mode(
 
 
 async def _matches_command(
-    chat_message: ChatMessage, command: Command
+    chat_message: ChatMessageRequest, command: Command
 ) -> MessageResponse | None:
     if chat_message.message.startswith('!'):
         return await _matches_cmd(chat_message, command)
@@ -104,7 +104,7 @@ async def _matches_command(
 
 
 async def _matches_cmd(
-    chat_message: ChatMessage, command: Command
+    chat_message: ChatMessageRequest, command: Command
 ) -> MessageResponse | None:
     args = chat_message.message[1:].split(' ')
     cmd = args.pop(0).lower()
@@ -128,7 +128,7 @@ async def _matches_cmd(
 
 
 async def _matches_pattern(
-    chat_message: ChatMessage, command: Command
+    chat_message: ChatMessageRequest, command: Command
 ) -> MessageResponse | None:
     for pattern in command.patterns:
         if not check_pattern_match(chat_message.message, pattern):

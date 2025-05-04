@@ -3,13 +3,22 @@ from .exceptions import ExternalApiError as ExternalApiError
 from .exceptions import TBotBaseException as TBotBaseException
 from .schemas.base_request_schema import BaseRequestSchema as BaseRequestSchema
 from .schemas.base_schema import BaseSchema as BaseSchema
+from .schemas.chat_message_request_schema import (
+    ChatMessageBadgeRequest as ChatMessageBadgeRequest,
+)
+from .schemas.chat_message_request_schema import (
+    ChatMessagePartRequest as ChatMessagePartRequest,
+)
+from .schemas.chat_message_request_schema import (
+    ChatMessageRequest as ChatMessageRequest,
+)
+from .schemas.chat_message_request_schema import ChatMessageType as ChatMessageType
+from .schemas.chat_message_request_schema import EmotePartRequest as EmotePartRequest
+from .schemas.chat_message_request_schema import GiftPartRequest as GiftPartRequest
+from .schemas.chat_message_request_schema import (
+    MentionPartRequest as MentionPartRequest,
+)
 from .schemas.chat_message_schema import ChatMessage as ChatMessage
-from .schemas.chat_message_schema import ChatMessageBadge as ChatMessageBadge
-from .schemas.chat_message_schema import ChatMessagePart as ChatMessagePart
-from .schemas.chat_message_schema import ChatMessageType as ChatMessageType
-from .schemas.chat_message_schema import EmotePart as EmotePart
-from .schemas.chat_message_schema import GiftPart as GiftPart
-from .schemas.chat_message_schema import MentionPart as MentionPart
 from .schemas.connect_url_schema import ConnectUrl as ConnectUrl
 from .schemas.error_schema import Error as Error
 from .schemas.error_schema import SubError as SubError

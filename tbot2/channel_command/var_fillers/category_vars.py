@@ -1,4 +1,4 @@
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 from tbot2.twitch import (
     ModifyChannelInformationRequest,
     get_twitch_channel_information,
@@ -16,7 +16,7 @@ from ..var_filler import fills_vars
     vars=('set_game', 'set_category'),
 )
 async def change_twitch_category_vars(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     name = ' '.join(command.args)
     if not name and vars['set_game'].args:
@@ -49,7 +49,7 @@ async def change_twitch_category_vars(
     vars=('game', 'category'),
 )
 async def get_twitch_category_vars(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     channel = await get_twitch_channel_information(
         channel_id=chat_message.channel_id,

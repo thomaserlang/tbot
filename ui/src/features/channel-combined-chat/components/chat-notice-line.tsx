@@ -2,7 +2,7 @@ import { Alert, Box, Text } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
 import { providerLogo } from './chat-message-line'
 import classes from './chat-message-line.module.css'
-import { MessageWithFragments } from './message-with-fragments'
+import { MessageLine } from './message-line'
 
 interface Props {
     chatMessage: ChatMessage
@@ -14,7 +14,7 @@ export function ChatNoticeLine({ chatMessage }: Props) {
             <Alert color="blue" fz="md" mr="1rem">
                 <Text>
                     {providerLogo(chatMessage.provider)}
-                    <MessageWithFragments chatMessage={chatMessage} />
+                    <MessageLine chatMessage={chatMessage} />
                 </Text>
             </Alert>
         </Box>

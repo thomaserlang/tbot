@@ -1,4 +1,4 @@
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 
 from ..types import MessageVars, TCommand
 from ..var_filler import fills_vars
@@ -9,6 +9,6 @@ from ..var_filler import fills_vars
     vars=('sender',),
 )
 async def sender_vars(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     vars['sender'].value = chat_message.viewer_display_name

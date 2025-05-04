@@ -1,4 +1,4 @@
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 from tbot2.twitch import (
     ModifyChannelInformationRequest,
     get_twitch_channel_information,
@@ -15,7 +15,7 @@ from ..var_filler import fills_vars
     vars=('set_title',),
 )
 async def change_twitch_title_vars(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     title = ' '.join(command.args)
     if not title and vars['set_title'].args:
@@ -37,7 +37,7 @@ async def change_twitch_title_vars(
     vars=('title',),
 )
 async def get_twitch_title_vars(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     channel = await get_twitch_channel_information(
         channel_id=chat_message.channel_id,

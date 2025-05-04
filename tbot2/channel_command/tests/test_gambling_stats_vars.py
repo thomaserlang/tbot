@@ -10,7 +10,7 @@ from tbot2.channel_gambling import (
     ChatterGamblingStatsUpdate,
     inc_chatter_gambling_stats,
 )
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 from tbot2.testbase import run_file
 
 
@@ -32,7 +32,7 @@ async def test_gambling_stats_vars(db: None) -> None:
             '{gambling_stats.slots_total_games} total games, '
             '{gambling_stats.slots_win_percent} win percent'
         ),
-        chat_message=ChatMessage(
+        chat_message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
@@ -57,7 +57,7 @@ async def test_gambling_stats_vars(db: None) -> None:
             '{gambling_stats.roulette_total_games} total games, '
             '{gambling_stats.roulette_win_percent} win percent'
         ),
-        chat_message=ChatMessage(
+        chat_message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),

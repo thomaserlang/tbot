@@ -2,7 +2,7 @@ import { Box, Text } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
 import { providerLogo } from './chat-message-line'
 import classes from './chat-message-line.module.css'
-import { MessageWithFragments } from './message-with-fragments'
+import { MessageLine } from './message-line'
 
 interface Props {
     chatMessage: ChatMessage
@@ -25,7 +25,7 @@ export function ChatModActionLine({ chatMessage }: Props) {
             </Text>
             {providerLogo(chatMessage.provider)}
             <Text component="span" c="dimmed">
-                <MessageWithFragments chatMessage={chatMessage} />
+                <MessageLine chatMessage={chatMessage} />
             </Text>
         </Box>
     )

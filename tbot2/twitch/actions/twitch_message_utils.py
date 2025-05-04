@@ -1,11 +1,11 @@
 from loguru import logger
 
 from tbot2.common import (
-    ChatMessageBadge,
-    ChatMessagePart,
-    EmotePart,
-    GiftPart,
-    MentionPart,
+    ChatMessageBadgeRequest,
+    ChatMessagePartRequest,
+    EmotePartRequest,
+    GiftPartRequest,
+    MentionPartRequest,
 )
 
 from ..schemas.event_channel_chat_message_schema import (
@@ -16,24 +16,24 @@ from ..schemas.event_channel_chat_message_schema import (
 
 def twitch_badges_to_badges(
     badges: list[TwitchBadge] | None,
-) -> list[ChatMessageBadge]:
+) -> list[ChatMessageBadgeRequest]:
     if not badges:
         return []
     return [
-        ChatMessageBadge(id=badge.id, type=badge.set_id, name=badge.set_id)
+        ChatMessageBadgeRequest(id=badge.id, type=badge.set_id, info=badge.info)
         for badge in badges
     ]
 
 
 def twitch_fragments_to_parts(
     fragments: list[TwitchMessageFragment],
-) -> list[ChatMessagePart]:
-    result: list[ChatMessagePart] = []
+) -> list[ChatMessagePartRequest]:
+    result: list[ChatMessagePartRequest] = []
     for fragment in fragments:
         match fragment.type:
             case 'text':
                 result.append(
-                    ChatMessagePart(
+                    ChatMessagePartRequest(
                         type='text',
                         text=fragment.text,
                     )
@@ -41,10 +41,10 @@ def twitch_fragments_to_parts(
             case 'emote':
                 if fragment.emote:
                     result.append(
-                        ChatMessagePart(
+                        ChatMessagePartRequest(
                             type='emote',
                             text=fragment.text,
-                            emote=EmotePart(
+                            emote=EmotePartRequest(
                                 id=fragment.emote.id,
                                 name=fragment.text,
                                 animated='animated' in fragment.emote.format,
@@ -55,24 +55,25 @@ def twitch_fragments_to_parts(
             case 'cheermote':
                 if fragment.cheermote:
                     result.append(
-                        ChatMessagePart(
+                        ChatMessagePartRequest(
                             type='gift',
                             text=fragment.text,
-                            gift=GiftPart(
+                            gift=GiftPartRequest(
                                 id=str(fragment.cheermote.tier),
                                 name=fragment.cheermote.prefix,
                                 type='cheer',
                                 count=fragment.cheermote.bits,
+                                animated=True,
                             ),
                         )
                     )
             case 'mention':
                 if fragment.mention:
                     result.append(
-                        ChatMessagePart(
+                        ChatMessagePartRequest(
                             type='mention',
                             text=fragment.text,
-                            mention=MentionPart(
+                            mention=MentionPartRequest(
                                 user_id=fragment.mention.user_id,
                                 username=fragment.mention.user_login,
                                 display_name=fragment.mention.user_name,

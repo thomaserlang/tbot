@@ -8,7 +8,7 @@ from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_command import TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_provider import ChannelProvider
-from tbot2.common import ChatMessage, TAccessLevel, datetime_now
+from tbot2.common import ChatMessageRequest, TAccessLevel, datetime_now
 from tbot2.message_parse import message_to_parts
 
 from ..actions.youtube_live_chat_ban_actions import live_chat_ban
@@ -71,7 +71,7 @@ async def handle_text_message_event(
 ) -> None:
     if not message.snippet.text_message_details:
         raise Exception('Missing text_message_details')
-    chat_message = ChatMessage(
+    chat_message = ChatMessageRequest(
         id=uuid7(),
         type='message',
         channel_id=channel_provider.channel_id,
@@ -128,7 +128,7 @@ def access_level_from_live_chat_message(
 
 async def handle_filter_message(
     channel_provider: ChannelProvider,
-    chat_message: ChatMessage,
+    chat_message: ChatMessageRequest,
     live_chat_id: str,
 ) -> None:
     try:
@@ -172,7 +172,7 @@ async def handle_type_message_deleted_event(
     details = live_message.snippet.message_deleted_details
     if not details:
         raise Exception('Missing message_deleted_details')
-    chat_message = ChatMessage(
+    chat_message = ChatMessageRequest(
         id=uuid7(),
         type='mod_action',
         sub_type='delete_message',
@@ -219,7 +219,7 @@ async def handle_type_user_banned_event(
         logger.error(f'Unknown ban type: {details.ban_type} ')
         return
 
-    chat_message = ChatMessage(
+    chat_message = ChatMessageRequest(
         id=uuid7(),
         type='mod_action',
         sub_type=sub_type,
@@ -241,7 +241,7 @@ async def handle_notice(
     channel_provider: ChannelProvider,
     live_message: LiveChatMessage,
 ) -> None:
-    chat_message = ChatMessage(
+    chat_message = ChatMessageRequest(
         id=uuid7(),
         type='notice',
         sub_type=live_message.snippet.type,

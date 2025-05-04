@@ -7,7 +7,7 @@ from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_command import TCommand
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_quote import cmd_var_fillers as cmd_var_fillers
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 from tbot2.testbase import run_file
 
 
@@ -17,7 +17,7 @@ async def test_gambling_stats_vars(db: None) -> None:
 
     message = await fill_message(
         response_message=('{quote.add}'),
-        chat_message=ChatMessage(
+        chat_message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
@@ -36,7 +36,7 @@ async def test_gambling_stats_vars(db: None) -> None:
 
     message = await fill_message(
         response_message=('{quote.edit}'),
-        chat_message=ChatMessage(
+        chat_message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
@@ -55,7 +55,7 @@ async def test_gambling_stats_vars(db: None) -> None:
 
     message = await fill_message(
         response_message=('{quote.message} ({quote.number})'),
-        chat_message=ChatMessage(
+        chat_message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
@@ -74,7 +74,7 @@ async def test_gambling_stats_vars(db: None) -> None:
 
     message = await fill_message(
         response_message=('{quote.delete}'),
-        chat_message=ChatMessage(
+        chat_message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),

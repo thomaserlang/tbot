@@ -2,7 +2,7 @@ import pytest
 from uuid6 import uuid7
 
 from tbot2.channel_chatlog import create_chatlog
-from tbot2.common import ChatMessage, datetime_now
+from tbot2.common import ChatMessageRequest, datetime_now
 from tbot2.testbase import AsyncClient, run_file, user_signin
 
 
@@ -13,7 +13,7 @@ async def test_create_chatlog(client: AsyncClient) -> None:
         scopes=[],
     )
     t = await create_chatlog(
-        data=ChatMessage(
+        data=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),

@@ -2,7 +2,7 @@ from typing import Annotated, Literal
 
 from pydantic import Field
 
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
@@ -37,7 +37,7 @@ class ChatFilterEmote(ChatFilterBase):
     type: Literal['emote']
     settings: ChatFilterEmoteSettings
 
-    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
+    async def check_message(self, message: ChatMessageRequest) -> FilterMatchResult:
         if message.provider == 'youtube':
             emote_count = message.message.count(':') // 2
             return FilterMatchResult(

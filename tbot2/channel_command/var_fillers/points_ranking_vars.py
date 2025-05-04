@@ -4,7 +4,7 @@ import sqlalchemy as sa
 from humanize import intcomma
 
 from tbot2.channel_points import MChatterPoints
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 from tbot2.contexts import get_session
 from tbot2.twitch import lookup_twitch_users
 
@@ -17,7 +17,7 @@ from ..var_filler import fills_vars
     vars=('points_ranking',),
 )
 async def points_ranking_vars(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     async with get_session() as session:
         result = await session.execute(

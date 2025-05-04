@@ -7,7 +7,7 @@ from fastapi import APIRouter, Security
 from uuid6 import uuid7
 
 from tbot2.channel_chat_filters.models.chat_filter_model import MChatFilter
-from tbot2.common import ChatMessage, ErrorMessage, TAccessLevel, TokenData
+from tbot2.common import ChatMessageRequest, ErrorMessage, TAccessLevel, TokenData
 from tbot2.dependecies import Depends, authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQuery, page_cursor
 
@@ -237,7 +237,7 @@ async def banned_term_test_route(
         )
 
     result = await filter.check_message(
-        message=ChatMessage(
+        message=ChatMessageRequest(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),

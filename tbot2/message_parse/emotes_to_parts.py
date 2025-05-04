@@ -8,24 +8,26 @@ from loguru import logger
 from memoize.configuration import DefaultInMemoryCacheConfiguration  # type: ignore
 from memoize.wrapper import memoize  # type: ignore
 
-from tbot2.common import ChatMessagePart, EmotePart, Provider
+from tbot2.common import ChatMessagePartRequest, EmotePartRequest, Provider
 
 from .http_client import http_client
 
 
 @dataclass(frozen=True)
 class EmotesCached:
-    emotes: dict[str, EmotePart]
+    emotes: dict[str, EmotePartRequest]
     emote_names: set[str]
 
 
-def text_to_emote_parts(text: str, emotes: EmotesCached) -> list[ChatMessagePart]:
-    parts: list[ChatMessagePart] = []
+def text_to_emote_parts(
+    text: str, emotes: EmotesCached
+) -> list[ChatMessagePartRequest]:
+    parts: list[ChatMessagePartRequest] = []
     text_buffer: list[str] = []
 
     def flush_text_buffer() -> None:
         if text_buffer:
-            parts.append(ChatMessagePart(type='text', text=''.join(text_buffer)))
+            parts.append(ChatMessagePartRequest(type='text', text=''.join(text_buffer)))
             text_buffer.clear()
 
     tokens = text.split(' ')
@@ -33,7 +35,9 @@ def text_to_emote_parts(text: str, emotes: EmotesCached) -> list[ChatMessagePart
         if part in emotes.emote_names:
             flush_text_buffer()
             parts.append(
-                ChatMessagePart(type='emote', text=part, emote=emotes.emotes[part])
+                ChatMessagePartRequest(
+                    type='emote', text=part, emote=emotes.emotes[part]
+                )
             )
         else:
             text_buffer.append(part)
@@ -71,7 +75,7 @@ async def get_emotes(
 
 
 @alru_cache(ttl=3600)
-async def get_global_emotes() -> list[EmotePart]:
+async def get_global_emotes() -> list[EmotePartRequest]:
     results = await asyncio.gather(
         get_global_betterttv_emotes(),
         get_global_seventv_emotes(),
@@ -81,7 +85,7 @@ async def get_global_emotes() -> list[EmotePart]:
 
 async def get_channel_emotes(
     provider: Provider, provider_user_id: str
-) -> list[EmotePart]:
+) -> list[EmotePartRequest]:
     results = await asyncio.gather(
         get_channel_betterttv_emotes(provider, provider_user_id),
         get_channel_seventv_emotes(provider, provider_user_id),
@@ -89,7 +93,7 @@ async def get_channel_emotes(
     return list(itertools.chain.from_iterable(results))
 
 
-async def get_global_seventv_emotes() -> list[EmotePart]:
+async def get_global_seventv_emotes() -> list[EmotePartRequest]:
     try:
         r = await http_client.get(
             'https://7tv.io/v3/emote-sets/global',
@@ -99,7 +103,7 @@ async def get_global_seventv_emotes() -> list[EmotePart]:
             return []
         data = r.json()['emotes']
         return [
-            EmotePart(
+            EmotePartRequest(
                 id=emote['data']['id'],
                 name=emote['name'],
                 animated=emote['data']['animated'],
@@ -114,7 +118,7 @@ async def get_global_seventv_emotes() -> list[EmotePart]:
 
 async def get_channel_seventv_emotes(
     provider: Provider, provider_user_id: str
-) -> list[EmotePart]:
+) -> list[EmotePartRequest]:
     try:
         r = await http_client.get(
             f'https://7tv.io/v3/users/{provider}/{provider_user_id}',
@@ -131,7 +135,7 @@ async def get_channel_seventv_emotes(
             return []
         data = r.json()['emote_set']['emotes']
         return [
-            EmotePart(
+            EmotePartRequest(
                 id=emote['data']['id'],
                 name=emote['name'],
                 animated=emote['data']['animated'],
@@ -144,7 +148,7 @@ async def get_channel_seventv_emotes(
         return []
 
 
-async def get_global_betterttv_emotes() -> list[EmotePart]:
+async def get_global_betterttv_emotes() -> list[EmotePartRequest]:
     try:
         r = await http_client.get(
             'https://api.betterttv.net/3/cached/emotes/global',
@@ -154,7 +158,7 @@ async def get_global_betterttv_emotes() -> list[EmotePart]:
             return []
         data = r.json()
         return [
-            EmotePart(
+            EmotePartRequest(
                 id=emote['id'],
                 name=emote['code'],
                 animated=emote['animated'],
@@ -169,7 +173,7 @@ async def get_global_betterttv_emotes() -> list[EmotePart]:
 
 async def get_channel_betterttv_emotes(
     provider: Provider, provider_user_id: str
-) -> list[EmotePart]:
+) -> list[EmotePartRequest]:
     try:
         r = await http_client.get(
             f'https://api.betterttv.net/3/cached/users/{provider}/{provider_user_id}'
@@ -187,7 +191,7 @@ async def get_channel_betterttv_emotes(
         data = r.json()
         data = data['channelEmotes'] + data['sharedEmotes']
         return [
-            EmotePart(
+            EmotePartRequest(
                 id=emote['id'],
                 name=emote['code'],
                 animated=emote['animated'],

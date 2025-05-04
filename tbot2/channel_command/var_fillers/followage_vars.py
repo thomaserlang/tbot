@@ -2,7 +2,7 @@ from datetime import datetime
 
 import humanize.time
 
-from tbot2.common import ChatMessage, datetime_now
+from tbot2.common import ChatMessageRequest, datetime_now
 from tbot2.twitch import lookup_twitch_users, twitch_channel_follower
 
 from ..exceptions import CommandError
@@ -15,7 +15,7 @@ from ..var_filler import fills_vars
     vars=('followage', 'followage_date', 'followage_datetime'),
 )
 async def followage_vars(
-    chat_message: ChatMessage, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
 ) -> None:
     followed_at = await twitch_followed_at(chat_message=chat_message, command=command)
 
@@ -26,7 +26,7 @@ async def followage_vars(
     vars['followage_datetime'].value = followed_at.strftime('%Y-%m-%d %H:%M:%S UTC')
 
 
-async def twitch_followed_at(chat_message: ChatMessage, command: TCommand) -> datetime:
+async def twitch_followed_at(chat_message: ChatMessageRequest, command: TCommand) -> datetime:
     user_id = chat_message.provider_viewer_id
     display_name = chat_message.viewer_display_name
     if command.args:

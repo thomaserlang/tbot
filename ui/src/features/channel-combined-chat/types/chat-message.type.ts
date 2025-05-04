@@ -16,6 +16,11 @@ export interface EmotePart {
     id: string
     animated: boolean
     emote_provider: string
+    urls: {
+        sm: string
+        md: string
+        lg: string
+    } | null
 }
 
 export interface MentionPart {

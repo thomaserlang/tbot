@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 
 from pydantic import Field
 
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
@@ -39,7 +39,7 @@ class ChatFilterCaps(ChatFilterBase):
     type: Literal['caps']
     settings: ChatFilterCapsSettings
 
-    async def check_message(self, message: ChatMessage) -> FilterMatchResult:
+    async def check_message(self, message: ChatMessageRequest) -> FilterMatchResult:
         caps = findall(r'[A-Z]', message.message_without_parts())
         return FilterMatchResult(
             filter=self,

@@ -2,44 +2,66 @@ from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import StringConstraints, field_validator
+from pydantic import StringConstraints, computed_field
 from typing_extensions import Doc
 
-from tbot2.common import BaseRequestSchema
-
-from ..types.access_level_type import TAccessLevel
+from ..types.chat_message_type import ChatMessageType
 from ..types.provider_type import Provider
+from .base_schema import BaseSchema
 
-ChatMessageType = Literal['message', 'notice', 'mod_action']
 
-
-class ChatMessageBadge(BaseRequestSchema):
+class ChatMessageBadge(BaseSchema):
     id: str
     type: str
-    name: str
+    info: str
 
 
-class EmotePart(BaseRequestSchema):
+class EmotePart(BaseSchema):
     id: str
     name: str
     animated: bool
     emote_provider: str
 
+    @computed_field  # type: ignore[misc]
+    def urls(self) -> dict[str, str] | None:
+        match self.emote_provider:
+            case 'twitch':
+                return {
+                    'sm': f'https://static-cdn.jtvnw.net/emoticons/v2/{self.id}/default/dark/1.0',
+                    'md': f'https://static-cdn.jtvnw.net/emoticons/v2/{self.id}/default/dark/2.0',
+                    'lg': f'https://static-cdn.jtvnw.net/emoticons/v2/{self.id}/default/dark/3.0',
+                }
+            case '7tv':
+                return {
+                    'sm': f'https://cdn.7tv.app/emote/{self.id}/1x.webp',
+                    'md': f'https://cdn.7tv.app/emote/{self.id}/2x.webp',
+                    'lg': f'https://cdn.7tv.app/emote/{self.id}/3x.webp',
+                }
+            case 'bttv':
+                return {
+                    'sm': f'https://cdn.betterttv.net/emote/{self.id}/1x.webp',
+                    'md': f'https://cdn.betterttv.net/emote/{self.id}/2x.webp',
+                    'lg': f'https://cdn.betterttv.net/emote/{self.id}/3x.webp',
+                }
+            case _:
+                return None
 
-class MentionPart(BaseRequestSchema):
+
+class MentionPart(BaseSchema):
     user_id: str
     username: str
     display_name: str
 
 
-class GiftPart(BaseRequestSchema):
+class GiftPart(BaseSchema):
     id: str
     name: str
     type: str
     count: int
+    animated: bool = False
 
 
-class ChatMessagePart(BaseRequestSchema):
+class ChatMessagePart(BaseSchema):
     type: Literal['text', 'emote', 'mention', 'gift']
     text: str
     gift: GiftPart | None = None
@@ -47,7 +69,7 @@ class ChatMessagePart(BaseRequestSchema):
     mention: MentionPart | None = None
 
 
-class ChatMessage(BaseRequestSchema):
+class ChatMessage(BaseSchema):
     id: UUID
     type: ChatMessageType
     sub_type: Annotated[str, StringConstraints(min_length=1, max_length=100)] | None = (
@@ -55,32 +77,16 @@ class ChatMessage(BaseRequestSchema):
     )
     created_at: datetime
     provider: Provider
-    provider_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
+    provider_id: str
     channel_id: Annotated[UUID, Doc('The ID of the TBot channel')]
-    provider_viewer_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
-    viewer_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
-    viewer_display_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
-    viewer_color: (
-        Annotated[
-            str,
-            StringConstraints(
-                min_length=4, max_length=7, pattern='^#[0-9A-Fa-f]{3,6}$'
-            ),
-        ]
-        | None
-    ) = None
-    message: Annotated[str, StringConstraints(min_length=1, max_length=2000)]
-    msg_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
+    provider_viewer_id: str
+    viewer_name: str
+    viewer_display_name: str
+    viewer_color: Annotated[str, Doc('Hex color')] | None = None
+    message: str
+    msg_id: str
     badges: list[ChatMessageBadge] = []
     parts: list[ChatMessagePart] = []
-    access_level: TAccessLevel = TAccessLevel.PUBLIC
-
-    @field_validator('viewer_color', mode='before')
-    @classmethod
-    def validate_viewer_color(cls, value: str | None) -> str | None:
-        if not value:
-            return None
-        return value
 
     def message_without_parts(self) -> str:
         if not self.parts:

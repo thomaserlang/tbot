@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Request
 from uuid6 import uuid7
 
 from tbot2.channel_chatlog import create_chatlog
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 from tbot2.message_parse import message_to_parts
 from tbot2.twitch.actions.twitch_message_utils import (
     twitch_badges_to_badges,
@@ -19,7 +19,7 @@ from ..schemas.event_headers_schema import EventSubHeaders
 from ..schemas.event_notification_schema import (
     EventSubNotification,
 )
-from .dependencies import validate_twitch_webhook_signature
+from ..twitch_event_dependencies import validate_twitch_webhook_signature
 
 router = APIRouter()
 
@@ -53,8 +53,8 @@ async def event_channel_chat_notification_route(
         # which users got gifted
         return
 
-    messages: list[ChatMessage] = [
-        ChatMessage(
+    messages: list[ChatMessageRequest] = [
+        ChatMessageRequest(
             id=uuid7(),
             type='notice',
             sub_type=data.event.notice_type,
@@ -73,7 +73,7 @@ async def event_channel_chat_notification_route(
 
     if data.event.message.text:
         messages.append(
-            ChatMessage(
+            ChatMessageRequest(
                 id=uuid7(),
                 type='message',
                 channel_id=channel_id,

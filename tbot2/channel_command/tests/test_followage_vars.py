@@ -6,7 +6,7 @@ from uuid6 import uuid7
 
 from tbot2.channel_command import MessageVar, TCommand
 from tbot2.channel_command.var_fillers.followage_vars import followage_vars
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessageRequest
 from tbot2.testbase import run_file
 from tbot2.twitch import ChannelFollower, TwitchUser
 
@@ -39,7 +39,7 @@ async def test_followage_vars(mocker: MockFixture) -> None:
     mock_datetime.return_value = datetime(2024, 5, 24, 22, 15, 8, tzinfo=UTC)
 
     await followage_vars(
-        chat_message=ChatMessage(  # type: ignore
+        chat_message=ChatMessageRequest(  # type: ignore
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
@@ -80,7 +80,7 @@ async def test_followage_vars(mocker: MockFixture) -> None:
     ]
 
     await followage_vars(
-        chat_message=ChatMessage(  # type: ignore
+        chat_message=ChatMessageRequest(  # type: ignore
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
