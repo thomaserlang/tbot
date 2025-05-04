@@ -105,7 +105,6 @@ async def handle_channel(
                     )
 
             async def on_comment(event: CommentEvent) -> None:
-                logger.info(event)
                 await create_chatlog(
                     data=ChatMessageRequest(
                         id=uuid7(),
