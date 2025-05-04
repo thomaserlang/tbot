@@ -1,0 +1,40 @@
+from uuid import UUID
+
+from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
+
+from ..exceptions import TwitchException
+from ..schemas.twitch_commercial_schema import RunCommercialResponse
+from ..twitch_http_client import twitch_user_client
+
+
+async def twitch_run_commercial(
+    channel_id: UUID,
+    broadcaster_id: str,
+    length: int = 180,
+) -> RunCommercialResponse:
+    response = await twitch_user_client.post(
+        '/channels/commercial',
+        json={
+            'broadcaster_id': broadcaster_id,
+            'length': length,
+        },
+        headers={
+            TBOT_CHANNEL_ID_HEADER: str(channel_id),
+        },
+    )
+    if response.status_code >= 400:
+        if response.status_code == 429:
+            raise TwitchException(
+                response=response,
+                request=response.request,
+                message=(
+                    "Can't run commercial for another "
+                    f'{response.json()["retry_after"]} seconds'
+                ),
+            )
+        raise TwitchException(
+            response=response,
+            request=response.request,
+        )
+    data = response.json()
+    return RunCommercialResponse.model_validate(data['data'][0])

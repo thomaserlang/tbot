@@ -3,8 +3,8 @@ import {
     ChannelProviderEmbedLive,
     ChannelProviderLiveStatus,
     ChannelProviderTitle,
-    ChannelProviderUpdateStreamTitleModal,
-} from '@/features/channel-providers'
+    UpdateStreamTitleModal,
+} from '@/features/channel-provider'
 import { Box, Flex, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconEdit } from '@tabler/icons-react'
@@ -56,7 +56,7 @@ export function DashboardChannelProvider({
                 )}
             </Flex>
 
-            <ChannelProviderUpdateStreamTitleModal
+            <UpdateStreamTitleModal
                 channelProvider={channelProvider}
                 opened={opened}
                 onClose={close}

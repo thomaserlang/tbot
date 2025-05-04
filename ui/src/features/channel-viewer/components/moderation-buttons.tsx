@@ -1,4 +1,4 @@
-import { useGetChannelProviders } from '@/features/channel-providers'
+import { useGetChannelProviders } from '@/features/channel-provider'
 import { ChannelId } from '@/features/channel/types'
 import { Provider } from '@/types/provider.type'
 import { toastError, toastSuccess } from '@/utils/toast'

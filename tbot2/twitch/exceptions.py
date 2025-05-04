@@ -6,7 +6,9 @@ from .schemas.twitch_error_schema import TwitchError
 
 
 class TwitchException(ExternalApiError):
-    def __init__(self, *, request: Request, response: Response) -> None:
+    def __init__(
+        self, *, request: Request, response: Response, message: str | None = None
+    ) -> None:
         if 'application/json' in response.headers.get('Content-Type'):
             self.error = TwitchError.model_validate(response.json())
         else:
@@ -15,4 +17,6 @@ class TwitchException(ExternalApiError):
                 message=f'Error {response.status_code}',
                 error=f'Error {response.status_code}',
             )
-        super().__init__(self.error.message, request=request, response=response)
+        super().__init__(
+            message or self.error.message, request=request, response=response
+        )

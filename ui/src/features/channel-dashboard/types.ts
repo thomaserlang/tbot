@@ -1,4 +1,4 @@
-import { ChannelProvider } from '../channel-providers'
+import { ChannelProvider } from '../channel-provider'
 
 export interface ChannelProviderDashboardProps {
     channelProvider: ChannelProvider

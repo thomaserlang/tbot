@@ -5,7 +5,6 @@ from fastapi import APIRouter, Body, HTTPException, Security
 
 from tbot2.channel_provider import ChannelProviderScope
 from tbot2.common import TAccessLevel, TokenData
-from tbot2.contexts import get_session
 from tbot2.dependecies import authenticated
 
 from ..actions.channel_provider_actions import (
@@ -36,7 +35,7 @@ async def update_stream_title_route(
 ) -> ChannelProviderPublic:
     await token_data.channel_require_access(
         channel_id=channel_id,
-        access_level=TAccessLevel.ADMIN,
+        access_level=TAccessLevel.MOD,
     )
     channel_provider = await get_channel_provider_by_id(
         channel_provider_id=channel_provider_id,
@@ -47,22 +46,14 @@ async def update_stream_title_route(
             detail='Channel provider not found',
         )
 
-    async with get_session() as session:
-        await save_channel_provider(
-            channel_id=channel_id,
-            provider=channel_provider.provider,
-            data=ChannelProviderRequest(stream_title=stream_title),
-            session=session,
-        )
-        channel_provider = await get_channel_provider_by_id(
-            channel_provider_id=channel_provider_id,
-            session=session,
-        )
-        if not channel_provider:
-            raise Exception('Channel provider not found')
+    channel_provider = await save_channel_provider(
+        channel_id=channel_id,
+        provider=channel_provider.provider,
+        data=ChannelProviderRequest(stream_title=stream_title),
+    )
 
-        await fire_event_update_stream_title(
-            channel_provider=channel_provider,
-            stream_title=stream_title,
-        )
-        return ChannelProviderPublic.model_validate(channel_provider)
+    await fire_event_update_stream_title(
+        channel_provider=channel_provider,
+        stream_title=stream_title,
+    )
+    return ChannelProviderPublic.model_validate(channel_provider)

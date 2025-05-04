@@ -1,4 +1,4 @@
-import { ChannelProvider } from '@/features/channel-providers'
+import { ChannelProvider } from '@/features/channel-provider'
 import { toastError, toastSuccess } from '@/utils/toast'
 import { Button, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'

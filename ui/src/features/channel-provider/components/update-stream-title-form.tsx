@@ -1,6 +1,6 @@
 import { providerInfo } from '@/constants'
 import { toastPromise } from '@/utils/toast'
-import { Button, Flex, Modal, Switch, Text, Textarea } from '@mantine/core'
+import { Button, Flex, Switch, Text, Textarea } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useUpdateStreamTitle } from '../api/channel-provider-stream-title.api'
 import { useGetChannelProviders } from '../api/channel-providers.api'
@@ -8,9 +8,10 @@ import { ChannelProvider } from '../channel-provider.types'
 
 interface Props {
     channelProvider: ChannelProvider
+    onClose?: () => void
 }
 
-export function ChannelProviderUpdateStreamTitle({ channelProvider }: Props) {
+export function UpdateStreamTitleForm({ channelProvider, onClose }: Props) {
     const channelProviders = useGetChannelProviders({
         channelId: channelProvider.channel_id,
     })
@@ -43,22 +44,19 @@ export function ChannelProviderUpdateStreamTitle({ channelProvider }: Props) {
                             },
                         }),
                         loading: {
-                            title: `Updating stream title for ${
-                                providerInfo[p.provider].name
-                            }`,
+                            title: providerInfo[p.provider].name,
+                            message: `Updating stream title`,
                         },
                         success: {
-                            title: `Stream title updated for ${
-                                providerInfo[p.provider].name
-                            }`,
+                            title: providerInfo[p.provider].name,
+                            message: `Stream title updated`,
                         },
                         error: {
-                            title: `Failed to update stream title for ${
-                                providerInfo[p.provider].name
-                            }`,
+                            title: providerInfo[p.provider].name,
                         },
                     })
                 }
+                onClose?.()
             })}
         >
             <Flex gap="0.5rem" direction="column">
@@ -93,33 +91,5 @@ export function ChannelProviderUpdateStreamTitle({ channelProvider }: Props) {
                 </Flex>
             </Flex>
         </form>
-    )
-}
-
-interface ModalProps extends Props {
-    onClose: () => void
-    opened: boolean
-}
-
-export function ChannelProviderUpdateStreamTitleModal({
-    channelProvider,
-    onClose,
-    opened,
-}: ModalProps) {
-    return (
-        <Modal
-            opened={opened}
-            onClose={onClose}
-            title={`${
-                providerInfo[channelProvider.provider].name ||
-                channelProvider.provider
-            } - Update Stream Title`}
-        >
-            {opened && (
-                <ChannelProviderUpdateStreamTitle
-                    channelProvider={channelProvider}
-                />
-            )}
-        </Modal>
     )
 }

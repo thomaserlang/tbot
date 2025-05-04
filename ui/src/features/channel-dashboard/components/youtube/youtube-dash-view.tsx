@@ -1,5 +1,5 @@
 import { providerInfo } from '@/constants'
-import { getDashboardUrl } from '@/features/channel-providers'
+import { getDashboardUrl } from '@/features/channel-provider'
 import { Button, Flex } from '@mantine/core'
 import { ChannelProviderDashboardProps } from '../../types'
 import { BroadcastScheduleButton } from './broadcast-schedule-button'

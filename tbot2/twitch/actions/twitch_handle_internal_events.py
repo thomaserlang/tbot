@@ -9,11 +9,13 @@ from tbot2.channel_provider import (
     on_event_unban_user,
     on_event_update_stream_title,
 )
+from tbot2.channel_provider.event_types import on_event_run_commercial
 from tbot2.channel_timer import Timer, is_timer_active, on_handle_timer
 from tbot2.twitch.actions.twitch_ban_user_actions import (
     twitch_ban_user,
     twitch_unban_user,
 )
+from tbot2.twitch.actions.twitch_start_commercial_actions import twitch_run_commercial
 
 from .twitch_channel_information_actions import (
     ModifyChannelInformationRequest,
@@ -86,3 +88,16 @@ async def unban_user(
         broadcaster_id=data.channel_provider.provider_user_id or '',
         twitch_user_id=data.provider_viewer_id,
     )
+
+
+@on_event_run_commercial(provider='twitch')
+async def run_commercial(
+    channel_provider: ChannelProvider,
+    length: int,
+) -> bool:
+    await twitch_run_commercial(
+        channel_id=channel_provider.channel_id,
+        broadcaster_id=channel_provider.provider_user_id or '',
+        length=length,
+    )
+    return True

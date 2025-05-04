@@ -1,4 +1,4 @@
-import { useGetChannelProviders } from '@/features/channel-providers'
+import { useGetChannelProviders } from '@/features/channel-provider'
 import { Badge, Box, NavLink, Paper } from '@mantine/core'
 import {
     IconBlocks,

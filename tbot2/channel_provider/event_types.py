@@ -66,6 +66,40 @@ def on_event_update_stream_title(
     return decorator
 
 
+async def fire_event_run_commercial(
+    channel_provider: ChannelProvider,
+    length: int,
+) -> bool:
+    result = await fire_event_async(
+        f'run_commercial.{channel_provider.provider}',
+        channel_provider=channel_provider,
+        length=length,
+    )
+    if not result:
+        return False
+    return all([bool(r) for r in result])
+
+
+def on_event_run_commercial(
+    provider: Provider,
+    priority: int = 128,
+) -> Callable[
+    [Callable[[ChannelProvider, int], Awaitable[bool]]],
+    Callable[[ChannelProvider, int], Awaitable[bool]],
+]:
+    def decorator(
+        func: Callable[[ChannelProvider, int], Awaitable[bool]],
+    ) -> Callable[[ChannelProvider, int], Awaitable[bool]]:
+        add_event_handler(
+            f'run_commercial.{provider}',
+            func,
+            priority,
+        )
+        return func
+
+    return decorator
+
+
 async def fire_event_ban_user(
     data: EventBanUser,
 ) -> list[bool]:

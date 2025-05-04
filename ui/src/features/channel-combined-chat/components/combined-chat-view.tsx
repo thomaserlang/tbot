@@ -1,4 +1,8 @@
 import {
+    RunCommercialButton,
+    UpdateStreamTitleButton,
+} from '@/features/channel-provider'
+import {
     ChannelViewerModal,
     ViewerName,
     ViewerSearchButton,
@@ -34,7 +38,9 @@ export function CombinedChatView({ channelId, hideTitle }: Props) {
 
                 <Divider />
 
-                <Flex>
+                <Flex gap="0.5rem">
+                    <RunCommercialButton channelId={channelId} />
+                    <UpdateStreamTitleButton channelId={channelId} />
                     <Box ml="auto">
                         <ViewerSearchButton
                             onSelect={(viewer) => {

@@ -44,7 +44,7 @@ export async function toastPromise({
     error?: {
         title?: string
         message?: string
-        onError?: () => void
+        onError?: (error: any) => void
     }
 }) {
     const id = notifications.show({
@@ -74,6 +74,6 @@ export async function toastPromise({
             color: 'red',
             autoClose: 10000,
         })
-        error?.onError?.()
+        error?.onError?.(e)
     }
 }

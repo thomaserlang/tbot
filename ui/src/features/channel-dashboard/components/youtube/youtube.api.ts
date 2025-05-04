@@ -3,7 +3,7 @@ import {
     ChannelProvider,
     ChannelProviderId,
     updateChannelProviderCache,
-} from '@/features/channel-providers'
+} from '@/features/channel-provider'
 import { api } from '@/utils/api'
 import { useMutation } from '@tanstack/react-query'
 import { LiveBroadcastInsert } from './youtube.types'
