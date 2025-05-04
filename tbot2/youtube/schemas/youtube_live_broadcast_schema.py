@@ -265,3 +265,44 @@ class LiveBroadcastInsert(BaseRequestSchema):
 
 
 class LiveBroadcastUpdate(LiveBroadcastInsert): ...
+
+
+class LiveBroadcastCuepoint(BaseRequestSchema):
+    id: Annotated[
+        str | None, Field(description='Unique identifier for the cuepoint.')
+    ] = None
+    insertion_offset_time_ms: Annotated[
+        int | None,
+        Field(
+            alias='insertionOffsetTimeMs',
+            description=(
+                'Time offset in milliseconds for cuepoint insertion. '
+                'Must not be set if walltimeMs is set.'
+            ),
+        ),
+    ] = None
+    walltime_ms: Annotated[
+        int | None,
+        Field(
+            alias='walltimeMs',
+            description=(
+                'Epoch timestamp (in milliseconds) for cuepoint insertion. '
+                'Must not be set if insertionOffsetTimeMs is set.'
+            ),
+        ),
+    ] = None
+    duration_secs: Annotated[
+        int | None,
+        Field(
+            alias='durationSecs',
+            description='Cuepoint duration in seconds. Must be a positive integer.',
+            ge=0,
+        ),
+    ] = 30
+    cue_type: Annotated[
+        Literal['cueTypeAd'] | str,
+        Field(
+            alias='cueType',
+            description="Cuepoint type. Must be set to 'cueTypeAd'.",
+        ),
+    ]

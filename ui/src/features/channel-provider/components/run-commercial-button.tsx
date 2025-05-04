@@ -16,7 +16,7 @@ export function RunCommercialButton({ channelId }: Props) {
 
     const run = (length: number) => {
         channelProviders.data
-            ?.filter((p) => !p.stream_live)
+            ?.filter((p) => p.stream_live)
             .forEach((p) => {
                 toastPromise({
                     promise: runCommercial.mutateAsync({

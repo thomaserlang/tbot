@@ -11,8 +11,12 @@ from tbot2.channel_provider import (
     on_event_unban_user,
     on_event_update_stream_title,
 )
+from tbot2.channel_provider.event_types import on_event_run_commercial
 from tbot2.channel_timer import Timer, is_timer_active, on_handle_timer
 from tbot2.common import ErrorMessage
+from tbot2.youtube.actions.youtube_live_broadcast_cuepoint_action import (
+    insert_live_broadcast_cuepoint,
+)
 
 from ..actions.youtube_live_broadcast_actions import update_live_broadcast
 from ..actions.youtube_live_chat_ban_actions import live_chat_ban
@@ -92,3 +96,16 @@ async def unban_user(
         'Unban of user on YouTube is currently not supported',
         type='not_supported',
     )
+
+
+@on_event_run_commercial('youtube')
+async def run_commercial(
+    channel_provider: ChannelProvider,
+    length: int,
+) -> bool:
+    await insert_live_broadcast_cuepoint(
+        channel_id=channel_provider.channel_id,
+        live_broadcast_id=channel_provider.stream_id or '',
+        duration_secs=length,
+    )
+    return True
