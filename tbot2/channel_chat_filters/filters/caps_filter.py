@@ -40,9 +40,9 @@ class ChatFilterCaps(ChatFilterBase):
     settings: ChatFilterCapsSettings
 
     async def check_message(self, message: ChatMessage) -> FilterMatchResult:
-        caps = findall(r'[A-Z]', message.message_without_fragments())
+        caps = findall(r'[A-Z]', message.message_without_parts())
         return FilterMatchResult(
             filter=self,
-            matched=(len(caps) / len(message.message_without_fragments())) * 100
+            matched=(len(caps) / len(message.message_without_parts())) * 100
             > self.settings.max_percent,
         )

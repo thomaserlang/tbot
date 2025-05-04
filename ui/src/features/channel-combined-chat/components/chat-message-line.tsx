@@ -31,10 +31,10 @@ export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
                 })}
             </Text>
             {providerLogo(chatMessage.provider)}
-            {chatMessage.twitch_badges && (
+            {chatMessage.badges && (
                 <Badges
                     channelId={chatMessage.channel_id}
-                    badges={chatMessage.twitch_badges}
+                    badges={chatMessage.badges}
                 />
             )}
             <span

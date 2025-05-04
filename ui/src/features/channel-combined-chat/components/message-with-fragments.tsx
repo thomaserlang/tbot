@@ -1,10 +1,9 @@
 import { Fragment } from 'react/jsx-runtime'
-import { EmotesResponse, useGetEmotes } from '../api/emotes.api'
-import { ChatMessage } from '../types/chat-message.type'
 import {
-    TwitchFragmentEmote,
-    TwitchMessageFragment,
-} from '../types/twitch.type'
+    ChatMessage,
+    ChatMessagePart,
+    EmotePart,
+} from '../types/chat-message.type'
 
 import classes from './chat-message-line.module.css'
 
@@ -13,39 +12,19 @@ interface Props {
 }
 
 export function MessageWithFragments({ chatMessage }: Props) {
-    const emotes = useGetEmotes({
-        provider: chatMessage.provider,
-        providerId: chatMessage.provider_id,
-    })
-    const fragments = chatMessage.twitch_fragments ?? [
-        {
-            type: 'text',
-            text: chatMessage.message,
-        } as TwitchMessageFragment,
-    ]
-    if (emotes.isError) {
-        console.error('Error fetching emotes', emotes.error)
-    }
-
-    if (emotes.data)
-        return assembleFragments(
-            fragments
-                .map((fragment) => expandFragments(fragment, emotes.data))
-                .flat()
-        )
-    return <>{chatMessage.message}</>
+    return assembleParts(chatMessage.parts)
 }
 
-function assembleFragments(fragments: TwitchMessageFragment[]) {
-    return fragments.map((fragment, ix) => (
-        <Fragment key={`${ix}-${fragment.text}`}>
-            {fragment.type !== 'emote' && <>{fragment.text}</>}
-            {fragment.type === 'emote' && fragment.emote && (
+function assembleParts(parts: ChatMessagePart[]) {
+    return parts.map((part, ix) => (
+        <Fragment key={`${ix}-${part.text}`}>
+            {part.type !== 'emote' && <>{part.text}</>}
+            {part.type === 'emote' && part.emote && (
                 <img
-                    key={`${ix}-${fragment.emote.id}`}
-                    src={getEmoteUrl(fragment.emote, 1)}
-                    alt={fragment.text}
-                    title={fragment.text}
+                    key={`${ix}-${part.emote.id}`}
+                    src={getEmoteUrl(part.emote, 1)}
+                    alt={part.text}
+                    title={part.text}
                     className={classes.emote}
                 />
             )}
@@ -53,40 +32,17 @@ function assembleFragments(fragments: TwitchMessageFragment[]) {
     ))
 }
 
-function expandFragments(
-    fragment: TwitchMessageFragment,
-    emotes: EmotesResponse
-): TwitchMessageFragment[] {
-    if (fragment.type !== 'text') return [fragment]
-    const parts = fragment.text.split(emotes.regex)
-    const fragments: TwitchMessageFragment[] = []
-    for (const part of parts) {
-        if (!part) continue
-        if (emotes.emoteIds.includes(part)) {
-            fragments.push({
-                type: 'emote',
-                emote: emotes.emotes[part],
-                text: part,
-            })
-        } else if (part) {
-            fragments.push({
-                type: 'text',
-                text: part,
-            })
-        }
+export function getEmoteUrl(emote: EmotePart, size: number): string {
+    switch (emote.emote_provider) {
+        case 'twitch':
+            return `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/${size}.0`
+        case '7tv':
+            return `https://cdn.7tv.app/emote/${emote.id}/${size + 1}x.webp`
+        case 'bttv':
+            return `https://cdn.betterttv.net/emote/${emote.id}/${
+                size + 1
+            }x.webp`
+        default:
+            return ''
     }
-    return fragments
-}
-
-export function getEmoteUrl(emote: TwitchFragmentEmote, size: number): string {
-    if (!emote.externalType) {
-        return `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/${size}.0`
-    }
-    if (emote.externalType === '7tv') {
-        return `https://cdn.7tv.app/emote/${emote.id}/${size + 1}x.webp`
-    }
-    if (emote.externalType === 'bttv') {
-        return `https://cdn.betterttv.net/emote/${emote.id}/${size + 1}x.webp`
-    }
-    return ''
 }

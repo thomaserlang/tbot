@@ -6,6 +6,11 @@ from uuid6 import uuid7
 
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.common import ChatMessage
+from tbot2.message_parse import message_to_parts
+from tbot2.twitch.actions.twitch_message_utils import (
+    twitch_badges_to_badges,
+    twitch_fragments_to_parts,
+)
 
 from ..schemas.event_channel_chat_notification_schema import (
     EventChannelChatNotification,
@@ -81,8 +86,12 @@ async def event_channel_chat_notification_route(
                 msg_id=data.event.message_id,
                 provider='twitch',
                 provider_id=data.event.broadcaster_user_id,
-                twitch_fragments=data.event.message.fragments,
-                twitch_badges=data.event.badges,
+                badges=twitch_badges_to_badges(data.event.badges),
+                parts=await message_to_parts(
+                    parts=twitch_fragments_to_parts(data.event.message.fragments),
+                    provider='twitch',
+                    provider_user_id=data.event.broadcaster_user_id,
+                ),
             )
         )
 

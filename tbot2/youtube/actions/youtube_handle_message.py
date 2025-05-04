@@ -9,6 +9,7 @@ from tbot2.channel_command import TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_provider import ChannelProvider
 from tbot2.common import ChatMessage, TAccessLevel, datetime_now
+from tbot2.message_parse import message_to_parts
 
 from ..actions.youtube_live_chat_ban_actions import live_chat_ban
 from ..actions.youtube_live_chat_message_actions import (
@@ -80,6 +81,11 @@ async def handle_text_message_event(
         viewer_color='',
         created_at=message.snippet.published_at,
         message=message.snippet.text_message_details.message_text,
+        parts=await message_to_parts(
+            message=message.snippet.text_message_details.message_text,
+            provider='youtube',
+            provider_user_id=channel_provider.provider_user_id or '',
+        ),
         msg_id=message.id,
         provider='youtube',
         provider_id=channel_provider.provider_user_id or '',

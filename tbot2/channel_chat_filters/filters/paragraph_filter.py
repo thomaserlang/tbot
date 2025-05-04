@@ -40,5 +40,5 @@ class ChatFilterParagraph(ChatFilterBase):
     async def check_message(self, message: ChatMessage) -> FilterMatchResult:
         return FilterMatchResult(
             filter=self,
-            matched=len(message.message_without_fragments()) > self.settings.max_length,
+            matched=len(message.message_without_parts()) > self.settings.max_length,
         )

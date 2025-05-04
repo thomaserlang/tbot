@@ -43,7 +43,7 @@ class ChatFilterSymbol(ChatFilterBase):
     settings: ChatFilterSymbolSettings
 
     async def check_message(self, message: ChatMessage) -> FilterMatchResult:
-        symbols = findall(r'[^ \w]', message.message_without_fragments())
+        symbols = findall(r'[^ \w]', message.message_without_parts())
         return FilterMatchResult(
             filter=self, matched=len(symbols) > self.settings.max_symbols
         )

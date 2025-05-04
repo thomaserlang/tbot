@@ -646,6 +646,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/6b/55/522bb43539fed463275ee803d79851faaebe86d17e7e3dbc89870d0322b9/protobuf3-to-dict-0.1.5.tar.gz", hash = "sha256:1e42c25b5afb5868e3a9b1962811077e492c17557f9c66f0fe40d821375d2b5a", size = 3508 }
 
 [[package]]
+name = "py-memoize"
+version = "3.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f4/7e/443433b6be2e4c44d5fbfbf393f95218d6f3bc3e514214092a7e94f22160/py-memoize-3.1.1.tar.gz", hash = "sha256:e06627a68917b14e5af878e491ea154e3580db0494b449d2d1144f135d38d569", size = 24403 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6d/55/b903566d223cfaf94db622087dec1c529b7d2e2abc44e34e39944c4bd465/py_memoize-3.1.1-py3-none-any.whl", hash = "sha256:8ccfa67e70ef14b5df56ce3fa309b649810fd28dd5cf58feb95a5099d246f338", size = 22808 },
+]
+
+[package.optional-dependencies]
+ujson = [
+    { name = "ujson" },
+]
+
+[[package]]
 name = "pycparser"
 version = "2.22"
 source = { registry = "https://pypi.org/simple" }
@@ -973,6 +987,7 @@ dependencies = [
     { name = "loguru" },
     { name = "more-itertools" },
     { name = "orjson" },
+    { name = "py-memoize", extra = ["ujson"] },
     { name = "pydantic", extra = ["email"] },
     { name = "pyjwt" },
     { name = "pymysql" },
@@ -1016,6 +1031,7 @@ requires-dist = [
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "more-itertools", specifier = "==10.7.0" },
     { name = "orjson", specifier = ">=3.10.18" },
+    { name = "py-memoize", extras = ["ujson"], specifier = ">=3.1.1" },
     { name = "pydantic", extras = ["email"], specifier = "==2.11.4" },
     { name = "pyjwt", specifier = "==2.10.1" },
     { name = "pymysql", specifier = "==1.1.1" },
@@ -1077,6 +1093,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/82/5c/e6082df02e215b846
 wheels = [
     { url = "https://files.pythonhosted.org/packages/31/08/aa4fdfb71f7de5176385bd9e90852eaf6b5d622735020ad600f2bab54385/typing_inspection-0.4.0-py3-none-any.whl", hash = "sha256:50e72559fcd2a6367a19f7a7e610e6afcb9fac940c650290eed893d61386832f", size = 14125 },
 ]
+
+[[package]]
+name = "ujson"
+version = "1.35"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/16/c4/79f3409bc710559015464e5f49b9879430d8f87498ecdc335899732e5377/ujson-1.35.tar.gz", hash = "sha256:f66073e5506e91d204ab0c614a148d5aa938bdbf104751be66f8ad7a222f5f86", size = 192027 }
 
 [[package]]
 name = "unidecode"

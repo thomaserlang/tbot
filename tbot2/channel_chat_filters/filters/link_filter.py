@@ -41,7 +41,7 @@ class ChatFilterLink(ChatFilterBase):
     type: Literal['link']
 
     async def check_message(self, message: ChatMessage) -> FilterMatchResult:
-        matches = RE_URL.findall(message.message_without_fragments())
+        matches = RE_URL.findall(message.message_without_parts())
         if not matches:
             return FilterMatchResult(filter=self, matched=False)
         allowlist = await get_link_allowlist_cached(filter_id=self.id)

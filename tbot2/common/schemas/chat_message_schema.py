@@ -9,9 +9,42 @@ from tbot2.common import BaseRequestSchema
 
 from ..types.access_level_type import TAccessLevel
 from ..types.provider_type import Provider
-from .twitch_schemas import TwitchBadge, TwitchMessageFragment
 
 ChatMessageType = Literal['message', 'notice', 'mod_action']
+
+
+class ChatMessageBadge(BaseRequestSchema):
+    id: str
+    type: str
+    name: str
+
+
+class EmotePart(BaseRequestSchema):
+    id: str
+    name: str
+    animated: bool
+    emote_provider: str
+
+
+class MentionPart(BaseRequestSchema):
+    user_id: str
+    username: str
+    display_name: str
+
+
+class GiftPart(BaseRequestSchema):
+    id: str
+    name: str
+    type: str
+    count: int
+
+
+class ChatMessagePart(BaseRequestSchema):
+    type: Literal['text', 'emote', 'mention', 'gift']
+    text: str
+    gift: GiftPart | None = None
+    emote: EmotePart | None = None
+    mention: MentionPart | None = None
 
 
 class ChatMessage(BaseRequestSchema):
@@ -38,8 +71,8 @@ class ChatMessage(BaseRequestSchema):
     ) = None
     message: Annotated[str, StringConstraints(min_length=1, max_length=2000)]
     msg_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
-    twitch_badges: list[TwitchBadge] | None = None
-    twitch_fragments: list[TwitchMessageFragment] | None = None
+    badges: list[ChatMessageBadge] = []
+    parts: list[ChatMessagePart] = []
     access_level: TAccessLevel = TAccessLevel.PUBLIC
 
     @field_validator('viewer_color', mode='before')
@@ -49,11 +82,7 @@ class ChatMessage(BaseRequestSchema):
             return None
         return value
 
-    def message_without_fragments(self) -> str:
-        if not self.twitch_fragments:
+    def message_without_parts(self) -> str:
+        if not self.parts:
             return self.message
-        return ''.join(
-            fragment.text
-            for fragment in self.twitch_fragments
-            if fragment.type == 'text'
-        )
+        return ''.join(parts.text for parts in self.parts if parts.type == 'text')

@@ -39,13 +39,13 @@ class ChatFilterBannedTerms(ChatFilterBase):
             if term.type == 'regex':
                 if search(
                     term.text if not term.text.startswith('re:') else term.text[3:],
-                    message.message_without_fragments(),
+                    message.message_without_parts(),
                     flags=IGNORECASE,
                 ):
                     return FilterMatchResult(filter=self, matched=True, sub_id=term.id)
             elif term.type == 'phrase':
                 if check_pattern_match(
-                    message=message.message_without_fragments(),
+                    message=message.message_without_parts(),
                     pattern=term.text,
                     normalize=True,
                     strip_symbols=True,

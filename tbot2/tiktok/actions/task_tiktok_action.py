@@ -23,6 +23,7 @@ from tbot2.channel_stream import (
     get_or_create_channel_provider_stream,
 )
 from tbot2.common import ChatMessage, datetime_now
+from tbot2.message_parse import message_to_parts
 
 channel_monitor_tasks: dict[UUID, asyncio.Task[None]] = {}
 
@@ -108,6 +109,11 @@ async def handle_channel(
                         viewer_display_name=event.user.nickname,
                         viewer_name=event.user.unique_id,
                         message=event.comment,
+                        parts=await message_to_parts(
+                            message=event.comment,
+                            provider='tiktok',
+                            provider_user_id=channel_provider.provider_user_id or '',
+                        ),
                         msg_id=str(event.base_message.message_id),
                     )
                 )
@@ -132,6 +138,12 @@ async def handle_channel(
                             viewer_display_name=event.user.nickname,
                             viewer_name=event.user.unique_id,
                             message=message,
+                            parts=await message_to_parts(
+                                message=message,
+                                provider='tiktok',
+                                provider_user_id=channel_provider.provider_user_id
+                                or '',
+                            ),
                             msg_id=str(event.base_message.message_id),
                         )
                     )

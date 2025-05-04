@@ -2,7 +2,7 @@ import sqlalchemy as sa
 from loguru import logger
 
 from tbot2.channel_viewer import ViewerNameHistoryRequest, save_viewers_name_history
-from tbot2.common import ChatMessage
+from tbot2.common import ChatMessage, ChatMessagePart
 from tbot2.common.utils.json_utils import json_dumps
 from tbot2.contexts import AsyncSession, get_session
 from tbot2.database import database
@@ -18,6 +18,17 @@ async def create_chatlog(
     data_ = data.model_dump()
     if 'access_level' in data_:
         data_.pop('access_level')  # do we wanna save this?
+
+    if not data.parts:
+        data_['parts'] = [
+            ChatMessagePart(
+                type='text',
+                text=data.message,
+            ).model_dump(exclude_unset=True)
+        ]
+    else:
+        data_['parts'] = [part.model_dump(exclude_unset=True) for part in data.parts]
+
     async with get_session(session) as session:
         try:
             await session.execute(

@@ -1,4 +1,5 @@
 import sys
+from typing import Any
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -32,3 +33,5 @@ class MChatlog(Base):
     twitch_badges: Mapped[dict[str, str | int | None] | None] = mapped_column(
         sa.JSON, nullable=True
     )
+    badges: Mapped[list[dict[str, Any]]] = mapped_column(sa.JSON, nullable=False)
+    parts: Mapped[list[dict[str, Any]]] = mapped_column(sa.JSON, nullable=False)

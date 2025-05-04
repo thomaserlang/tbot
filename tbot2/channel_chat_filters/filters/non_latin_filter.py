@@ -41,7 +41,7 @@ class ChatFilterNonLatin(ChatFilterBase):
     settings: ChatFilterNonLatinSettings
 
     async def check_message(self, message: ChatMessage) -> FilterMatchResult:
-        chars = sub(r'[\W]', '', message.message_without_fragments())
+        chars = sub(r'[\W]', '', message.message_without_parts())
         if not chars:
             return FilterMatchResult(filter=self, matched=False)
 

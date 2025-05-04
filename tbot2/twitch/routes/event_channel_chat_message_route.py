@@ -11,11 +11,19 @@ from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_provider import get_channel_provider
-from tbot2.common import ChatMessage, TAccessLevel
+from tbot2.common import (
+    ChatMessage,
+    TAccessLevel,
+)
+from tbot2.message_parse import message_to_parts
 from tbot2.twitch import twitch_warn_chat_user
 
 from ..actions.twitch_ban_user_actions import twitch_ban_user
 from ..actions.twitch_delete_message_actions import twitch_delete_message
+from ..actions.twitch_message_utils import (
+    twitch_badges_to_badges,
+    twitch_fragments_to_parts,
+)
 from ..actions.twitch_send_message_actions import twitch_bot_send_message
 from ..schemas.event_channel_chat_message_schema import (
     EventChannelChatMessage,
@@ -63,8 +71,12 @@ async def event_channel_chat_message_route(
         msg_id=data.event.message_id,
         provider='twitch',
         provider_id=data.event.broadcaster_user_id,
-        twitch_fragments=data.event.message.fragments,
-        twitch_badges=data.event.badges,
+        badges=twitch_badges_to_badges(data.event.badges),
+        parts=await message_to_parts(
+            parts=twitch_fragments_to_parts(data.event.message.fragments),
+            provider='twitch',
+            provider_user_id=data.event.broadcaster_user_id,
+        ),
         access_level=badges_to_access_level(data.event.badges),
     )
 
