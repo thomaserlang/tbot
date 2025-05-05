@@ -7,12 +7,7 @@ interface Props {
 export function Logo({ width }: Props) {
     return (
         <Anchor href="/channels">
-            <Image
-                src={logo}
-                alt="Synchra"
-                w={width}
-                style={{ stroke: 'blue', color: 'blue' }}
-            />
+            <Image src={logo} alt="Synchra" w={width} />
         </Anchor>
     )
 }
