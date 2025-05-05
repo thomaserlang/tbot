@@ -16,7 +16,7 @@ export function Component() {
 
     return (
         <>
-            <title>Sign in - HEIMRA</title>
+            <title>Sign in - Synchra</title>
             <Container size="xs" mt="3rem">
                 <Flex gap="1rem" direction="column" align="center">
                     <Logo width="10rem" />

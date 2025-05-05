@@ -119,7 +119,7 @@ class ConfigSettings(BaseYamlSettings):
     sentry_dsn: str | None = None
     port: int = 8001
     secret: str = ''
-    base_url: AnyHttpUrl = AnyHttpUrl('https://heimra.net')
+    base_url: AnyHttpUrl = AnyHttpUrl('https://synchra.net')
     twitch: ConfigTwitchModel = ConfigTwitchModel()
     discord: ConfigDiscordModel = ConfigDiscordModel()
     youtube: ConfigYoutubeModel = ConfigYoutubeModel()

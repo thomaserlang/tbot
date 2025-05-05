@@ -9,7 +9,7 @@ export function Logo({ width }: Props) {
         <Anchor href="/channels">
             <Image
                 src={logo}
-                alt="HEIMRA"
+                alt="Synchra"
                 w={width}
                 style={{ stroke: 'blue', color: 'blue' }}
             />

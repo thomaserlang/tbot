@@ -66,7 +66,7 @@ export function Component() {
 
     return (
         <>
-            <title>HEIMRA - Multiplatform Streaming Tools</title>
+            <title>Synchra - Multiplatform Streaming Tools</title>
             <meta
                 name="description"
                 content="A set of tools to help you manage your stream on
