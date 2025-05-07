@@ -6,7 +6,6 @@ from uuid6 import uuid7
 from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_command import TCommand
 from tbot2.channel_command.fill_message import fill_message
-from tbot2.channel_quote import cmd_var_fillers as cmd_var_fillers
 from tbot2.common import ChatMessageRequest
 from tbot2.testbase import run_file
 

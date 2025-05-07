@@ -190,7 +190,7 @@ class MonitorStream(BaseRequestSchema):
     ] = None
 
 
-class LiveBroadcastInsertContentDetails(BaseRequestSchema):
+class LiveBroadcastInsertContentDetails(BaseSchema):
     """
     Additional settings that control broadcast behavior.
     """
@@ -267,7 +267,7 @@ class LiveBroadcastInsert(BaseRequestSchema):
 class LiveBroadcastUpdate(LiveBroadcastInsert): ...
 
 
-class LiveBroadcastCuepoint(BaseRequestSchema):
+class LiveBroadcastCuepoint(BaseSchema):
     id: Annotated[
         str | None, Field(description='Unique identifier for the cuepoint.')
     ] = None

@@ -20,6 +20,7 @@ export function pageRecordsFlatten<T = Record<string, unknown>, L = unknown>(
     return data.pages.map((p) => p.records).flat()
 }
 
+<<<<<<< Updated upstream
 export function addRecord<T = Record<string, unknown>, L = any>({
     oldData,
     data,
@@ -28,16 +29,28 @@ export function addRecord<T = Record<string, unknown>, L = any>({
     oldData: InfiniteData<PageCursor<T, L>> | undefined
     data: T
     maxSize?: number
+=======
+export function addRecord<T = Record<string, unknown>, L = unknown>({
+    oldData,
+    data,
+}: {
+    oldData: InfiniteData<PageCursor<T, L>> | undefined
+    data: T
+>>>>>>> Stashed changes
 }): InfiniteData<PageCursor<T, L>> | undefined {
     if (!oldData) return oldData
     const pages = oldData.pages.map((page, index) => ({
         ...page,
+<<<<<<< Updated upstream
         records:
             index === 0
                 ? maxSize
                     ? [data, ...page.records.slice(0, maxSize - 1)]
                     : [data, ...page.records]
                 : page.records,
+=======
+        records: index === 0 ? [data, ...page.records] : page.records,
+>>>>>>> Stashed changes
     }))
     return {
         ...oldData,
@@ -45,15 +58,26 @@ export function addRecord<T = Record<string, unknown>, L = any>({
     }
 }
 
+<<<<<<< Updated upstream
 export function updateRecord<T = Record<string, unknown>, L = any>({
+=======
+export function updateRecord<T>({
+>>>>>>> Stashed changes
     oldData,
     data,
     matchFn,
 }: {
+<<<<<<< Updated upstream
     oldData: InfiniteData<PageCursor<T, L>> | undefined
     data: T
     matchFn: (item: T) => boolean
 }): InfiniteData<PageCursor<T, L>> | undefined {
+=======
+    oldData: InfiniteData<PageCursor<T>> | undefined
+    data: T
+    matchFn: (item: T) => boolean
+}): InfiniteData<PageCursor<T>> | undefined {
+>>>>>>> Stashed changes
     if (!oldData) return oldData
     const pages = oldData.pages.map((page) => ({
         ...page,
@@ -65,6 +89,7 @@ export function updateRecord<T = Record<string, unknown>, L = any>({
     }
 }
 
+<<<<<<< Updated upstream
 export function removeRecord<T = Record<string, unknown>, L = any>({
     oldData,
     matchFn,
@@ -72,6 +97,15 @@ export function removeRecord<T = Record<string, unknown>, L = any>({
     oldData: InfiniteData<PageCursor<T, L>> | undefined
     matchFn: (item: T) => boolean
 }): InfiniteData<PageCursor<T, L>> | undefined {
+=======
+export function removeRecord<T>({
+    oldData,
+    matchFn,
+}: {
+    oldData: InfiniteData<PageCursor<T>> | undefined
+    matchFn: (item: T) => boolean
+}): InfiniteData<PageCursor<T>> | undefined {
+>>>>>>> Stashed changes
     if (!oldData) return oldData
     const pages = oldData.pages.map((page) => ({
         ...page,

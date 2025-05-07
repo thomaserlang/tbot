@@ -17,6 +17,7 @@ from tbot2.channel_command.router import command_router
 from tbot2.channel_gambling.router import channel_gambling_router
 from tbot2.channel_points.router import channel_point_settings_router
 from tbot2.channel_provider.router import channel_provider_router
+from tbot2.channel_queue.router import channel_queue_router
 from tbot2.channel_quote.router import channel_quotes_router
 from tbot2.channel_timer.router import channel_timer_router
 from tbot2.channel_user_access.router import channel_user_access_router
@@ -96,6 +97,7 @@ app.include_router(channel_provider_router, prefix='/api/2')
 app.include_router(channel_user_access_router, prefix='/api/2')
 app.include_router(channel_point_settings_router, prefix='/api/2')
 app.include_router(channel_gambling_router, prefix='/api/2')
+app.include_router(channel_queue_router, prefix='/api/2')
 app.include_router(bot_provider_routes, prefix='/api/2')
 app.include_router(chatlog_router, prefix='/api/2')
 app.include_router(youtube_router, prefix='/api/2')

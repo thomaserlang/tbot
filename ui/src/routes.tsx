@@ -145,6 +145,14 @@ const protectedRoutes: RouteObject[] = [
                 path: 'quotes/:channelQuoteId',
                 lazy: () => import('./features/channel-quotes/quotes.page'),
             },
+            {
+                path: 'queues',
+                lazy: () => import('./features/channel-queue/queues.page'),
+            },
+            {
+                path: 'queues/:channelQueueId',
+                lazy: () => import('./features/channel-queue/queues.page'),
+            },
         ],
     },
     {

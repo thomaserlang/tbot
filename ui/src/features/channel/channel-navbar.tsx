@@ -72,7 +72,6 @@ export function ChannelNavbar() {
                     to={`/channels/${channel.id}/queues`}
                     label="Queues"
                     leftSection={<IconUsers size={20} />}
-                    disabled
                 />
                 <NavLink
                     component={RouterNavLink}

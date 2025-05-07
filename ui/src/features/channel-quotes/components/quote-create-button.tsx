@@ -29,13 +29,15 @@ export function CreateQuoteButton({ channelId, onCreated }: Props) {
                 onClose={close}
                 title="Create Quote"
             >
-                <QuoteCreateForm
-                    channelId={channelId}
-                    onCreated={(quote) => {
-                        onCreated?.(quote)
-                        close()
-                    }}
-                />
+                {opened && (
+                    <QuoteCreateForm
+                        channelId={channelId}
+                        onCreated={(quote) => {
+                            onCreated?.(quote)
+                            close()
+                        }}
+                    />
+                )}
             </Modal>
         </>
     )
