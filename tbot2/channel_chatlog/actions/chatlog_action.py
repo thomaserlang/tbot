@@ -14,19 +14,18 @@ async def create_chatlog(
     publish: bool = True,
     session: AsyncSession | None = None,
 ) -> bool:
+    if not data.parts:
+        data.parts = [
+            ChatMessagePartRequest(
+                type='text',
+                text=data.message,
+            )
+        ]
     data_ = data.model_dump()
     if 'access_level' in data_:
         data_.pop('access_level')  # do we wanna save this?
 
-    if not data.parts:
-        data_['parts'] = [
-            ChatMessagePartRequest(
-                type='text',
-                text=data.message,
-            ).model_dump(exclude_unset=True)
-        ]
-    else:
-        data_['parts'] = [part.model_dump(exclude_unset=True) for part in data.parts]
+    data_['parts'] = [part.model_dump(exclude_unset=True) for part in data.parts]
 
     async with get_session(session) as session:
         try:
