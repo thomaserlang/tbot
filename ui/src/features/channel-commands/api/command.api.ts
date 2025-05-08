@@ -1,14 +1,14 @@
+import { ChannelId } from '@/features/channel/types'
 import { queryClient } from '@/queryclient'
 import { PageCursor } from '@/types/page-cursor.type'
 import { api } from '@/utils/api'
 import { InfiniteData, useMutation, useQuery } from '@tanstack/react-query'
-import { ChannelId } from '../channel/types'
 import {
     Command,
     CommandCreate,
     CommandId,
     CommandUpdate,
-} from './command.types'
+} from '../types/command.types'
 import { getCommandsQueryKey } from './commands.api'
 
 export function getCommandQueryKey(commandId: CommandId) {
