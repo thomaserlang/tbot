@@ -7,8 +7,16 @@ from uuid6 import uuid7
 from tbot2.common import ErrorMessage, datetime_now
 from tbot2.contexts import get_session
 
-from ..models.queue_viewer_model import MQueueViewer
-from ..schemas.queue_viewer_schema import QueueViewer, QueueViewerCreate
+from ..models.channel_queue_viewer_model import MChannelQueueViewer
+from ..schemas.queue_viewer_schema import (
+    QueueViewer,
+    QueueViewerCreate,
+)
+from .queue_event_actions import (
+    publish_queue_cleared,
+    publish_queue_viewer_created,
+    publish_queue_viewer_deleted,
+)
 
 
 async def get_queue_viewer(
@@ -17,10 +25,13 @@ async def get_queue_viewer(
 ) -> QueueViewer | None:
     async with get_session(session) as session:
         result = await session.scalar(
-            sa.select(MQueueViewer).where(MQueueViewer.id == channel_queue_viewer_id)
+            sa.select(MChannelQueueViewer).where(
+                MChannelQueueViewer.id == channel_queue_viewer_id
+            )
         )
         if result:
             return QueueViewer.model_validate(result)
+        return None
 
 
 async def get_queue_viewer_by_provider(
@@ -31,17 +42,18 @@ async def get_queue_viewer_by_provider(
 ) -> QueueViewer | None:
     async with get_session(session) as session:
         result = await session.scalar(
-            sa.select(MQueueViewer).where(
-                MQueueViewer.channel_queue_id == channel_queue_id,
-                MQueueViewer.provider == provider,
-                MQueueViewer.provider_viewer_id == provider_viewer_id,
+            sa.select(MChannelQueueViewer).where(
+                MChannelQueueViewer.channel_queue_id == channel_queue_id,
+                MChannelQueueViewer.provider == provider,
+                MChannelQueueViewer.provider_viewer_id == provider_viewer_id,
             )
         )
         if result:
             return QueueViewer.model_validate(result)
+        return None
 
 
-async def add_viewer_to_queue(
+async def create_queue_viewer(
     channel_queue_id: UUID,
     data: QueueViewerCreate,
     channel_queue_viewer_id: UUID | None = None,
@@ -54,10 +66,10 @@ async def add_viewer_to_queue(
         if position is None:
             pos = await session.scalar(
                 sa.select(
-                    sa.func.coalesce(sa.func.max(MQueueViewer.position), 0) + 1,
+                    sa.func.coalesce(sa.func.max(MChannelQueueViewer.position), 0) + 1,
                 )
                 .where(
-                    MQueueViewer.channel_queue_id == channel_queue_id,
+                    MChannelQueueViewer.channel_queue_id == channel_queue_id,
                 )
                 .with_for_update()
             )
@@ -74,7 +86,7 @@ async def add_viewer_to_queue(
 
         try:
             await session.execute(
-                sa.insert(MQueueViewer.__table__).values(  # type: ignore
+                sa.insert(MChannelQueueViewer.__table__).values(  # type: ignore
                     id=id,
                     channel_queue_id=channel_queue_id,
                     position=pos,
@@ -103,13 +115,16 @@ async def add_viewer_to_queue(
                 session=session,
             )
 
-        user = await get_queue_viewer(
+        viewer = await get_queue_viewer(
             channel_queue_viewer_id=id,
             session=session,
         )
-        if user is None:
+        if viewer is None:
             raise ValueError('User not found after creation')
-        return user
+        await publish_queue_viewer_created(
+            channel_queue_viewer=viewer,
+        )
+        return viewer
 
 
 async def _update_position(
@@ -119,51 +134,55 @@ async def _update_position(
     session: AsyncSession,
 ) -> None:
     await session.execute(
-        sa.update(MQueueViewer.__table__)  # type: ignore
+        sa.update(MChannelQueueViewer.__table__)  # type: ignore
         .where(
-            MQueueViewer.channel_queue_id == channel_queue_id,
-            MQueueViewer.position >= from_pos,
+            MChannelQueueViewer.channel_queue_id == channel_queue_id,
+            MChannelQueueViewer.position >= from_pos,
         )
-        .values(position=MQueueViewer.position + inc_pos)
+        .values(position=MChannelQueueViewer.position + inc_pos)
     )
 
 
-async def remove_viewer_from_queue(
+async def delete_queue_viewer(
     channel_queue_viewer_id: UUID,
     session: AsyncSession | None = None,
 ) -> bool:
     async with get_session(session) as session:
-        user = await get_queue_viewer(
+        viewer = await get_queue_viewer(
             channel_queue_viewer_id=channel_queue_viewer_id,
             session=session,
         )
-        if not user:
+        if not viewer:
             return False
         result = await session.execute(
-            sa.delete(MQueueViewer.__table__).where(  # type: ignore
-                MQueueViewer.id == channel_queue_viewer_id,
+            sa.delete(MChannelQueueViewer.__table__).where(  # type: ignore
+                MChannelQueueViewer.id == channel_queue_viewer_id,
             )
         )
         if result.rowcount == 0:
             return False
         await _update_position(
-            channel_queue_id=user.channel_queue_id,
-            from_pos=user.position,
+            channel_queue_id=viewer.channel_queue_id,
+            from_pos=viewer.position,
             inc_pos=-1,
             session=session,
+        )
+        await publish_queue_viewer_deleted(
+            channel_queue_viewer=viewer,
         )
         return True
 
 
-async def clear_queue(
+async def clear_viewer_queue(
     channel_queue_id: UUID, session: AsyncSession | None = None
 ) -> bool:
     async with get_session(session) as session:
         await session.execute(
-            sa.delete(MQueueViewer.__table__).where(  # type: ignore
-                MQueueViewer.channel_queue_id == channel_queue_id
+            sa.delete(MChannelQueueViewer.__table__).where(  # type: ignore
+                MChannelQueueViewer.channel_queue_id == channel_queue_id
             )
         )
+        await publish_queue_cleared(channel_queue_id=channel_queue_id)
         return True
 
 
@@ -178,11 +197,11 @@ async def move_viewer_to_top(
         )
         if not user:
             return False
-        await remove_viewer_from_queue(
+        await delete_queue_viewer(
             channel_queue_viewer_id=user.id,
             session=session,
         )
-        await add_viewer_to_queue(
+        await create_queue_viewer(
             channel_queue_id=user.channel_queue_id,
             data=QueueViewerCreate(
                 provider=user.provider,

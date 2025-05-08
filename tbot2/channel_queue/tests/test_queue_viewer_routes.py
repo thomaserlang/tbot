@@ -1,15 +1,19 @@
 import pytest
 from httpx import AsyncClient
 
-from tbot2.channel_queue import QueueCreate, QueueScope, create_queue
+from tbot2.channel_queue import (
+    ChannelQueueScope,
+    QueueCreate,
+    create_queue,
+)
 from tbot2.testbase import run_file, user_signin
 
 
 @pytest.mark.asyncio
-async def test_queue_routes(client: AsyncClient) -> None:
+async def test_queue_viewer_routes(client: AsyncClient) -> None:
     user = await user_signin(
         client,
-        scopes=[QueueScope.READ, QueueScope.WRITE],
+        scopes=[ChannelQueueScope.READ, ChannelQueueScope.WRITE],
     )
 
     queue = await create_queue(

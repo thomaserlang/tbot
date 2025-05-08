@@ -1,8 +1,8 @@
+import { ChannelId } from '@/features/channel/types'
 import { PageCursor } from '@/types/page-cursor.type'
 import { api } from '@/utils/api'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { ChannelId } from '../channel/types'
-import { Command } from './command.types'
+import { Command } from '../types/command.types'
 
 interface IParams {}
 

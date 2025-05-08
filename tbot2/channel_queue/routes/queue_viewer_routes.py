@@ -11,26 +11,32 @@ from tbot2.page_cursor import PageCursor, PageCursorQueryDep, page_cursor
 
 from ..actions.queue_actions import get_queue
 from ..actions.queue_viewer_actions import (
-    add_viewer_to_queue,
-    clear_queue,
+    clear_viewer_queue,
+    create_queue_viewer,
+    delete_queue_viewer,
     move_viewer_to_top,
-    remove_viewer_from_queue,
 )
-from ..models.queue_model import MQueue
-from ..models.queue_viewer_model import MQueueViewer
-from ..schemas.queue_viewer_schema import QueueViewer, QueueViewerCreate
-from ..types import QueueScope
+from ..models.channel_queue_model import MChannelQueue
+from ..models.channel_queue_viewer_model import MChannelQueueViewer
+from ..schemas.queue_viewer_schema import (
+    QueueViewer,
+    QueueViewerCreate,
+)
+from ..types import ChannelQueueScope
 
 router = APIRouter()
 
 
 @router.get(
-    '/channels/{channel_id}/queues/{channel_queue_id}/viewers', name='Get Queue Viewers'
+    '/channels/{channel_id}/queues/{channel_queue_id}/viewers',
+    name='Get Queue Viewers',
 )
 async def get_queue_viewers_route(
     channel_id: UUID,
     channel_queue_id: UUID,
-    token_data: Annotated[TokenData, Security(authenticated, scopes=[QueueScope.READ])],
+    token_data: Annotated[
+        TokenData, Security(authenticated, scopes=[ChannelQueueScope.READ])
+    ],
     page_query: PageCursorQueryDep,
     provider: Provider | None = None,
     provider_viewer_id: str | None = None,
@@ -41,34 +47,33 @@ async def get_queue_viewers_route(
     )
 
     stmt = (
-        sa.select(MQueueViewer)
+        sa.select(MChannelQueueViewer)
         .where(
-            MQueueViewer.channel_queue_id == channel_queue_id,
-            MQueue.channel_id == channel_id,
-            MQueue.id == MQueueViewer.channel_queue_id,
+            MChannelQueueViewer.channel_queue_id == channel_queue_id,
+            MChannelQueue.channel_id == channel_id,
+            MChannelQueue.id == MChannelQueueViewer.channel_queue_id,
         )
         .order_by(
-            MQueueViewer.position,
+            MChannelQueueViewer.position,
         )
     )
 
     if provider and provider_viewer_id:
         stmt = stmt.where(
-            MQueueViewer.provider == provider,
-            MQueueViewer.provider_viewer_id == provider_viewer_id,
+            MChannelQueueViewer.provider == provider,
+            MChannelQueueViewer.provider_viewer_id == provider_viewer_id,
         )
 
-    page = await page_cursor(
+    return await page_cursor(
         query=stmt,
         page_query=page_query,
         response_model=QueueViewer,
     )
-    return page
 
 
 @router.post(
     '/channels/{channel_id}/queues/{channel_queue_id}/viewers',
-    name='Add Viewer to Queue',
+    name='Add Viewer to Channel Queue',
     status_code=201,
 )
 async def add_viewer_to_queue_route(
@@ -76,7 +81,7 @@ async def add_viewer_to_queue_route(
     channel_queue_id: UUID,
     data: QueueViewerCreate,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[QueueScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelQueueScope.WRITE])
     ],
 ) -> QueueViewer:
     await token_data.channel_require_access(
@@ -88,20 +93,19 @@ async def add_viewer_to_queue_route(
     if not queue or queue.channel_id != channel_id:
         raise ErrorMessage(
             code=404,
-            message='Queue not found',
-            type='queue_not_found',
+            message='queue not found',
+            type='channel_queue_not_found',
         )
 
-    viewer = await add_viewer_to_queue(
+    return await create_queue_viewer(
         channel_queue_id=channel_queue_id,
         data=data,
     )
-    return viewer
 
 
 @router.delete(
     '/channels/{channel_id}/queues/{channel_queue_id}/viewers/{channel_queue_viewer_id}',
-    name='Remove Viewer from Queue',
+    name='Remove Viewer from Channel Queue',
     status_code=204,
 )
 async def remove_viewer_from_queue_route(
@@ -109,7 +113,7 @@ async def remove_viewer_from_queue_route(
     channel_queue_id: UUID,
     channel_queue_viewer_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[QueueScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelQueueScope.WRITE])
     ],
 ) -> None:
     await token_data.channel_require_access(
@@ -121,23 +125,23 @@ async def remove_viewer_from_queue_route(
     if not queue or queue.channel_id != channel_id:
         raise ErrorMessage(
             code=404,
-            message='Queue not found',
-            type='queue_not_found',
+            message='queue not found',
+            type='channel_queue_not_found',
         )
 
-    await remove_viewer_from_queue(channel_queue_viewer_id)
+    await delete_queue_viewer(channel_queue_viewer_id)
 
 
 @router.delete(
     '/channels/{channel_id}/queues/{channel_queue_id}/viewers',
-    name='Clear queue',
+    name='Clear viewer queue',
     status_code=204,
 )
 async def clear_queue_route(
     channel_id: UUID,
     channel_queue_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[QueueScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelQueueScope.WRITE])
     ],
 ) -> None:
     await token_data.channel_require_access(
@@ -149,16 +153,16 @@ async def clear_queue_route(
     if not queue or queue.channel_id != channel_id:
         raise ErrorMessage(
             code=404,
-            message='Queue not found',
-            type='queue_not_found',
+            message='queue not found',
+            type='channel_queue_not_found',
         )
 
-    await clear_queue(channel_queue_id)
+    await clear_viewer_queue(channel_queue_id)
 
 
 @router.put(
     '/channels/{channel_id}/queues/{channel_queue_id}/move-to-top',
-    name='Move Viewer to Top',
+    name='Move viewer to top of queue',
     status_code=204,
 )
 async def move_viewer_to_top_route(
@@ -166,7 +170,7 @@ async def move_viewer_to_top_route(
     channel_queue_id: UUID,
     channel_queue_viewer_id: Annotated[UUID, Body(embed=True)],
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[QueueScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelQueueScope.WRITE])
     ],
 ) -> None:
     await token_data.channel_require_access(
@@ -178,8 +182,8 @@ async def move_viewer_to_top_route(
     if not queue or queue.channel_id != channel_id:
         raise ErrorMessage(
             code=404,
-            message='Queue not found',
-            type='queue_not_found',
+            message='queue not found',
+            type='channel_queue_not_found',
         )
 
     await move_viewer_to_top(channel_queue_viewer_id)

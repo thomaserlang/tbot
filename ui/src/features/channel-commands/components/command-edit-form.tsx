@@ -1,8 +1,9 @@
 import { setFormErrors } from '@/utils/form'
+import { toastSuccess } from '@/utils/toast'
 import { Alert, Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { useUpdateCommand } from '../command.api'
-import { Command, CommandUpdate } from '../command.types'
+import { useUpdateCommand } from '../api/command.api'
+import { Command, CommandUpdate } from '../types/command.types'
 import { CommandForm } from './command-form'
 
 interface Props {
@@ -10,9 +11,10 @@ interface Props {
     onUpdated?: (command: Command) => void
 }
 
-export function EditCommandForm({ command, onUpdated }: Props) {
+export function CommandEditForm({ command, onUpdated }: Props) {
     const update = useUpdateCommand({
         onSuccess: (data) => {
+            toastSuccess('Command updated')
             onUpdated?.(data)
         },
         onError: (error) => {

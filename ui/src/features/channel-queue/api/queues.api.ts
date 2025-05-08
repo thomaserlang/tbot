@@ -15,7 +15,7 @@ export function getQueuesQueryKey({ channelId, params }: GetProps) {
     return ['channel-queues', channelId, params]
 }
 
-export async function getQueues({
+export async function getChannelQueues({
     channelId,
 }: GetProps & { params?: GetParams & { cursor?: string } }) {
     const r = await api.get<PageCursor<Queue>>(
@@ -28,7 +28,7 @@ export function useGetQueues({ channelId, params }: GetProps) {
     return useInfiniteQuery({
         queryKey: getQueuesQueryKey({ channelId, params }),
         queryFn: ({ pageParam }) =>
-            getQueues({
+            getChannelQueues({
                 channelId,
                 params: {
                     ...params,

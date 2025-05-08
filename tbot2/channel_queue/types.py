@@ -1,6 +1,6 @@
 from tbot2.common import Scope
 
 
-class QueueScope(Scope):
-    READ = 'quote:read'
-    WRITE = 'quote:write'
+class ChannelQueueScope(Scope):
+    READ = 'channel_viewer_queue:read'
+    WRITE = 'channel_viewer_queue:write'

@@ -21,7 +21,7 @@ import {
     commandActiveModeLabels,
     CommandCreate,
     CommandUpdate,
-} from '../command.types'
+} from '../types/command.types'
 
 interface Props {
     form: UseFormReturnType<CommandCreate> | UseFormReturnType<CommandUpdate>

@@ -2,7 +2,7 @@ import { providerInfo } from '@/constants/providers-info.constants'
 import { ChannelId } from '@/features/channel/types'
 import { toastPromise } from '@/utils/toast'
 import { Button, Menu } from '@mantine/core'
-import { IconCaretDownFilled } from '@tabler/icons-react'
+import { IconChevronDown } from '@tabler/icons-react'
 import { useRunCommercial } from '../api/channel-provider-commercial'
 import { useGetChannelProviders } from '../api/channel-providers.api'
 
@@ -46,7 +46,7 @@ export function RunCommercialButton({ channelId }: Props) {
             <Menu.Target>
                 <Button
                     loading={runCommercial.isPending}
-                    rightSection={<IconCaretDownFilled />}
+                    rightSection={<IconChevronDown size={14} />}
                     variant="light"
                 >
                     Run Ads

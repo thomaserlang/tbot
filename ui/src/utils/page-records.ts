@@ -75,7 +75,7 @@ export function removeRecord<T = Record<string, unknown>, L = any>({
     if (!oldData) return oldData
     const pages = oldData.pages.map((page) => ({
         ...page,
-        records: page.records.filter((item) => matchFn(item)),
+        records: page.records.filter((item) => !matchFn(item)),
     }))
     return {
         ...oldData,

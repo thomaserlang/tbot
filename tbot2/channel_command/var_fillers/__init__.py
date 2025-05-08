@@ -1,6 +1,7 @@
 from . import accountage_vars as accountage_vars
 from . import add_point_vars as add_point_vars
 from . import category_vars as category_vars
+from . import channel_queue_vars as channel_queue_vars
 from . import channel_quote_vars as channel_quote_vars
 from . import countdown_vars as countdown_vars
 from . import faceit_vars as faceit_vars

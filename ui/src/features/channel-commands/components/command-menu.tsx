@@ -1,8 +1,8 @@
 import { toastPromise } from '@/utils/toast'
 import { ActionIcon, Menu, MenuItem } from '@mantine/core'
 import { IconDotsVertical, IconEdit, IconTrash } from '@tabler/icons-react'
-import { useDeleteCommand } from '../command.api'
-import { Command } from '../command.types'
+import { useDeleteCommand } from '../api/command.api'
+import { Command } from '../types/command.types'
 
 interface Props {
     command: Command

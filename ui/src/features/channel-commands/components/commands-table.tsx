@@ -4,7 +4,7 @@ import { Anchor } from '@mantine/core'
 import { IconBlocks } from '@tabler/icons-react'
 import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query'
 import { DataTable } from 'mantine-datatable'
-import { Command } from '../command.types'
+import { Command } from '../types/command.types'
 import { CommandMenu } from './command-menu'
 
 interface Props {

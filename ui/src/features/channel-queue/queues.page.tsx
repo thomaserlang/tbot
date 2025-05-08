@@ -1,12 +1,16 @@
-import { Flex } from '@mantine/core'
+import { Container } from '@mantine/core'
+import { useParams } from 'react-router-dom'
 import { useCurrentChannel } from '../channel'
-import { SelectQueue } from './components/select-queue'
+import { QueueView } from './components/queue-view'
+import { ChannelQueueId } from './types/queue.types'
 
 export function Component() {
     const channel = useCurrentChannel()
+    const { queueId } = useParams<{ queueId?: ChannelQueueId }>()
+
     return (
-        <Flex>
-            <SelectQueue channelId={channel.id} />
-        </Flex>
+        <Container size="sm">
+            <QueueView channelId={channel.id} queueId={queueId} />
+        </Container>
     )
 }

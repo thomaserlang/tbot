@@ -15,24 +15,24 @@ import { getQueuesQueryKey } from './queues.api'
 
 interface GetProps {
     channelId: ChannelId
-    channelQueueId: ChannelQueueId
+    queueId: ChannelQueueId
 }
 
-export function getQueueQueryKey({ channelId, channelQueueId }: GetProps) {
-    return ['channel-queue', channelId, channelQueueId]
+export function getQueueQueryKey({ queueId }: Omit<GetProps, 'channelId'>) {
+    return ['channel-queue', queueId]
 }
 
-export async function getQueue({ channelId, channelQueueId }: GetProps) {
+export async function getQueue({ channelId, queueId }: GetProps) {
     const r = await api.get<Queue>(
-        `/api/2/channels/${channelId}/queues/${channelQueueId}`
+        `/api/2/channels/${channelId}/queues/${queueId}`
     )
     return r.data
 }
 
-export function useGetQueue({ channelId, channelQueueId }: GetProps) {
+export function useGetQueue({ channelId, queueId }: GetProps) {
     return useQuery({
-        queryKey: getQueueQueryKey({ channelId, channelQueueId }),
-        queryFn: () => getQueue({ channelId, channelQueueId }),
+        queryKey: getQueueQueryKey({ queueId }),
+        queryFn: () => getQueue({ channelId, queueId }),
     })
 }
 
@@ -43,6 +43,22 @@ interface CreateProps {
 
 export async function createQueue({ channelId, data }: CreateProps) {
     const r = await api.post<Queue>(`/api/2/channels/${channelId}/queues`, data)
+    queryClient.setQueryData(
+        getQueueQueryKey({
+            queueId: r.data.id,
+        }),
+        data
+    )
+    queryClient.setQueryData(
+        getQueuesQueryKey({
+            channelId,
+        }),
+        (oldData: InfiniteData<PageCursor<Queue>>) =>
+            addRecord({
+                oldData,
+                data: r.data,
+            })
+    )
     return r.data
 }
 
@@ -55,45 +71,39 @@ export function useCreateQueue({
 } = {}) {
     return useMutation({
         mutationFn: createQueue,
-        onSuccess: (data, variables) => {
-            queryClient.setQueryData(
-                getQueueQueryKey({
-                    channelId: variables.channelId,
-                    channelQueueId: data.id,
-                }),
-                data
-            )
-            queryClient.setQueryData(
-                getQueuesQueryKey({
-                    channelId: variables.channelId,
-                }),
-                (oldData: InfiniteData<PageCursor<Queue>>) =>
-                    addRecord({
-                        oldData,
-                        data,
-                    })
-            )
-            onSuccess?.(data, variables)
-        },
+        onSuccess,
         onError,
     })
 }
 
 interface UpdateProps {
     channelId: ChannelId
-    channelQueueId: ChannelQueueId
+    queueId: ChannelQueueId
     channelQueueViewerId: ChannelQueueViewerId
     data: QueueUpdate
 }
 
-export async function updateQueue({
-    channelId,
-    channelQueueId,
-    data,
-}: UpdateProps) {
+export async function updateQueue({ channelId, queueId, data }: UpdateProps) {
     const r = await api.put<Queue>(
-        `/api/2/channels/${channelId}/queues/${channelQueueId}`,
+        `/api/2/channels/${channelId}/queues/${queueId}`,
         data
+    )
+    queryClient.setQueryData(
+        getQueueQueryKey({
+            queueId: r.data.id,
+        }),
+        r.data
+    )
+    queryClient.setQueryData(
+        getQueuesQueryKey({
+            channelId,
+        }),
+        (oldData: InfiniteData<PageCursor<Queue>>) =>
+            updateRecord({
+                oldData,
+                data: r.data,
+                matchFn: (item) => item.id === queueId,
+            })
     )
     return r.data
 }
@@ -108,24 +118,6 @@ export function useUpdateQueue({
     return useMutation({
         mutationFn: updateQueue,
         onSuccess: (data, variables) => {
-            queryClient.setQueryData(
-                getQueueQueryKey({
-                    channelId: variables.channelId,
-                    channelQueueId: data.id,
-                }),
-                data
-            )
-            queryClient.setQueryData(
-                getQueuesQueryKey({
-                    channelId: variables.channelId,
-                }),
-                (oldData: InfiniteData<PageCursor<Queue>>) =>
-                    updateRecord({
-                        oldData,
-                        data,
-                        matchFn: (item) => item.id === data.id,
-                    })
-            )
             onSuccess?.(data, variables)
         },
         onError,
@@ -134,11 +126,21 @@ export function useUpdateQueue({
 
 interface DeleteProps {
     channelId: ChannelId
-    channelQueueId: ChannelQueueId
+    queueId: ChannelQueueId
 }
 
-export async function deleteQueue({ channelId, channelQueueId }: DeleteProps) {
-    await api.delete(`/api/2/channels/${channelId}/queues/${channelQueueId}`)
+export async function deleteChannelQueue({ channelId, queueId }: DeleteProps) {
+    await api.delete(`/api/2/channels/${channelId}/queues/${queueId}`)
+    queryClient.setQueryData(
+        getQueuesQueryKey({
+            channelId: channelId,
+        }),
+        (oldData: InfiniteData<PageCursor<Queue>>) =>
+            removeRecord({
+                oldData,
+                matchFn: (item) => item.id === queueId,
+            })
+    )
 }
 
 export function useDeleteQueue({
@@ -149,27 +151,8 @@ export function useDeleteQueue({
     onError?: (error: any, variables: DeleteProps) => void
 } = {}) {
     return useMutation({
-        mutationFn: deleteQueue,
-        onSuccess: (data, variables) => {
-            queryClient.setQueryData(
-                getQueueQueryKey({
-                    channelId: variables.channelId,
-                    channelQueueId: variables.channelQueueId,
-                }),
-                data
-            )
-            queryClient.setQueryData(
-                getQueuesQueryKey({
-                    channelId: variables.channelId,
-                }),
-                (oldData: InfiniteData<PageCursor<Queue>>) =>
-                    removeRecord({
-                        oldData,
-                        matchFn: (item) => item.id === variables.channelQueueId,
-                    })
-            )
-            onSuccess?.(data, variables)
-        },
+        mutationFn: deleteChannelQueue,
+        onSuccess,
         onError,
     })
 }

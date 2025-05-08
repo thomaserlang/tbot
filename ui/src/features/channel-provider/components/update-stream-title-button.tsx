@@ -1,7 +1,7 @@
 import { providerInfo } from '@/constants/providers-info.constants'
 import { ChannelId } from '@/features/channel/types'
 import { Button, Menu } from '@mantine/core'
-import { IconCaretDownFilled } from '@tabler/icons-react'
+import { IconChevronDown } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useGetChannelProviders } from '../api/channel-providers.api'
 import { ChannelProvider } from '../channel-provider.types'
@@ -21,7 +21,7 @@ export function UpdateStreamTitleButton({ channelId }: Props) {
             <Menu shadow="md" width={200}>
                 <Menu.Target>
                     <Button
-                        rightSection={<IconCaretDownFilled />}
+                        rightSection={<IconChevronDown size={14} />}
                         variant="light"
                     >
                         Update Title
@@ -44,6 +44,7 @@ export function UpdateStreamTitleButton({ channelId }: Props) {
                         ))}
                 </Menu.Dropdown>
             </Menu>
+
             {channelProvider && (
                 <UpdateStreamTitleModal
                     channelProvider={channelProvider}

@@ -3,12 +3,12 @@ import pytest
 from tbot2.channel_queue import (
     QueueCreate,
     QueueViewerCreate,
-    add_viewer_to_queue,
-    clear_queue,
+    clear_viewer_queue,
     create_queue,
+    create_queue_viewer,
+    delete_queue_viewer,
     get_queue_viewer_by_provider,
     move_viewer_to_top,
-    remove_viewer_from_queue,
 )
 from tbot2.common import ErrorMessage
 from tbot2.testbase import run_file, user_signin
@@ -25,7 +25,7 @@ async def test_queue_viewer_actions(db: None) -> None:
         ),
     )
 
-    viewer_item = await add_viewer_to_queue(
+    viewer_item = await create_queue_viewer(
         channel_queue_id=queue.id,
         data=QueueViewerCreate(
             provider='twitch',
@@ -42,7 +42,7 @@ async def test_queue_viewer_actions(db: None) -> None:
 
     # Test adding the same viewer again
     with pytest.raises(ErrorMessage) as excinfo:
-        await add_viewer_to_queue(
+        await create_queue_viewer(
             channel_queue_id=queue.id,
             data=QueueViewerCreate(
                 provider='twitch',
@@ -53,7 +53,7 @@ async def test_queue_viewer_actions(db: None) -> None:
     assert str(excinfo.value) == 'Viewer already in queue'
 
     # Test adding a different viewer
-    viewer_item2 = await add_viewer_to_queue(
+    viewer_item2 = await create_queue_viewer(
         channel_queue_id=queue.id,
         data=QueueViewerCreate(
             provider='twitch',
@@ -68,7 +68,7 @@ async def test_queue_viewer_actions(db: None) -> None:
     assert viewer_item2.display_name == 'test2'
     assert viewer_item2.position == 2
 
-    viewer_item3 = await add_viewer_to_queue(
+    viewer_item3 = await create_queue_viewer(
         channel_queue_id=queue.id,
         data=QueueViewerCreate(
             provider='twitch',
@@ -112,7 +112,7 @@ async def test_queue_viewer_actions(db: None) -> None:
     assert viewer_item
     assert viewer_item.position == 3
 
-    await remove_viewer_from_queue(
+    await delete_queue_viewer(
         channel_queue_viewer_id=viewer_item1.id,
     )
 
@@ -132,7 +132,7 @@ async def test_queue_viewer_actions(db: None) -> None:
     assert viewer_item
     assert viewer_item.position == 1
 
-    await clear_queue(
+    await clear_viewer_queue(
         channel_queue_id=queue.id,
     )
     viewer_item = await get_queue_viewer_by_provider(

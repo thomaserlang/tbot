@@ -1,16 +1,16 @@
 import { ChannelId } from '@/features/channel/types'
-import { Button, Modal } from '@mantine/core'
+import { Button } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconPlus } from '@tabler/icons-react'
-import { Command } from '../command.types'
-import { CreateCommandForm } from './command-create-form'
+import { Command } from '../types/command.types'
+import { CommandCreateModal } from './command-create-modal'
 
 interface Props {
     channelId: ChannelId
     onCreated?: (command: Command) => void
 }
 
-export function CreateCommandButton({ channelId, onCreated }: Props) {
+export function CommandCreateButton({ channelId, onCreated }: Props) {
     const [opened, { open, close }] = useDisclosure(false)
     return (
         <>
@@ -23,20 +23,12 @@ export function CreateCommandButton({ channelId, onCreated }: Props) {
                 Create Command
             </Button>
 
-            <Modal
-                size="lg"
+            <CommandCreateModal
+                channelId={channelId}
                 opened={opened}
                 onClose={close}
-                title="Create Command"
-            >
-                <CreateCommandForm
-                    channelId={channelId}
-                    onCreated={(command) => {
-                        onCreated?.(command)
-                        close()
-                    }}
-                />
-            </Modal>
+                onCreated={onCreated}
+            />
         </>
     )
 }

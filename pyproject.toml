@@ -8,7 +8,7 @@ dependencies = [
     "sqlalchemy==2.0.40",
     "yaml-settings-pydantic==2.3.2",
     "pydantic[email]==2.11.4",
-    "redis==5.2.1",
+    "redis[hiredis]==6.0.0",
     "httpx[http2]==0.28.1",
     "httpx_auth==0.23.1",
     "authlib==1.5.2",
@@ -53,7 +53,7 @@ requires = ["flit_core>=3.2,<4"]
 quote-style = "single"
 
 [tool.ruff.lint]
-select = ["E", "F", "UP", "B", "I", "FAST", "ANN"]
+select = ["E", "F", "UP", "B", "I", "FAST", "ANN", "RET"]
 ignore = ['ANN401']
 
 [tool.pytest.ini_options]

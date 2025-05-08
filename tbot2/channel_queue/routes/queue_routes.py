@@ -9,61 +9,71 @@ from tbot2.common import ErrorMessage, TAccessLevel
 from tbot2.dependecies import authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQueryDep, page_cursor
 
-from ..actions.queue_actions import create_queue, delete_queue, get_queue, update_queue
-from ..models.queue_model import MQueue
-from ..schemas.queue_schema import Queue, QueueCreate, QueueUpdate
-from ..types import QueueScope
+from ..actions.queue_actions import (
+    create_queue,
+    delete_queue,
+    get_queue,
+    update_queue,
+)
+from ..models.channel_queue_model import MChannelQueue
+from ..schemas.queue_schema import (
+    Queue,
+    QueueCreate,
+    QueueUpdate,
+)
+from ..types import ChannelQueueScope
 
 router = APIRouter()
 
 
 @router.get('/channels/{channel_id}/queues', name='Get Queues')
-async def get_channel_queues_route(
+async def get_queues_route(
     channel_id: UUID,
     page_query: PageCursorQueryDep,
-    token_data: Annotated[TokenData, Security(authenticated, scopes=[QueueScope.READ])],
+    token_data: Annotated[
+        TokenData, Security(authenticated, scopes=[ChannelQueueScope.READ])
+    ],
 ) -> PageCursor[Queue]:
     await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
     stmt = (
-        sa.select(MQueue)
+        sa.select(MChannelQueue)
         .where(
-            MQueue.channel_id == channel_id,
+            MChannelQueue.channel_id == channel_id,
         )
         .order_by(
-            MQueue.id.desc(),
+            MChannelQueue.id.desc(),
         )
     )
 
-    page = await page_cursor(
+    return await page_cursor(
         query=stmt,
         page_query=page_query,
         response_model=Queue,
     )
-    return page
 
 
 @router.get('/channels/{channel_id}/queues/{channel_queue_id}', name='Get Queue')
 async def get_queue_route(
     channel_id: UUID,
     channel_queue_id: UUID,
-    token_data: Annotated[TokenData, Security(authenticated, scopes=[QueueScope.READ])],
+    token_data: Annotated[
+        TokenData, Security(authenticated, scopes=[ChannelQueueScope.READ])
+    ],
 ) -> Queue:
     await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
 
-    queue = await get_queue(
-        channel_queue_id=channel_queue_id,
-    )
+    queue = await get_queue(channel_queue_id=channel_queue_id)
     if not queue or queue.channel_id != channel_id:
         raise ErrorMessage(
             code=404,
-            message='Queue not found',
-            type='queue_not_found',
+            message='Channel queue not found',
+            type='channel_queue_not_found',
         )
     return queue
 
@@ -73,7 +83,7 @@ async def create_queue_route(
     channel_id: UUID,
     data: QueueCreate,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[QueueScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelQueueScope.WRITE])
     ],
 ) -> Queue:
     await token_data.channel_require_access(
@@ -81,11 +91,10 @@ async def create_queue_route(
         access_level=TAccessLevel.MOD,
     )
 
-    queue = await create_queue(
+    return await create_queue(
         channel_id=channel_id,
         data=data,
     )
-    return queue
 
 
 @router.put(
@@ -97,7 +106,7 @@ async def update_queue_route(
     channel_queue_id: UUID,
     data: QueueUpdate,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[QueueScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelQueueScope.WRITE])
     ],
 ) -> Queue:
     await token_data.channel_require_access(
@@ -105,21 +114,18 @@ async def update_queue_route(
         access_level=TAccessLevel.MOD,
     )
 
-    queue = await get_queue(
-        channel_queue_id=channel_queue_id,
-    )
+    queue = await get_queue(channel_queue_id=channel_queue_id)
     if not queue or queue.channel_id != channel_id:
         raise ErrorMessage(
             code=404,
-            message='Queue not found',
-            type='queue_not_found',
+            message='Channel queue not found',
+            type='channel_queue_not_found',
         )
 
-    queue = await update_queue(
+    return await update_queue(
         channel_queue_id=channel_queue_id,
         data=data,
     )
-    return queue
 
 
 @router.delete(
@@ -131,7 +137,7 @@ async def delete_queue_route(
     channel_id: UUID,
     channel_queue_id: UUID,
     token_data: Annotated[
-        TokenData, Security(authenticated, scopes=[QueueScope.WRITE])
+        TokenData, Security(authenticated, scopes=[ChannelQueueScope.WRITE])
     ],
 ) -> None:
     await token_data.channel_require_access(
@@ -139,14 +145,12 @@ async def delete_queue_route(
         access_level=TAccessLevel.MOD,
     )
 
-    queue = await get_queue(
-        channel_queue_id=channel_queue_id,
-    )
+    queue = await get_queue(channel_queue_id=channel_queue_id)
     if not queue or queue.channel_id != channel_id:
         raise ErrorMessage(
             code=404,
-            message='Queue not found',
-            type='queue_not_found',
+            message='Channel queue not found',
+            type='channel_queue_not_found',
         )
 
     await delete_queue(

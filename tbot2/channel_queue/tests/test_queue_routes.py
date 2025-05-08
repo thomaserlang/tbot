@@ -1,7 +1,7 @@
 import pytest
 from httpx import AsyncClient
 
-from tbot2.channel_queue import QueueScope
+from tbot2.channel_queue import ChannelQueueScope
 from tbot2.testbase import run_file, user_signin
 
 
@@ -9,7 +9,7 @@ from tbot2.testbase import run_file, user_signin
 async def test_queue_routes(client: AsyncClient) -> None:
     user = await user_signin(
         client,
-        scopes=[QueueScope.READ, QueueScope.WRITE],
+        scopes=[ChannelQueueScope.READ, ChannelQueueScope.WRITE],
     )
 
     response = await client.get(f'/api/2/channels/{user.channel.id}/queues')

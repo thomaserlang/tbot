@@ -1,6 +1,6 @@
 import { ChannelId } from '@/features/channel/types'
 import { setFormErrors } from '@/utils/form'
-import { toastError } from '@/utils/toast'
+import { toastError, toastSuccess } from '@/utils/toast'
 import { Button, Flex, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useCreateQueue } from '../api/queue.api'
@@ -11,7 +11,7 @@ interface Props {
     onCreated?: (queue: Queue) => void
 }
 
-export function CreateQueueForm({ channelId, onCreated }: Props) {
+export function QueueCreateForm({ channelId, onCreated }: Props) {
     const form = useForm({
         initialValues: {
             name: '',
@@ -20,6 +20,7 @@ export function CreateQueueForm({ channelId, onCreated }: Props) {
     const create = useCreateQueue({
         onSuccess: (data) => {
             onCreated?.(data)
+            toastSuccess('Queue created')
         },
         onError: (error) => {
             if (error.status === 422) setFormErrors(form, error.response.data)

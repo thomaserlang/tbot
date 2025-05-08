@@ -1,20 +1,27 @@
 import { ChannelId } from '@/features/channel/types'
 import { AccessLevel } from '@/types/access-level.type'
 import { setFormErrors } from '@/utils/form'
+import { toastSuccess } from '@/utils/toast'
 import { Alert, Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { useCreateCommand } from '../command.api'
-import { Command, CommandCreate } from '../command.types'
+import { useCreateCommand } from '../api/command.api'
+import { Command, CommandCreate } from '../types/command.types'
 import { CommandForm } from './command-form'
 
 interface Props {
     channelId: ChannelId
+    initialValues?: CommandCreate
     onCreated: (command: Command) => void
 }
 
-export function CreateCommandForm({ channelId, onCreated }: Props) {
+export function CommandCreateForm({
+    initialValues,
+    channelId,
+    onCreated,
+}: Props) {
     const create = useCreateCommand({
         onSuccess: (data) => {
+            toastSuccess('Command created')
             onCreated(data)
         },
         onError: (error) => {
@@ -35,6 +42,7 @@ export function CreateCommandForm({ channelId, onCreated }: Props) {
             public: true,
             access_level: AccessLevel.PUBLIC.toString(),
             provider: 'all',
+            ...initialValues,
         },
     })
 

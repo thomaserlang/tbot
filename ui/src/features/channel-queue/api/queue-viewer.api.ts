@@ -1,9 +1,12 @@
 import { ChannelId } from '@/features/channel/types'
 import { queryClient } from '@/queryclient'
+import { PageCursor } from '@/types/page-cursor.type'
 import { api } from '@/utils/api'
-import { useMutation } from '@tanstack/react-query'
+import { removeRecord } from '@/utils/page-records'
+import { InfiniteData, useMutation } from '@tanstack/react-query'
 import {
     ChannelQueueViewerId,
+    QueueViewer,
     QueueViewerCreate,
 } from '../types/queue-viewer.types'
 import { ChannelQueueId } from '../types/queue.types'
@@ -11,19 +14,24 @@ import { getQueueViewersQueryKey } from './queue-viewers.api'
 
 interface CreateProps {
     channelId: ChannelId
-    channelQueueId: ChannelQueueId
+    queueId: ChannelQueueId
     data: QueueViewerCreate
 }
 
 export async function createQueueViewer({
     channelId,
-    channelQueueId,
+    queueId,
     data,
-}: CreateProps): Promise<QueueViewerCreate> {
-    const r = await api.post<QueueViewerCreate>(
-        `/api/2/channels/${channelId}/queues/${channelQueueId}/viewers`,
+}: CreateProps): Promise<QueueViewer> {
+    const r = await api.post<QueueViewer>(
+        `/api/2/channels/${channelId}/queues/${queueId}/viewers`,
         data
     )
+    queryClient.invalidateQueries({
+        queryKey: getQueueViewersQueryKey({
+            queueId: queueId,
+        }),
+    })
     return r.data
 }
 
@@ -36,29 +44,14 @@ export function useCreateQueueViewer({
 } = {}) {
     return useMutation({
         mutationFn: createQueueViewer,
-        onSuccess: (data, variables) => {
-            queryClient.setQueryData(
-                getQueueViewersQueryKey({
-                    channelId: variables.channelId,
-                    channelQueueId: variables.channelQueueId,
-                }),
-                data
-            )
-            queryClient.invalidateQueries({
-                queryKey: getQueueViewersQueryKey({
-                    channelId: variables.channelId,
-                    channelQueueId: variables.channelQueueId,
-                }),
-            })
-            onSuccess?.(data, variables)
-        },
+        onSuccess,
         onError,
     })
 }
 
 interface MoveToTopProps {
     channelId: ChannelId
-    channelQueueId: ChannelQueueId
+    queueId: ChannelQueueId
     data: {
         channelQueueViewerId: ChannelQueueViewerId
     }
@@ -66,13 +59,20 @@ interface MoveToTopProps {
 
 export async function moveQueueViewerToTop({
     channelId,
-    channelQueueId,
+    queueId,
     data,
 }: MoveToTopProps): Promise<void> {
     await api.put(
-        `/api/2/channels/${channelId}/queues/${channelQueueId}/move-to-top`,
-        data
+        `/api/2/channels/${channelId}/queues/${queueId}/move-to-top`,
+        {
+            channel_queue_viewer_id: data.channelQueueViewerId,
+        }
     )
+    queryClient.invalidateQueries({
+        queryKey: getQueueViewersQueryKey({
+            queueId: queueId,
+        }),
+    })
 }
 
 export function useMoveQueueViewerToTop({
@@ -84,33 +84,44 @@ export function useMoveQueueViewerToTop({
 } = {}) {
     return useMutation({
         mutationFn: moveQueueViewerToTop,
-        onSuccess: (data, variables) => {
-            queryClient.invalidateQueries({
-                queryKey: getQueueViewersQueryKey({
-                    channelId: variables.channelId,
-                    channelQueueId: variables.channelQueueId,
-                }),
-            })
-            onSuccess?.(data, variables)
-        },
+        onSuccess,
         onError,
     })
 }
 
 interface DeleteProps {
     channelId: ChannelId
-    channelQueueId: ChannelQueueId
-    channelQueueViewerId: string
+    queueId: ChannelQueueId
+    queueViewerId: ChannelQueueViewerId
 }
 
 export async function deleteQueueViewer({
     channelId,
-    channelQueueId,
-    channelQueueViewerId,
+    queueId,
+    queueViewerId,
 }: DeleteProps): Promise<void> {
     await api.delete(
-        `/api/2/channels/${channelId}/queues/${channelQueueId}/viewers/${channelQueueViewerId}`
+        `/api/2/channels/${channelId}/queues/${queueId}/viewers/${queueViewerId}`
     )
+    queryClient.setQueriesData(
+        {
+            queryKey: getQueueViewersQueryKey({
+                queueId: queueId,
+            }),
+        },
+        (oldData: InfiniteData<PageCursor<QueueViewer>>) => {
+            if (!oldData) return oldData
+            return removeRecord({
+                oldData,
+                matchFn: (item) => item.id === queueViewerId,
+            })
+        }
+    )
+    queryClient.invalidateQueries({
+        queryKey: getQueueViewersQueryKey({
+            queueId: queueId,
+        }),
+    })
 }
 
 export function useDeleteQueueViewer({
@@ -122,34 +133,30 @@ export function useDeleteQueueViewer({
 } = {}) {
     return useMutation({
         mutationFn: deleteQueueViewer,
-        onSuccess: (data, variables) => {
-            queryClient.invalidateQueries({
-                queryKey: getQueueViewersQueryKey({
-                    channelId: variables.channelId,
-                    channelQueueId: variables.channelQueueId,
-                }),
-            })
-            onSuccess?.(data, variables)
-        },
+        onSuccess,
         onError,
     })
 }
 
 interface ClearQueueProps {
     channelId: ChannelId
-    channelQueueId: ChannelQueueId
+    queueId: ChannelQueueId
 }
 
-export async function clearQueueViewer({
+export async function clearQueueViewers({
     channelId,
-    channelQueueId,
+    queueId,
 }: ClearQueueProps): Promise<void> {
-    await api.delete(
-        `/api/2/channels/${channelId}/queues/${channelQueueId}/viewers`
-    )
+    await api.delete(`/api/2/channels/${channelId}/queues/${queueId}/viewers`)
+
+    queryClient.invalidateQueries({
+        queryKey: getQueueViewersQueryKey({
+            queueId: queueId,
+        }),
+    })
 }
 
-export function useClearQueueViewer({
+export function useClearQueueViewers({
     onSuccess,
     onError,
 }: {
@@ -157,16 +164,8 @@ export function useClearQueueViewer({
     onError?: (error: any, variables: ClearQueueProps) => void
 } = {}) {
     return useMutation({
-        mutationFn: clearQueueViewer,
-        onSuccess: (data, variables) => {
-            queryClient.invalidateQueries({
-                queryKey: getQueueViewersQueryKey({
-                    channelId: variables.channelId,
-                    channelQueueId: variables.channelQueueId,
-                }),
-            })
-            onSuccess?.(data, variables)
-        },
+        mutationFn: clearQueueViewers,
+        onSuccess,
         onError,
     })
 }

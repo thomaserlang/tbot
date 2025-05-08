@@ -1,18 +1,20 @@
 import { ChannelId } from '@/features/channel/types'
 import { Button, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { CreateQueueForm } from './create-queue-form'
+import { useNavigate } from 'react-router-dom'
+import { QueueCreateForm } from './queue-create-form'
 
 interface Props {
     channelId: ChannelId
 }
 
-export function CreateQueueButton({ channelId }: Props) {
+export function QueueCreateButton({ channelId }: Props) {
     const [opened, { open, close }] = useDisclosure(false)
+    const navigate = useNavigate()
 
     return (
         <>
-            <Button size="lg" onClick={open} variant="light">
+            <Button onClick={open} variant="light">
                 Create Queue
             </Button>
 
@@ -23,9 +25,12 @@ export function CreateQueueButton({ channelId }: Props) {
                 onClose={close}
             >
                 {opened && (
-                    <CreateQueueForm
+                    <QueueCreateForm
                         channelId={channelId}
-                        onCreated={() => {
+                        onCreated={(queue) => {
+                            navigate(
+                                `/channels/${channelId}/queues/${queue.id}`
+                            )
                             close()
                         }}
                     />

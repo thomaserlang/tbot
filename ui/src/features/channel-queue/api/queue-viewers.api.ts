@@ -9,44 +9,39 @@ interface GetParams {}
 
 interface GetProps {
     channelId: ChannelId
-    channelQueueId: ChannelQueueId
+    queueId: ChannelQueueId
     params?: GetParams
 }
 
 export function getQueueViewersQueryKey({
-    channelId,
-    channelQueueId,
-}: GetProps) {
-    return ['channel-queue-viewers', channelId, channelQueueId]
+    queueId,
+    params = {},
+}: Omit<GetProps, 'channelId'>) {
+    return ['channel-queue', queueId, params]
 }
 
 export async function getQueueViewers({
     channelId,
-    channelQueueId,
+    queueId: queueId,
 }: GetProps & {
     params?: GetParams & { cursor?: string }
 }): Promise<PageCursor<QueueViewer>> {
     const r = await api.get<PageCursor<QueueViewer>>(
-        `/api/2/channels/${channelId}/queues/${channelQueueId}/viewers`
+        `/api/2/channels/${channelId}/queues/${queueId}/viewers`
     )
     return r.data
 }
 
-export function useGetQueueViewers({
-    channelId,
-    channelQueueId,
-    params,
-}: GetProps) {
+export function useGetQueueViewers({ channelId, queueId, params }: GetProps) {
     return useInfiniteQuery({
         queryKey: getQueueViewersQueryKey({
-            channelId,
-            channelQueueId,
+            queueId: queueId,
             params,
         }),
         queryFn: ({ pageParam }) =>
             getQueueViewers({
                 channelId,
-                channelQueueId,
+                queueId: queueId,
                 params: {
                     ...params,
                     cursor: pageParam,
@@ -54,5 +49,6 @@ export function useGetQueueViewers({
             }),
         initialPageParam: '',
         getNextPageParam: (lastPage) => lastPage.cursor ?? undefined,
+        enabled: !!channelId && !!queueId,
     })
 }

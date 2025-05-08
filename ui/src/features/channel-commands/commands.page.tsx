@@ -3,11 +3,11 @@ import { useCurrentChannel } from '@/features/channel'
 import { useDocumentTitle } from '@/utils/document-title'
 import { Container, Flex, Title } from '@mantine/core'
 import { useNavigate, useParams } from 'react-router-dom'
-import { CommandId } from './command.types'
-import { useGetCommands } from './commands.api'
-import { CreateCommandButton } from './components/command-create-button'
-import { EditCommandModal } from './components/command-edit-modal'
+import { useGetCommands } from './api/commands.api'
+import { CommandCreateButton } from './components/command-create-button'
+import { CommandEditModal } from './components/command-edit-modal'
 import { CommandsTable } from './components/commands-table'
+import { CommandId } from './types/command.types'
 
 export function Component() {
     const channel = useCurrentChannel()
@@ -28,7 +28,7 @@ export function Component() {
                     <Flex>
                         <Title order={2}>Commands</Title>
 
-                        <CreateCommandButton
+                        <CommandCreateButton
                             channelId={channel.id}
                             onCreated={() => {
                                 data.refetch()
@@ -46,7 +46,7 @@ export function Component() {
             </Container>
 
             {commandId && (
-                <EditCommandModal
+                <CommandEditModal
                     channelId={channel.id}
                     commandId={commandId}
                     onClose={() => {

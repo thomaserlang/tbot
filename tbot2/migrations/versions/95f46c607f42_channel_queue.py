@@ -1,7 +1,7 @@
 """Channel queue
 
 Revision ID: 95f46c607f42
-Revises: 9ec95dd569a5
+Revises: e375d12db428
 Create Date: 2025-04-28 21:27:56.912463
 
 """
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = '95f46c607f42'
-down_revision: str | None = '9ec95dd569a5'
+down_revision: str | None = 'e375d12db428'
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

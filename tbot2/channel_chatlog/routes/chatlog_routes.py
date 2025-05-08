@@ -64,13 +64,12 @@ async def get_chatlogs(
     if type:
         stmt = stmt.where(MChatlog.type == type)
 
-    page = await page_cursor(
+    return await page_cursor(
         query=stmt,
         page_query=page_query,
         response_model=ChatMessage,
         count_total=False,
     )
-    return page
 
 
 @router.websocket(

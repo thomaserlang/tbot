@@ -10,7 +10,7 @@ from tbot2.common.utils.sqlalchemy_utils import UtcDateTime
 from tbot2.model_base import Base
 
 
-class MQueueViewer(Base):
+class MChannelQueueViewer(Base):
     __tablename__ = 'channel_queue_viewers'
     __table_args__ = {'extend_existing': 'pytest' in sys.modules}
 

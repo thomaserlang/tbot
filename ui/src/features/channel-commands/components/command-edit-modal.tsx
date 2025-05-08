@@ -2,9 +2,9 @@ import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
 import { ChannelId } from '@/features/channel'
 import { Modal } from '@mantine/core'
-import { useGetCommand } from '../command.api'
-import { CommandId } from '../command.types'
-import { EditCommandForm } from './command-edit-form'
+import { useGetCommand } from '../api/command.api'
+import { CommandId } from '../types/command.types'
+import { CommandEditForm } from './command-edit-form'
 
 interface Props {
     channelId: ChannelId
@@ -12,7 +12,7 @@ interface Props {
     onClose: () => void
 }
 
-export function EditCommandModal({ channelId, commandId, onClose }: Props) {
+export function CommandEditModal({ channelId, commandId, onClose }: Props) {
     const { isLoading, error, data } = useGetCommand({
         channelId,
         commandId,
@@ -27,7 +27,7 @@ export function EditCommandModal({ channelId, commandId, onClose }: Props) {
             {isLoading && <PageLoader />}
             {error && <ErrorBox errorObj={error} />}
             {data && (
-                <EditCommandForm
+                <CommandEditForm
                     command={data}
                     onUpdated={() => {
                         onClose()
