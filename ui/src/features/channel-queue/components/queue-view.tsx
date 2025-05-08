@@ -17,7 +17,7 @@ export function QueueView({ channelId, queueId }: Props) {
     const navigate = useNavigate()
 
     return (
-        <Flex direction="column" gap="1rem" h="var(--tbot-content-height)">
+        <Flex direction="column" gap="1rem" h="100%">
             <Flex gap="1rem">
                 <SelectQueue
                     channelId={channelId}

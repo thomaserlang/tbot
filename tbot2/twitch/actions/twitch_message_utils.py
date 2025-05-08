@@ -61,7 +61,7 @@ def twitch_fragments_to_parts(
                             gift=GiftPartRequest(
                                 id=str(fragment.cheermote.tier),
                                 name=fragment.cheermote.prefix,
-                                type='cheer',
+                                type='cheermote',
                                 count=fragment.cheermote.bits,
                                 animated=True,
                             ),
