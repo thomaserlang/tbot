@@ -1,4 +1,5 @@
 import { RelativeTimeUpdater } from '@/components/relative-time-updater'
+import { providerInfo } from '@/constants'
 import { ChannelViewerModal } from '@/features/channel-viewer'
 import { ChannelId } from '@/features/channel/types'
 import { pageRecordsFlatten } from '@/utils/page-records'
@@ -71,6 +72,22 @@ export function QueueViewersTable({ channelId, queueId: queueId }: Props) {
                 fz="md"
                 columns={[
                     { accessor: 'position', width: '1%', noWrap: true },
+                    {
+                        accessor: 'provider',
+                        width: '1%',
+                        noWrap: true,
+                        render: (item) => {
+                            if (!item.provider) return null
+                            return (
+                                <Flex
+                                    title={providerInfo[item.provider].name}
+                                    c={providerInfo[item.provider].color}
+                                >
+                                    {providerInfo[item.provider].icon}
+                                </Flex>
+                            )
+                        },
+                    },
                     {
                         accessor: 'display_name',
                         render: (item) =>
