@@ -1,6 +1,5 @@
 import { ChannelId } from '@/features/channel/types'
 import { pageRecordsFlatten } from '@/utils/page-records'
-import { toastError } from '@/utils/toast'
 import { Select } from '@mantine/core'
 import { useEffect } from 'react'
 import { useCreateQueue } from '../api/queue.api'
@@ -20,15 +19,12 @@ export function SelectQueue({
     selectedId,
     onSelect,
 }: Props) {
-    const { data } = useGetQueues({
+    const { data, isLoading } = useGetQueues({
         channelId,
     })
     const createQueue = useCreateQueue({
         onSuccess: (data) => {
             onSelect?.(data)
-        },
-        onError: (error) => {
-            toastError(error)
         },
     })
 
@@ -38,7 +34,7 @@ export function SelectQueue({
         if (autoSelect && !selectedId) {
             if (records.length > 0) {
                 onSelect?.(records[0])
-            } else {
+            } else if (!isLoading) {
                 createQueue.mutate({
                     channelId,
                     data: {
