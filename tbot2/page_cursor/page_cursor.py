@@ -75,9 +75,8 @@ async def page_cursor(
                 cursor=cursor,
                 total=total,
             )
-        else:
-            return PageCursor(
-                records=page.paging.rows,
-                cursor=cursor,
-                total=total,
-            )
+        return PageCursor(
+            records=page.paging.rows,
+            cursor=cursor,
+            total=total,
+        )
