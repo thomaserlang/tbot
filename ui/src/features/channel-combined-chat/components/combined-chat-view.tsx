@@ -7,7 +7,7 @@ import {
     ViewerName,
     ViewerSearchButton,
 } from '@/features/channel-viewer'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { Box, Divider, Flex, Title } from '@mantine/core'
 import { useState } from 'react'
 import { ChatView } from './chat-view'
@@ -53,7 +53,6 @@ export function CombinedChatView({ channelId, hideTitle }: Props) {
 
             {showViewer && (
                 <ChannelViewerModal
-                    channelId={channelId}
                     provider={showViewer.provider}
                     providerViewerId={showViewer.provider_viewer_id}
                     opened={true}

@@ -1,5 +1,5 @@
 import { accessLevelInfo } from '@/constants/access-levels-info.constants'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { AccessLevel } from '@/types/access-level.type'
 import { toastError } from '@/utils/toast'
 import { Button, CopyButton, Flex, Select, TextInput } from '@mantine/core'

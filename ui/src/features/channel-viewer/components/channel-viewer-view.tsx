@@ -1,6 +1,7 @@
 import { PageLoader } from '@/components/page-loader'
-import { ChannelId } from '@/features/channel'
 import { ChatView } from '@/features/channel-combined-chat'
+import { useCurrentChannel } from '@/features/channel/current-channel.provider'
+import { Feature } from '@/types/feature.type'
 import { Provider } from '@/types/provider.type'
 import { strDateFormat } from '@/utils/date'
 import { Box, Divider, Flex, Modal, Paper, Text } from '@mantine/core'
@@ -12,7 +13,6 @@ import { ViewerStreamsTable } from './viewer-streams-table'
 
 interface Props {
     provider: Provider
-    channelId: ChannelId
     providerViewerId: ProviderViewerId
 }
 
@@ -31,7 +31,11 @@ const hourHumanizer = humanizeDuration.humanizer({
 })
 
 export function ChannelViewerView(props: Props) {
-    const { data, isLoading } = useGetChannelViewer(props)
+    const channel = useCurrentChannel()
+    const { data, isLoading } = useGetChannelViewer({
+        ...props,
+        channelId: channel.id,
+    })
     if (isLoading) return <PageLoader />
     if (!data) return null
 
@@ -49,21 +53,27 @@ export function ChannelViewerView(props: Props) {
 
                 <Divider orientation="vertical" />
 
-                <Flex direction="column" align="center">
-                    <Text fz={24}>
-                        {data.stats.last_channel_provider_stream
-                            ? strDateFormat(
-                                  data.stats.last_channel_provider_stream
-                                      .started_at
-                              )
-                            : 'N/A'}
-                    </Text>
-                    <Text fz={12} fw={700} tt="capitalize">
-                        Last stream
-                    </Text>
-                </Flex>
-
-                <Divider orientation="vertical" />
+                {channel.features.includes(
+                    Feature.CHANNEL_VIEWER_EXTRA_STATS
+                ) && (
+                    <>
+                        <Flex direction="column" align="center">
+                            <Text fz={24}>
+                                {data.stats.last_channel_provider_stream
+                                    ? strDateFormat(
+                                          data.stats
+                                              .last_channel_provider_stream
+                                              .started_at
+                                      )
+                                    : 'N/A'}
+                            </Text>
+                            <Text fz={12} fw={700} tt="capitalize">
+                                Last stream
+                            </Text>
+                        </Flex>
+                        <Divider orientation="vertical" />
+                    </>
+                )}
 
                 <Flex direction="column" align="center">
                     <Text fz={24}>
@@ -78,7 +88,7 @@ export function ChannelViewerView(props: Props) {
             </Flex>
 
             <ModerationButtons
-                channelId={props.channelId}
+                channelId={channel.id}
                 provider={props.provider}
                 providerViewerId={props.providerViewerId}
             />
@@ -87,7 +97,7 @@ export function ChannelViewerView(props: Props) {
                 <Text fw={700}>Chatlog</Text>
                 <Paper h="15rem" pl="0.5rem" withBorder>
                     <ChatView
-                        channelId={props.channelId}
+                        channelId={channel.id}
                         liveUpdates={true}
                         params={{
                             provider: props.provider,
@@ -97,18 +107,19 @@ export function ChannelViewerView(props: Props) {
                 </Paper>
             </Box>
 
-            {data.stats.last_channel_provider_stream && (
-                <Box>
-                    <Text fw={700}>Streams</Text>
-                    <Box mah={400}>
-                        <ViewerStreamsTable
-                            channelId={props.channelId}
-                            provider={props.provider}
-                            providerViewerId={props.providerViewerId}
-                        />
+            {channel.features.includes(Feature.CHANNEL_VIEWER_EXTRA_STATS) &&
+                data.stats.last_channel_provider_stream && (
+                    <Box>
+                        <Text fw={700}>Streams</Text>
+                        <Box mah={400}>
+                            <ViewerStreamsTable
+                                channelId={channel.id}
+                                provider={props.provider}
+                                providerViewerId={props.providerViewerId}
+                            />
+                        </Box>
                     </Box>
-                </Box>
-            )}
+                )}
         </Flex>
     )
 }
@@ -119,7 +130,8 @@ interface ModalProps extends Props {
 }
 
 export function ChannelViewerModal(props: ModalProps) {
-    const { data } = useGetChannelViewer(props)
+    const channel = useCurrentChannel()
+    const { data } = useGetChannelViewer({ ...props, channelId: channel.id })
 
     return (
         <Modal

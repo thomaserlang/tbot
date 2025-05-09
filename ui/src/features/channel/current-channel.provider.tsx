@@ -5,7 +5,7 @@ import { Center, Container } from '@mantine/core'
 import { createContext, useContext } from 'react'
 import { useParams } from 'react-router'
 import { useGetChannel } from './api/channel.api'
-import { Channel } from './types'
+import { Channel } from './types/channel.types'
 
 const CurrentChannelContext = createContext<Channel | undefined>(undefined)
 

@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { toastSuccess } from '@/utils/toast'
 import { Button, Text } from '@mantine/core'
 import { openConfirmModal } from '@mantine/modals'

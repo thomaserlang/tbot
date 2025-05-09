@@ -1,5 +1,5 @@
 import { ChatFilterId } from '@/features/channel-chat-filters/filter.types'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { Button, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconPlus } from '@tabler/icons-react'

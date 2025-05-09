@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { Button, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { ChannelUserCreateInvite } from './channel-user-create-invite'

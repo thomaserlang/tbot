@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { Modal } from '@mantine/core'
 import { Command, CommandCreate } from '../types/command.types'
 import { CommandCreateForm } from './command-create-form'

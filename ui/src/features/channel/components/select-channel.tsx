@@ -3,7 +3,7 @@ import { Box, Flex, Input } from '@mantine/core'
 import { IconSearch } from '@tabler/icons-react'
 import { DataTable } from 'mantine-datatable'
 import { useGetChannels } from '../api/channels.api'
-import { Channel } from '../types'
+import { Channel } from '../types/channel.types'
 
 interface Props {
     onSelect?: (channel: Channel) => void

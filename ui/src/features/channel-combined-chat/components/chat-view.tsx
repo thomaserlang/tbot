@@ -1,7 +1,7 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { Flex, Text } from '@mantine/core'
 import { IconMessage } from '@tabler/icons-react'

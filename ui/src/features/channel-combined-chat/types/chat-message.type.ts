@@ -1,5 +1,5 @@
 import { ProviderViewerId } from '@/features/channel-viewer/types/viewer.type'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { Provider } from '@/types/provider.type'
 import { Branded } from '@/utils/brand'
 

@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { api } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
 import { BadgeVersion, ChannelBadges } from '../types/twitch.type'

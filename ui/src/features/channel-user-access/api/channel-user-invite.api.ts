@@ -1,4 +1,4 @@
-import { Channel, ChannelId } from '@/features/channel/types'
+import { Channel, ChannelId } from '@/features/channel/types/channel.types'
 import { queryClient } from '@/queryclient'
 import { PageCursor } from '@/types/page-cursor.type'
 import { api } from '@/utils/api'

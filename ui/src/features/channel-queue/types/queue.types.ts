@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { DateTimeString } from '@/types/datetime.type'
 import { Branded } from '@/utils/brand'
 

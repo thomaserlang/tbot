@@ -1,6 +1,6 @@
 import { api } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
-import { ChannelId } from '../channel/types'
+import { ChannelId } from '../channel/types/channel.types'
 import { ChatFilter } from './filter-registry'
 
 interface Params {}

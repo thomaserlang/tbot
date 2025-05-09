@@ -70,6 +70,7 @@ def upgrade() -> None:
             'provider_viewer_id',
             unique=True,
         ),
+        if_not_exists=True,
     )
 
 

@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Security
 from pydantic import StringConstraints
 
 from tbot2.channel_stream import MChannelProviderStream
-from tbot2.common import Provider, TAccessLevel, TokenData
+from tbot2.common import Feature, Provider, TAccessLevel, TokenData
 from tbot2.contexts import get_session
 from tbot2.dependecies import authenticated
 from tbot2.page_cursor import (
@@ -106,6 +106,7 @@ async def get_channel_viewer_streams_route(
     await token_data.channel_require_access(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
+        feature=Feature.CHANNEL_VIEWER_EXTRA_STATS,
     )
 
     stmt = (

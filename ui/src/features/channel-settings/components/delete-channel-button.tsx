@@ -1,6 +1,6 @@
 import { Button, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { ChannelId } from '../../channel/types'
+import { ChannelId } from '../../channel/types/channel.types'
 import { DeleteChannelConfirm } from './delete-channel-confirm'
 
 interface Props {

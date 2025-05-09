@@ -3,10 +3,11 @@ from uuid import UUID
 from pydantic import BaseModel
 from starlette.authentication import BaseUser
 
-from tbot2.common import ErrorMessage
 from tbot2.config_settings import config
 
+from ..exceptions import ErrorMessage
 from ..types.access_level_type import TAccessLevel
+from ..types.feature_type import Feature
 from ..types.scope_type import Scope
 
 
@@ -19,7 +20,11 @@ class TokenData(BaseUser, BaseModel):
         return True
 
     async def channel_require_access(
-        self, *, channel_id: UUID, access_level: TAccessLevel
+        self,
+        *,
+        channel_id: UUID,
+        access_level: TAccessLevel,
+        feature: Feature | None = None,
     ) -> TAccessLevel:
         from tbot2.channel_user_access import get_channel_user_access_level
 
@@ -36,6 +41,18 @@ class TokenData(BaseUser, BaseModel):
                 type='access_denied',
                 message='You do not have access to this channel',
             )
+
+        if feature:
+            from tbot2.channel import get_channel
+
+            channel = await get_channel(channel_id=channel_id)
+            if not channel or feature not in channel.features:
+                raise ErrorMessage(
+                    code=403,
+                    type='feature_access_denied',
+                    message='This channel does not have access to this feature',
+                )
+
         return user_level.access_level
 
     def has_any_scope(self, scopes: list[Scope]) -> bool:

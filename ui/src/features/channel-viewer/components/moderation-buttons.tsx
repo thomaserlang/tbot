@@ -1,5 +1,5 @@
 import { useGetChannelProviders } from '@/features/channel-provider'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { Provider } from '@/types/provider.type'
 import { toastError, toastSuccess } from '@/utils/toast'
 import { Button, Flex } from '@mantine/core'

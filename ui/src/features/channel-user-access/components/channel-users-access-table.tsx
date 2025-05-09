@@ -1,6 +1,6 @@
 import { ErrorBox } from '@/components/error-box'
 import { accessLevelInfo } from '@/constants/access-levels-info.constants'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { toastPromise } from '@/utils/toast'
 import { ActionIcon, Group, Text } from '@mantine/core'

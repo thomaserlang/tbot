@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { AccessLevel } from '@/types/access-level.type'
 import { setFormErrors } from '@/utils/form'
 import { toastSuccess } from '@/utils/toast'

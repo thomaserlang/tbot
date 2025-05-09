@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { setFormErrors } from '@/utils/form'
 import { Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'

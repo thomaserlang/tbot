@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { Provider } from '@/types/provider.type'
 import { api } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'

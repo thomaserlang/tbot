@@ -18,7 +18,7 @@ import {
 import { NavLink as RouterNavLink } from 'react-router-dom'
 import { CurrentChannelCard } from './components/current-channel-card'
 import { useCurrentChannel } from './current-channel.provider'
-import { Channel } from './types'
+import { Channel } from './types/channel.types'
 
 export function ChannelNavbar() {
     const channel = useCurrentChannel()

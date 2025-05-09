@@ -1,6 +1,6 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { toastPromise } from '@/utils/toast'
 import { Box, Button, Flex, Paper, Switch, Text } from '@mantine/core'
 import { IconShieldCog } from '@tabler/icons-react'

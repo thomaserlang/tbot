@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { PageCursor } from '@/types/page-cursor.type'
 import { api } from '@/utils/api'
 import { useInfiniteQuery } from '@tanstack/react-query'

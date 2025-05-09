@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 
 export interface ChannelPointSettings {
     channel_id: ChannelId

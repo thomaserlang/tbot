@@ -41,6 +41,7 @@ async def get_channel_user_access_level_by_id(
         )
         if result:
             return ChannelUserAccessLevel.model_validate(result)
+        return None
 
 
 async def set_channel_user_access_level(

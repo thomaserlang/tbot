@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { Flex } from '@mantine/core'
 import { ChannelQueueId } from '../types/queue.types'
 import { QueueClearButton } from './queue-clear-button'

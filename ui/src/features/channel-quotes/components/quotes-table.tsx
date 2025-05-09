@@ -1,5 +1,5 @@
 import { ErrorBox } from '@/components/error-box'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { strDateFormat } from '@/utils/date'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { Anchor } from '@mantine/core'

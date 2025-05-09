@@ -1,5 +1,5 @@
 import { ErrorBox } from '@/components/error-box'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { api } from '@/utils/api'
 import { toastSuccess } from '@/utils/toast'
 import { Button, Flex, Modal, TextInput } from '@mantine/core'

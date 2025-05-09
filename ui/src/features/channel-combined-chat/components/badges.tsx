@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { useGetTwitchBadges } from '../api/twitch-badges.api'
 import { ChatMessageBadge } from '../types/chat-message.type'
 import classes from './chat-message-line.module.css'

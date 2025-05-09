@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { ProviderBot } from '@/features/provider-bot/provider-bot.types'
 import { Provider } from '@/types/provider.type'
 import { Thumbnail } from '@/types/thumbnail.type'

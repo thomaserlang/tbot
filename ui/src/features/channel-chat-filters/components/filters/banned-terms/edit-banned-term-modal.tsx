@@ -1,7 +1,7 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
 import { ChatFilterId } from '@/features/channel-chat-filters/filter.types'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { Modal } from '@mantine/core'
 import { useGetBannedTerm } from './banned-term.api'
 import { BannedTerm, BannedTermId } from './banned-terms.types'

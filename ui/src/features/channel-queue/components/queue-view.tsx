@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { Flex } from '@mantine/core'
 import { useNavigate } from 'react-router-dom'
 import { ChannelQueueId } from '../types/queue.types'

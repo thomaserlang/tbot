@@ -1,5 +1,5 @@
 import { providerInfo } from '@/constants/providers-info.constants'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { toastPromise } from '@/utils/toast'
 import { Button, Menu } from '@mantine/core'
 import { IconChevronDown } from '@tabler/icons-react'

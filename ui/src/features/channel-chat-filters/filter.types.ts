@@ -1,7 +1,7 @@
 import { AccessLevel } from '@/types/access-level.type'
 import { Provider } from '@/types/provider.type'
 import { Branded } from '@/utils/brand'
-import { ChannelId } from '../channel/types'
+import { ChannelId } from '../channel/types/channel.types'
 import { ChatFilter } from './filter-registry'
 
 export type ChatFilterId = Branded<string, 'FilterId'>

@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { User } from '@/features/user/types'
 import { AccessLevel } from '@/types/access-level.type'
 import { Branded } from '@/utils/brand'

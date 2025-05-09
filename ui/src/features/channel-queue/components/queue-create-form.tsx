@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { setFormErrors } from '@/utils/form'
 import { toastError, toastSuccess } from '@/utils/toast'
 import { Button, Flex, TextInput } from '@mantine/core'

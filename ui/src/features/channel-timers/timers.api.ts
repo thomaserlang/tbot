@@ -1,6 +1,6 @@
 import { getAllPagesCursor } from '@/utils/api'
 import { useQuery } from '@tanstack/react-query'
-import { ChannelId } from '../channel/types'
+import { ChannelId } from '../channel/types/channel.types'
 import { Timer } from './timer.types'
 
 interface Params {}

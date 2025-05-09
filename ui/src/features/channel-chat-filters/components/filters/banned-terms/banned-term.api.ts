@@ -1,5 +1,5 @@
 import { ChatFilterId } from '@/features/channel-chat-filters/filter.types'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { queryClient } from '@/queryclient'
 import { api } from '@/utils/api'
 import { useMutation, useQuery } from '@tanstack/react-query'

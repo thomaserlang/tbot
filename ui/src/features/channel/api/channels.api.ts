@@ -1,7 +1,7 @@
 import { PageCursor } from '@/types/page-cursor.type'
 import { api } from '@/utils/api'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Channel } from '../types'
+import { Channel } from '../types/channel.types'
 
 interface IParams {
     name?: string

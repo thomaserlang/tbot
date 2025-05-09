@@ -2,7 +2,7 @@ import { getCurrentUserQueryKey } from '@/components/current-user'
 import { queryClient } from '@/queryclient'
 import { api } from '@/utils/api'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Channel, ChannelId } from '../types'
+import { Channel, ChannelId } from '../types/channel.types'
 import { getChannelsQueryKey } from './channels.api'
 
 interface IParams {

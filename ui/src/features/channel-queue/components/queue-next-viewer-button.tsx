@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { toastSuccess } from '@/utils/toast'
 import { Button } from '@mantine/core'
 import { IconCaretRightFilled } from '@tabler/icons-react'

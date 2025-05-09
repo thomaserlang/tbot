@@ -1,4 +1,4 @@
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { Select } from '@mantine/core'
 import { useEffect } from 'react'

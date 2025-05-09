@@ -1,7 +1,7 @@
 import { RelativeTimeUpdater } from '@/components/relative-time-updater'
 import { providerInfo } from '@/constants'
 import { ChannelViewerModal } from '@/features/channel-viewer'
-import { ChannelId } from '@/features/channel/types'
+import { ChannelId } from '@/features/channel/types/channel.types'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { toastError, toastSuccess } from '@/utils/toast'
 import { ActionIcon, Anchor, Flex } from '@mantine/core'
@@ -52,7 +52,6 @@ export function QueueViewersTable({ channelId, queueId: queueId }: Props) {
         <>
             {viewViewer && (
                 <ChannelViewerModal
-                    channelId={channelId}
                     provider={viewViewer.provider}
                     providerViewerId={viewViewer.provider_viewer_id}
                     opened={!!viewViewer}
