@@ -79,9 +79,9 @@ export interface LiveBroadcast {
 
 export interface LiveBroadcastInsertSnippet {
     title: string
-    scheduledStartTime?: Date
+    scheduledStartTime: string
     description?: string
-    scheduledEndTime?: Date
+    scheduledEndTime?: string
 }
 
 export interface LiveBroadcastInsertStatus {

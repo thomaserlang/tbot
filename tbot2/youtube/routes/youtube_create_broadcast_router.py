@@ -49,6 +49,7 @@ async def youtube_create_broadcast_route(
             status_code=404,
             detail='Channel provider not found',
         )
+
     broadcast = await create_new_broadcast_from_previous(
         channel_id=channel_provider.channel_id,
         overwrite_data=data,

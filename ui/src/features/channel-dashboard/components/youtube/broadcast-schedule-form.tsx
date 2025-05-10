@@ -23,6 +23,9 @@ export function BroadcastScheduleForm({
     return (
         <form
             onSubmit={form.onSubmit((values) => {
+                values.snippet.scheduledStartTime = dayjs(
+                    values.snippet.scheduledStartTime
+                ).format('YYYY-MM-DDTHH:mm:ssZ')
                 onSave(values)
             })}
         >
@@ -34,7 +37,7 @@ export function BroadcastScheduleForm({
                         clearable={false}
                         highlightToday
                         weekendDays={[]}
-                        minDate={dayjs().toDate()}
+                        minDate={dayjs().format('YYYY-MM-DD')}
                         key={form.key('snippet.scheduledStartTime')}
                         {...form.getInputProps('snippet.scheduledStartTime')}
                     />

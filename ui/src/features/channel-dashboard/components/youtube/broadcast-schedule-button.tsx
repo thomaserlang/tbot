@@ -41,11 +41,10 @@ export function BroadcastScheduleButton({ channelProvider }: Props) {
                     initialValues={{
                         snippet: {
                             scheduledStartTime: dayjs()
-                                .hour(dayjs().hour() + 1)
-                                .minute(0)
+                                .add(5 - (dayjs().minute() % 5), 'minute')
                                 .second(0)
                                 .millisecond(0)
-                                .toDate(),
+                                .format('YYYY-MM-DDTHH:mm:ssZ'),
                             title: channelProvider.stream_title || '',
                         },
                         status: {

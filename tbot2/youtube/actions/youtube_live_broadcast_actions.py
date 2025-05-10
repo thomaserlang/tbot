@@ -199,7 +199,6 @@ async def create_new_broadcast_from_previous(
         broadcast_insert.content_details.enable_auto_stop = True
 
     if overwrite_data:
-        logger.info(overwrite_data.model_dump())
         broadcast_insert = update_model(
             original=broadcast_insert,
             updates=overwrite_data,
