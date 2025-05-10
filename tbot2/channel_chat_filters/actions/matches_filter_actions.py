@@ -14,6 +14,8 @@ from .permit_actions import has_permit
 async def matches_filter(chat_message: ChatMessageRequest) -> FilterMatchResult | None:
     filters = await get_channel_filters_cached(chat_message.channel_id)
     for filter in filters:
+        if filter.enabled is False:
+            continue
         if chat_message.access_level >= filter.exclude_access_level:
             continue
         result = await filter.check_message(chat_message)
@@ -43,6 +45,7 @@ async def matches_filter(chat_message: ChatMessageRequest) -> FilterMatchResult 
             )
 
         return result
+    return None
 
 
 @alru_cache(ttl=1, maxsize=1000 if 'pytest' not in sys.modules else 0)
