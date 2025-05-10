@@ -2,10 +2,11 @@ from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import StringConstraints, field_validator
+from pydantic import StringConstraints, ValidationInfo, field_validator
 from typing_extensions import Doc
 
 from tbot2.common import BaseRequestSchema
+from tbot2.common.utils.username_color_generate import username_color_generator
 
 from ..types.access_level_type import TAccessLevel
 from ..types.chat_message_type import ChatMessageType
@@ -77,9 +78,16 @@ class ChatMessageRequest(BaseRequestSchema):
 
     @field_validator('viewer_color', mode='before')
     @classmethod
-    def validate_viewer_color(cls, value: str | None) -> str | None:
+    def viewer_color_not_empty(cls, value: str | None) -> str | None:
         if not value:
             return None
+        return value
+
+    @field_validator('viewer_color', mode='after')
+    @classmethod
+    def viewer_color_generate(cls, value: str | None, info: ValidationInfo) -> str:
+        if not value:
+            return username_color_generator(info.data['viewer_name'])
         return value
 
     def message_without_parts(self) -> str:
