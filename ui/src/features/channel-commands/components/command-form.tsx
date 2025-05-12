@@ -33,6 +33,7 @@ export function CommandForm({ form }: Props) {
             <TagsInput
                 leftSection={<IconExclamationMark size={16} />}
                 label="Command triggers"
+                description="Write the commands without the !."
                 placeholder="Type and press enter"
                 key={form.key('cmds')}
                 onKeyDown={(event) => {
@@ -48,7 +49,8 @@ export function CommandForm({ form }: Props) {
 
             <TagsInput
                 leftSection={<IconLineDotted size={16} />}
-                label="Command patterns"
+                label="Phrase triggers"
+                description="The command will be triggered when the phrase is detected in a message. Use the prefix `re:` for a regular expression."
                 placeholder="Type and press enter"
                 key={form.key('patterns')}
                 onKeyDown={(event) => {
