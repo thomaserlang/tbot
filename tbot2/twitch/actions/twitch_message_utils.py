@@ -9,13 +9,13 @@ from tbot2.common import (
 )
 
 from ..schemas.event_channel_chat_message_schema import (
-    TwitchBadge,
-    TwitchMessageFragment,
+    ChannelChatMessageBadge,
+    ChannelChatMessageFragment,
 )
 
 
 def twitch_badges_to_badges(
-    badges: list[TwitchBadge] | None,
+    badges: list[ChannelChatMessageBadge] | None,
 ) -> list[ChatMessageBadgeRequest]:
     if not badges:
         return []
@@ -26,7 +26,7 @@ def twitch_badges_to_badges(
 
 
 def twitch_fragments_to_parts(
-    fragments: list[TwitchMessageFragment],
+    fragments: list[ChannelChatMessageFragment],
 ) -> list[ChatMessagePartRequest]:
     result: list[ChatMessagePartRequest] = []
     for fragment in fragments:

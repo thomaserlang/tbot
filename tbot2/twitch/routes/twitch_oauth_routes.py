@@ -39,7 +39,7 @@ from tbot2.dependecies import authenticated
 from tbot2.twitch import TwitchUser
 from tbot2.user import UserCreate, get_or_create_user
 
-from ..actions.eventsub_actions import (
+from ..actions.twitch_eventsub_actions import (
     refresh_all_eventsubs,
     refresh_channel_eventsubs,
 )

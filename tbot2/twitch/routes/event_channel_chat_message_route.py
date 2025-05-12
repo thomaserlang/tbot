@@ -26,8 +26,8 @@ from ..actions.twitch_message_utils import (
 )
 from ..actions.twitch_send_message_actions import twitch_bot_send_message
 from ..schemas.event_channel_chat_message_schema import (
+    ChannelChatMessageBadge,
     EventChannelChatMessage,
-    TwitchBadge,
 )
 from ..schemas.event_headers_schema import EventSubHeaders
 from ..schemas.event_notification_schema import (
@@ -61,6 +61,7 @@ async def event_channel_chat_message_route(
     chat_message = ChatMessageRequest(
         id=uuid7(),
         type='message',
+        sub_type=data.event.message_type,
         channel_id=channel_id,
         provider_viewer_id=data.event.chatter_user_id,
         viewer_name=data.event.chatter_user_login,
@@ -157,7 +158,7 @@ async def handle_filter_message(
         logger.exception(e)
 
 
-def badges_to_access_level(badges: list[TwitchBadge]) -> TAccessLevel:
+def badges_to_access_level(badges: list[ChannelChatMessageBadge]) -> TAccessLevel:
     for badge in badges:
         match badge.set_id:
             case 'moderator':
