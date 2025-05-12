@@ -2,8 +2,9 @@ from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import StringConstraints, ValidationInfo, field_validator
+from pydantic import Field, StringConstraints, ValidationInfo, field_validator
 from typing_extensions import Doc
+from uuid6 import uuid7
 
 from tbot2.common import BaseRequestSchema
 from tbot2.common.utils.username_color_generate import username_color_generator
@@ -49,7 +50,7 @@ class ChatMessagePartRequest(BaseRequestSchema):
 
 
 class ChatMessageRequest(BaseRequestSchema):
-    id: UUID
+    id: Annotated[UUID, Field(default_factory=uuid7)]
     type: ChatMessageType
     sub_type: Annotated[str, StringConstraints(min_length=1, max_length=100)] | None = (
         None
