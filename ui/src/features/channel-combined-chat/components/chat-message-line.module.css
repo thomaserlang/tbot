@@ -49,4 +49,7 @@
 .chat-badge {
   margin-right: 0.25rem;
   margin-bottom: -0.25rem;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
 }
