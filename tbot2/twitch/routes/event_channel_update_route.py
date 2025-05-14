@@ -17,6 +17,7 @@ router = APIRouter()
 
 @router.post(
     '/channel.update',
+    include_in_schema=False,
     status_code=204,
 )
 async def event_channel_update_route(

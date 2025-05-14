@@ -1,17 +1,13 @@
 import { Fragment } from 'react/jsx-runtime'
-import { ChatMessage, ChatMessagePart } from '../types/chat-message.type'
+import { ChatMessagePart } from '../types/chat-message.type'
 
 import classes from './chat-message-line.module.css'
 
 interface Props {
-    chatMessage: ChatMessage
+    parts: ChatMessagePart[]
 }
 
-export function MessageLine({ chatMessage }: Props) {
-    return assembleParts(chatMessage.parts)
-}
-
-function assembleParts(parts: ChatMessagePart[]) {
+export function AssembleParts({ parts }: Props) {
     return parts.map((part, ix) => (
         <Fragment key={`${ix}-${part.text}`}>
             {part.type !== 'emote' && <>{part.text}</>}

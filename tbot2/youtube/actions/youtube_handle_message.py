@@ -174,7 +174,7 @@ async def handle_type_message_deleted_event(
         raise Exception('Missing message_deleted_details')
     chat_message = ChatMessageRequest(
         id=uuid7(),
-        type='mod_action',
+        type='status',
         sub_type='delete_message',
         channel_id=channel_provider.channel_id,
         provider_viewer_id=live_message.author_details.channel_id,
@@ -221,7 +221,7 @@ async def handle_type_user_banned_event(
 
     chat_message = ChatMessageRequest(
         id=uuid7(),
-        type='mod_action',
+        type='status',
         sub_type=sub_type,
         channel_id=channel_provider.channel_id,
         provider_viewer_id=details.banned_user_details.channel_id,

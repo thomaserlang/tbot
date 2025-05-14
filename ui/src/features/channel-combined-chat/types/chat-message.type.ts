@@ -4,7 +4,50 @@ import { Provider } from '@/types/provider.type'
 import { Branded } from '@/utils/brand'
 
 export type ChatMessageId = Branded<string, 'ChatMessageId'>
-export type ChatMessageType = 'message' | 'notice' | 'mod_action'
+export type ChatMessageType = 'message' | 'notice' | 'status'
+export type ChatMessageSubType =
+    | 'custom_reward_redemption'
+    | 'sub'
+    | 'resub'
+    | 'sub_gift'
+    | 'community_sub_gift'
+    | 'gift_paid_upgrade'
+    | 'prime_paid_upgrade'
+    | 'pay_it_forward'
+    | 'raid'
+    | 'unraid'
+    | 'announcement'
+    | 'bits_badge_tier'
+    | 'ban'
+    | 'timeout'
+    | 'unban'
+    | 'untimeout'
+    | 'clear'
+    | 'emoteonly'
+    | 'emoteonlyoff'
+    | 'followers'
+    | 'followersoff'
+    | 'uniquechat'
+    | 'uniquechatoff'
+    | 'slow'
+    | 'slowoff'
+    | 'subscribers'
+    | 'subscribersoff'
+    | 'unraid'
+    | 'delete'
+    | 'vip'
+    | 'unvip'
+    | 'raid'
+    | 'add_blocked_term'
+    | 'add_permitted_term'
+    | 'remove_blocked_term'
+    | 'remove_permitted_term'
+    | 'mod'
+    | 'unmod'
+    | 'approve_unban_request'
+    | 'deny_unban_request'
+    | 'warn'
+    | null
 
 export interface ChatMessageBadge {
     id: string
@@ -47,7 +90,7 @@ export interface ChatMessagePart {
 export interface ChatMessage {
     id: ChatMessageId
     type: ChatMessageType
-    sub_type: string | null
+    sub_type: ChatMessageSubType
     provider: Provider
     provider_id: string
     channel_id: ChannelId
@@ -60,4 +103,6 @@ export interface ChatMessage {
     created_at: string
     parts: ChatMessagePart[]
     badges: ChatMessageBadge[]
+    notice_message: string
+    notice_parts: ChatMessagePart[]
 }

@@ -35,3 +35,7 @@ class MChatlog(Base):
     )
     badges: Mapped[list[dict[str, Any]]] = mapped_column(sa.JSON, nullable=False)
     parts: Mapped[list[dict[str, Any]]] = mapped_column(sa.JSON, nullable=False)
+    notice_message: Mapped[str | None] = mapped_column(sa.String(500), nullable=True)
+    notice_parts: Mapped[list[dict[str, Any]] | None] = mapped_column(
+        sa.JSON, nullable=True
+    )

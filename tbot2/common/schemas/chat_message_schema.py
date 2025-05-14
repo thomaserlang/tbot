@@ -5,6 +5,8 @@ from uuid import UUID
 from pydantic import StringConstraints, computed_field
 from typing_extensions import Doc
 
+from tbot2.common import ChatMessagePartRequest
+
 from ..types.chat_message_type import ChatMessageType
 from ..types.provider_type import Provider
 from .base_schema import BaseSchema
@@ -87,8 +89,13 @@ class ChatMessage(BaseSchema):
     msg_id: str
     badges: list[ChatMessageBadge] = []
     parts: list[ChatMessagePart] = []
+    notice_message: str = ''
+    notice_parts: list[ChatMessagePart] = []
 
     def message_without_parts(self) -> str:
         if not self.parts:
             return self.message
         return ''.join(parts.text for parts in self.parts if parts.type == 'text')
+
+    def parts_to_request(self) -> list[ChatMessagePartRequest]:
+        return [ChatMessagePartRequest.model_validate(part) for part in self.parts]

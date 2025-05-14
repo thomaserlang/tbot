@@ -7,7 +7,7 @@ from loguru import logger
 
 from tbot2.database import database
 
-from ..actions.queue_event_actions import queue_event_key
+from ..actions.queue_publish_actions import queue_queue_key
 
 router = APIRouter()
 
@@ -52,7 +52,7 @@ async def handle_event(
 ) -> None:
     async with database.redis.pubsub() as pubsub:  # type: ignore
         await pubsub.subscribe(  # type: ignore
-            queue_event_key(channel_queue_id=channel_queue_id)
+            queue_queue_key(channel_queue_id=channel_queue_id)
         )
         while True:
             try:

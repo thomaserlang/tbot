@@ -131,6 +131,13 @@ def get_eventsub_registrations(
                 'broadcaster_user_id': broadcaster_user_id,
             },
         ),
+        EventSubRegistration(
+            event_type='channel.channel_points_custom_reward_redemption.add',
+            version='1',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+            },
+        ),
     ]
 
 

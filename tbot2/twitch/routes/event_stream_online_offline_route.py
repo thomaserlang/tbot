@@ -23,6 +23,7 @@ router = APIRouter()
 
 @router.post(
     '/stream.online',
+    include_in_schema=False,
     status_code=204,
 )
 async def event_stream_online_route(
@@ -48,6 +49,7 @@ async def event_stream_online_route(
 
 @router.post(
     '/stream.offline',
+    include_in_schema=False,
     status_code=204,
 )
 async def event_stream_offline_route(

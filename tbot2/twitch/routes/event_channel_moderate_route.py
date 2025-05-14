@@ -5,7 +5,7 @@ import humanize.time
 from fastapi import APIRouter, Depends, Request
 from uuid6 import uuid7
 
-from tbot2.channel_chatlog import create_chatlog
+from tbot2.channel_chatlog import create_chatlog, get_chatlog
 from tbot2.common import ChatMessageRequest, datetime_now
 
 from ..schemas.event_channel_moderate_schema import EventChannelModerate
@@ -20,6 +20,7 @@ router = APIRouter()
 
 @router.post(
     '/channel.moderate',
+    include_in_schema=False,
     status_code=204,
 )
 async def event_channel_chat_message_route(
@@ -45,14 +46,14 @@ async def event_channel_chat_message_route(
             if data.event.mod:
                 chat_message = ChatMessageRequest(
                     id=uuid7(),
-                    type='mod_action',
+                    type='status',
                     sub_type='mod',
                     channel_id=channel_id,
                     provider_viewer_id=data.event.mod.user_id,
                     viewer_name=data.event.mod.user_login,
                     viewer_display_name=data.event.mod.user_name,
                     created_at=headers.message_timestamp,
-                    message=(
+                    notice_message=(
                         f'{data.event.moderator_user_name} modded '
                         f'{data.event.mod.user_name}'
                     ),
@@ -64,14 +65,14 @@ async def event_channel_chat_message_route(
             if data.event.unmod:
                 chat_message = ChatMessageRequest(
                     id=uuid7(),
-                    type='mod_action',
+                    type='status',
                     sub_type='unmod',
                     channel_id=channel_id,
                     provider_viewer_id=data.event.unmod.user_id,
                     viewer_name=data.event.unmod.user_login,
                     viewer_display_name=data.event.unmod.user_name,
                     created_at=headers.message_timestamp,
-                    message=(
+                    notice_message=(
                         f'{data.event.moderator_user_name} unmodded '
                         f'{data.event.unmod.user_name}'
                     ),
@@ -83,14 +84,14 @@ async def event_channel_chat_message_route(
             if data.event.vip:
                 chat_message = ChatMessageRequest(
                     id=uuid7(),
-                    type='mod_action',
+                    type='status',
                     sub_type='vip',
                     channel_id=channel_id,
                     provider_viewer_id=data.event.vip.user_id,
                     viewer_name=data.event.vip.user_login,
                     viewer_display_name=data.event.vip.user_name,
                     created_at=headers.message_timestamp,
-                    message=(
+                    notice_message=(
                         f'{data.event.moderator_user_name} vipped '
                         f'{data.event.vip.user_name}'
                     ),
@@ -102,14 +103,14 @@ async def event_channel_chat_message_route(
             if data.event.unvip:
                 chat_message = ChatMessageRequest(
                     id=uuid7(),
-                    type='mod_action',
+                    type='status',
                     sub_type='unmod',
                     channel_id=channel_id,
                     provider_viewer_id=data.event.unvip.user_id,
                     viewer_name=data.event.unvip.user_login,
                     viewer_display_name=data.event.unvip.user_name,
                     created_at=headers.message_timestamp,
-                    message=(
+                    notice_message=(
                         f'{data.event.moderator_user_name} unvipped '
                         f'{data.event.unvip.user_name}'
                     ),
@@ -121,14 +122,14 @@ async def event_channel_chat_message_route(
             if data.event.ban:
                 chat_message = ChatMessageRequest(
                     id=uuid7(),
-                    type='mod_action',
+                    type='status',
                     sub_type='ban',
                     channel_id=channel_id,
                     provider_viewer_id=data.event.ban.user_id,
                     viewer_name=data.event.ban.user_login,
                     viewer_display_name=data.event.ban.user_name,
                     created_at=headers.message_timestamp,
-                    message=(
+                    notice_message=(
                         f'{data.event.moderator_user_name} banned '
                         f'{data.event.ban.user_name}'
                     ),
@@ -140,14 +141,14 @@ async def event_channel_chat_message_route(
             if data.event.unban:
                 chat_message = ChatMessageRequest(
                     id=uuid7(),
-                    type='mod_action',
+                    type='status',
                     sub_type='unban',
                     channel_id=channel_id,
                     provider_viewer_id=data.event.unban.user_id,
                     viewer_name=data.event.unban.user_login,
                     viewer_display_name=data.event.unban.user_name,
                     created_at=headers.message_timestamp,
-                    message=(
+                    notice_message=(
                         f'{data.event.moderator_user_name} unbanned '
                         f'{data.event.unban.user_name}'
                     ),
@@ -157,23 +158,45 @@ async def event_channel_chat_message_route(
                 )
         case 'delete':
             if data.event.delete:
-                chat_message = ChatMessageRequest(
-                    id=uuid7(),
-                    type='mod_action',
-                    sub_type='delete',
-                    channel_id=channel_id,
-                    provider_viewer_id=data.event.moderator_user_id,
-                    viewer_name=data.event.moderator_user_login,
-                    viewer_display_name=data.event.moderator_user_name,
-                    created_at=headers.message_timestamp,
-                    message=(
-                        f'{data.event.moderator_user_name} deleted message: '
-                        f'{data.event.delete.message_body}'
-                    ),
-                    msg_id=headers.message_id,
-                    provider='twitch',
-                    provider_id=data.event.broadcaster_user_id,
+                deleted_message = await get_chatlog(
+                    provider='twitch', msg_id=data.event.delete.message_id
                 )
+                if deleted_message:
+                    chat_message = ChatMessageRequest(
+                        id=uuid7(),
+                        type='status',
+                        sub_type='delete',
+                        channel_id=channel_id,
+                        provider_viewer_id=deleted_message.provider_viewer_id,
+                        viewer_name=deleted_message.viewer_name,
+                        viewer_display_name=deleted_message.viewer_display_name,
+                        created_at=headers.message_timestamp,
+                        notice_message=(
+                            f'{data.event.moderator_user_name} deleted message '
+                            f'"{data.event.delete.message_body}"'
+                        ),
+                        msg_id=headers.message_id,
+                        provider='twitch',
+                        provider_id=data.event.broadcaster_user_id,
+                    )
+                else:
+                    chat_message = ChatMessageRequest(
+                        id=uuid7(),
+                        type='status',
+                        sub_type='delete',
+                        channel_id=channel_id,
+                        provider_viewer_id=data.event.moderator_user_id,
+                        viewer_name=data.event.moderator_user_login,
+                        viewer_display_name=data.event.moderator_user_name,
+                        created_at=headers.message_timestamp,
+                        notice_message=(
+                            f'{data.event.moderator_user_name} deleted message '
+                            f'"{data.event.delete.message_body}"'
+                        ),
+                        msg_id=headers.message_id,
+                        provider='twitch',
+                        provider_id=data.event.broadcaster_user_id,
+                    )
         case 'timeout':
             if data.event.timeout:
                 until = humanize.time.precisedelta(
@@ -181,14 +204,14 @@ async def event_channel_chat_message_route(
                 )
                 chat_message = ChatMessageRequest(
                     id=uuid7(),
-                    type='mod_action',
+                    type='status',
                     sub_type='timeout',
                     channel_id=channel_id,
                     provider_viewer_id=data.event.timeout.user_id,
                     viewer_name=data.event.timeout.user_login,
                     viewer_display_name=data.event.timeout.user_name,
                     created_at=headers.message_timestamp,
-                    message=(
+                    notice_message=(
                         f'{data.event.moderator_user_name} timed out '
                         f'{data.event.timeout.user_name} for {until}'
                     ),
@@ -200,14 +223,14 @@ async def event_channel_chat_message_route(
             if data.event.untimeout:
                 chat_message = ChatMessageRequest(
                     id=uuid7(),
-                    type='mod_action',
+                    type='status',
                     sub_type='untimeout',
                     channel_id=channel_id,
                     provider_viewer_id=data.event.untimeout.user_id,
                     viewer_name=data.event.untimeout.user_login,
                     viewer_display_name=data.event.untimeout.user_name,
                     created_at=headers.message_timestamp,
-                    message=(
+                    notice_message=(
                         f'{data.event.moderator_user_name} removed time out on '
                         f'{data.event.untimeout.user_name}'
                     ),
@@ -219,14 +242,14 @@ async def event_channel_chat_message_route(
             if data.event.warn:
                 chat_message = ChatMessageRequest(
                     id=uuid7(),
-                    type='mod_action',
+                    type='status',
                     sub_type='warn',
                     channel_id=channel_id,
                     provider_viewer_id=data.event.warn.user_id,
                     viewer_name=data.event.warn.user_login,
                     viewer_display_name=data.event.warn.user_name,
                     created_at=headers.message_timestamp,
-                    message=(
+                    notice_message=(
                         f'{data.event.moderator_user_name} warned '
                         f'{data.event.warn.user_name}: "{data.event.warn.reason}"'
                     ),
@@ -237,14 +260,14 @@ async def event_channel_chat_message_route(
         case 'clear':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='clear',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=f'{data.event.moderator_user_name} cleared chat',
+                notice_message=f'{data.event.moderator_user_name} cleared chat',
                 msg_id=headers.message_id,
                 provider='twitch',
                 provider_id=data.event.broadcaster_user_id,
@@ -252,14 +275,16 @@ async def event_channel_chat_message_route(
         case 'emoteonly':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='emoteonly',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=f'{data.event.moderator_user_name} activated emoteonly mode',
+                notice_message=(
+                    f'{data.event.moderator_user_name} activated emoteonly mode'
+                ),
                 msg_id=headers.message_id,
                 provider='twitch',
                 provider_id=data.event.broadcaster_user_id,
@@ -267,14 +292,14 @@ async def event_channel_chat_message_route(
         case 'emoteonlyoff':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='emoteonlyoff',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=(
+                notice_message=(
                     f'{data.event.moderator_user_name} deactivated emoteonly mode'
                 ),
                 msg_id=headers.message_id,
@@ -284,14 +309,16 @@ async def event_channel_chat_message_route(
         case 'followers':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='followers',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=(f'{data.event.moderator_user_name} activated followers mode'),
+                notice_message=(
+                    f'{data.event.moderator_user_name} activated followers mode'
+                ),
                 msg_id=headers.message_id,
                 provider='twitch',
                 provider_id=data.event.broadcaster_user_id,
@@ -299,14 +326,14 @@ async def event_channel_chat_message_route(
         case 'followersoff':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='followersoff',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=(
+                notice_message=(
                     f'{data.event.moderator_user_name} deactivated followers mode'
                 ),
                 msg_id=headers.message_id,
@@ -316,14 +343,14 @@ async def event_channel_chat_message_route(
         case 'uniquechat':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='uniquechat',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=(
+                notice_message=(
                     f'{data.event.moderator_user_name} activated unique chat mode'
                 ),
                 msg_id=headers.message_id,
@@ -333,14 +360,14 @@ async def event_channel_chat_message_route(
         case 'uniquechatoff':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='uniquechatoff',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=(
+                notice_message=(
                     f'{data.event.moderator_user_name} deactivated unique chat mode'
                 ),
                 msg_id=headers.message_id,
@@ -350,14 +377,16 @@ async def event_channel_chat_message_route(
         case 'slow':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='slow',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=(f'{data.event.moderator_user_name} activated slow mode'),
+                notice_message=(
+                    f'{data.event.moderator_user_name} activated slow mode'
+                ),
                 msg_id=headers.message_id,
                 provider='twitch',
                 provider_id=data.event.broadcaster_user_id,
@@ -365,14 +394,16 @@ async def event_channel_chat_message_route(
         case 'slowoff':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='slowoff',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=(f'{data.event.moderator_user_name} deactivated slow mode'),
+                notice_message=(
+                    f'{data.event.moderator_user_name} deactivated slow mode'
+                ),
                 msg_id=headers.message_id,
                 provider='twitch',
                 provider_id=data.event.broadcaster_user_id,
@@ -380,14 +411,14 @@ async def event_channel_chat_message_route(
         case 'subscribers':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='subscribers',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=(
+                notice_message=(
                     f'{data.event.moderator_user_name} activated subscribers mode'
                 ),
                 msg_id=headers.message_id,
@@ -397,14 +428,14 @@ async def event_channel_chat_message_route(
         case 'subscribersoff':
             chat_message = ChatMessageRequest(
                 id=uuid7(),
-                type='mod_action',
+                type='status',
                 sub_type='subscribersoff',
                 channel_id=channel_id,
                 provider_viewer_id=data.event.moderator_user_id,
                 viewer_name=data.event.moderator_user_login,
                 viewer_display_name=data.event.moderator_user_name,
                 created_at=headers.message_timestamp,
-                message=(
+                notice_message=(
                     f'{data.event.moderator_user_name} deactivated subscribers mode'
                 ),
                 msg_id=headers.message_id,

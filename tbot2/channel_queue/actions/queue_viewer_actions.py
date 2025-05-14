@@ -12,7 +12,7 @@ from ..schemas.queue_viewer_schema import (
     QueueViewer,
     QueueViewerCreate,
 )
-from .queue_event_actions import (
+from .queue_publish_actions import (
     publish_queue_cleared,
     publish_queue_viewer_created,
     publish_queue_viewer_deleted,

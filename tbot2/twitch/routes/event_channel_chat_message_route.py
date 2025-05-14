@@ -41,6 +41,7 @@ router = APIRouter()
 @router.post(
     '/channel.chat.message',
     status_code=204,
+    include_in_schema=False,
 )
 async def event_channel_chat_message_route(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],

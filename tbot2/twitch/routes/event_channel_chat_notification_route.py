@@ -2,7 +2,6 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request
-from uuid6 import uuid7
 
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.common import ChatMessageRequest
@@ -26,6 +25,7 @@ router = APIRouter()
 
 @router.post(
     '/channel.chat.notification',
+    include_in_schema=False,
     status_code=204,
 )
 async def event_channel_chat_notification_route(
@@ -53,9 +53,13 @@ async def event_channel_chat_notification_route(
         # which users got gifted
         return
 
-    messages: list[ChatMessageRequest] = [
-        ChatMessageRequest(
-            id=uuid7(),
+    notice_message = data.event.system_message
+    if not notice_message:
+        if data.event.notice_type == 'announcement':
+            notice_message = 'Announcement'
+
+    await create_chatlog(
+        data=ChatMessageRequest(
             type='notice',
             sub_type=data.event.notice_type,
             channel_id=channel_id,
@@ -64,36 +68,18 @@ async def event_channel_chat_notification_route(
             viewer_display_name=data.event.chatter_user_name,
             viewer_color=data.event.color,
             created_at=headers.message_timestamp,
-            message=data.event.system_message,
+            notice_message=notice_message,
             msg_id=headers.message_id,
             provider='twitch',
             provider_id=data.event.broadcaster_user_id,
-        )
-    ]
-
-    if data.event.message.text:
-        messages.append(
-            ChatMessageRequest(
-                id=uuid7(),
-                type='message',
-                channel_id=channel_id,
-                provider_viewer_id=data.event.chatter_user_id,
-                viewer_name=data.event.chatter_user_login,
-                viewer_display_name=data.event.chatter_user_name,
-                viewer_color=data.event.color,
-                created_at=headers.message_timestamp,
-                message=data.event.message.text,
-                msg_id=data.event.message_id,
+            message=data.event.message.text,
+            badges=twitch_badges_to_badges(data.event.badges),
+            parts=await message_to_parts(
+                parts=twitch_fragments_to_parts(data.event.message.fragments),
                 provider='twitch',
-                provider_id=data.event.broadcaster_user_id,
-                badges=twitch_badges_to_badges(data.event.badges),
-                parts=await message_to_parts(
-                    parts=twitch_fragments_to_parts(data.event.message.fragments),
-                    provider='twitch',
-                    provider_user_id=data.event.broadcaster_user_id,
-                ),
+                provider_user_id=data.event.broadcaster_user_id,
             )
+            if data.event.message.text
+            else [],
         )
-
-    for message in messages:
-        await create_chatlog(data=message)
+    )

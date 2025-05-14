@@ -1,18 +1,22 @@
-import { providerInfo } from '@/constants'
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
-import { Provider } from '@/types/provider.type'
 import { Box, Text } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
+import { AssembleParts } from './assemble-parts'
 import { Badges } from './badges'
 import classes from './chat-message-line.module.css'
-import { MessageLine } from './message-line'
+import { ProviderLogo } from './provider-logo'
 
 interface Props {
     chatMessage: ChatMessage
+    hideProviderLogo?: boolean
     onViewerClick?: (viewer: ViewerName) => void
 }
 
-export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
+export function ChatMessageLine({
+    chatMessage,
+    hideProviderLogo,
+    onViewerClick,
+}: Props) {
     return (
         <Box className={classes.message}>
             <Text
@@ -30,7 +34,9 @@ export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
                     hour12: false,
                 })}
             </Text>
-            {providerLogo(chatMessage.provider)}
+            {!hideProviderLogo && (
+                <ProviderLogo provider={chatMessage.provider} />
+            )}
             {chatMessage.badges && (
                 <Badges
                     channelId={chatMessage.channel_id}
@@ -56,21 +62,8 @@ export function ChatMessageLine({ chatMessage, onViewerClick }: Props) {
             </span>
             :
             <span className={classes.text}>
-                <MessageLine chatMessage={chatMessage} />
+                <AssembleParts parts={chatMessage.parts} />
             </span>
-        </Box>
-    )
-}
-
-export function providerLogo(provider: Provider) {
-    return (
-        <Box
-            component="span"
-            className={classes.provider}
-            title={providerInfo[provider].name || ''}
-            c={providerInfo[provider].color}
-        >
-            {providerInfo[provider].icon}
         </Box>
     )
 }

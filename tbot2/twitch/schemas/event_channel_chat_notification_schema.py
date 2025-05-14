@@ -1,9 +1,9 @@
 from typing import Literal
 
 from tbot2.common import BaseSchema
-from tbot2.common.schemas.twitch_schemas import TwitchBadge
 
 from .event_channel_chat_message_schema import (
+    ChannelChatMessageBadge,
     ChannelChatMessageMessage,
 )
 
@@ -111,14 +111,14 @@ class EventChannelChatNotification(BaseSchema):
     chatter_user_name: str
     chatter_is_anonymous: bool
     color: str
-    badges: list[TwitchBadge]
+    badges: list[ChannelChatMessageBadge]
     system_message: str
     message_id: str
     message: ChannelChatMessageMessage
     source_broadcaster_user_id: str | None
     source_broadcaster_user_login: str | None
     source_broadcaster_user_name: str | None
-    source_badges: list[TwitchBadge] | None
+    source_badges: list[ChannelChatMessageBadge] | None
     source_message_id: str | None
 
     notice_type: (

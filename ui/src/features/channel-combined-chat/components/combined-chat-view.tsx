@@ -8,8 +8,10 @@ import {
     ViewerSearchButton,
 } from '@/features/channel-viewer'
 import { ChannelId } from '@/features/channel/types/channel.types'
-import { Box, Divider, Flex, Title } from '@mantine/core'
+import { ActionIcon, Divider, Flex, Title } from '@mantine/core'
+import { IconDotsVertical } from '@tabler/icons-react'
 import { useState } from 'react'
+import { ChatMenu } from './chat-menu'
 import { ChatView } from './chat-view'
 
 interface Props {
@@ -41,13 +43,20 @@ export function CombinedChatView({ channelId, hideTitle }: Props) {
                 <Flex gap="0.5rem">
                     <RunCommercialButton channelId={channelId} />
                     <UpdateStreamTitleButton channelId={channelId} />
-                    <Box ml="auto">
+                    <Flex ml="auto" gap="0.5rem" align="center">
                         <ViewerSearchButton
                             onSelect={(viewer) => {
                                 setShowViewer(viewer)
                             }}
                         />
-                    </Box>
+                        <ChatMenu>
+                            <ActionIcon variant="subtle" color="gray">
+                                <IconDotsVertical
+                                    style={{ width: '70%', height: '70%' }}
+                                />
+                            </ActionIcon>
+                        </ChatMenu>
+                    </Flex>
                 </Flex>
             </Flex>
 

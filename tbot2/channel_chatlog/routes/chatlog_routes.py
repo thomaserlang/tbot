@@ -7,6 +7,7 @@ import sqlalchemy as sa
 from fastapi import APIRouter, Query, Security, WebSocket, WebSocketDisconnect
 from loguru import logger
 
+from tbot2.channel_chatlog.actions.chatlog_action import chatlog_queue_key
 from tbot2.common import (
     ChatMessage,
     ChatMessageType,
@@ -28,7 +29,7 @@ router = APIRouter()
     '/channels/{channel_id}/chatlogs',
     name='Get Chatlogs',
 )
-async def get_chatlogs(
+async def get_chatlogs_route(
     channel_id: UUID,
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[ChatlogsScope.READ])
@@ -124,7 +125,7 @@ async def handle_connection(
     type: ChatMessageType | None = None,
 ) -> None:
     async with database.redis.pubsub() as pubsub:  # type: ignore
-        await pubsub.subscribe(f'tbot:live_chat:{channel_id}')  # type: ignore
+        await pubsub.subscribe(chatlog_queue_key(channel_id=channel_id))  # type: ignore
         while True:
             try:
                 data = cast(

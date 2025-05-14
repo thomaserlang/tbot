@@ -1,11 +1,10 @@
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
 import { strDateFormat } from '@/utils/date'
-import { Divider } from '@mantine/core'
-import { Fragment } from 'react/jsx-runtime'
+import { Box, Divider } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
 import { ChatMessageLine } from './chat-message-line'
-import { ChatModActionLine } from './chat-mod-action-line'
 import { ChatNoticeLine } from './chat-notice-line'
+import { ChatStatusLine } from './chat-status-line'
 
 interface Props {
     messages: ChatMessage[]
@@ -22,7 +21,7 @@ export function ChatMessages({ messages, onViewerClick }: Props) {
                 if (showDateLine) lastDate = date
 
                 return (
-                    <Fragment key={message.id}>
+                    <Box p="0.3rem 0" key={message.id}>
                         {showDateLine && (
                             <Divider
                                 my="xs"
@@ -37,14 +36,14 @@ export function ChatMessages({ messages, onViewerClick }: Props) {
                             />
                         )}
 
-                        {message.type == 'mod_action' && (
-                            <ChatModActionLine chatMessage={message} />
+                        {message.type == 'status' && (
+                            <ChatStatusLine chatMessage={message} />
                         )}
 
                         {message.type == 'notice' && (
                             <ChatNoticeLine chatMessage={message} />
                         )}
-                    </Fragment>
+                    </Box>
                 )
             })}
         </>

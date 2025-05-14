@@ -10,7 +10,7 @@ from tbot2.common import BaseRequestSchema
 from tbot2.common.utils.username_color_generate import username_color_generator
 
 from ..types.access_level_type import TAccessLevel
-from ..types.chat_message_type import ChatMessageType
+from ..types.chat_message_type import ChatMessageSubType, ChatMessageType
 from ..types.provider_type import Provider
 
 
@@ -50,11 +50,14 @@ class ChatMessagePartRequest(BaseRequestSchema):
 
 
 class ChatMessageRequest(BaseRequestSchema):
-    id: Annotated[UUID, Field(default_factory=uuid7)]
+    id: UUID = Field(default_factory=uuid7)
     type: ChatMessageType
-    sub_type: Annotated[str, StringConstraints(min_length=1, max_length=100)] | None = (
-        None
-    )
+    sub_type: (
+        Annotated[
+            ChatMessageSubType | str, StringConstraints(min_length=1, max_length=100)
+        ]
+        | None
+    ) = None
     created_at: datetime
     provider: Provider
     provider_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
@@ -70,12 +73,34 @@ class ChatMessageRequest(BaseRequestSchema):
             ),
         ]
         | None
-    ) = None
-    message: Annotated[str, StringConstraints(min_length=1, max_length=2000)]
+    ) = Field(
+        default_factory=lambda data: username_color_generator(data['viewer_name'])
+    )
+    message: Annotated[str, StringConstraints(min_length=0, max_length=2000)] = ''
     msg_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     badges: list[ChatMessageBadgeRequest] = []
-    parts: list[ChatMessagePartRequest] = []
+    parts: list[ChatMessagePartRequest] = Field(
+        default_factory=lambda data: [
+            ChatMessagePartRequest(
+                type='text',
+                text=data['message'],
+            )
+        ]
+        if data['message']
+        else []
+    )
     access_level: TAccessLevel = TAccessLevel.PUBLIC
+    notice_message: Annotated[str, StringConstraints(min_length=0, max_length=500)] = ''
+    notice_parts: list[ChatMessagePartRequest] | None = Field(
+        default_factory=lambda data: [
+            ChatMessagePartRequest(
+                type='text',
+                text=data['notice_message'],
+            )
+        ]
+        if data['notice_message']
+        else []
+    )
 
     @field_validator('viewer_color', mode='before')
     @classmethod
@@ -86,7 +111,7 @@ class ChatMessageRequest(BaseRequestSchema):
 
     @field_validator('viewer_color', mode='after')
     @classmethod
-    def viewer_color_generate(cls, value: str | None, info: ValidationInfo) -> str:
+    def viewer_color_valid(cls, value: str | None, info: ValidationInfo) -> str:
         if not value:
             return username_color_generator(info.data['viewer_name'])
         return value
