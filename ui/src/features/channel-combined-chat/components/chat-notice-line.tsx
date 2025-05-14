@@ -34,13 +34,6 @@ export function ChatNoticeLine({ chatMessage, color }: Props) {
                     />
                 )}
             </Flex>
-
-            <Divider
-                size="0.5rem"
-                ml="auto"
-                orientation="vertical"
-                color={color || subTypeToColor(chatMessage.sub_type)}
-            />
         </Flex>
     )
 }
