@@ -140,4 +140,21 @@ export const EmulateEvents: EmulateEvent[] = [
             )
         },
     },
+
+    {
+        name: 'Celebration',
+        request: ({ channelId }) => {
+            return api.post(
+                `/api/2/twitch/eventsub/emulate-automatic-reward-redemption`,
+                {
+                    reward_type: 'celebration',
+                },
+                {
+                    params: {
+                        channel_id: channelId,
+                    },
+                }
+            )
+        },
+    },
 ]

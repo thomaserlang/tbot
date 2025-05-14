@@ -20,6 +20,9 @@ from .schemas.chat_message_request_schema import (
     MentionPartRequest as MentionPartRequest,
 )
 from .schemas.chat_message_schema import ChatMessage as ChatMessage
+from .schemas.chat_message_schema import ChatMessagePart as ChatMessagePart
+from .schemas.chat_message_schema import EmotePart as EmotePart
+from .schemas.chat_message_schema import GiftPart as GiftPart
 from .schemas.connect_url_schema import ConnectUrl as ConnectUrl
 from .schemas.error_schema import Error as Error
 from .schemas.error_schema import SubError as SubError

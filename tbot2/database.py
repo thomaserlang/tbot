@@ -25,7 +25,9 @@ class Connections:
         self._test_setup: bool = False
         self._conn: AsyncConnection
         self.elasticsearch = AsyncElasticsearch(
-            config.elasticsearch.url,
+            config.elasticsearch.host,
+            basic_auth=(config.elasticsearch.user, config.elasticsearch.password),
+            verify_certs=config.elasticsearch.verify_certs,
         )
 
     async def setup(self) -> None:

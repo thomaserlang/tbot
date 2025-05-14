@@ -16,7 +16,7 @@ class Reward(BaseSchema):
     'The reward description.'
 
 
-class EventChannelPointsCustomRewardRedemptionAdd(BaseSchema):
+class EventChannelPointsCustomRewardRedemption(BaseSchema):
     id: str
     'The redemption identifier.'
     broadcaster_user_id: str
@@ -31,7 +31,7 @@ class EventChannelPointsCustomRewardRedemptionAdd(BaseSchema):
     'Login of the user that redeemed the reward.'
     user_name: str
     'Display name of the user that redeemed the reward.'
-    user_input: str
+    user_input: str = ''
     'The user input provided. Empty string if not provided.'
     status: Literal['unknown', 'unfulfilled', 'fulfilled', 'canceled'] | str
     'Defaults to unfulfilled. Possible values are unknown, unfulfilled, fulfilled, and canceled.'  # noqa: E501

@@ -33,10 +33,13 @@ class MentionPartRequest(BaseRequestSchema):
     display_name: str
 
 
+GiftPartType = Literal['cheermote']
+
+
 class GiftPartRequest(BaseRequestSchema):
     id: str
     name: str
-    type: str
+    type: str | GiftPartType
     count: int
     animated: bool = False
 

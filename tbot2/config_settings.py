@@ -64,7 +64,10 @@ class ConfigRedisModel(BaseModel):
 
 
 class ConfigElasticsearchModel(BaseModel):
-    url: str = 'http://localhost:9200/'
+    host: str = 'http://localhost:9200/'
+    user: str = ''
+    password: str = ''
+    verify_certs: bool = False
 
 
 def get_config_path() -> Path:

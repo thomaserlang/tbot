@@ -4,6 +4,7 @@ from .routes import (
     event_channel_chat_message_route,
     event_channel_chat_notification_route,
     event_channel_moderate_route,
+    event_channel_points_automatic_reward_redemption_add_route,
     event_channel_points_custom_reward_redemption_add_route,
     event_channel_update_route,
     event_stream_online_offline_route,
@@ -19,6 +20,9 @@ twitch_eventsub_router.include_router(event_channel_moderate_route.router)
 twitch_eventsub_router.include_router(event_channel_update_route.router)
 twitch_eventsub_router.include_router(
     event_channel_points_custom_reward_redemption_add_route.router
+)
+twitch_eventsub_router.include_router(
+    event_channel_points_automatic_reward_redemption_add_route.router
 )
 
 twitch_router = APIRouter(tags=['Twitch'])
