@@ -1,6 +1,7 @@
 from typing import Literal
 
 from tbot2.common import BaseSchema
+from tbot2.common.types.chat_message_type import TwitchNoticeType
 
 from .event_channel_chat_message_schema import (
     ChannelChatMessageBadge,
@@ -121,32 +122,7 @@ class EventChannelChatNotification(BaseSchema):
     source_badges: list[ChannelChatMessageBadge] | None
     source_message_id: str | None
 
-    notice_type: (
-        str
-        | Literal[
-            'sub',
-            'resub',
-            'sub_gift',
-            'community_sub_gift',
-            'gift_paid_upgrade',
-            'prime_paid_upgrade',
-            'pay_it_forward',
-            'raid',
-            'unraid',
-            'announcement',
-            'bits_badge_tier',
-            'charity_donation',
-            'shared_chat_sub',
-            'shared_chat_resub',
-            'shared_chat_sub_gift',
-            'shared_chat_community_sub_gift',
-            'shared_chat_gift_paid_upgrade',
-            'shared_chat_prime_paid_upgrade',
-            'shared_chat_pay_it_forward',
-            'shared_chat_raid',
-            'shared_chat_announcement',
-        ]
-    )
+    notice_type: str | TwitchNoticeType
     sub: SubNoticeMetadata | None
     resub: ResubNoticeMetadata | None
     sub_gift: SubGiftNoticeMetadata | None

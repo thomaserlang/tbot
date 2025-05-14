@@ -5,8 +5,7 @@ import { Branded } from '@/utils/brand'
 
 export type ChatMessageId = Branded<string, 'ChatMessageId'>
 export type ChatMessageType = 'message' | 'notice' | 'status'
-export type ChatMessageSubType =
-    | 'custom_reward_redemption'
+export type TwitchNoticeType =
     | 'sub'
     | 'resub'
     | 'sub_gift'
@@ -18,6 +17,18 @@ export type ChatMessageSubType =
     | 'unraid'
     | 'announcement'
     | 'bits_badge_tier'
+    | 'charity_donation'
+    | 'shared_chat_sub'
+    | 'shared_chat_resub'
+    | 'shared_chat_sub_gift'
+    | 'shared_chat_community_sub_gift'
+    | 'shared_chat_gift_paid_upgrade'
+    | 'shared_chat_prime_paid_upgrade'
+    | 'shared_chat_pay_it_forward'
+    | 'shared_chat_raid'
+    | 'shared_chat_announcement'
+
+export type TwitchModerateAction =
     | 'ban'
     | 'timeout'
     | 'unban'
@@ -47,12 +58,40 @@ export type ChatMessageSubType =
     | 'approve_unban_request'
     | 'deny_unban_request'
     | 'warn'
+
+export type TwitchChatMessageType =
     | 'text'
+    | 'custom_reward_redemption'
     | 'channel_points_highlighted'
     | 'channel_points_sub_only'
     | 'user_intro'
     | 'power_ups_message_effect'
     | 'power_ups_gigantified_emote'
+
+export type YoutubeMessageType =
+    | 'chatEndedEvent'
+    | 'messageDeletedEvent'
+    | 'sponsorOnlyModeEndedEvent'
+    | 'sponsorOnlyModeStartedEvent'
+    | 'newSponsorEvent'
+    | 'memberMilestoneChatEvent'
+    | 'superChatEvent'
+    | 'superStickerEvent'
+    | 'textMessageEvent'
+    | 'tombstone'
+    | 'userBannedEvent'
+    | 'membershipGiftingEvent'
+    | 'giftMembershipReceivedEvent'
+    | 'pollDetails'
+
+export type TiktokNoticeSubType = 'gift'
+
+export type ChatMessageSubType =
+    | TwitchNoticeType
+    | TwitchModerateAction
+    | TwitchChatMessageType
+    | YoutubeMessageType
+    | TiktokNoticeSubType
     | null
 
 export interface ChatMessageBadge {

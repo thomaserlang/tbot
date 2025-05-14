@@ -10,7 +10,6 @@ from TikTokLive.events import (  # type: ignore
     GiftEvent,
     LiveEndEvent,
 )
-from uuid6 import uuid7
 
 from tbot2.channel_chatlog import create_chatlog
 from tbot2.channel_provider import (
@@ -107,9 +106,7 @@ async def handle_channel(
             async def on_comment(event: CommentEvent) -> None:
                 await create_chatlog(
                     data=ChatMessageRequest(
-                        id=uuid7(),
                         type='message',
-                        created_at=datetime_now(),
                         channel_id=channel_provider.channel_id,
                         provider='tiktok',
                         provider_id=client.unique_id,
@@ -157,9 +154,8 @@ async def handle_channel(
                 ]
                 await create_chatlog(
                     data=ChatMessageRequest(
-                        id=uuid7(),
                         type='notice',
-                        created_at=datetime_now(),
+                        sub_type='gift',
                         channel_id=channel_provider.channel_id,
                         provider='tiktok',
                         provider_id=client.unique_id,

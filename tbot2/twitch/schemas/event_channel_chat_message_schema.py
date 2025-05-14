@@ -1,6 +1,7 @@
 from typing import Literal
 
 from tbot2.common import BaseSchema
+from tbot2.common.types.chat_message_type import TwitchChatMessageType
 
 
 class ChannelChatMessageCheermote(BaseSchema):
@@ -96,14 +97,7 @@ class ChannelChatMessageSourceBadge(BaseSchema):
     'Contains metadata related to the chat badges in the badges tag.'
 
 
-ChannelChatMessageType = Literal[
-    'text',
-    'channel_points_highlighted',
-    'channel_points_sub_only',
-    'user_intro',
-    'power_ups_message_effect',
-    'power_ups_gigantified_emote',
-]
+ChannelChatMessageType = TwitchChatMessageType
 
 
 class EventChannelChatMessage(BaseSchema):

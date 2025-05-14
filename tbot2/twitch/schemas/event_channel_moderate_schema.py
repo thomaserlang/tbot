@@ -4,6 +4,7 @@ from typing import Annotated, Literal
 from pydantic import Field
 
 from tbot2.common import BaseSchema
+from tbot2.common.types.chat_message_type import TwitchModerateAction
 
 
 class ModerateMetadataFollowers(BaseSchema):
@@ -91,40 +92,7 @@ class EventChannelModerate(BaseSchema):
     moderator_user_id: str
     moderator_user_login: str
     moderator_user_name: str
-    action: (
-        str
-        | Literal[
-            'ban',
-            'timeout',
-            'unban',
-            'untimeout',
-            'clear',
-            'emoteonly',
-            'emoteonlyoff',
-            'followers',
-            'followersoff',
-            'uniquechat',
-            'uniquechatoff',
-            'slow',
-            'slowoff',
-            'subscribers',
-            'subscribersoff',
-            'unraid',
-            'delete',
-            'vip',
-            'unvip',
-            'raid',
-            'add_blocked_term',
-            'add_permitted_term',
-            'remove_blocked_term',
-            'remove_permitted_term',
-            'mod',
-            'unmod',
-            'approve_unban_request',
-            'deny_unban_request',
-            'warn',
-        ]
-    )
+    action: str | TwitchModerateAction
     followers: ModerateMetadataFollowers | None = None
     slow: ModerateMetadataSlow | None = None
     vip: ModerateMetadataVip | None = None

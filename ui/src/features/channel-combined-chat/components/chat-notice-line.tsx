@@ -47,6 +47,12 @@ function subTypeToColor(subType: ChatMessageSubType) {
         case 'gift_paid_upgrade':
         case 'prime_paid_upgrade':
         case 'pay_it_forward':
+        case 'newSponsorEvent':
+        case 'superChatEvent':
+        case 'superStickerEvent':
+        case 'membershipGiftingEvent':
+        case 'giftMembershipReceivedEvent':
+        case 'gift':
             return '#228be6'
         case 'announcement':
             return '#4c6ef5'

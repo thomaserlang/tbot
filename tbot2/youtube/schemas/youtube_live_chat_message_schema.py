@@ -4,6 +4,7 @@ from typing import Annotated, Literal
 from pydantic import Field
 
 from tbot2.common import BaseSchema
+from tbot2.common.types.chat_message_type import YoutubeMessageType
 
 
 class TextMessageDetails(BaseSchema):
@@ -93,25 +94,7 @@ class GiftMembershipReceivedDetails(BaseSchema):
 
 
 class Snippet(BaseSchema):
-    type: (
-        Literal[
-            'chatEndedEvent',
-            'messageDeletedEvent',
-            'sponsorOnlyModeEndedEvent',
-            'sponsorOnlyModeStartedEvent',
-            'newSponsorEvent',
-            'memberMilestoneChatEvent',
-            'superChatEvent',
-            'superStickerEvent',
-            'textMessageEvent',
-            'tombstone',
-            'userBannedEvent',
-            'membershipGiftingEvent',
-            'giftMembershipReceivedEvent',
-            'pollDetails',
-        ]
-        | str
-    )
+    type: YoutubeMessageType | str
     live_chat_id: Annotated[str, Field(alias='liveChatId')]
     author_channel_id: Annotated[str, Field(alias='authorChannelId')]
     """
