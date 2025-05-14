@@ -6,7 +6,7 @@ from uuid6 import uuid7
 
 from tbot2.common import Provider
 from tbot2.contexts import AsyncSession, get_session
-from tbot2.database import database
+from tbot2.database import conn
 
 from ..event_types import fire_event_delete_channel_provider
 from ..models.channel_provider_model import (
@@ -120,7 +120,7 @@ async def save_channel_provider(
         )
 
         if data.bot_provider_id:
-            await database.redis.delete(
+            await conn.redis.delete(
                 f'channel_provider_bot_oauth:{provider}:{channel_id}',
             )
 

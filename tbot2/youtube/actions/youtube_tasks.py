@@ -14,7 +14,7 @@ from tbot2.channel_stream import (
     get_or_create_channel_provider_stream,
 )
 from tbot2.common import datetime_now
-from tbot2.database import database
+from tbot2.database import conn
 
 from ..actions.youtube_handle_message import handle_message
 from ..actions.youtube_live_broadcast_actions import (
@@ -172,7 +172,7 @@ async def handle_broadcast_live_chat(
     ):
         logger.debug('Monitoring for events')
         try:
-            page_token = await database.redis.get(
+            page_token = await conn.redis.get(
                 f'youtube:live_broadcast:{live_chat_id}:page_token'
             )
             while True:
@@ -207,7 +207,7 @@ async def handle_broadcast_live_chat(
                     await asyncio.sleep(60)
                     continue
 
-                await database.redis.set(
+                await conn.redis.set(
                     f'youtube:live_broadcast:{live_chat_id}:page_token',
                     messages.next_page_token,
                     ex=60,

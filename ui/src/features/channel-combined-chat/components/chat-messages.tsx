@@ -1,8 +1,9 @@
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
 import { strDateFormat } from '@/utils/date'
-import { Box, Divider } from '@mantine/core'
+import { Box, Divider, Flex } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
 import { ChatMessageLine } from './chat-message-line'
+import classes from './chat-message.module.css'
 import { ChatNoticeLine } from './chat-notice-line'
 import { ChatStatusLine } from './chat-status-line'
 
@@ -14,14 +15,14 @@ interface Props {
 export function ChatMessages({ messages, onViewerClick }: Props) {
     let lastDate = ''
     return (
-        <>
+        <Flex gap="0.6rem" direction="column">
             {messages.map((message) => {
                 const date = message.created_at.substring(0, 10)
                 const showDateLine = date !== lastDate
                 if (showDateLine) lastDate = date
 
                 return (
-                    <Box p="0.3rem 0" key={message.id}>
+                    <>
                         {showDateLine && (
                             <Divider
                                 my="xs"
@@ -29,23 +30,46 @@ export function ChatMessages({ messages, onViewerClick }: Props) {
                                 labelPosition="center"
                             />
                         )}
-                        {message.type == 'message' && (
-                            <ChatMessageLine
-                                chatMessage={message}
-                                onViewerClick={onViewerClick}
-                            />
-                        )}
 
-                        {message.type == 'status' && (
-                            <ChatStatusLine chatMessage={message} />
-                        )}
+                        <DecorateMessage message={message} key={message.id}>
+                            {message.type == 'message' && (
+                                <ChatMessageLine
+                                    chatMessage={message}
+                                    onViewerClick={onViewerClick}
+                                />
+                            )}
 
-                        {message.type == 'notice' && (
-                            <ChatNoticeLine chatMessage={message} />
-                        )}
-                    </Box>
+                            {message.type == 'status' && (
+                                <ChatStatusLine chatMessage={message} />
+                            )}
+
+                            {message.type == 'notice' && (
+                                <ChatNoticeLine chatMessage={message} />
+                            )}
+                        </DecorateMessage>
+                    </>
                 )
             })}
-        </>
+        </Flex>
     )
+}
+
+function DecorateMessage({
+    message,
+    children,
+}: {
+    children: React.ReactNode
+    message: ChatMessage
+}) {
+    if (message.sub_type == 'power_ups_message_effect')
+        return (
+            <Box p="1rem">
+                <Box className={classes['message-animated-shadow']}>
+                    {children}
+                </Box>
+            </Box>
+        )
+    if (message.sub_type == 'channel_points_highlighted')
+        return <Box className={classes.highlight}>{children}</Box>
+    return <Box>{children}</Box>
 }

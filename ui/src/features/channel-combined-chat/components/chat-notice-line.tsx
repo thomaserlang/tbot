@@ -11,7 +11,7 @@ interface Props {
 
 export function ChatNoticeLine({ chatMessage, color }: Props) {
     return (
-        <Flex gap="0.25rem">
+        <Flex gap="0.7rem">
             <Divider
                 size="0.5rem"
                 orientation="vertical"

@@ -3,8 +3,7 @@ from warnings import filterwarnings
 
 import redis.asyncio as redis
 import sqlalchemy as sa
-from arq import ArqRedis, create_pool
-from arq.connections import RedisSettings
+from elasticsearch import AsyncElasticsearch
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncEngine,
@@ -18,14 +17,16 @@ from tbot2.config_settings import config
 filterwarnings('ignore', module=r'aiomysql')
 
 
-class Database:
+class Connections:
     def __init__(self) -> None:
         self.engine: AsyncEngine
         self.session: async_sessionmaker[AsyncSession]
-        self.redis: redis.Redis[str]
-        self.redis_queue: ArqRedis
+        self.redis: redis.Redis
         self._test_setup: bool = False
         self._conn: AsyncConnection
+        self.elasticsearch = AsyncElasticsearch(
+            config.elasticsearch.url,
+        )
 
     async def setup(self) -> None:
         database_url = sa.URL.create(
@@ -52,15 +53,6 @@ class Database:
             password=config.redis.password,
             db=config.redis.db,
             decode_responses=True,
-        )
-        self.redis_queue = await create_pool(
-            RedisSettings(
-                host=config.redis.host,
-                port=config.redis.port,
-                password=config.redis.password,
-                database=config.redis.db,
-            ),
-            default_queue_name=config.redis.queue_name,
         )
 
     async def setup_test(self) -> None:
@@ -103,11 +95,12 @@ class Database:
         self._test_setup = True
         self.trans = await self._conn.begin()
 
-        await self.redis.flushdb()
+        await self.redis.flushdb()  # type: ignore
 
     async def close(self) -> None:
         await self.engine.dispose()
         await self.redis.aclose()  # type: ignore
+        await self.elasticsearch.close()
 
     async def close_test(self) -> None:
         await self.trans.rollback()
@@ -115,4 +108,4 @@ class Database:
         await self.close()
 
 
-database = Database()
+conn = Connections()

@@ -2,19 +2,22 @@ import asyncio
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Body, Depends, Request, Security
 from loguru import logger
 from uuid6 import uuid7
 
 from tbot2.channel_chat_filters import matches_filter
-from tbot2.channel_chatlog import create_chatlog
+from tbot2.channel_chatlog import create_chatlog, publish_chatlog
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_provider import get_channel_provider
 from tbot2.common import (
+    ChatMessage,
     ChatMessageRequest,
     TAccessLevel,
+    TokenData,
 )
+from tbot2.dependecies import authenticated
 from tbot2.message_parse import message_to_parts
 from tbot2.twitch import twitch_warn_chat_user
 
@@ -27,6 +30,8 @@ from ..actions.twitch_message_utils import (
 from ..actions.twitch_send_message_actions import twitch_bot_send_message
 from ..schemas.event_channel_chat_message_schema import (
     ChannelChatMessageBadge,
+    ChannelChatMessageFragment,
+    ChannelChatMessageType,
     EventChannelChatMessage,
 )
 from ..schemas.event_headers_schema import EventSubHeaders
@@ -60,7 +65,6 @@ async def event_channel_chat_message_route(
         return
 
     chat_message = ChatMessageRequest(
-        id=uuid7(),
         type='message',
         sub_type=data.event.message_type,
         channel_id=channel_id,
@@ -108,6 +112,43 @@ async def event_channel_chat_message_route(
     await asyncio.gather(
         handle_filter_message(chat_message=chat_message),
         create_chatlog(data=chat_message),
+    )
+
+
+@router.post(
+    '/emulate-channel-chat-message',
+    name='Emulate Channel Chat Message',
+    status_code=204,
+)
+async def emulate_channel_chat_message_route(
+    channel_id: UUID,
+    token_data: Annotated[TokenData, Security(authenticated)],
+    fragments: Annotated[list[ChannelChatMessageFragment], Body(embed=True)],
+    message_type: Annotated[ChannelChatMessageType, Body(embed=True)] = 'text',
+) -> None:
+    await token_data.channel_require_access(
+        channel_id=channel_id,
+        access_level=TAccessLevel.MOD,
+    )
+
+    chat_message = ChatMessageRequest(
+        type='message',
+        sub_type=message_type,
+        channel_id=channel_id,
+        provider_viewer_id='123',
+        viewer_name='test_user',
+        viewer_display_name='TestUser',
+        msg_id=str(uuid7()),
+        provider='twitch',
+        provider_id='123',
+        parts=await message_to_parts(
+            parts=twitch_fragments_to_parts(fragments),
+            provider='twitch',
+            provider_user_id='123',
+        ),
+    )
+    await publish_chatlog(
+        channel_id=channel_id, data=ChatMessage.model_validate(chat_message)
     )
 
 

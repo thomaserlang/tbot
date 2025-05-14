@@ -15,7 +15,7 @@ from tbot2.common import (
     TAccessLevel,
     TokenData,
 )
-from tbot2.database import database
+from tbot2.database import conn
 from tbot2.dependecies import authenticated
 from tbot2.page_cursor import PageCursor, PageCursorQueryDep, page_cursor
 
@@ -124,7 +124,7 @@ async def handle_connection(
     provider_viewer_id: str | None = None,
     type: ChatMessageType | None = None,
 ) -> None:
-    async with database.redis.pubsub() as pubsub:  # type: ignore
+    async with conn.redis.pubsub() as pubsub:  # type: ignore
         await pubsub.subscribe(chatlog_queue_key(channel_id=channel_id))  # type: ignore
         while True:
             try:

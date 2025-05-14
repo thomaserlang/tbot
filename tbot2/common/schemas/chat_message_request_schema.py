@@ -6,12 +6,12 @@ from pydantic import Field, StringConstraints, ValidationInfo, field_validator
 from typing_extensions import Doc
 from uuid6 import uuid7
 
-from tbot2.common import BaseRequestSchema
-from tbot2.common.utils.username_color_generate import username_color_generator
-
 from ..types.access_level_type import TAccessLevel
 from ..types.chat_message_type import ChatMessageSubType, ChatMessageType
 from ..types.provider_type import Provider
+from ..utils.datetime_now import datetime_now
+from ..utils.username_color_generate import username_color_generator
+from .base_request_schema import BaseRequestSchema
 
 
 class ChatMessageBadgeRequest(BaseRequestSchema):
@@ -58,7 +58,7 @@ class ChatMessageRequest(BaseRequestSchema):
         ]
         | None
     ) = None
-    created_at: datetime
+    created_at: datetime = Field(default_factory=datetime_now)
     provider: Provider
     provider_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     channel_id: Annotated[UUID, Doc('The ID of the TBot channel')]

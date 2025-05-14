@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import hmac
 from typing import Annotated
@@ -6,6 +7,7 @@ from fastapi import Depends, HTTPException, Request
 from loguru import logger
 
 from tbot2.config_settings import config
+from tbot2.database import conn
 from tbot2.dependecies import PlainResponse
 
 from .schemas.event_headers_schema import EventSubHeaders
@@ -51,5 +53,19 @@ async def validate_twitch_webhook_signature(
             headers.message_type,
         )
         raise PlainResponse(status_code=200, content='Roger')
+
+    asyncio.create_task(
+        conn.elasticsearch.index(
+            index='twitch-eventsub',
+            document={
+                'message_id': headers.message_id,
+                'message_timestamp': headers.message_timestamp,
+                'message_type': headers.message_type,
+                'message_signature': headers.message_signature,
+                'channel_id': request.query_params['channel_id'],
+                **(await request.json()),
+            },
+        )
+    )
 
     return headers

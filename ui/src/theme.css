@@ -15,15 +15,17 @@ body {
 
   --tbot-selected-color: var(--mantine-primary-color-light);
 
-  @mixin light {
-    background-color: var(--mantine-color-gray-0);
+  --background-color: light-dark(
+    var(--mantine-color-gray-0),
+    var(--mantine-color-dark-8)
+  );
+  background-color: var(--background-color);
 
+  @mixin light {
     --tbot-border-color: var(--mantine-color-gray-3);
   }
 
   @mixin dark {
-    background-color: var(--mantine-color-dark-8);
-
     --tbot-border-color: var(--mantine-color-dark-4);
 
     --mantine-datatable-shadow-background-bottom: linear-gradient(

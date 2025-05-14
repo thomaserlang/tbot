@@ -25,7 +25,6 @@ export function useHandleQueueEvents({ queueId }: GetChatlogsWSProps) {
             },
             onMessage: (message) => {
                 const event = JSON.parse(message.data) as QueueEvent
-                console.log('1')
                 if (event.channel_queue_viewer) {
                     queryClient.invalidateQueries({
                         queryKey: getQueueViewersQueryKey({

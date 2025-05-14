@@ -20,7 +20,7 @@ from tbot2.channel_provider import (
 from tbot2.common import ErrorMessage, Provider, datetime_now
 from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 from tbot2.common.exceptions import ExternalApiError
-from tbot2.database import database
+from tbot2.database import conn
 
 
 class ChannelProviderOAuthHelper(Auth):
@@ -54,7 +54,7 @@ class ChannelProviderOAuthHelper(Auth):
             yield request
 
     async def get_access_token(self, channel_id: UUID) -> str:
-        access_token = await database.redis.get(
+        access_token = await conn.redis.get(
             f'channel_provider_oauth:{self.provider}:{channel_id}',
         )
         if access_token:
@@ -86,7 +86,7 @@ class ChannelProviderOAuthHelper(Auth):
     async def cache_access_token(
         self, channel_id: UUID, access_token: str, expires_in: float
     ) -> None:
-        await database.redis.set(
+        await conn.redis.set(
             f'channel_provider_oauth:{self.provider}:{channel_id}',
             access_token,
             ex=int(expires_in),
@@ -94,17 +94,16 @@ class ChannelProviderOAuthHelper(Auth):
 
     async def refresh_token(self, channel_id: UUID) -> str:
         logger.debug('Refreshing token', channel_id=channel_id, provider=self.provider)
-        async with database.redis.lock(
+        async with conn.redis.lock(
             f'lock_channel_provider_oauth:{self.provider}:{channel_id}',
             timeout=2.0,
         ) as lock:
             if await lock.owned():
                 return await self._refresh_token(channel_id=channel_id)
-            else:
-                await lock.acquire()
-                return await self.get_access_token(
-                    channel_id=channel_id,
-                )
+            await lock.acquire()
+            return await self.get_access_token(
+                channel_id=channel_id,
+            )
 
     async def _refresh_token(self, channel_id: UUID) -> str:
         channel_provider_oauth = await get_channel_provider_oauth(
@@ -182,7 +181,7 @@ class ChannelProviderBotOAuthHelper(Auth):
             yield request
 
     async def get_access_token(self, channel_id: UUID) -> str:
-        access_token = await database.redis.get(
+        access_token = await conn.redis.get(
             f'channel_provider_bot_oauth:{self.provider}:{channel_id}',
         )
         if access_token:
@@ -215,7 +214,7 @@ class ChannelProviderBotOAuthHelper(Auth):
     async def cache_access_token(
         self, channel_id: UUID, access_token: str, expires_in: float
     ) -> None:
-        await database.redis.set(
+        await conn.redis.set(
             f'channel_provider_bot_oauth:{self.provider}:{channel_id}',
             access_token,
             ex=int(expires_in),
@@ -223,17 +222,16 @@ class ChannelProviderBotOAuthHelper(Auth):
 
     async def refresh_token(self, channel_id: UUID) -> str:
         logger.debug('Refreshing token', channel_id=channel_id, provider=self.provider)
-        async with database.redis.lock(
+        async with conn.redis.lock(
             f'lock_channel_provider_bot_oauth:{self.provider}:{channel_id}',
             timeout=2.0,
         ) as lock:
             if await lock.owned():
                 return await self._refresh_token(channel_id=channel_id)
-            else:
-                await lock.acquire()
-                return await self.get_access_token(
-                    channel_id=channel_id,
-                )
+            await lock.acquire()
+            return await self.get_access_token(
+                channel_id=channel_id,
+            )
 
     async def _refresh_token(self, channel_id: UUID) -> str:
         bot_provider = await get_channel_bot_provider(

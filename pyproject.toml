@@ -8,12 +8,11 @@ dependencies = [
     "sqlalchemy==2.0.40",
     "yaml-settings-pydantic==2.3.2",
     "pydantic[email]==2.11.4",
-    "redis[hiredis]==6.0.0",
+    "redis[hiredis]==6.1.0",
     "httpx[http2]==0.28.1",
     "httpx_auth==0.23.1",
     "authlib==1.5.2",
     "uvicorn[standard]==0.34.2",
-    "arq==0.26.3",
     "asyncmy==0.2.10",
     "alembic==1.15.2",
     "uuid6==2024.7.10",
@@ -31,9 +30,10 @@ dependencies = [
     "orjson>=3.10.18",
     "sentry-sdk[fastapi,loguru]==2.27.0",
     "httpx-retries>=0.3.2",
-    "tiktoklive==6.5.1.post1",
+    "tiktoklive==6.5.2",
     "betterproto==2.0.0b7",
     "py-memoize[ujson]>=3.1.1",
+    "elasticsearch[async]==9.0.1",
 ]
 
 [project.optional-dependencies]

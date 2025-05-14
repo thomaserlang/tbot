@@ -2,7 +2,7 @@ import { ChannelId } from '@/features/channel/types/channel.types'
 import { Skeleton } from '@mantine/core'
 import { useGetTwitchBadges } from '../api/twitch-badges.api'
 import { ChatMessageBadge } from '../types/chat-message.type'
-import classes from './chat-message-line.module.css'
+import classes from './chat-message.module.css'
 
 interface Props {
     channelId: ChannelId

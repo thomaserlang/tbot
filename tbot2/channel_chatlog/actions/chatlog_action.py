@@ -6,7 +6,7 @@ from loguru import logger
 from tbot2.channel_viewer import ViewerNameHistoryRequest, save_viewers_name_history
 from tbot2.common import ChatMessage, ChatMessageRequest, Provider
 from tbot2.contexts import AsyncSession, get_session
-from tbot2.database import database
+from tbot2.database import conn
 
 from ..models.chatlog_model import MChatlog
 
@@ -16,7 +16,7 @@ async def get_chatlog(
     channel_id: UUID | None = None,
     provider: Provider | None = None,
 ) -> ChatMessage | None:
-    async with database.session() as session:
+    async with conn.session() as session:
         stmt = (
             sa.select(MChatlog)
             .where(
@@ -87,7 +87,7 @@ async def publish_chatlog(
     data: ChatMessage,
 ) -> None:
     key = chatlog_queue_key(channel_id=channel_id)
-    await database.redis.publish(  # type: ignore
+    await conn.redis.publish(  # type: ignore
         key,
         data.model_dump_json(),
     )

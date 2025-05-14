@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from tbot2.channel_queue.schemas.queue_event_schema import QueueEvent
-from tbot2.database import database
+from tbot2.database import conn
 
 from ..schemas.queue_viewer_schema import QueueViewer
 
@@ -18,7 +18,7 @@ async def publish_queue_viewer_created(
         type='channel_queue_viewer_created',
         channel_queue_viewer=channel_queue_viewer,
     )
-    await database.redis.publish(key, event.model_dump_json())  # type: ignore
+    await conn.redis.publish(key, event.model_dump_json())  # type: ignore
 
 
 async def publish_queue_viewer_deleted(
@@ -29,7 +29,7 @@ async def publish_queue_viewer_deleted(
         type='channel_queue_viewer_deleted',
         channel_queue_viewer=channel_queue_viewer,
     )
-    await database.redis.publish(key, event.model_dump_json())  # type: ignore
+    await conn.redis.publish(key, event.model_dump_json())  # type: ignore
 
 
 async def publish_queue_viewer_moved(
@@ -40,7 +40,7 @@ async def publish_queue_viewer_moved(
         type='channel_queue_viewer_moved',
         channel_queue_viewer=channel_queue_viewer,
     )
-    await database.redis.publish(key, event.model_dump_json())  # type: ignore
+    await conn.redis.publish(key, event.model_dump_json())  # type: ignore
 
 
 async def publish_queue_cleared(channel_queue_id: UUID) -> None:
@@ -49,4 +49,4 @@ async def publish_queue_cleared(channel_queue_id: UUID) -> None:
         type='channel_queue_cleared',
         channel_queue_viewer=None,
     )
-    await database.redis.publish(key, event.model_dump_json())  # type: ignore
+    await conn.redis.publish(key, event.model_dump_json())  # type: ignore

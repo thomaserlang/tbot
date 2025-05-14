@@ -96,6 +96,16 @@ class ChannelChatMessageSourceBadge(BaseSchema):
     'Contains metadata related to the chat badges in the badges tag.'
 
 
+ChannelChatMessageType = Literal[
+    'text',
+    'channel_points_highlighted',
+    'channel_points_sub_only',
+    'user_intro',
+    'power_ups_message_effect',
+    'power_ups_gigantified_emote',
+]
+
+
 class EventChannelChatMessage(BaseSchema):
     broadcaster_user_id: str
     'The broadcaster user ID.'
@@ -113,17 +123,7 @@ class EventChannelChatMessage(BaseSchema):
     'A UUID that identifies the message.'
     message: ChannelChatMessageMessage
     'The structured chat message.'
-    message_type: (
-        Literal[
-            'text',
-            'channel_points_highlighted',
-            'channel_points_sub_only',
-            'user_intro',
-            'power_ups_message_effect',
-            'power_ups_gigantified_emote',
-        ]
-        | str
-    )
+    message_type: ChannelChatMessageType | str
     'The type of message.'
     badges: list[ChannelChatMessageBadge]
     'List of chat badges.'

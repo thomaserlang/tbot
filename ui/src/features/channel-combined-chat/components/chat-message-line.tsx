@@ -3,7 +3,7 @@ import { Box, MantineFontSize, MantineLineHeight, Text } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
 import { AssembleParts } from './assemble-parts'
 import { Badges } from './badges'
-import classes from './chat-message-line.module.css'
+import classes from './chat-message.module.css'
 import { ProviderLogo } from './provider-logo'
 
 interface Props {
@@ -73,7 +73,10 @@ export function ChatMessageLine({
             </Text>
             :
             <Text component="span" size={size} className={classes.text}>
-                <AssembleParts parts={chatMessage.parts} />
+                <AssembleParts
+                    parts={chatMessage.parts}
+                    subType={chatMessage.sub_type}
+                />
             </Text>
         </Box>
     )

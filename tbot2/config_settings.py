@@ -61,7 +61,10 @@ class ConfigRedisModel(BaseModel):
     pool_max_size: int = 20
     password: str | None = None
     db: int = 0
-    queue_name: str = 'tbot'
+
+
+class ConfigElasticsearchModel(BaseModel):
+    url: str = 'http://localhost:9200/'
 
 
 def get_config_path() -> Path:
@@ -127,6 +130,7 @@ class ConfigSettings(BaseYamlSettings):
     tiktok: ConfigTiktokConfig = ConfigTiktokConfig()
     logging: ConfigLoggingModel = ConfigLoggingModel()
     db: ConfigDBModel = ConfigDBModel()
+    elasticsearch: ConfigElasticsearchModel = ConfigElasticsearchModel()
     redis: ConfigRedisModel = ConfigRedisModel()
     openweathermap_apikey: str | None = None
     faceit_apikey: str | None = None

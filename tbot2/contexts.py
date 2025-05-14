@@ -1,7 +1,7 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from .database import AsyncSession, database
+from .database import AsyncSession, conn
 
 
 @asynccontextmanager
@@ -11,6 +11,6 @@ async def get_session(
     if session:
         yield session
     else:
-        async with database.session() as session:
+        async with conn.session() as session:
             yield session
             await session.commit()

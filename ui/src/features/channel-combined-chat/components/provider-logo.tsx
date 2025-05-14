@@ -1,7 +1,7 @@
 import { providerInfo } from '@/constants/providers-info.constants'
 import { Provider } from '@/types/provider.type'
 import { Box } from '@mantine/core'
-import classes from './chat-message-line.module.css'
+import classes from './chat-message.module.css'
 
 interface Props {
     provider: Provider

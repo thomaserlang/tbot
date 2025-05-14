@@ -55,11 +55,11 @@ def upgrade(revision: str, keep_running: bool) -> None:
 
 @asynccontextmanager
 async def db() -> AsyncGenerator[None]:
-    from tbot2.database import database
+    from tbot2.database import conn
 
-    await database.setup()
+    await conn.setup()
     yield
-    await database.close()
+    await conn.close()
 
 
 @cli.command()

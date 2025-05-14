@@ -26,7 +26,7 @@ from tbot2.common import Error, TBotBaseException
 from tbot2.common.constants import APP_TITLE
 from tbot2.common.utils.pydantic_response import request_validation_error_to_error
 from tbot2.config_settings import config
-from tbot2.database import database
+from tbot2.database import conn
 from tbot2.dependecies import PlainResponse
 from tbot2.health.router import health_router
 from tbot2.spotify.router import spotify_router
@@ -38,9 +38,9 @@ from tbot2.youtube.router import youtube_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
-    await database.setup()
+    await conn.setup()
     yield
-    await database.close()
+    await conn.close()
 
 
 app = FastAPI(

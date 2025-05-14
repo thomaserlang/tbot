@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from tbot2.common import Provider
-from tbot2.database import database
+from tbot2.database import conn
 
 
 async def create_permit(
@@ -11,7 +11,7 @@ async def create_permit(
     provider_viewer_id: str,
     seconds: int = 60,
 ) -> None:
-    await database.redis.set(
+    await conn.redis.set(
         f'tbot:permit:{channel_id}:{provider}:{provider_viewer_id}',
         '1',
         ex=seconds,
@@ -25,7 +25,7 @@ async def has_permit(
     provider_viewer_id: str,
 ) -> bool:
     return (
-        await database.redis.exists(
+        await conn.redis.exists(
             f'tbot:permit:{channel_id}:{provider}:{provider_viewer_id}',
         )
     ) > 0
@@ -38,7 +38,7 @@ async def delete_permit(
     provider_viewer_id: str,
 ) -> bool:
     return (
-        await database.redis.delete(
+        await conn.redis.delete(
             f'tbot:permit:{channel_id}:{provider}:{provider_viewer_id}',
         )
     ) > 0
