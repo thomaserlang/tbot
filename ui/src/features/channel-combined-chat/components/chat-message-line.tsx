@@ -1,5 +1,7 @@
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
 import { Box, MantineFontSize, MantineLineHeight, Text } from '@mantine/core'
+import { suggestAAColorVariant } from 'accessible-colors'
+
 import { ChatMessage } from '../types/chat-message.type'
 import { AssembleParts } from './assemble-parts'
 import { Badges } from './badges'
@@ -65,7 +67,11 @@ export function ChatMessageLine({
                     } as ViewerName)
                 }}
                 style={{
-                    color: fixColor(chatMessage.viewer_color) || '',
+                    color:
+                        suggestAAColorVariant(
+                            chatMessage.viewer_color || '',
+                            '#1f1f1f'
+                        ) || '#8b58FF',
                     cursor: onViewerClick ? 'pointer' : 'default',
                 }}
             >
@@ -80,37 +86,4 @@ export function ChatMessageLine({
             </Text>
         </Box>
     )
-}
-
-function fixColor(color: string | null) {
-    switch ((color || '').toUpperCase()) {
-        case '#0000FF':
-            return '#8b58FF'
-        case '#8A2BE2':
-            return '#8B58FF'
-        case '#000000':
-            return '#7A7A7A'
-        case '#3A2B2B':
-            return '#877587'
-        case '#893939':
-            return '#B7625F'
-        case '#4D4C4D':
-            return '#7D7E7F'
-        case '#191D59':
-            return '#837AC3'
-        case '#0E3820':
-            return '#5B8969'
-        case '#161917':
-            return '#7A7A7A'
-        case '#5900FF':
-            return '#9F4EFF'
-        case '#2626D3':
-            return '#8061FF'
-        case '#1926B3':
-            return '#866FFF'
-        case '#000061':
-            return '#8C68D9'
-        default:
-            return color
-    }
 }
