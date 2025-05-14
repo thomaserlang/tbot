@@ -1,5 +1,5 @@
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
-import { Box, Text } from '@mantine/core'
+import { Box, MantineFontSize, MantineLineHeight, Text } from '@mantine/core'
 import { ChatMessage } from '../types/chat-message.type'
 import { AssembleParts } from './assemble-parts'
 import { Badges } from './badges'
@@ -9,41 +9,52 @@ import { ProviderLogo } from './provider-logo'
 interface Props {
     chatMessage: ChatMessage
     hideProviderLogo?: boolean
+    hideTime?: boolean
+    hideBadges?: boolean
+    size?: MantineFontSize & MantineLineHeight
     onViewerClick?: (viewer: ViewerName) => void
 }
 
 export function ChatMessageLine({
     chatMessage,
     hideProviderLogo,
+    hideTime,
+    hideBadges,
+    size,
     onViewerClick,
 }: Props) {
     return (
         <Box className={classes.message}>
-            <Text
-                component="span"
-                mr="0.25rem"
-                c="dimmed"
-                style={{
-                    fontVariantNumeric: 'tabular-nums',
-                }}
-                title={chatMessage.created_at}
-            >
-                {new Date(chatMessage.created_at).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                })}
-            </Text>
+            {!hideTime && (
+                <Text
+                    component="span"
+                    mr="0.25rem"
+                    c="dimmed"
+                    style={{
+                        fontVariantNumeric: 'tabular-nums',
+                    }}
+                    title={chatMessage.created_at}
+                    size={size}
+                >
+                    {new Date(chatMessage.created_at).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                    })}
+                </Text>
+            )}
             {!hideProviderLogo && (
                 <ProviderLogo provider={chatMessage.provider} />
             )}
-            {chatMessage.badges && (
+            {!hideBadges && chatMessage.badges.length > 0 && (
                 <Badges
                     channelId={chatMessage.channel_id}
                     badges={chatMessage.badges}
                 />
             )}
-            <span
+            <Text
+                component="span"
+                size={size}
                 className={classes.username}
                 onClick={() => {
                     onViewerClick?.({
@@ -59,11 +70,11 @@ export function ChatMessageLine({
                 }}
             >
                 {chatMessage.viewer_display_name}
-            </span>
+            </Text>
             :
-            <span className={classes.text}>
+            <Text component="span" size={size} className={classes.text}>
                 <AssembleParts parts={chatMessage.parts} />
-            </span>
+            </Text>
         </Box>
     )
 }

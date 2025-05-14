@@ -1,6 +1,7 @@
 import { RelativeTimeUpdater } from '@/components/relative-time-updater'
 import { providerInfo } from '@/constants'
 import { ChatMessage } from '@/features/channel-combined-chat'
+import { ChatMessageLine } from '@/features/channel-combined-chat/components/chat-message-line'
 import { Box, Divider, Flex, Text } from '@mantine/core'
 import { Fragment } from 'react/jsx-runtime'
 
@@ -30,7 +31,16 @@ export function NoticeFeedList({ notices }: Props) {
                             </Text>
                         </Flex>
 
-                        <Text>{notice.message}</Text>
+                        <Text size="sm">{notice.notice_message}</Text>
+                        {notice.parts.length > 0 && (
+                            <ChatMessageLine
+                                chatMessage={notice}
+                                hideProviderLogo
+                                hideTime
+                                hideBadges
+                                size="sm"
+                            />
+                        )}
                     </Flex>
 
                     <Divider />
