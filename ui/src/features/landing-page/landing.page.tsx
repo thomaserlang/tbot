@@ -1,9 +1,10 @@
-import { Logo } from '@/components/logo'
 import {
+    Box,
     Button,
     Container,
     Flex,
     Grid,
+    Image,
     SimpleGrid,
     Text,
     ThemeIcon,
@@ -79,8 +80,16 @@ export function Component() {
             />
             <Container size="lg">
                 <Flex ml="2rem" mt="2rem" direction="column" wrap={'wrap'}>
-                    <Logo width={300} />
-                    <Text c="dimmed" fw={500} fz={25}>
+                    <Flex gap="0.5rem">
+                        <Box
+                            mt="0.25rem"
+                            style={{ width: '13%', height: '13%' }}
+                        >
+                            <Image src="/tree.svg" alt="Synchra" />
+                        </Box>
+                        <Image src="/logo.svg" alt="Synchra" w={300} />
+                    </Flex>
+                    <Text c="dimmed" ml="9.5rem" mt="-1rem" fw={500} fz={25}>
                         Work smarter, not harder
                     </Text>
                 </Flex>

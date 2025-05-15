@@ -1,5 +1,5 @@
 .wrapper {
-  padding: calc(var(--mantine-spacing-xl) * 2) var(--mantine-spacing-xl);
+  padding: var(--mantine-spacing-xl) var(--mantine-spacing-xl);
 }
 
 .title {
