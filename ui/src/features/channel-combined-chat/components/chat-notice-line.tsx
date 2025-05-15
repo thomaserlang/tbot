@@ -19,7 +19,7 @@ export function ChatNoticeLine({ chatMessage }: Props) {
         >
             <Box className={classes.verticalLine} />
 
-            <Flex direction="column" p="0.5rem 0">
+            <Flex direction="column" p="0.5rem 0" pr="0.25rem">
                 <Flex gap="0.1rem">
                     <ProviderLogo provider={chatMessage.provider} />
 
