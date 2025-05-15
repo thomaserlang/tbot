@@ -79,21 +79,43 @@ export function Component() {
                 content="Multiplartform streaming, Your own bot name, Combined Chat, Chat Filter, Commands/Timers"
             />
             <Container size="lg">
-                <Flex ml="2rem" mt="2rem" direction="column" wrap={'wrap'}>
-                    <Flex gap="0.5rem">
-                        <Box
-                            mt="0.25rem"
-                            style={{ width: '13%', height: '13%' }}
-                        >
-                            <Image src="/tree.svg" alt="Synchra" />
-                        </Box>
-                        <Image src="/logo.svg" alt="Synchra" w={300} />
-                    </Flex>
-                    <Text c="dimmed" ml="9.5rem" mt="-1rem" fw={500} fz={25}>
-                        Work smarter, not harder
-                    </Text>
-                </Flex>
                 <div className={classes.wrapper}>
+                    <Grid gutter={80}>
+                        <Grid.Col span={{ base: 12, md: 6 }}>
+                            <Flex
+                                gap="0.5rem"
+                                wrap={'wrap'}
+                                justify="center"
+                                align="center"
+                                mb="1rem"
+                            >
+                                <Flex direction="column">
+                                    <Image
+                                        ml="-0.15rem"
+                                        src="/logo.svg"
+                                        alt="Synchra"
+                                        w={300}
+                                    />
+                                    <Text
+                                        c="dimmed"
+                                        mt="-1.5rem"
+                                        fw={500}
+                                        fz={25}
+                                    >
+                                        Work smarter, not harder
+                                    </Text>
+                                </Flex>
+                                <Box mt="0.25rem">
+                                    <Image
+                                        src="/tree.svg"
+                                        alt="Synchra"
+                                        w={150}
+                                    />
+                                </Box>
+                            </Flex>
+                        </Grid.Col>
+                    </Grid>
+
                     <Grid gutter={80}>
                         <Grid.Col span={{ base: 12, md: 5 }}>
                             <Title className={classes.title} order={2}>
