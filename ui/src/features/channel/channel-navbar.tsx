@@ -7,6 +7,7 @@ import {
     IconGift,
     IconHome,
     IconLink,
+    IconList,
     IconLock,
     IconMessage,
     IconPokerChip,
@@ -41,6 +42,12 @@ export function ChannelNavbar() {
                     to={`/channels/${channel.id}/combined-chat`}
                     label="Combined Chat"
                     leftSection={<IconMessage size={20} />}
+                />
+                <NavLink
+                    component={RouterNavLink}
+                    to={`/channels/${channel.id}/notice-feed`}
+                    label="Notice Feed"
+                    leftSection={<IconList size={20} />}
                 />
                 <NavLink
                     component={RouterNavLink}

@@ -110,6 +110,13 @@ const protectedRoutes: RouteObject[] = [
                     ),
             },
             {
+                path: 'notice-feed',
+                lazy: () =>
+                    import(
+                        './features/channel-notice-feed/channel-notice-feed.page'
+                    ),
+            },
+            {
                 path: 'user-access',
                 lazy: () =>
                     import(
