@@ -12,14 +12,14 @@ interface Props {
 export function ChatNoticeLine({ chatMessage }: Props) {
     return (
         <Flex
-            gap="0.7rem"
+            gap="0.5rem"
             className={`${classes.notice} ${subTypeToClassName(
                 chatMessage.sub_type
             )}`}
         >
             <Box className={classes.verticalLine} />
 
-            <Flex direction="column" p="0.5rem 0" pr="0.25rem">
+            <Flex direction="column" className={classes.text}>
                 <Flex gap="0.1rem">
                     <ProviderLogo provider={chatMessage.provider} />
 

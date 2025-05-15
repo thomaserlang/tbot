@@ -2,8 +2,12 @@
   background-color: #1f1f1f;
 }
 
+.notice .text {
+  padding: 0.25rem 0.25rem 0.25rem 0;
+}
+
 .verticalLine {
-  width: 0.5rem;
+  width: 8px;
   background-color: #868e96;
 }
 
@@ -25,22 +29,26 @@
 .gold-border {
   --border-angle: 45deg;
 
-  border: 0.5rem solid transparent;
+  border: 0.25rem solid transparent;
   border-radius: 0.25rem;
 
   border-image: linear-gradient(
       var(--border-angle),
-      #f9d423,
-      #ffde7d,
-      #d4af37,
-      #ffde7d,
-      #f9d423
+      #f9d423 0%,
+      #ffde7d 25%,
+      #d4af37 50%,
+      #ffde7d 75%,
+      #f9d423 100%
     )
     1;
 
-  animation: rotateBorder 5s linear infinite;
-  padding: 1rem;
+  animation: moveGradient 1s linear infinite;
+  padding: 0.5rem;
   background-color: var(--background-color);
+}
+
+.gold-border .text {
+  padding: 0;
 }
 
 @keyframes rotateBorder {
