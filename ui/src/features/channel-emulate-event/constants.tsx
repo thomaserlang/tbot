@@ -157,4 +157,19 @@ export const EmulateEvents: EmulateEvent[] = [
             )
         },
     },
+
+    {
+        name: 'Subscription',
+        request: ({ channelId }) => {
+            return api.post(
+                `/api/2/twitch/eventsub/emulate-subscription`,
+                {},
+                {
+                    params: {
+                        channel_id: channelId,
+                    },
+                }
+            )
+        },
+    },
 ]

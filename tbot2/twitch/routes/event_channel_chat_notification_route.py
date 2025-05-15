@@ -1,10 +1,18 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Security
+from uuid6 import uuid7
 
-from tbot2.channel_chatlog import create_chatlog
-from tbot2.common import ChatMessageRequest
+from tbot2.channel_chatlog import create_chatlog, publish_chatlog
+from tbot2.common import (
+    ChatMessage,
+    ChatMessagePartRequest,
+    ChatMessageRequest,
+    TAccessLevel,
+    TokenData,
+)
+from tbot2.dependecies import authenticated
 from tbot2.message_parse import message_to_parts
 from tbot2.twitch.actions.twitch_message_utils import (
     twitch_badges_to_badges,
@@ -82,4 +90,44 @@ async def event_channel_chat_notification_route(
             if data.event.message.text
             else [],
         )
+    )
+
+
+@router.post(
+    '/emulate-subscription',
+    name='Emulate subscription',
+    status_code=204,
+)
+async def emulate_automatic_reward_redemption_route(
+    channel_id: UUID,
+    token_data: Annotated[TokenData, Security(authenticated)],
+) -> None:
+    await token_data.channel_require_access(
+        channel_id=channel_id,
+        access_level=TAccessLevel.MOD,
+    )
+
+    notice_message = "TestUser subscribed at Tier 1. They've subscribed for 41 months!"
+
+    chat_message = ChatMessageRequest(
+        type='notice',
+        sub_type='sub',
+        channel_id=channel_id,
+        provider_viewer_id='123',
+        viewer_name='test_user',
+        viewer_display_name='TestUser',
+        notice_message=notice_message,
+        notice_parts=[
+            ChatMessagePartRequest(
+                type='text',
+                text=notice_message,
+            ),
+        ],
+        message='Wohoo!!',
+        msg_id=str(uuid7()),
+        provider='twitch',
+        provider_id='123',
+    )
+    await publish_chatlog(
+        channel_id=channel_id, data=ChatMessage.model_validate(chat_message)
     )

@@ -1,0 +1,23 @@
+.notice {
+  background-color: #141414;
+}
+
+.verticalLine {
+  width: 0.5rem;
+  background-color: #868e96;
+}
+
+.gold-notice .verticalLine {
+  background: linear-gradient(
+    to bottom,
+    #f9d423 0%,
+    #ffde7d 25%,
+    #d4af37 50%,
+    #ffde7d 75%,
+    #f9d423 100%
+  );
+}
+
+.announcement-notice .verticalLine {
+  background-color: #1971c2;
+}

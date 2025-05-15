@@ -1,24 +1,25 @@
-import { Divider, Flex, Text } from '@mantine/core'
+import { Box, Flex, Text } from '@mantine/core'
 import { ChatMessage, ChatMessageSubType } from '../types/chat-message.type'
 import { AssembleParts } from './assemble-parts'
 import { ChatMessageLine } from './chat-message-line'
+import classes from './chat-notice.module.css'
 import { ProviderLogo } from './provider-logo'
 
 interface Props {
     chatMessage: ChatMessage
-    color?: string
 }
 
-export function ChatNoticeLine({ chatMessage, color }: Props) {
+export function ChatNoticeLine({ chatMessage }: Props) {
     return (
-        <Flex gap="0.7rem">
-            <Divider
-                size="0.5rem"
-                orientation="vertical"
-                color={color || subTypeToColor(chatMessage.sub_type)}
-            />
+        <Flex
+            gap="0.7rem"
+            className={`${classes.notice} ${subTypeToClassName(
+                chatMessage.sub_type
+            )}`}
+        >
+            <Box className={classes.verticalLine} />
 
-            <Flex direction="column" pb="0.1rem" pt="0.1rem">
+            <Flex direction="column" p="0.5rem 0">
                 <Flex gap="0.1rem">
                     <ProviderLogo provider={chatMessage.provider} />
 
@@ -38,7 +39,7 @@ export function ChatNoticeLine({ chatMessage, color }: Props) {
     )
 }
 
-function subTypeToColor(subType: ChatMessageSubType) {
+function subTypeToClassName(subType: ChatMessageSubType) {
     switch (subType) {
         case 'sub':
         case 'resub':
@@ -53,8 +54,8 @@ function subTypeToColor(subType: ChatMessageSubType) {
         case 'membershipGiftingEvent':
         case 'giftMembershipReceivedEvent':
         case 'gift':
-            return '#228be6'
+            return classes['gold-notice']
         case 'announcement':
-            return '#4c6ef5'
+            return classes['announcement-notice']
     }
 }
