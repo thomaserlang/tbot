@@ -17,8 +17,10 @@
 }
 
 .highlight .text {
-  background-color: #d0bfff;
-  color: #000;
+  padding: 0 0.15rem;
+  padding-bottom: 0.15rem;
+  background-color: #8d67f5;
+  color: #fff;
 }
 
 .provider {
