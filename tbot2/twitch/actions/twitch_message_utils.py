@@ -21,7 +21,9 @@ def twitch_badges_to_badges(
         return []
     return [
         ChatMessageBadgeRequest(
-            id=f'{badge.set_id}-{badge.id}', type=badge.set_id, info=badge.info
+            id=f'{badge.set_id}-{badge.id}',
+            type=badge.set_id,
+            name=f'{badge.set_id} {badge.info}'.strip(),
         )
         for badge in badges
     ]

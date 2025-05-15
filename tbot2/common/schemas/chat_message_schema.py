@@ -15,7 +15,7 @@ from .image_urls_schema import ImageUrls
 class ChatMessageBadge(BaseSchema):
     id: str
     type: str
-    info: str
+    name: str
 
 
 class EmotePart(BaseSchema):

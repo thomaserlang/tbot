@@ -23,7 +23,7 @@ from .base_request_schema import BaseRequestSchema
 class ChatMessageBadgeRequest(BaseRequestSchema):
     id: str
     type: str
-    info: str
+    name: str
 
 
 class EmotePartRequest(BaseRequestSchema):
