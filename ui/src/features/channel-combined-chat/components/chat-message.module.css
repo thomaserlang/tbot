@@ -52,7 +52,7 @@
 
 .emote-sm {
   margin: -0.5rem 0;
-  height: 28px;
+  max-height: 28px;
 }
 
 .emote-md {
