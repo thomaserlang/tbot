@@ -13,7 +13,7 @@ async def get_custom_reward(
     broadcaster_id: str,
     id: str,
 ) -> CustomReward | None:
-    response = await twitch_user_client.post(
+    response = await twitch_user_client.get(
         '/channel_points/custom_rewards',
         params={
             'broadcaster_id': broadcaster_id,
