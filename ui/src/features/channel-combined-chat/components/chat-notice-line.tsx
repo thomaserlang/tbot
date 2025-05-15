@@ -47,6 +47,7 @@ export function ChatNoticeLine({ chatMessage }: Props) {
 
 function subTypeToClassName(subType: ChatMessageSubType) {
     switch (subType) {
+        case 'cheer':
         case 'sub':
         case 'resub':
         case 'sub_gift':

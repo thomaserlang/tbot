@@ -24,6 +24,7 @@ TwitchNoticeType = Literal[
     'shared_chat_pay_it_forward',
     'shared_chat_raid',
     'shared_chat_announcement',
+    'cheer',  # custom added
 ]
 
 TwitchModerateAction = Literal[

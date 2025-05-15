@@ -27,6 +27,7 @@ export type TwitchNoticeType =
     | 'shared_chat_pay_it_forward'
     | 'shared_chat_raid'
     | 'shared_chat_announcement'
+    | 'cheer' // custom added
 
 export type TwitchModerateAction =
     | 'ban'
