@@ -66,6 +66,6 @@ class EventChannelPointsAutomaticRewardRedemption(BaseSchema):
     'An object that contains the reward information.'
     message: Message
     'An object that contains the user message and emote information needed to recreate the message.'  # noqa: E501
-    user_input: str = ''
+    user_input: str | None = None
     'Optional. A string that the user entered if the reward requires input.'
     redeemed_at: datetime
