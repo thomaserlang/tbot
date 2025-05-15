@@ -33,6 +33,7 @@ from ..actions.twitch_message_utils import (
 from ..actions.twitch_send_message_actions import twitch_bot_send_message
 from ..schemas.event_channel_chat_message_schema import (
     ChannelChatMessageBadge,
+    ChannelChatMessageCheer,
     ChannelChatMessageFragment,
     ChannelChatMessageType,
     EventChannelChatMessage,
@@ -99,6 +100,11 @@ async def event_channel_chat_message_route(
             chat_message.type = 'notice'
             chat_message.notice_message = f'Redeemed {reward.title} • {reward.cost}'
 
+    if data.event.cheer:
+        chat_message.type = 'notice'
+        chat_message.sub_type = 'cheer'
+        chat_message.notice_message = f'Cheered {data.event.cheer.bits} bits'
+
     try:
         if response := await handle_message_response(
             chat_message=chat_message,
@@ -137,6 +143,7 @@ async def emulate_channel_chat_message_route(
     channel_id: UUID,
     token_data: Annotated[TokenData, Security(authenticated)],
     fragments: Annotated[list[ChannelChatMessageFragment], Body(embed=True)],
+    cheer: Annotated[ChannelChatMessageCheer | None, Body(embed=True)] = None,
     message_type: Annotated[ChannelChatMessageType, Body(embed=True)] = 'text',
 ) -> None:
     await token_data.channel_require_access(
@@ -160,6 +167,11 @@ async def emulate_channel_chat_message_route(
             provider_user_id='123',
         ),
     )
+    if cheer:
+        chat_message.type = 'notice'
+        chat_message.sub_type = 'cheer'
+        chat_message.notice_message = f'Cheered {cheer.bits} bits'
+
     await publish_chatlog(
         channel_id=channel_id, data=ChatMessage.model_validate(chat_message)
     )

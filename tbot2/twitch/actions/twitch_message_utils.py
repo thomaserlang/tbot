@@ -20,7 +20,9 @@ def twitch_badges_to_badges(
     if not badges:
         return []
     return [
-        ChatMessageBadgeRequest(id=badge.id, type=badge.set_id, info=badge.info)
+        ChatMessageBadgeRequest(
+            id=f'{badge.set_id}-{badge.id}', type=badge.set_id, info=badge.info
+        )
         for badge in badges
     ]
 
@@ -59,8 +61,8 @@ def twitch_fragments_to_parts(
                             type='gift',
                             text=fragment.text,
                             gift=GiftPartRequest(
-                                id=str(fragment.cheermote.tier),
-                                name=fragment.cheermote.prefix,
+                                id=f'{fragment.cheermote.prefix}-{fragment.cheermote.tier}',
+                                name=f'{fragment.cheermote.prefix}-{fragment.cheermote.bits}',
                                 type='cheermote',
                                 count=fragment.cheermote.bits,
                                 animated=True,

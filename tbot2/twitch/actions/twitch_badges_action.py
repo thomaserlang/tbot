@@ -1,3 +1,4 @@
+import asyncio
 from datetime import timedelta
 
 from memoize.configuration import DefaultInMemoryCacheConfiguration  # type: ignore
@@ -7,6 +8,16 @@ from tbot2.twitch.schemas.twitch_chat_badge_schema import ChatBadge, ChatBadgeVe
 
 from ..exceptions import TwitchException
 from ..twitch_http_client import twitch_app_client
+
+
+async def get_twitch_cached_badges(
+    broadcaster_id: str,
+) -> dict[str, ChatBadgeVersion]:
+    channel_badges, global_badges = await asyncio.gather(
+        twitch_channel_badges_cached(broadcaster_id),
+        twitch_global_badges_cached(),
+    )
+    return global_badges | channel_badges
 
 
 @memoize(
@@ -25,7 +36,7 @@ async def twitch_channel_badges_cached(
     if badges:
         for b in badges:
             for v in b.versions:
-                result[f'{b.set_id}/{v.id}'] = v
+                result[f'{b.set_id}-{v.id}'] = v
     return result
 
 
@@ -43,7 +54,7 @@ async def twitch_global_badges_cached() -> dict[str, ChatBadgeVersion]:
     if badges:
         for b in badges:
             for v in b.versions:
-                result[f'{b.set_id}/{v.id}'] = v
+                result[f'{b.set_id}-{v.id}'] = v
     return result
 
 
@@ -61,7 +72,7 @@ async def twitch_channel_badges(broadcaster_id: str) -> list[ChatBadge] | None:
         )
     data = response.json()
     if not data['data']:
-        return
+        return None
     return [ChatBadge.model_validate(badge) for badge in data['data']]
 
 
@@ -76,5 +87,5 @@ async def twitch_global_badges() -> list[ChatBadge] | None:
         )
     data = response.json()
     if not data['data']:
-        return
+        return None
     return [ChatBadge.model_validate(badge) for badge in data['data']]

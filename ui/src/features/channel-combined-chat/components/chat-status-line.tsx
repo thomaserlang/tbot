@@ -13,7 +13,13 @@ export function ChatStatusLine({ chatMessage }: Props) {
         <Box className={classes.message}>
             <ProviderLogo provider={chatMessage.provider} />
             <Text component="span" c="dimmed">
-                <AssembleParts parts={chatMessage.notice_parts} />
+                <AssembleParts
+                    parts={chatMessage.notice_parts}
+                    subType={chatMessage.sub_type}
+                    channelId={chatMessage.channel_id}
+                    provider={chatMessage.provider}
+                    providerUserId={chatMessage.provider_id}
+                />
             </Text>
         </Box>
     )

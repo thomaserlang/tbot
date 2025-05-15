@@ -5,11 +5,11 @@ from uuid import UUID
 from pydantic import StringConstraints, computed_field
 from typing_extensions import Doc
 
-from tbot2.common import ChatMessagePartRequest
-
 from ..types.chat_message_type import ChatMessageType
 from ..types.provider_type import Provider
 from .base_schema import BaseSchema
+from .chat_message_request_schema import ChatMessagePartRequest
+from .image_urls_schema import ImageUrls
 
 
 class ChatMessageBadge(BaseSchema):
@@ -25,26 +25,27 @@ class EmotePart(BaseSchema):
     emote_provider: str
 
     @computed_field  # type: ignore[misc]
-    def urls(self) -> dict[str, str] | None:
+    @property
+    def urls(self) -> ImageUrls | None:
         match self.emote_provider:
             case 'twitch':
-                return {
-                    'sm': f'https://static-cdn.jtvnw.net/emoticons/v2/{self.id}/default/dark/1.0',
-                    'md': f'https://static-cdn.jtvnw.net/emoticons/v2/{self.id}/default/dark/2.0',
-                    'lg': f'https://static-cdn.jtvnw.net/emoticons/v2/{self.id}/default/dark/3.0',
-                }
+                return ImageUrls(
+                    sm=f'https://static-cdn.jtvnw.net/emoticons/v2/{self.id}/default/dark/1.0',
+                    md=f'https://static-cdn.jtvnw.net/emoticons/v2/{self.id}/default/dark/2.0',
+                    lg=f'https://static-cdn.jtvnw.net/emoticons/v2/{self.id}/default/dark/3.0',
+                )
             case '7tv':
-                return {
-                    'sm': f'https://cdn.7tv.app/emote/{self.id}/1x.webp',
-                    'md': f'https://cdn.7tv.app/emote/{self.id}/2x.webp',
-                    'lg': f'https://cdn.7tv.app/emote/{self.id}/3x.webp',
-                }
+                return ImageUrls(
+                    sm=f'https://cdn.7tv.app/emote/{self.id}/1x.webp',
+                    md=f'https://cdn.7tv.app/emote/{self.id}/2x.webp',
+                    lg=f'https://cdn.7tv.app/emote/{self.id}/3x.webp',
+                )
             case 'bttv':
-                return {
-                    'sm': f'https://cdn.betterttv.net/emote/{self.id}/1x.webp',
-                    'md': f'https://cdn.betterttv.net/emote/{self.id}/2x.webp',
-                    'lg': f'https://cdn.betterttv.net/emote/{self.id}/3x.webp',
-                }
+                return ImageUrls(
+                    sm=f'https://cdn.betterttv.net/emote/{self.id}/1x.webp',
+                    md=f'https://cdn.betterttv.net/emote/{self.id}/2x.webp',
+                    lg=f'https://cdn.betterttv.net/emote/{self.id}/3x.webp',
+                )
             case _:
                 return None
 

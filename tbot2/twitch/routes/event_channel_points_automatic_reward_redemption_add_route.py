@@ -62,7 +62,7 @@ async def event_channel_points_automatic_reward_redemption_add_route(
         viewer_name=data.event.user_login,
         viewer_display_name=data.event.user_name,
         created_at=data.event.redeemed_at,
-        message=data.event.user_input,
+        message=data.event.user_input or '',
         notice_message=f'{notice_message} ♢ {data.event.reward.cost}',
         notice_parts=[
             ChatMessagePartRequest(

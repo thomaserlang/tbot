@@ -26,6 +26,7 @@ from .schemas.chat_message_schema import GiftPart as GiftPart
 from .schemas.connect_url_schema import ConnectUrl as ConnectUrl
 from .schemas.error_schema import Error as Error
 from .schemas.error_schema import SubError as SubError
+from .schemas.image_urls_schema import ImageUrls as ImageUrls
 from .schemas.oauth2_client_schemas import (
     Oauth2AuthorizeParams as Oauth2AuthorizeParams,
 )
@@ -34,10 +35,12 @@ from .schemas.oauth2_client_schemas import (
 )
 from .schemas.oauth2_client_schemas import Oauth2TokenParams as Oauth2TokenParams
 from .schemas.oauth2_client_schemas import Oauth2TokenResponse as Oauth2TokenResponse
+from .schemas.provider_image_schemas import ProviderImage as ProviderImage
 from .schemas.thumbnail_schema import Thumbnail as Thumbnail
 from .schemas.token_data_schema import TokenData as TokenData
 from .types.access_level_type import TAccessLevel as TAccessLevel
 from .types.feature_type import Feature as Feature
+from .types.provider_image_size_type import ImageSizeType as ImageSizeType
 from .types.provider_type import Provider as Provider
 from .types.provider_type import bot_provider_scopes as bot_provider_scopes
 from .types.provider_type import channel_provider_scopes as channel_provider_scopes

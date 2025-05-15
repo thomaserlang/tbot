@@ -97,7 +97,7 @@ export type ChatMessageSubType =
 export interface ChatMessageBadge {
     id: string
     type: string
-    name: string
+    info: string
 }
 
 export interface EmotePart {

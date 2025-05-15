@@ -51,6 +51,8 @@ export function ChatMessageLine({
             {!hideBadges && chatMessage.badges.length > 0 && (
                 <Badges
                     channelId={chatMessage.channel_id}
+                    provider={chatMessage.provider}
+                    providerUserId={chatMessage.provider_id}
                     badges={chatMessage.badges}
                 />
             )}
@@ -82,6 +84,9 @@ export function ChatMessageLine({
                 <AssembleParts
                     parts={chatMessage.parts}
                     subType={chatMessage.sub_type}
+                    channelId={chatMessage.channel_id}
+                    provider={chatMessage.provider}
+                    providerUserId={chatMessage.provider_id}
                 />
             </Text>
         </Box>

@@ -71,6 +71,30 @@
   display: inline-block;
 }
 
+.gift-1 {
+  color: #979797;
+}
+
+.gift-100 {
+  color: #9c3ee8;
+}
+
+.gift-1000 {
+  color: #1db2a5;
+}
+
+.gift-5000 {
+  color: #0099f1;
+}
+
+.gift-10000 {
+  color: #f43021;
+}
+
+.gift-100000 {
+  color: #f3a71a;
+}
+
 .message-animated-shadow {
   background-color: var(--background-color);
   position: relative;

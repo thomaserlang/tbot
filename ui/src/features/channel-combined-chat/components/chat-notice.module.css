@@ -26,6 +26,10 @@
   background-color: #1971c2;
 }
 
+.gift-notice .verticalLine {
+  background-color: #c2194c;
+}
+
 .gold-border {
   --border-angle: 45deg;
 

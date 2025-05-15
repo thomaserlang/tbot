@@ -172,4 +172,62 @@ export const EmulateEvents: EmulateEvent[] = [
             )
         },
     },
+
+    {
+        name: 'Cheer',
+        request: ({ channelId }) => {
+            return api.post(
+                `/api/2/twitch/eventsub/emulate-channel-chat-message`,
+                {
+                    message_type: 'text',
+                    fragments: [
+                        {
+                            type: 'cheermote',
+                            text: 'cheer100001',
+                            cheermote: {
+                                prefix: 'cheer',
+                                bits: 100001,
+                                tier: 100000,
+                            },
+                        },
+                        {
+                            type: 'text',
+                            text: ' test ',
+                        },
+                        {
+                            type: 'emote',
+                            text: 'bahRat',
+                            emote: {
+                                id: 'emotesv2_b8c288d7d202433aaaf25bae6ad79ac3',
+                                emote_set_id: '49155',
+                                owner_id: '77256527',
+                                format: ['static'],
+                            },
+                        },
+                        {
+                            type: 'text',
+                            text: ' ',
+                        },
+                        {
+                            type: 'cheermote',
+                            text: 'cheer1050',
+                            cheermote: {
+                                prefix: 'cheer',
+                                bits: 1050,
+                                tier: 1000,
+                            },
+                        },
+                    ],
+                    cheer: {
+                        bits: 101051,
+                    },
+                },
+                {
+                    params: {
+                        channel_id: channelId,
+                    },
+                }
+            )
+        },
+    },
 ]
