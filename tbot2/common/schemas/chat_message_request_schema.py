@@ -1,8 +1,14 @@
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Self
 from uuid import UUID
 
-from pydantic import Field, StringConstraints, ValidationInfo, field_validator
+from pydantic import (
+    Field,
+    StringConstraints,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
 from typing_extensions import Doc
 from uuid6 import uuid7
 
@@ -114,10 +120,28 @@ class ChatMessageRequest(BaseRequestSchema):
 
     @field_validator('viewer_color', mode='after')
     @classmethod
-    def viewer_color_valid(cls, value: str | None, info: ValidationInfo) -> str:
+    def viewer_color_set(cls, value: str | None, info: ValidationInfo) -> str:
         if not value:
             return username_color_generator(info.data['viewer_name'])
         return value
+
+    @model_validator(mode='after')
+    def notice_message_not_empty(self) -> Self:
+        if self.notice_message and not self.notice_parts:
+            self.notice_parts = [
+                ChatMessagePartRequest(
+                    type='text',
+                    text=self.notice_message,
+                )
+            ]
+        if self.message and not self.parts:
+            self.parts = [
+                ChatMessagePartRequest(
+                    type='text',
+                    text=self.message,
+                )
+            ]
+        return self
 
     def message_without_parts(self) -> str:
         if not self.parts:

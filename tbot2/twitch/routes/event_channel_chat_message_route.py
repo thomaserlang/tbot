@@ -22,6 +22,9 @@ from tbot2.message_parse import message_to_parts
 from tbot2.twitch import twitch_warn_chat_user
 
 from ..actions.twitch_ban_user_actions import twitch_ban_user
+from ..actions.twitch_custom_reward_redemption_actions import (
+    get_custom_reward_redemption,
+)
 from ..actions.twitch_delete_message_actions import twitch_delete_message
 from ..actions.twitch_message_utils import (
     twitch_badges_to_badges,
@@ -85,6 +88,18 @@ async def event_channel_chat_message_route(
         ),
         access_level=badges_to_access_level(data.event.badges),
     )
+
+    if data.event.channel_points_custom_reward_id:
+        redemption = await get_custom_reward_redemption(
+            broadcaster_id=data.event.broadcaster_user_id,
+            id=data.event.channel_points_custom_reward_id,
+            channel_id=channel_id,
+        )
+        if redemption:
+            chat_message.type = 'notice'
+            chat_message.notice_message = (
+                f'Redeemed {redemption.reward.title} • {redemption.reward.cost}'
+            )
 
     try:
         if response := await handle_message_response(

@@ -56,5 +56,5 @@ async def lookup_twitch_user(
         user_ids=[user_id] if user_id else [],
     )
     if not data:
-        return
+        return None
     return data[0]

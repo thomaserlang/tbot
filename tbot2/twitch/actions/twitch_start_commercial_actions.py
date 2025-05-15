@@ -1,7 +1,5 @@
 from uuid import UUID
 
-from loguru import logger
-
 from tbot2.common.constants import TBOT_CHANNEL_ID_HEADER
 
 from ..exceptions import TwitchException
@@ -26,8 +24,6 @@ async def twitch_run_commercial(
     )
     if response.status_code >= 400:
         if response.status_code == 429:
-            data = response.json()
-            logger.info(data)
             raise TwitchException(
                 response=response,
                 request=response.request,

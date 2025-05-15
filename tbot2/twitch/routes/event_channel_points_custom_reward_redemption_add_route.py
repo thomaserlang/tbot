@@ -39,13 +39,14 @@ async def event_channel_points_custom_reward_redemption_add_route(
         EventChannelPointsCustomRewardRedemption
     ].model_validate_json(await request.body())
 
+    if data.event.user_input:
+        # if it has user input it also gets sent to the channel.chat.message endpoint
+        # so we don't need to handle it here. There we get user badges, fragments etc.
+        return
+
     notice_message = (
-        f'Redeemed {data.event.reward.title} • {data.event.reward.cost}'
-        if data.event.user_input
-        else (
-            f'{data.event.user_name} redeemed {data.event.reward.title} '
-            f'• {data.event.reward.cost}'
-        )
+        f'{data.event.user_name} redeemed {data.event.reward.title} '
+        f'• {data.event.reward.cost}'
     )
 
     chat_message = ChatMessageRequest(
@@ -56,7 +57,6 @@ async def event_channel_points_custom_reward_redemption_add_route(
         viewer_name=data.event.user_login,
         viewer_display_name=data.event.user_name,
         created_at=data.event.redeemed_at,
-        message=data.event.user_input,
         notice_message=notice_message,
         msg_id=data.event.id,
         provider='twitch',

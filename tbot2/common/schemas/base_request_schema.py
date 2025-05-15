@@ -7,4 +7,5 @@ class BaseRequestSchema(BaseModel):
         from_attributes=True,
         validate_by_name=True,
         validate_by_alias=True,
+        validate_assignment=True,
     )
