@@ -1,6 +1,7 @@
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
 import { strDateFormat } from '@/utils/date'
 import { Box, Divider, Flex } from '@mantine/core'
+import { Fragment } from 'react/jsx-runtime'
 import { ChatMessage } from '../types/chat-message.type'
 import { ChatMessageLine } from './chat-message-line'
 import classes from './chat-message.module.css'
@@ -22,16 +23,17 @@ export function ChatMessages({ messages, onViewerClick }: Props) {
                 if (showDateLine) lastDate = date
 
                 return (
-                    <>
+                    <Fragment key={message.id}>
                         {showDateLine && (
                             <Divider
                                 my="xs"
                                 label={strDateFormat(message.created_at)}
                                 labelPosition="center"
+                                key={message.created_at}
                             />
                         )}
 
-                        <DecorateMessage message={message} key={message.id}>
+                        <DecorateMessage message={message}>
                             {message.type == 'message' && (
                                 <ChatMessageLine
                                     chatMessage={message}
@@ -47,7 +49,7 @@ export function ChatMessages({ messages, onViewerClick }: Props) {
                                 <ChatNoticeLine chatMessage={message} />
                             )}
                         </DecorateMessage>
-                    </>
+                    </Fragment>
                 )
             })}
         </Flex>
