@@ -38,7 +38,6 @@ export function NoticeFeedList({ notices }: Props) {
                                 hideProviderLogo
                                 hideTime
                                 hideBadges
-                                size="sm"
                             />
                         )}
                     </Flex>
