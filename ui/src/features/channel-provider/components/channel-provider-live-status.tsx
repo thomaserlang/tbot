@@ -51,7 +51,7 @@ export function ChannelProviderLiveStatus({ channelProvider }: Props) {
                     </HoverCard.Target>
                     <HoverCard.Dropdown>
                         <Text size="sm">
-                            Click the Create Broadcast button.
+                            Click the Configure in Studio button.
                         </Text>
                     </HoverCard.Dropdown>
                 </HoverCard>
