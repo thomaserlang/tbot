@@ -31,7 +31,7 @@ export function NoticeFeedList({ notices }: Props) {
                             </Text>
                         </Flex>
 
-                        <Text size="sm">{notice.notice_message}</Text>
+                        <Text>{notice.notice_message}</Text>
                         {notice.parts.length > 0 && (
                             <ChatMessageLine
                                 chatMessage={notice}
