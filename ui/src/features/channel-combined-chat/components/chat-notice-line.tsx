@@ -23,7 +23,7 @@ export function ChatNoticeLine({ chatMessage }: Props) {
                 <Flex gap="0.1rem">
                     <ProviderLogo provider={chatMessage.provider} />
 
-                    <Text component="span" c="dimmed">
+                    <Text component="span">
                         <AssembleParts parts={chatMessage.notice_parts} />
                     </Text>
                 </Flex>
@@ -54,7 +54,7 @@ function subTypeToClassName(subType: ChatMessageSubType) {
         case 'membershipGiftingEvent':
         case 'giftMembershipReceivedEvent':
         case 'gift':
-            return classes['gold-notice']
+            return `${classes['gold-border']} ${classes['gold-notice']}`
         case 'announcement':
             return classes['announcement-notice']
     }
