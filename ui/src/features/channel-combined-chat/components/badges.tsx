@@ -17,7 +17,7 @@ export function Badges({ channelId, provider, providerUserId, badges }: Props) {
                 return (
                     <img
                         key={`${badge.id}`}
-                        title={`${badge.info} ${badge.info}`}
+                        title={`${badge.name} ${badge.name}`}
                         src={`/api/2/channels/${channelId}/${provider}/badge-image/${providerUserId}/sm/${badge.id}`}
                         alt={badge.type}
                         className={classes['chat-badge']}
