@@ -50,15 +50,15 @@
 
 .emote-sm {
   margin: -0.5rem 0;
-  max-height: 28px;
+  height: 28px;
 }
 
 .emote-md {
-  max-height: 3.5rem;
+  height: 3.5rem;
 }
 
 .emote-lg {
-  max-height: 112px;
+  height: 112px;
 }
 
 .chat-badge {
