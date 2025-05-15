@@ -16,7 +16,7 @@ class MessageEmote(BaseSchema):
 class Message(BaseSchema):
     text: str
     'The text of the chat message.'
-    emotes: list[MessageEmote]
+    emotes: list[MessageEmote] | None = None
 
 
 class UnlockedEmote(BaseSchema):
