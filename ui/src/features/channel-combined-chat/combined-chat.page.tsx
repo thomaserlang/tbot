@@ -9,7 +9,7 @@ export function Component() {
 
     return (
         <Container size="lg" h="var(--tbot-content-height)">
-            <CombinedChatView channelId={channel.id} />
+            <CombinedChatView channelId={channel.id} hideTitle />
         </Container>
     )
 }
