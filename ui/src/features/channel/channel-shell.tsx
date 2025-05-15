@@ -29,7 +29,7 @@ export function ChannelShell({ children }: { children: ReactNode }) {
             >
                 <AppShell.Header>
                     <Flex
-                        gap="2rem"
+                        gap="1rem"
                         h="100%"
                         align="center"
                         p="0.25rem"
