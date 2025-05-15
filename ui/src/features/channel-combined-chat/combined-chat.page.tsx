@@ -1,6 +1,6 @@
 import { useCurrentChannel } from '@/features/channel/current-channel.provider'
 import { useDocumentTitle } from '@/utils/document-title'
-import { Container } from '@mantine/core'
+import { Paper } from '@mantine/core'
 import { CombinedChatView } from './components/combined-chat-view'
 
 export function Component() {
@@ -8,8 +8,8 @@ export function Component() {
     useDocumentTitle(`Combined Chat - ${channel.display_name}`)
 
     return (
-        <Container size="lg" h="var(--tbot-content-height)">
+        <Paper withBorder h="var(--tbot-content-height)" p="0.5rem">
             <CombinedChatView channelId={channel.id} hideTitle />
-        </Container>
+        </Paper>
     )
 }
