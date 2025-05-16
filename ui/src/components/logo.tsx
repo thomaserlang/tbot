@@ -1,4 +1,6 @@
 import { Anchor, Box, Flex, Image, StyleProp } from '@mantine/core'
+import logoUrl from './logo.svg'
+import treeUrl from './treeOutline.svg'
 
 interface Props {
     width: StyleProp<React.CSSProperties['width']>
@@ -8,11 +10,11 @@ export function Logo({ width }: Props) {
         <Flex gap="0.5rem" align="center">
             <Box>
                 <Anchor href="/channels">
-                    <Image src="/tree.svg?v2" alt="Synchra" h={40} />
+                    <Image src={treeUrl} alt="Synchra" h={40} />
                 </Anchor>
             </Box>
             <Anchor href="/channels">
-                <Image src="/logo.svg" alt="Synchra" w={width} />
+                <Image src={logoUrl} alt="Synchra" w={width} />
             </Anchor>
         </Flex>
     )
