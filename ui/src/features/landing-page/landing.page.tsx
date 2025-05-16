@@ -80,41 +80,22 @@ export function Component() {
             />
             <Container size="lg">
                 <div className={classes.wrapper}>
-                    <Grid gutter={80}>
-                        <Grid.Col span={{ base: 12, md: 6 }}>
-                            <Flex
-                                gap="0.5rem"
-                                wrap={'wrap'}
-                                justify="center"
-                                align="center"
-                                mb="1rem"
-                            >
-                                <Flex direction="column">
-                                    <Image
-                                        ml="-0.15rem"
-                                        src="/logo.svg"
-                                        alt="Synchra"
-                                        w={300}
-                                    />
-                                    <Text
-                                        c="dimmed"
-                                        mt="-1.5rem"
-                                        fw={500}
-                                        fz={25}
-                                    >
-                                        Work smarter, not harder
-                                    </Text>
-                                </Flex>
-                                <Box mt="0.25rem">
-                                    <Image
-                                        src="/tree.svg"
-                                        alt="Synchra"
-                                        w={150}
-                                    />
-                                </Box>
-                            </Flex>
-                        </Grid.Col>
-                    </Grid>
+                    <Flex gap="0.5rem" wrap={'wrap'} align="center" mb="1rem">
+                        <Flex direction="column">
+                            <Image
+                                ml="-0.15rem"
+                                src="/logo.svg"
+                                alt="Synchra"
+                                w={300}
+                            />
+                            <Text c="dimmed" mt="-1.5rem" fw={500} fz={25}>
+                                Work smarter, not harder
+                            </Text>
+                        </Flex>
+                        <Box mt="0.25rem">
+                            <Image src="/tree.svg" alt="Synchra" w={150} />
+                        </Box>
+                    </Flex>
 
                     <Grid gutter={80}>
                         <Grid.Col span={{ base: 12, md: 5 }}>
