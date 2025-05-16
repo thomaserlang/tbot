@@ -35,6 +35,7 @@ async def get_channel_provider(
         channel_provider = await session.scalar(stmt)
         if channel_provider:
             return ChannelProvider.model_validate(channel_provider)
+        return None
 
 
 async def get_channel_provider_by_id(
@@ -48,6 +49,7 @@ async def get_channel_provider_by_id(
         )
         if channel_provider:
             return ChannelProvider.model_validate(channel_provider)
+        return None
 
 
 async def get_channel_provider_by_provider_id(
@@ -62,6 +64,7 @@ async def get_channel_provider_by_provider_id(
         )
         if channel_provider:
             return ChannelProvider.model_validate(channel_provider)
+        return None
 
 
 async def get_channel_providers(

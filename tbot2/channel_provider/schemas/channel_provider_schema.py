@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import StringConstraints, computed_field
+from pydantic import Field, StringConstraints, computed_field
 
 from tbot2.bot_providers import BotProvider, BotProviderPublic
 from tbot2.common import (
@@ -28,6 +28,7 @@ class ChannelProviderBase(BaseSchema):
     stream_live: bool = False
     stream_live_at: datetime | None = None
     stream_chat_id: str | None = None
+    stream_viewers_count: int | None = None
 
     @computed_field  # type: ignore[misc]
     @property
@@ -96,3 +97,4 @@ class ChannelProviderRequest(BaseRequestSchema):
     stream_chat_id: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
+    stream_viewers_count: Annotated[int, Field(ge=0)] | None = None

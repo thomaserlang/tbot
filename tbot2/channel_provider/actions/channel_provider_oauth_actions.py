@@ -41,6 +41,7 @@ async def get_channel_provider_oauth(
         channel_provider = await session.scalar(stmt)
         if channel_provider:
             return ChannelProviderOAuth.model_validate(channel_provider)
+        return None
 
 
 async def save_channel_provider_oauth(
@@ -82,5 +83,4 @@ async def save_channel_provider_oauth(
                 await conn.redis.delete(
                     f'channel_provider_oauth:{channel_provider.provider}:{channel_provider.channel_id}',
                 )
-
         return True

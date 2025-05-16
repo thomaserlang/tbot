@@ -46,6 +46,7 @@ async def get_channel_bot_provider(
         bot_provider = await session.scalar(query)
         if bot_provider:
             return BotProvider.model_validate(bot_provider)
+        return None
 
 
 async def disconnect_channel_bot_provider(

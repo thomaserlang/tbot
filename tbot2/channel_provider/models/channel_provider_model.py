@@ -46,3 +46,6 @@ class MChannelProvider(Base):
         UtcDateTime(), nullable=True
     )
     stream_chat_id: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
+    stream_viewers_count: Mapped[int | None] = mapped_column(
+        sa.Integer(), nullable=True
+    )
