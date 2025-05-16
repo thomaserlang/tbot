@@ -82,7 +82,7 @@ export function Component() {
                 <div className={classes.wrapper}>
                     <Flex gap="0.5rem" wrap={'wrap'} align="center" mb="1rem">
                         <Box mt="0.25rem" hiddenFrom="xs" ml="auto" mr="auto">
-                            <Image src="/tree.svg" alt="Synchra" w={150} />
+                            <Image src="/tree.svg?v2" alt="Synchra" w={150} />
                         </Box>
                         <Flex direction="column">
                             <Image
@@ -96,7 +96,7 @@ export function Component() {
                             </Text>
                         </Flex>
                         <Box mt="0.25rem" visibleFrom="xs">
-                            <Image src="/tree.svg" alt="Synchra" w={150} />
+                            <Image src="/tree.svg?v2" alt="Synchra" w={150} />
                         </Box>
                     </Flex>
 
