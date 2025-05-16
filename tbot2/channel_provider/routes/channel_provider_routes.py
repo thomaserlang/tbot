@@ -34,7 +34,7 @@ async def get_channel_route(
 ) -> list[ChannelProviderPublic]:
     await token_data.channel_require_access(
         channel_id=channel_id,
-        access_level=TAccessLevel.ADMIN,
+        access_level=TAccessLevel.MOD,
     )
     providers = await get_channel_providers(
         channel_id=channel_id,
