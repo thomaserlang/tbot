@@ -6,9 +6,9 @@ interface Props {
 export function Logo({ width }: Props) {
     return (
         <Flex gap="0.5rem" align="center">
-            <Box style={{ width: '13%', height: '13%' }}>
+            <Box>
                 <Anchor href="/channels">
-                    <Image src="/tree.svg" alt="Synchra" />
+                    <Image src="/tree.svg" alt="Synchra" h={40} />
                 </Anchor>
             </Box>
             <Anchor href="/channels">
