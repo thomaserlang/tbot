@@ -8,7 +8,7 @@ import {
     ViewerSearchButton,
 } from '@/features/channel-viewer'
 import { ChannelId } from '@/features/channel/types/channel.types'
-import { Divider, Flex, Paper, ScrollArea } from '@mantine/core'
+import { Box, Divider, Flex, Paper } from '@mantine/core'
 import { useState } from 'react'
 import { ChatView } from './chat-view'
 import { CombinedChatHeader } from './combined-chat-header'
@@ -23,7 +23,7 @@ export function CombinedChatView({ channelId, hideChannelProviders }: Props) {
 
     return (
         <>
-            <Flex direction="column" h="100%" w="100%">
+            <Flex direction="column" h="100%" w="100%" miw={300}>
                 <Paper>
                     <Paper p="0.25rem 0.5rem">
                         <CombinedChatHeader
@@ -44,19 +44,17 @@ export function CombinedChatView({ channelId, hideChannelProviders }: Props) {
 
                 <Divider />
 
-                <Paper p="0.5rem">
-                    <ScrollArea>
-                        <Flex gap="0.5rem">
-                            <RunCommercialButton channelId={channelId} />
-                            <UpdateStreamTitleButton channelId={channelId} />
-                            <Flex ml="auto" gap="0.5rem" align="center">
-                                <ViewerSearchButton
-                                    onSelect={(viewer) => setShowViewer(viewer)}
-                                />
-                            </Flex>
+                <Box p="0.5rem">
+                    <Flex gap="0.5rem">
+                        <RunCommercialButton channelId={channelId} />
+                        <UpdateStreamTitleButton channelId={channelId} />
+                        <Flex ml="auto" gap="0.5rem" align="center">
+                            <ViewerSearchButton
+                                onSelect={(viewer) => setShowViewer(viewer)}
+                            />
                         </Flex>
-                    </ScrollArea>
-                </Paper>
+                    </Flex>
+                </Box>
             </Flex>
 
             {showViewer && (

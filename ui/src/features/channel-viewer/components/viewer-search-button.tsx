@@ -16,6 +16,7 @@ export function ViewerSearchButton({ onSelect }: Props) {
                 onClick={open}
                 variant="default"
                 leftSection={<IconSearch size={14} />}
+                size="compact-sm"
             >
                 Viewer
             </Button>

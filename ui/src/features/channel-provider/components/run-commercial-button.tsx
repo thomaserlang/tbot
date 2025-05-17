@@ -48,6 +48,7 @@ export function RunCommercialButton({ channelId }: Props) {
                     loading={runCommercial.isPending}
                     rightSection={<IconChevronDown size={14} />}
                     variant="default"
+                    size="compact-sm"
                 >
                     Run Ads
                 </Button>

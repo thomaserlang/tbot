@@ -23,6 +23,7 @@ export function UpdateStreamTitleButton({ channelId }: Props) {
                     <Button
                         rightSection={<IconChevronDown size={14} />}
                         variant="default"
+                        size="compact-sm"
                     >
                         Update Title
                     </Button>
