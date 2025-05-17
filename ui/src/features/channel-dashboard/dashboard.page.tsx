@@ -18,8 +18,8 @@ export function Component() {
                         <NoticeFeedView channelId={channel.id} />
                     </Paper>
 
-                    <Paper flex={1} withBorder p="0.5rem">
-                        <CombinedChatView channelId={channel.id} hideTitle />
+                    <Paper flex={1} withBorder>
+                        <CombinedChatView channelId={channel.id} hideHeader />
                     </Paper>
                 </Flex>
             </Flex>

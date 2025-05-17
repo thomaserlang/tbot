@@ -24,7 +24,7 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
             `https://player.twitch.tv/?channel={provider_user_name}` +
             `&parent=${window.location.hostname}&muted=true&autoplay=true`,
         streamTitleMaxLength: 140,
-        icon: <IconBrandTwitch size={18} />,
+        icon: <IconBrandTwitch color="#6441a5" size={18} />,
     },
     youtube: {
         key: 'youtube',
@@ -44,7 +44,7 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
         embedUrl:
             'https://www.youtube.com/embed/{live_stream_id}?mute=1&autoplay=1',
         streamTitleMaxLength: 100,
-        icon: <IconBrandYoutube size={18} />,
+        icon: <IconBrandYoutube color="#CD201F" size={18} />,
     },
     tiktok: {
         key: 'tiktok',
@@ -68,6 +68,6 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
         key: 'discord',
         name: 'Discord',
         color: '#7289da',
-        icon: <IconBrandDiscord size={18} />,
+        icon: <IconBrandDiscord color="#7289da" size={18} />,
     },
 } as const

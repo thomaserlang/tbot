@@ -1,3 +1,4 @@
+import { ViewerCount } from '@/components/viewer-count'
 import {
     ChannelProvider,
     ChannelProviderEmbedLive,
@@ -5,7 +6,7 @@ import {
     ChannelProviderTitle,
     UpdateStreamTitleModal,
 } from '@/features/channel-provider'
-import { Box, Flex, Text } from '@mantine/core'
+import { Flex, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconEdit } from '@tabler/icons-react'
 import { YoutubeDashView } from './youtube/youtube-dash-view'
@@ -26,11 +27,15 @@ export function DashboardChannelProvider({
             <Flex direction="column" gap="0.25rem" h="100%" w={300}>
                 <Flex align="center">
                     <ChannelProviderTitle channelProvider={channelProvider} />
-                    <Box ml="auto">
+
+                    <Flex ml="auto" gap="0.5rem" align="center">
+                        <ViewerCount
+                            count={channelProvider.stream_viewer_count}
+                        />
                         <ChannelProviderLiveStatus
                             channelProvider={channelProvider}
                         />
-                    </Box>
+                    </Flex>
                 </Flex>
 
                 {channelProvider.live_stream_id && (
@@ -48,11 +53,9 @@ export function DashboardChannelProvider({
                 <DashView channelProvider={channelProvider} />
 
                 {!collapsed && (
-                    <>
-                        <ChannelProviderEmbedLive
-                            channelProvider={channelProvider}
-                        />
-                    </>
+                    <ChannelProviderEmbedLive
+                        channelProvider={channelProvider}
+                    />
                 )}
             </Flex>
 
