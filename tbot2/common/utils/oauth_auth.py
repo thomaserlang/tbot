@@ -36,7 +36,7 @@ class ChannelProviderOAuthHelper(Auth):
     async def async_auth_flow(
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
-        channel_id = request.headers.pop(TBOT_CHANNEL_ID_HEADER, None)
+        channel_id = request.headers.get(TBOT_CHANNEL_ID_HEADER, None)
         if not channel_id:
             raise Exception(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
         channel_id = UUID(channel_id)
@@ -163,7 +163,7 @@ class ChannelProviderBotOAuthHelper(Auth):
     async def async_auth_flow(
         self, request: Request
     ) -> typing.AsyncGenerator[Request, Response]:
-        channel_id = request.headers.pop(TBOT_CHANNEL_ID_HEADER, None)
+        channel_id = request.headers.get(TBOT_CHANNEL_ID_HEADER, None)
         if not channel_id:
             raise Exception(f'Missing {TBOT_CHANNEL_ID_HEADER} header')
         channel_id = UUID(channel_id)
