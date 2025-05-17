@@ -40,9 +40,13 @@ async def youtube_tasks() -> None:
     logger.info('Starting youtube_tasks')
     while True:
         try:
-            await asyncio.gather(
+            fns = [
                 check_for_live(),
                 update_viewer_count(),
+            ]
+            await asyncio.wait(
+                [asyncio.create_task(fn) for fn in fns],
+                return_when=asyncio.FIRST_EXCEPTION,
             )
         finally:
             if last_check:
@@ -90,6 +94,7 @@ async def update_viewer_count() -> None:
             )
 
 
+@logger.catch()
 async def check_for_live() -> None:
     channel_provider_ids: dict[UUID, asyncio.Task[None]] = {}
     current_chat_ids: set[str] = set()
