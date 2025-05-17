@@ -3,7 +3,14 @@ import { PageLoader } from '@/components/page-loader'
 import { providerInfo } from '@/constants'
 import { ChannelId } from '@/features/channel'
 import { useGetChannelProviders } from '@/features/channel-provider'
-import { Box, Divider, Flex, Paper, ScrollArea } from '@mantine/core'
+import {
+    ActionIcon,
+    Box,
+    Divider,
+    Flex,
+    Paper,
+    ScrollArea,
+} from '@mantine/core'
 import { useLocalStorage } from '@mantine/hooks'
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react'
 import { Fragment } from 'react/jsx-runtime'
@@ -22,7 +29,7 @@ export function DashboardProviders({ channelId }: Props) {
     })
     const [collapsed, setCollapsed] = useLocalStorage({
         key: 'dashboard-channel-providers-collapsed',
-        defaultValue: false,
+        defaultValue: true,
     })
 
     if (channelProviders.isLoading) return <PageLoader />
@@ -31,30 +38,34 @@ export function DashboardProviders({ channelId }: Props) {
 
     return (
         <Paper withBorder p="0.5rem">
-            <Flex direction="row" gap="1rem">
-                {!collapsed ? (
-                    <IconChevronDown
-                        title="Collapse"
-                        onClick={() => {
-                            setCollapsed(!collapsed)
-                        }}
-                        style={{
-                            cursor: 'pointer',
-                        }}
-                        size={24}
-                    />
-                ) : (
-                    <IconChevronRight
-                        title="Expand"
-                        onClick={() => {
-                            setCollapsed(!collapsed)
-                        }}
-                        style={{
-                            cursor: 'pointer',
-                        }}
-                        size={24}
-                    />
-                )}
+            <Flex direction="row" gap="0.5rem">
+                <Box>
+                    {!collapsed ? (
+                        <ActionIcon
+                            title="Collapse"
+                            variant="subtle"
+                            size="md"
+                            color="gray"
+                            onClick={() => {
+                                setCollapsed(!collapsed)
+                            }}
+                        >
+                            <IconChevronDown size={22} />
+                        </ActionIcon>
+                    ) : (
+                        <ActionIcon
+                            variant="subtle"
+                            size="md"
+                            onClick={() => {
+                                setCollapsed(!collapsed)
+                            }}
+                            title="Expand"
+                            color="gray"
+                        >
+                            <IconChevronRight size={22} />
+                        </ActionIcon>
+                    )}
+                </Box>
 
                 <ScrollArea>
                     <Flex direction="row" gap="1rem">
