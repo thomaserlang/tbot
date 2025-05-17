@@ -21,6 +21,7 @@ body {
     var(--mantine-color-dark-8)
   );
   background-color: var(--background-color);
+  --mantine-color-body: var(--background-color);
 
   @mixin light {
     --tbot-border-color: var(--mantine-color-gray-3);
@@ -36,6 +37,11 @@ body {
       linear-gradient(rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.2));
   }
 }
+
+.mantine-Container-root {
+  padding-inline: 0;
+}
+
 .mantine-Checkbox-labelWrapper {
   --label-offset-start: 0.5rem;
 }

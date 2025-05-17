@@ -25,7 +25,7 @@ export function CombinedChatView({ channelId, hideHeader }: Props) {
 
     return (
         <>
-            <Flex direction="column" h="100%" w="100%" gap="0.5rem">
+            <Flex direction="column" h="100%" w="100%">
                 {!hideHeader && (
                     <Paper>
                         <Paper p="0.25rem 0.5rem">
@@ -35,7 +35,7 @@ export function CombinedChatView({ channelId, hideHeader }: Props) {
                     </Paper>
                 )}
 
-                <Paper pl="0.25rem" h="100%">
+                <Paper pl="0.25rem" pb="0.5rem" h="100%">
                     <ChatView
                         channelId={channelId}
                         onViewerClick={(viewer) => {
@@ -46,15 +46,13 @@ export function CombinedChatView({ channelId, hideHeader }: Props) {
 
                 <Divider />
 
-                <Paper p="0 0 0.5rem 0.5rem">
+                <Paper p="0.5rem 0 0.5rem 0.5rem">
                     <Flex gap="0.5rem">
                         <RunCommercialButton channelId={channelId} />
                         <UpdateStreamTitleButton channelId={channelId} />
                         <Flex ml="auto" gap="0.5rem" align="center">
                             <ViewerSearchButton
-                                onSelect={(viewer) => {
-                                    setShowViewer(viewer)
-                                }}
+                                onSelect={(viewer) => setShowViewer(viewer)}
                             />
                             <ChatMenu>
                                 <ActionIcon variant="subtle" color="gray">

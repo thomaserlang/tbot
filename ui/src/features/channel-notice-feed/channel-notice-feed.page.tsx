@@ -8,7 +8,12 @@ export function Component() {
     useDocumentTitle(`Notice Feed - ${channel.display_name}`)
 
     return (
-        <Paper withBorder h="var(--tbot-content-height)" p="0.5rem">
+        <Paper
+            h="calc(var(--tbot-content-height) + 1rem)"
+            mt="-1rem"
+            ml="-1rem"
+            mr="-1rem"
+        >
             <NoticeFeedView channelId={channel.id} />
         </Paper>
     )

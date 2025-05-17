@@ -11,10 +11,10 @@ interface Props {
 
 export function NoticeFeedList({ notices }: Props) {
     return (
-        <Flex direction="column" gap="0.75rem">
+        <Flex direction="column" gap="0.75rem" pt="0.5rem">
             {notices.map((notice) => (
                 <Fragment key={notice.id}>
-                    <Flex direction="column">
+                    <Flex direction="column" p="0 0.5rem">
                         <Flex align="center" gap="0.25rem">
                             <Box
                                 c={providerInfo[notice.provider].color}

@@ -8,7 +8,12 @@ export function Component() {
     useDocumentTitle(`Combined Chat - ${channel.display_name}`)
 
     return (
-        <Paper withBorder h="var(--tbot-content-height)">
+        <Paper
+            h="calc(var(--tbot-content-height) + 1rem)"
+            mt="-1rem"
+            ml="-1rem"
+            mr="-1rem"
+        >
             <CombinedChatView channelId={channel.id} />
         </Paper>
     )
