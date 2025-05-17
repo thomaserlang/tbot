@@ -8,7 +8,7 @@ import {
     ViewerSearchButton,
 } from '@/features/channel-viewer'
 import { ChannelId } from '@/features/channel/types/channel.types'
-import { ActionIcon, Divider, Flex, Paper } from '@mantine/core'
+import { ActionIcon, Divider, Flex, Paper, ScrollArea } from '@mantine/core'
 import { IconDotsVertical } from '@tabler/icons-react'
 import { useState } from 'react'
 import { ChatMenu } from './chat-menu'
@@ -47,22 +47,27 @@ export function CombinedChatView({ channelId, hideHeader }: Props) {
                 <Divider />
 
                 <Paper p="0.5rem 0 0.5rem 0.5rem">
-                    <Flex gap="0.5rem">
-                        <RunCommercialButton channelId={channelId} />
-                        <UpdateStreamTitleButton channelId={channelId} />
-                        <Flex ml="auto" gap="0.5rem" align="center">
-                            <ViewerSearchButton
-                                onSelect={(viewer) => setShowViewer(viewer)}
-                            />
-                            <ChatMenu>
-                                <ActionIcon variant="subtle" color="gray">
-                                    <IconDotsVertical
-                                        style={{ width: '70%', height: '70%' }}
-                                    />
-                                </ActionIcon>
-                            </ChatMenu>
+                    <ScrollArea>
+                        <Flex gap="0.5rem">
+                            <RunCommercialButton channelId={channelId} />
+                            <UpdateStreamTitleButton channelId={channelId} />
+                            <Flex ml="auto" gap="0.5rem" align="center">
+                                <ViewerSearchButton
+                                    onSelect={(viewer) => setShowViewer(viewer)}
+                                />
+                                <ChatMenu>
+                                    <ActionIcon variant="subtle" color="gray">
+                                        <IconDotsVertical
+                                            style={{
+                                                width: '70%',
+                                                height: '70%',
+                                            }}
+                                        />
+                                    </ActionIcon>
+                                </ChatMenu>
+                            </Flex>
                         </Flex>
-                    </Flex>
+                    </ScrollArea>
                 </Paper>
             </Flex>
 
