@@ -1,7 +1,7 @@
 import { setAccessToken } from '@/utils/api'
-import { Avatar, Flex, Menu, Text } from '@mantine/core'
+import { Avatar, Flex, Menu } from '@mantine/core'
 import { openModal } from '@mantine/modals'
-import { IconChevronDown, IconLogout, IconSettings } from '@tabler/icons-react'
+import { IconLogout, IconSettings } from '@tabler/icons-react'
 import { useCurrentUser } from './current-user.provider'
 import { UserSettingsView } from './settings/user-settings-view'
 
@@ -18,11 +18,7 @@ export function CurrentUserCard() {
                         userSelect: 'none',
                     }}
                 >
-                    <Avatar color="blue" size="sm" name={user.display_name} />
-                    <Text truncate="end" maw={160} size="sm">
-                        {user.display_name}
-                    </Text>
-                    <IconChevronDown size={14} />
+                    <Avatar color="blue" size="md" name={user.display_name} />
                 </Flex>
             </Menu.Target>
             <Menu.Dropdown>
