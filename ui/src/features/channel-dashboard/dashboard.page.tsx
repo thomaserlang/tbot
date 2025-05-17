@@ -15,7 +15,7 @@ export function Component() {
                 <DashboardProviders channelId={channel.id} />
 
                 <Flex gap="1rem" flex={1} wrap={'wrap'}>
-                    <Paper maw={400} flex={1} withBorder pr="0.25rem">
+                    <Paper maw={400} flex={1} withBorder>
                         <NoticeFeedView channelId={channel.id} />
                     </Paper>
 

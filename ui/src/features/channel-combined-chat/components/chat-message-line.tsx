@@ -20,7 +20,7 @@ interface Props {
 export function ChatMessageLine({
     chatMessage,
     hideProviderLogo,
-    hideTime,
+    hideTime = true,
     hideBadges,
     size,
     onViewerClick,
