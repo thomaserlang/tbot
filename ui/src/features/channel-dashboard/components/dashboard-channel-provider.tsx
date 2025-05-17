@@ -24,7 +24,7 @@ export function DashboardChannelProvider({
 
     return (
         <>
-            <Flex direction="column" gap="0.25rem" h="100%" w={300}>
+            <Flex direction="column">
                 <Flex align="center">
                     <ChannelProviderTitle channelProvider={channelProvider} />
 

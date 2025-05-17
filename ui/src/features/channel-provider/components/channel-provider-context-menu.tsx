@@ -13,7 +13,7 @@ export function ChannelProviderContextMenu({ channelProvider }: Props) {
         <Menu width={200}>
             <Menu.Target>
                 <ActionIcon size="sm-compact" variant="subtle" color="gray">
-                    <IconDotsVertical size={16} />
+                    <IconDotsVertical size={14} />
                 </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>

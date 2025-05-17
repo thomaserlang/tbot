@@ -1,5 +1,5 @@
 import { providerInfo } from '@/constants'
-import { Flex, Text } from '@mantine/core'
+import { Box, Flex, Text } from '@mantine/core'
 import { ChannelProvider } from '../channel-provider.types'
 import { ChannelProviderContextMenu } from './channel-provider-context-menu'
 
@@ -16,9 +16,12 @@ export function ChannelProviderTitle({ channelProvider }: Props) {
             </Text>
         )
     return (
-        <Flex gap="0.25rem" align="center">
-            <ChannelProviderContextMenu channelProvider={channelProvider} />
-            <Text component="a" fw={500} target="_blank">
+        <Flex gap="0.1rem" align="center">
+            <Box ml="-0.35rem" mt="0.1rem">
+                <ChannelProviderContextMenu channelProvider={channelProvider} />
+            </Box>
+
+            <Text component="a" size="sm" fw={500} target="_blank">
                 {providerInfo[channelProvider.provider].name ||
                     channelProvider.provider}
             </Text>

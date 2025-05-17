@@ -3,7 +3,7 @@ import { PageLoader } from '@/components/page-loader'
 import { providerInfo } from '@/constants'
 import { ChannelId } from '@/features/channel'
 import { useGetChannelProviders } from '@/features/channel-provider'
-import { Divider, Flex, Paper, ScrollArea } from '@mantine/core'
+import { Box, Divider, Flex, Paper, ScrollArea } from '@mantine/core'
 import { useLocalStorage } from '@mantine/hooks'
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react'
 import { Fragment } from 'react/jsx-runtime'
@@ -63,11 +63,16 @@ export function DashboardProviders({ channelId }: Props) {
                             ?.filter((f) => providerInfo[f.provider].stream)
                             .map((channelProvider) => (
                                 <Fragment key={channelProvider.id}>
-                                    <DashboardChannelProvider
-                                        key={channelProvider.id}
-                                        channelProvider={channelProvider}
-                                        collapsed={collapsed}
-                                    />
+                                    <Flex>
+                                        <Box miw="250px">
+                                            <DashboardChannelProvider
+                                                channelProvider={
+                                                    channelProvider
+                                                }
+                                                collapsed={collapsed}
+                                            />
+                                        </Box>
+                                    </Flex>
                                     <Divider orientation="vertical" />
                                 </Fragment>
                             ))}
