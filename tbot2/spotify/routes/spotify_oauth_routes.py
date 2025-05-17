@@ -10,7 +10,7 @@ from tbot2.channel_provider import (
     ChannelProviderOAuthRequest,
     ChannelProviderRequest,
     ChannelProviderScope,
-    save_channel_provider,
+    create_or_update_channel_provider,
     save_channel_provider_oauth,
 )
 from tbot2.common import (
@@ -107,7 +107,7 @@ async def spotify_auth_route(
         raise HTTPException(status_code=r.status_code, detail=r.text)
     user_info = r.json()
 
-    channel_provider = await save_channel_provider(
+    channel_provider = await create_or_update_channel_provider(
         channel_id=UUID(params.state['channel_id']),
         provider='spotify',
         data=ChannelProviderRequest(

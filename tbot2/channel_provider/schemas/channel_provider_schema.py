@@ -24,11 +24,12 @@ class ChannelProviderBase(BaseSchema):
     provider_user_display_name: str | None
     scope: str | None
     stream_title: str | None
-    stream_id: str | None
+    live_stream_id: str | None
     stream_live: bool = False
     stream_live_at: datetime | None = None
     stream_chat_id: str | None = None
-    stream_viewers_count: int | None = None
+    stream_viewer_count: int | None = None
+    channel_provider_stream_id: UUID | None
 
     @computed_field  # type: ignore[misc]
     @property
@@ -84,17 +85,25 @@ class ChannelProviderRequest(BaseRequestSchema):
     stream_title: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
-    stream_id: (
+    live_stream_id: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
     """
-    Used to update the channel provider's stream_id. 
-    This is meant to be the id to watch the stream. 
-    For Twitch it would be the username and for YouTube the broadcast id.
+    This is the id to watch the stream. 
+    For Twitch it would be the username and for YouTube the live broadcast id.
     """
     stream_live: bool = False
     stream_live_at: datetime | None = None
     stream_chat_id: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
-    stream_viewers_count: Annotated[int, Field(ge=0)] | None = None
+    channel_provider_stream_id: UUID | None = None
+    stream_viewer_count: Annotated[int, Field(ge=0)] | None = None
+
+
+class ChannelProviderCreate(ChannelProviderRequest):
+    provider: Provider
+
+
+class ChannelProviderUpdate(ChannelProviderRequest):
+    pass

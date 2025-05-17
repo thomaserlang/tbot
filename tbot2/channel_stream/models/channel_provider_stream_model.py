@@ -20,7 +20,9 @@ class MChannelProviderStream(Base):
         sa.UUID, sa.ForeignKey('channel_streams.id', ondelete='CASCADE'), nullable=False
     )
     provider: Mapped[Provider] = mapped_column(sa.String(255))
-    provider_id: Mapped[str] = mapped_column(sa.String(255))
+    provider_user_id: Mapped[str] = mapped_column(sa.String(255))
     provider_stream_id: Mapped[str] = mapped_column(sa.String(255))
     started_at: Mapped[datetime] = mapped_column(UtcDateTime())
     ended_at: Mapped[datetime | None] = mapped_column(UtcDateTime(), nullable=True)
+    avg_viewer_count: Mapped[int | None] = mapped_column(sa.Integer(), nullable=True)
+    peak_viewer_count: Mapped[int | None] = mapped_column(sa.Integer(), nullable=True)

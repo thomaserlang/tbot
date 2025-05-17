@@ -17,8 +17,8 @@ from tbot2.channel_provider import (
     ChannelProviderOAuthRequest,
     ChannelProviderRequest,
     ChannelProviderScope,
+    create_or_update_channel_provider,
     get_channel_provider,
-    save_channel_provider,
     save_channel_provider_oauth,
 )
 from tbot2.common import (
@@ -210,7 +210,7 @@ async def twitch_auth_route(
                 ),
             )
             if result.created and result.channel:
-                channel_provider = await save_channel_provider(
+                channel_provider = await create_or_update_channel_provider(
                     channel_id=result.channel.id,
                     provider='twitch',
                     data=ChannelProviderRequest(
@@ -236,7 +236,7 @@ async def twitch_auth_route(
 
         case 'connect':
             channel_id = UUID(params.state['channel_id'])
-            channel_provider = await save_channel_provider(
+            channel_provider = await create_or_update_channel_provider(
                 channel_id=channel_id,
                 provider='twitch',
                 data=ChannelProviderRequest(
@@ -244,7 +244,7 @@ async def twitch_auth_route(
                     provider_user_name=twitch_user.login,
                     provider_user_display_name=twitch_user.display_name,
                     provider_user_id=twitch_user.id,
-                    stream_id=twitch_user.login,
+                    live_stream_id=twitch_user.login,
                 ),
             )
             await save_channel_provider_oauth(
@@ -282,7 +282,7 @@ async def twitch_auth_route(
                     name=twitch_user.display_name,
                 ),
             )
-            await save_channel_provider(
+            await create_or_update_channel_provider(
                 channel_id=channel_id,
                 provider='twitch',
                 data=ChannelProviderRequest(

@@ -9,6 +9,16 @@ from tbot2.common.utils.oauth_auth import (
 )
 from tbot2.config_settings import config
 
+youtube_api_key_client = AsyncClient(
+    base_url='https://www.googleapis.com/youtube/v3',
+    params={
+        'key': config.youtube.api_key,
+    },
+    http2=True,
+    timeout=15,
+    transport=retry_transport,
+)
+
 youtube_user_client = AsyncClient(
     base_url='https://www.googleapis.com/youtube/v3',
     headers={

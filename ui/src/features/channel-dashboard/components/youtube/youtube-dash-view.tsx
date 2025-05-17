@@ -6,7 +6,7 @@ import { ChannelProviderDashboardProps } from '../../types'
 
 export function YoutubeDashView(props: ChannelProviderDashboardProps) {
     const [loading, setLoading] = useState(false)
-    if (props.channelProvider.stream_id) return
+    if (props.channelProvider.live_stream_id) return
 
     return (
         <Flex gap="0.5rem">

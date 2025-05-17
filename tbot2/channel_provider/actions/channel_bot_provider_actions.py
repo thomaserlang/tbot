@@ -8,10 +8,12 @@ from tbot2.contexts import AsyncSession, get_session
 
 from ..event_types import fire_disconnect_channel_bot_provider
 from ..models.channel_provider_model import MChannelProvider
-from ..schemas.channel_provider_schema import ChannelProviderRequest
+from ..schemas.channel_provider_schema import (
+    ChannelProviderUpdate,
+)
 from .channel_provider_actions import (
     get_channel_provider_by_id,
-    save_channel_provider,
+    update_channel_provider,
 )
 
 
@@ -75,12 +77,9 @@ async def disconnect_channel_bot_provider(
                 type='bot_provider_not_found',
             )
 
-        await save_channel_provider(
-            channel_id=channel_id,
-            provider=channel_provider.provider,
-            data=ChannelProviderRequest(
-                bot_provider_id=None,
-            ),
+        await update_channel_provider(
+            channel_provider_id=channel_provider_id,
+            data=ChannelProviderUpdate(bot_provider_id=None),
             session=session,
         )
 

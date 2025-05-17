@@ -4,7 +4,7 @@ from uuid import UUID
 import sqlalchemy as sa
 from uuid6 import uuid7
 
-from tbot2.common import Provider
+from tbot2.common import ErrorMessage, Provider
 from tbot2.contexts import AsyncSession, get_session
 from tbot2.database import conn
 
@@ -14,7 +14,9 @@ from ..models.channel_provider_model import (
 )
 from ..schemas.channel_provider_schema import (
     ChannelProvider,
+    ChannelProviderCreate,
     ChannelProviderRequest,
+    ChannelProviderUpdate,
 )
 
 
@@ -103,45 +105,25 @@ async def get_channels_providers(
             yield ChannelProvider.model_validate(p)
 
 
-async def save_channel_provider(
+async def create_channel_provider(
     *,
     channel_id: UUID,
-    provider: Provider,
-    data: ChannelProviderRequest,
+    data: ChannelProviderCreate,
     session: AsyncSession | None = None,
 ) -> ChannelProvider:
     async with get_session(session) as session:
-        data_ = data.model_dump(exclude_unset=True)
-
-        r = await session.execute(
-            sa.update(MChannelProvider)
-            .where(
-                MChannelProvider.channel_id == channel_id,
-                MChannelProvider.provider == provider,
+        id = uuid7()
+        data_ = data.model_dump()
+        await session.execute(
+            sa.insert(MChannelProvider).values(
+                id=id,
+                channel_id=channel_id,
+                **data_,
             )
-            .values(**data_)
         )
 
-        if data.bot_provider_id:
-            await conn.redis.delete(
-                f'channel_provider_bot_oauth:{provider}:{channel_id}',
-            )
-
-        if r.rowcount == 0:
-            id = uuid7()
-            await session.execute(
-                sa.insert(MChannelProvider).values(
-                    id=id,
-                    channel_id=channel_id,
-                    provider=provider,
-                    **data_,
-                )
-            )
-
-        channel_provider = await get_channel_provider(
-            channel_id=channel_id,
-            provider=provider,
-            session=session,
+        channel_provider = await get_channel_provider_by_id(
+            channel_provider_id=id, session=session
         )
         if not channel_provider:
             raise Exception('Channel provider not found')
@@ -149,25 +131,106 @@ async def save_channel_provider(
         return ChannelProvider.model_validate(channel_provider)
 
 
-async def reset_channel_provider_live_state(
-    channel_id: UUID,
-    provider: Provider,
-    reset_channel_stream_id: bool = False,
+async def update_channel_provider(
+    *,
+    channel_provider_id: UUID,
+    data: ChannelProviderUpdate,
     session: AsyncSession | None = None,
 ) -> ChannelProvider:
     async with get_session(session) as session:
-        data = ChannelProviderRequest(
-            stream_live=False,
-            stream_live_at=None,
+        data_ = data.model_dump(exclude_unset=True)
+        channel_provider = await get_channel_provider_by_id(
+            channel_provider_id=channel_provider_id, session=session
         )
-        if reset_channel_stream_id:
-            data.stream_id = None
-            data.stream_chat_id = None
+        if not channel_provider:
+            raise ErrorMessage(
+                message='Channel provider not found',
+                code=404,
+                type='channel_provider_not_found',
+            )
 
-        return await save_channel_provider(
+        await session.execute(
+            sa.update(MChannelProvider)
+            .where(
+                MChannelProvider.id == channel_provider_id,
+            )
+            .values(**data_)
+        )
+
+        if 'bot_provider_id' in data_:
+            await conn.redis.delete(
+                f'channel_provider_bot_oauth:{channel_provider.provider}:{channel_provider.channel_id}',
+            )
+
+        channel_provider = await get_channel_provider_by_id(
+            channel_provider_id=channel_provider_id, session=session
+        )
+        if not channel_provider:
+            raise Exception('Channel provider not found')
+
+        return ChannelProvider.model_validate(channel_provider)
+
+
+async def create_or_update_channel_provider(
+    *,
+    channel_id: UUID,
+    provider: Provider,
+    data: ChannelProviderRequest,
+    session: AsyncSession | None = None,
+) -> ChannelProvider:
+    async with get_session(session) as session:
+        channel_provider = await get_channel_provider(
             channel_id=channel_id,
             provider=provider,
-            data=data,
+            session=session,
+        )
+
+        if channel_provider:
+            return await update_channel_provider(
+                channel_provider_id=channel_provider.id,
+                data=ChannelProviderUpdate.model_validate(
+                    data.model_dump(exclude_unset=True)
+                ),
+                session=session,
+            )
+        return await create_channel_provider(
+            channel_id=channel_id,
+            data=ChannelProviderCreate.model_validate(
+                {**data.model_dump(), 'provider': provider}
+            ),
+            session=session,
+        )
+
+
+async def reset_channel_provider_live_state(
+    channel_id: UUID,
+    provider: Provider,
+    reset_live_stream_id: bool = False,
+    session: AsyncSession | None = None,
+) -> ChannelProvider:
+    async with get_session(session) as session:
+        data = ChannelProviderUpdate(
+            stream_live=False,
+            stream_live_at=None,
+            stream_viewer_count=None,
+            channel_provider_stream_id=None,
+        )
+        if reset_live_stream_id:
+            data.live_stream_id = None
+            data.stream_chat_id = None
+
+        channel_provider = await get_channel_provider(
+            channel_id=channel_id, provider=provider
+        )
+        if not channel_provider:
+            raise ErrorMessage(
+                code=404,
+                type='channel_provider_not_found',
+                message='Channel provider not found',
+            )
+
+        return await update_channel_provider(
+            channel_provider_id=channel_provider.id, data=data
         )
 
 

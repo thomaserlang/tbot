@@ -11,7 +11,7 @@ from tbot2.channel_provider import (
     ChannelProviderOAuthRequest,
     ChannelProviderRequest,
     ChannelProviderScope,
-    save_channel_provider,
+    create_or_update_channel_provider,
     save_channel_provider_oauth,
 )
 from tbot2.common import (
@@ -148,7 +148,7 @@ async def tiktok_auth_route(
                 ),
             )
             if result.created and result.channel:
-                channel_provider = await save_channel_provider(
+                channel_provider = await create_or_update_channel_provider(
                     channel_id=result.channel.id,
                     provider='tiktok',
                     data=ChannelProviderRequest(
@@ -173,7 +173,7 @@ async def tiktok_auth_route(
             )
 
         case 'connect':
-            channel_provider = await save_channel_provider(
+            channel_provider = await create_or_update_channel_provider(
                 channel_id=UUID(params.state['channel_id']),
                 provider='tiktok',
                 data=ChannelProviderRequest(

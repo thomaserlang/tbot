@@ -49,7 +49,7 @@ from .actions.twitch_send_message_actions import (
     twitch_bot_send_message as twitch_bot_send_message,
 )
 from .actions.twitch_tasks import (
-    task_update_live_streams as task_update_live_streams,
+    twitch_tasks as twitch_tasks,
 )
 from .actions.twitch_warn_chat_user_action import (
     twitch_warn_chat_user as twitch_warn_chat_user,

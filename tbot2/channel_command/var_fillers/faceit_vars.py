@@ -50,7 +50,7 @@ async def faceit_elo_vars(
         raise CommandError(
             f'Unknow user on Faceit "{username}" (usernames are case sensitive)'
         )
-    elif response.status_code >= 400:
+    if response.status_code >= 400:
         raise CommandError(f'Faceit error: {response.text}')
     data = response.json()
     if 'cs2' not in data['games']:

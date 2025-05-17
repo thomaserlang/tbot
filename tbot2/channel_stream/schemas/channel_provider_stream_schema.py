@@ -9,7 +9,9 @@ class ChannelProviderStream(BaseSchema):
     channel_id: UUID
     channel_stream_id: UUID
     provider: Provider
-    provider_id: str
+    provider_user_id: str
     provider_stream_id: str
     started_at: datetime
     ended_at: datetime | None
+    avg_viewer_count: int | None
+    peak_viewer_count: int | None

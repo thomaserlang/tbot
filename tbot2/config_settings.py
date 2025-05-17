@@ -19,6 +19,7 @@ class ConfigTwitchModel(BaseModel):
 class ConfigYoutubeModel(BaseModel):
     client_id: str = ''
     client_secret: str = ''
+    api_key: str = ''
 
 
 class ConfigDiscordModel(BaseModel):

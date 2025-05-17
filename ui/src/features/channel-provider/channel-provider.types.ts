@@ -1,7 +1,6 @@
 import { ChannelId } from '@/features/channel/types/channel.types'
 import { ProviderBot } from '@/features/provider-bot/provider-bot.types'
 import { Provider } from '@/types/provider.type'
-import { Thumbnail } from '@/types/thumbnail.type'
 import { Branded } from '@/utils/brand'
 
 export type ChannelProviderId = Branded<string, 'ChannelProviderId'>
@@ -15,7 +14,7 @@ export interface ChannelProvider {
         | null
         | boolean
         | ProviderBot
-        | Thumbnail
+        | number
     id: ChannelProviderId
     channel_id: ChannelId
     provider: Provider
@@ -25,7 +24,9 @@ export interface ChannelProvider {
     scope_needed: boolean
     bot_provider: ProviderBot | null
     stream_title: string | null
-    stream_id: string | null
+    live_stream_id: string | null
     stream_live: boolean
     stream_live_at: string | null
+    stream_viewer_count: number | null
+    channel_provider_stream_id: string | null
 }

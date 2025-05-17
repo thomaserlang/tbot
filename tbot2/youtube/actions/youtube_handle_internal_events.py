@@ -47,7 +47,7 @@ async def update_stream_title(
 ) -> bool:
     await update_live_broadcast(
         channel_id=channel_provider.channel_id,
-        live_broadcast_id=channel_provider.stream_id or '',
+        live_broadcast_id=channel_provider.live_stream_id or '',
         snippet_title=stream_title[:100],
     )
     return True
@@ -105,7 +105,7 @@ async def run_commercial(
 ) -> bool:
     await insert_live_broadcast_cuepoint(
         channel_id=channel_provider.channel_id,
-        live_broadcast_id=channel_provider.stream_id or '',
+        live_broadcast_id=channel_provider.live_stream_id or '',
         duration_secs=length,
     )
     return True

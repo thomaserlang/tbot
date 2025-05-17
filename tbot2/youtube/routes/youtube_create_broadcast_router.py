@@ -7,8 +7,8 @@ from tbot2.channel_provider import (
     ChannelProviderPublic,
     ChannelProviderRequest,
     ChannelProviderScope,
+    create_or_update_channel_provider,
     get_channel_provider_by_id,
-    save_channel_provider,
 )
 from tbot2.common import TAccessLevel, TokenData
 from tbot2.contexts import get_session
@@ -55,11 +55,11 @@ async def youtube_create_broadcast_route(
         overwrite_data=data,
     )
     async with get_session() as session:
-        await save_channel_provider(
+        await create_or_update_channel_provider(
             channel_id=channel_id,
             provider='youtube',
             data=ChannelProviderRequest(
-                stream_id=broadcast.id,
+                live_stream_id=broadcast.id,
                 stream_title=broadcast.snippet.title,
                 stream_chat_id=broadcast.snippet.live_chat_id,
             ),

@@ -3,6 +3,15 @@ from .actions.channel_bot_provider_actions import (
     get_channel_bot_provider as get_channel_bot_provider,
 )
 from .actions.channel_provider_actions import (
+    create_channel_provider as create_channel_provider,
+)
+from .actions.channel_provider_actions import (
+    create_or_update_channel_provider as create_or_update_channel_provider,
+)
+from .actions.channel_provider_actions import (
+    delete_channel_provider as delete_channel_provider,
+)
+from .actions.channel_provider_actions import (
     get_channel_provider as get_channel_provider,
 )
 from .actions.channel_provider_actions import (
@@ -21,7 +30,7 @@ from .actions.channel_provider_actions import (
     reset_channel_provider_live_state as reset_channel_provider_live_state,
 )
 from .actions.channel_provider_actions import (
-    save_channel_provider as save_channel_provider,
+    update_channel_provider as update_channel_provider,
 )
 from .actions.channel_provider_oauth_actions import (
     get_channel_provider_oauth as get_channel_provider_oauth,
@@ -65,10 +74,16 @@ from .schemas.channel_provider_schema import (
     ChannelProvider as ChannelProvider,
 )
 from .schemas.channel_provider_schema import (
+    ChannelProviderCreate as ChannelProviderCreate,
+)
+from .schemas.channel_provider_schema import (
     ChannelProviderPublic as ChannelProviderPublic,
 )
 from .schemas.channel_provider_schema import (
     ChannelProviderRequest as ChannelProviderRequest,
+)
+from .schemas.channel_provider_schema import (
+    ChannelProviderUpdate as ChannelProviderUpdate,
 )
 from .schemas.event_ban_user_schema import EventBanUser as EventBanUser
 from .schemas.event_ban_user_schema import (

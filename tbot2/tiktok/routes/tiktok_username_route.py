@@ -7,11 +7,11 @@ from tbot2.channel_provider import (
     ChannelProvider,
     ChannelProviderRequest,
     ChannelProviderScope,
-    save_channel_provider,
+    create_or_update_channel_provider,
 )
 from tbot2.common import TAccessLevel, TokenData
 from tbot2.dependecies import authenticated
-from tbot2.tiktok.actions.task_tiktok_action import TikTokLiveClient
+from tbot2.tiktok.actions.tiktok_tasks import TikTokLiveClient
 
 router = APIRouter()
 
@@ -32,16 +32,15 @@ async def register_tiktok_username_route(
         access_level=TAccessLevel.ADMIN,
     )
     username = TikTokLiveClient.parse_unique_id(username)
-    channel_provider = await save_channel_provider(
+    return await create_or_update_channel_provider(
         channel_id=channel_id,
         provider='tiktok',
         data=ChannelProviderRequest(
             provider_user_name=username,
             provider_user_display_name=username,
             provider_user_id=username,
-            stream_id=username,
+            live_stream_id=username,
             stream_title=username,
             stream_chat_id=username,
         ),
     )
-    return channel_provider

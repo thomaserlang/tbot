@@ -76,18 +76,22 @@ def refresh_twitch_eventsubs() -> None:
 
 @cli.command()
 def tasks() -> None:
-    from tbot2.channel_timer import task_handle_timers
-    from tbot2.tiktok import task_tiktok
-    from tbot2.twitch import task_update_live_streams
-    from tbot2.youtube import task_youtube_live
+    from tbot2.channel_timer import timer_tasks
+    from tbot2.tiktok import tiktok_tasks
+    from tbot2.twitch import twitch_tasks
+    from tbot2.youtube import youtube_tasks
 
     async def run() -> None:
         async with db():
-            await asyncio.gather(
-                task_update_live_streams(),
-                task_handle_timers(),
-                task_youtube_live(),
-                task_tiktok(),
+            fns = [
+                timer_tasks(),
+                twitch_tasks(),
+                youtube_tasks(),
+                tiktok_tasks(),
+            ]
+            await asyncio.wait(
+                [asyncio.create_task(fn) for fn in fns],
+                return_when=asyncio.FIRST_COMPLETED,
             )
 
     with asyncio.Runner() as runner:

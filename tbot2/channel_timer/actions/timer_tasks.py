@@ -11,7 +11,7 @@ from tbot2.common import Provider, datetime_now
 from tbot2.common.utils.event import add_event_handler, fire_event_async
 from tbot2.contexts import AsyncSession, get_session
 
-from ..actions.timer_actions import (
+from .timer_actions import (
     Timer,
     get_timers,
     update_timer_next_run_at,
@@ -20,9 +20,9 @@ from ..actions.timer_actions import (
 CHECK_EVERY = 60.0
 
 
-async def task_handle_timers() -> None:
+async def timer_tasks() -> None:
     last_check: datetime | None = None
-    logger.info('Starting task_handle_timers')
+    logger.info('Starting timer_tasks')
     while True:
         if last_check:
             elapsed = (datetime_now() - last_check).total_seconds()
@@ -31,6 +31,7 @@ async def task_handle_timers() -> None:
             sleep_time = CHECK_EVERY
         await asyncio.sleep(sleep_time)
         last_check = datetime_now()
+
         timers = await get_timers(
             enabled=True,
             lte_next_run_at=datetime_now(),
@@ -97,7 +98,7 @@ async def is_timer_active(
         stream = await get_current_channel_provider_stream(
             channel_id=timer.channel_id,
             provider=channel_provider.provider,
-            provider_id=channel_provider.provider_user_id,
+            provider_user_id=channel_provider.provider_user_id,
             session=session,
         )
         if timer.active_mode == 'online' and stream:

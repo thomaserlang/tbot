@@ -3,7 +3,7 @@ import { ChannelProvider } from './channel-provider.types'
 
 export function getDashboardUrl(channelProvider: ChannelProvider) {
     if (
-        channelProvider.stream_id &&
+        channelProvider.live_stream_id &&
         providerInfo[channelProvider.provider].broadcastEditUrl
     ) {
         return providerInfo[channelProvider.provider].broadcastEditUrl?.replace(

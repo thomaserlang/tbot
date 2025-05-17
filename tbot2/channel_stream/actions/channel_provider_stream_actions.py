@@ -5,9 +5,10 @@ import sqlalchemy as sa
 from uuid6 import uuid7
 
 from tbot2.channel_provider import (
-    ChannelProviderRequest,
+    ChannelProviderUpdate,
+    get_channel_provider,
     reset_channel_provider_live_state,
-    save_channel_provider,
+    update_channel_provider,
 )
 from tbot2.common import Provider, datetime_now
 from tbot2.contexts import AsyncSession, get_session
@@ -30,13 +31,14 @@ async def get_channel_provider_stream(
         )
         if result:
             return ChannelProviderStream.model_validate(result)
+        return None
 
 
 async def get_current_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: Provider,
-    provider_id: str | None = None,
+    provider_user_id: str | None = None,
     provider_stream_id: str | None = None,
     session: AsyncSession | None = None,
 ) -> ChannelProviderStream | None:
@@ -46,8 +48,10 @@ async def get_current_channel_provider_stream(
             MChannelProviderStream.provider == provider,
             MChannelProviderStream.ended_at.is_(None),
         )
-        if provider_id:
-            stmt = stmt.where(MChannelProviderStream.provider_id == provider_id)
+        if provider_user_id:
+            stmt = stmt.where(
+                MChannelProviderStream.provider_user_id == provider_user_id
+            )
         if provider_stream_id:
             stmt = stmt.where(
                 MChannelProviderStream.provider_stream_id == provider_stream_id
@@ -55,23 +59,24 @@ async def get_current_channel_provider_stream(
         result = await session.scalar(stmt)
         if result:
             return ChannelProviderStream.model_validate(result)
+        return None
 
 
 async def create_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: Provider,
-    provider_id: str,
+    provider_user_id: str,
     provider_stream_id: str,
     started_at: datetime,
-    stream_id: str | None = None,
+    live_stream_id: str | None = None,
     ended_at: datetime | None = None,
     session: AsyncSession | None = None,
 ) -> ChannelProviderStream:
     """
     Args:
         provider_stream_id: The id of the stream from the provider.
-        stream_id: Used to update the channel provider's stream_id. This is meant to be the id to watch the stream. For Twitch it would be the username and for YouTube the broadcast id.
+        live_stream_id: This is the id to watch the stream live. For Twitch it would be the username and for YouTube the live broadcast id.
     """  # noqa: E501
     async with get_session(session) as session:
         # Check if there is an existing not ended
@@ -79,14 +84,14 @@ async def create_channel_provider_stream(
         stream = await get_current_channel_provider_stream(
             channel_id=channel_id,
             provider=provider,
-            provider_id=provider_id,
+            provider_user_id=provider_user_id,
             session=session,
         )
         if stream:
             await end_channel_provider_stream(
                 channel_id=channel_id,
                 provider=provider,
-                provider_id=provider_id,
+                provider_user_id=provider_user_id,
                 ended_at=datetime_now(),
                 session=session,
             )
@@ -95,35 +100,45 @@ async def create_channel_provider_stream(
         stream = await get_or_create_channel_stream(
             channel_id=channel_id, session=session
         )
-        await session.execute(
-            sa.insert(MChannelProviderStream.__table__).values(  # type: ignore
-                id=id,
-                channel_id=channel_id,
-                channel_stream_id=stream.id,
-                provider=provider,
-                provider_id=provider_id,
-                provider_stream_id=provider_stream_id,
-                started_at=started_at,
-                ended_at=ended_at,
+        try:
+            await session.execute(
+                sa.insert(MChannelProviderStream.__table__).values(  # type: ignore
+                    id=id,
+                    channel_id=channel_id,
+                    channel_stream_id=stream.id,
+                    provider=provider,
+                    provider_user_id=provider_user_id,
+                    provider_stream_id=provider_stream_id,
+                    started_at=started_at,
+                    ended_at=ended_at,
+                )
             )
-        )
+        except sa.exc.IntegrityError as e:
+            if 'provider_streams_uq' not in str(e.orig):
+                raise e
+
         stream = await get_channel_provider_stream(
             channel_provider_stream_id=id, session=session
         )
         if not stream:
             raise Exception('Failed to create channel provider stream')
 
-        data = ChannelProviderRequest(
+        data = ChannelProviderUpdate(
             stream_live=True,
             stream_live_at=started_at,
+            channel_provider_stream_id=id,
+            stream_viewer_count=1,            
         )
-        if stream_id:
-            data.stream_id = stream_id
-        await save_channel_provider(
-            channel_id=channel_id,
-            provider=provider,
-            data=data,
+        if live_stream_id:
+            data.live_stream_id = live_stream_id
+        channel_provider = await get_channel_provider(
+            channel_id=channel_id, provider=provider, session=session
         )
+        if channel_provider:
+            await update_channel_provider(
+                channel_provider_id=channel_provider.id, data=data, session=session
+            )
+
         return stream
 
 
@@ -131,21 +146,21 @@ async def get_or_create_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: Provider,
-    provider_id: str,
+    provider_user_id: str,
     provider_stream_id: str,
     started_at: datetime,
-    stream_id: str | None = None,
+    live_stream_id: str | None = None,
     session: AsyncSession | None = None,
 ) -> ChannelProviderStream:
     """
     Args:
         provider_stream_id: The id of the stream from the provider.
-        stream_id: Used to update the channel provider's stream_id. This is meant to be the id to watch the stream. For Twitch it would be the username and for YouTube the broadcast id.
+        live_stream_id: This is the id to watch the stream live. For Twitch it would be the username and for YouTube the live broadcast id.
     """  # noqa: E501
     stream = await get_current_channel_provider_stream(
         channel_id=channel_id,
         provider=provider,
-        provider_id=provider_id,
+        provider_user_id=provider_user_id,
         provider_stream_id=provider_stream_id,
         session=session,
     )
@@ -154,10 +169,10 @@ async def get_or_create_channel_provider_stream(
     return await create_channel_provider_stream(
         channel_id=channel_id,
         provider=provider,
-        provider_id=provider_id,
+        provider_user_id=provider_user_id,
         provider_stream_id=provider_stream_id,
         started_at=started_at,
-        stream_id=stream_id,
+        live_stream_id=live_stream_id,
     )
 
 
@@ -165,15 +180,15 @@ async def end_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: Provider,
-    provider_id: str | None = None,
+    provider_user_id: str | None = None,
     provider_stream_id: str | None = None,
     ended_at: datetime | None = None,
-    reset_channel_stream_id: bool = False,
+    reset_live_stream_id: bool = False,
     session: AsyncSession | None = None,
 ) -> ChannelProviderStream | None:
     """
     Args:
-        reset_channel_stream_id: This is only meant to be true for providers where the stream_id changes per stream.
+        reset_live_stream_id: This is only meant to be true for providers where the stream_id changes per stream, e.g. YouTube.
     """  # noqa: E501
     if ended_at is None:
         ended_at = datetime_now()
@@ -181,7 +196,7 @@ async def end_channel_provider_stream(
         stream = await get_current_channel_provider_stream(
             channel_id=channel_id,
             provider=provider,
-            provider_id=provider_id,
+            provider_user_id=provider_user_id,
             session=session,
         )
         if stream and not stream.ended_at:
@@ -202,22 +217,7 @@ async def end_channel_provider_stream(
         await reset_channel_provider_live_state(
             channel_id=channel_id,
             provider=provider,
-            reset_channel_stream_id=reset_channel_stream_id,
+            reset_live_stream_id=reset_live_stream_id,
             session=session,
         )
         return stream
-
-
-async def get_live_channels_provider_streams(
-    *,
-    provider: Provider,
-    session: AsyncSession | None = None,
-) -> list[ChannelProviderStream]:
-    async with get_session(session) as session:
-        result = await session.scalars(
-            sa.select(MChannelProviderStream).where(
-                MChannelProviderStream.provider == provider,
-                MChannelProviderStream.ended_at.is_(None),
-            )
-        )
-        return [ChannelProviderStream.model_validate(r) for r in result]

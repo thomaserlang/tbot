@@ -3,7 +3,11 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request
 
-from tbot2.channel_provider import ChannelProviderRequest, save_channel_provider
+from tbot2.channel_provider import (
+    ChannelProviderUpdate,
+    get_channel_provider,
+    update_channel_provider,
+)
 
 from ..schemas.event_channel_update_schema import EventChannelUpdate
 from ..schemas.event_headers_schema import EventSubHeaders
@@ -28,12 +32,16 @@ async def event_channel_update_route(
     data = EventSubNotification[EventChannelUpdate].model_validate_json(
         await request.body()
     )
-    await save_channel_provider(
-        channel_id=channel_id,
-        provider='twitch',
-        data=ChannelProviderRequest(
-            provider_user_display_name=data.event.broadcaster_user_name,
-            provider_user_name=data.event.broadcaster_user_name,
-            stream_title=data.event.title,
-        ),
+
+    channel_provider = await get_channel_provider(
+        channel_id=channel_id, provider='twitch'
     )
+    if channel_provider:
+        await update_channel_provider(
+            channel_provider_id=channel_provider.id,
+            data=ChannelProviderUpdate(
+                provider_user_display_name=data.event.broadcaster_user_name,
+                provider_user_name=data.event.broadcaster_user_name,
+                stream_title=data.event.title,
+            ),
+        )

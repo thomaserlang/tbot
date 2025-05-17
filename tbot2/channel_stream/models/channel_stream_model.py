@@ -16,3 +16,5 @@ class MChannelStream(Base):
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)
     channel_id: Mapped[UUID] = mapped_column(sa.UUID)
     started_at: Mapped[datetime] = mapped_column(UtcDateTime())
+    avg_viewer_count: Mapped[int | None] = mapped_column(sa.Integer(), nullable=True)
+    peak_viewer_count: Mapped[int | None] = mapped_column(sa.Integer(), nullable=True)

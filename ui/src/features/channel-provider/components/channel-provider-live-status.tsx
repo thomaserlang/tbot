@@ -36,7 +36,7 @@ export function ChannelProviderLiveStatus({ channelProvider }: Props) {
         )
     }
 
-    if (!channelProvider.stream_id) {
+    if (!channelProvider.live_stream_id) {
         return (
             <Flex gap="0.25rem" align="center">
                 <HoverCard width={280}>
@@ -65,7 +65,7 @@ export function ChannelProviderLiveStatus({ channelProvider }: Props) {
                 <HoverCard.Target>
                     <Flex gap="0.25rem" align="center">
                         <Text size="sm">
-                            {channelProvider.stream_id
+                            {channelProvider.live_stream_id
                                 ? 'Ready to stream'
                                 : 'Not ready'}
                         </Text>

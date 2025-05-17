@@ -9,6 +9,7 @@ from TikTokLive.events import (  # type: ignore
     ConnectEvent,
     GiftEvent,
     LiveEndEvent,
+    RoomUserSeqEvent,
 )
 
 from tbot2.channel_chatlog import create_chatlog
@@ -17,6 +18,8 @@ from tbot2.channel_provider import (
     get_channels_providers,
 )
 from tbot2.channel_stream import (
+    ChannelProviderStream,
+    add_viewer_count,
     end_channel_provider_stream,
     get_or_create_channel_provider_stream,
 )
@@ -33,8 +36,8 @@ channel_monitor_tasks: dict[UUID, asyncio.Task[None]] = {}
 CHECK_EVERY = 60.0
 
 
-async def task_tiktok() -> None:
-    logger.info('Checking for live tiktok streams')
+async def tiktok_tasks() -> None:
+    logger.info('Starting tiktok_tasks')
     while True:
         try:
             current_channels: set[UUID] = set()
@@ -83,10 +86,12 @@ async def handle_channel(
                     await end_channel_provider_stream(
                         channel_id=channel_provider.channel_id,
                         provider='tiktok',
-                        provider_id=channel_provider.provider_user_id,
+                        provider_user_id=channel_provider.provider_user_id,
                         ended_at=datetime_now(),
                     )
                 return
+
+            channel_provider_stream: ChannelProviderStream | None = None
 
             async def on_connect(event: ConnectEvent) -> None:  # type: ignore
                 logger.debug(
@@ -95,12 +100,14 @@ async def handle_channel(
                 )
                 if not channel_provider.stream_live:
                     logger.debug('channel is live')
-                    await get_or_create_channel_provider_stream(
-                        channel_id=channel_provider.channel_id,
-                        provider='tiktok',
-                        provider_id=channel_provider.provider_user_id or '',
-                        provider_stream_id=str(event.room_id),
-                        started_at=datetime_now(),
+                    channel_provider_stream = (
+                        await get_or_create_channel_provider_stream(
+                            channel_id=channel_provider.channel_id,
+                            provider='tiktok',
+                            provider_user_id=channel_provider.provider_user_id or '',
+                            provider_stream_id=str(event.room_id),
+                            started_at=datetime_now(),
+                        )
                     )
 
             async def on_comment(event: CommentEvent) -> None:
@@ -172,15 +179,25 @@ async def handle_channel(
                 await end_channel_provider_stream(
                     channel_id=channel_provider.channel_id,
                     provider='tiktok',
-                    provider_id=channel_provider.provider_user_id,
+                    provider_user_id=channel_provider.provider_user_id,
                     ended_at=datetime_now(),
                 )
                 await client.disconnect()
+
+            async def on_viewer_count(event: RoomUserSeqEvent) -> None:
+                if channel_provider_stream:
+                    logger.info(event)
+                    await add_viewer_count(
+                        channel_provider_id=channel_provider.id,
+                        channel_provider_stream_id=channel_provider_stream.id,
+                        viewer_count=event.m_total,
+                    )
 
             client.add_listener(ConnectEvent, on_connect)  # type: ignore
             client.add_listener(CommentEvent, on_comment)  # type: ignore
             client.add_listener(GiftEvent, on_gift)  # type: ignore
             client.add_listener(LiveEndEvent, on_live_end)  # type: ignore
+            client.add_listener(RoomUserSeqEvent, on_viewer_count)  # type: ignore
             await client.connect()  # type: ignore
         except UserNotFoundError as e:
             logger.debug(str(e))

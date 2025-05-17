@@ -38,7 +38,7 @@ class MChannelProvider(Base):
         viewonly=True,
     )
     stream_title: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
-    stream_id: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
+    live_stream_id: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
     stream_live: Mapped[bool] = mapped_column(
         sa.Boolean(), nullable=False, default=False
     )
@@ -46,6 +46,13 @@ class MChannelProvider(Base):
         UtcDateTime(), nullable=True
     )
     stream_chat_id: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
-    stream_viewers_count: Mapped[int | None] = mapped_column(
-        sa.Integer(), nullable=True
+    stream_viewer_count: Mapped[int | None] = mapped_column(sa.Integer(), nullable=True)
+    channel_provider_stream_id = mapped_column(
+        sa.UUID,
+        sa.ForeignKey(
+            'channel_provider_streams.id',
+            ondelete='SET NULL',
+            onupdate='CASCADE',
+        ),
+        nullable=True,
     )

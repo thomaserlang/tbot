@@ -52,7 +52,7 @@ async def create_chatlog(
             )
         except sa.exc.IntegrityError as e:
             if 'uq_chatlogs_msg_id' in str(e):
-                logger.info(
+                logger.debug(
                     'Duplicate message id, ignoring', extra={'msg_id': data.msg_id}
                 )
                 return False

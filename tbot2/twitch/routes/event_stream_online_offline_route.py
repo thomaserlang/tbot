@@ -40,10 +40,10 @@ async def event_stream_online_route(
     await create_channel_provider_stream(
         channel_id=channel_id,
         provider='twitch',
-        provider_id=data.event.broadcaster_user_id,
+        provider_user_id=data.event.broadcaster_user_id,
         provider_stream_id=data.event.id,
         started_at=data.event.started_at,
-        stream_id=data.event.broadcaster_user_name,
+        live_stream_id=data.event.broadcaster_user_name,
     )
 
 
@@ -63,5 +63,5 @@ async def event_stream_offline_route(
     await end_channel_provider_stream(
         channel_id=channel_id,
         provider='twitch',
-        provider_id=data.event.broadcaster_user_id,
+        provider_user_id=data.event.broadcaster_user_id,
     )

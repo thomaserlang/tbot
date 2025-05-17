@@ -13,7 +13,7 @@ export function ChannelProviderEmbedLive({
     height,
 }: Props) {
     if (!providerInfo[channelProvider.provider].embedUrl) return null
-    if (!channelProvider.stream_id) return null
+    if (!channelProvider.live_stream_id) return null
     return (
         <iframe
             width={width}

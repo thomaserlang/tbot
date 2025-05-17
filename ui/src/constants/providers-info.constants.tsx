@@ -40,8 +40,9 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
         dashboardUrl:
             'https://studio.youtube.com/channel/{provider_user_id}/livestreaming',
         broadcastEditUrl:
-            'https://studio.youtube.com/video/{stream_id}/livestreaming',
-        embedUrl: 'https://www.youtube.com/embed/{stream_id}?mute=1&autoplay=1',
+            'https://studio.youtube.com/video/{live_stream_id}/livestreaming',
+        embedUrl:
+            'https://www.youtube.com/embed/{live_stream_id}?mute=1&autoplay=1',
         streamTitleMaxLength: 100,
         icon: <IconBrandYoutube size={18} />,
     },

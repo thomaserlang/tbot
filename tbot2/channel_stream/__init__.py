@@ -11,10 +11,10 @@ from .actions.channel_provider_stream_actions import (
     get_current_channel_provider_stream as get_current_channel_provider_stream,
 )
 from .actions.channel_provider_stream_actions import (
-    get_live_channels_provider_streams as get_live_channels_provider_streams,
-)
-from .actions.channel_provider_stream_actions import (
     get_or_create_channel_provider_stream as get_or_create_channel_provider_stream,
+)
+from .actions.channel_provider_stream_viewer_count_actions import (
+    add_viewer_count as add_viewer_count,
 )
 from .actions.channel_stream_actions import get_channel_stream as get_channel_stream
 from .actions.channel_stream_actions import (

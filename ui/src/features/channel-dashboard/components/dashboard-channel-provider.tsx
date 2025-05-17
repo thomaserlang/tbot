@@ -33,7 +33,7 @@ export function DashboardChannelProvider({
                     </Box>
                 </Flex>
 
-                {channelProvider.stream_id && (
+                {channelProvider.live_stream_id && (
                     <Flex
                         gap="0.25rem"
                         align="center"

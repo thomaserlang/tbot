@@ -12,7 +12,7 @@ from tbot2.channel_provider import (
     ChannelProviderOAuthRequest,
     ChannelProviderRequest,
     ChannelProviderScope,
-    save_channel_provider,
+    create_or_update_channel_provider,
     save_channel_provider_oauth,
 )
 from tbot2.common import (
@@ -223,7 +223,7 @@ async def youtube_auth_route(
                     session=session,
                 )
                 if result.created and result.channel:
-                    channel_provider = await save_channel_provider(
+                    channel_provider = await create_or_update_channel_provider(
                         channel_id=result.channel.id,
                         provider='youtube',
                         data=ChannelProviderRequest(
@@ -242,7 +242,7 @@ async def youtube_auth_route(
 
         case 'connect':
             channel = channels.items[0]
-            channel_provider = await save_channel_provider(
+            channel_provider = await create_or_update_channel_provider(
                 channel_id=UUID(params.state['channel_id']),
                 provider='youtube',
                 data=ChannelProviderRequest(
@@ -274,7 +274,7 @@ async def youtube_auth_route(
                     name=channel.snippet.title,
                 ),
             )
-            await save_channel_provider(
+            await create_or_update_channel_provider(
                 channel_id=channel_id,
                 provider='youtube',
                 data=ChannelProviderRequest(
