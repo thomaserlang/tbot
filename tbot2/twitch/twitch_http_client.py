@@ -91,6 +91,7 @@ async def get_twitch_pagination_yield(
                 **response.url.params,
                 'after': pagination['cursor'],
             },
+            headers=response.request.headers,
         )
         if response.status_code >= 400:
             raise ErrorMessage(f'{response.status_code} {response.text}')
