@@ -36,7 +36,7 @@ export function Component() {
                                         key={provider.key}
                                         bg={provider.color}
                                         leftSection={provider.icon}
-                                        loading={signInUrl.isSuccess}
+                                        loading={signInUrl.isPending}
                                         onClick={() => {
                                             signInUrl.mutate({
                                                 provider: provider.key,
