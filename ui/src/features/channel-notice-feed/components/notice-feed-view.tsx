@@ -6,8 +6,9 @@ import {
     useGetChatlogsWS,
 } from '@/features/channel-combined-chat'
 import { pageRecordsFlatten } from '@/utils/page-records'
-import { Flex, ScrollArea, Text } from '@mantine/core'
+import { Divider, Flex, Paper, ScrollArea, Text } from '@mantine/core'
 import { IconNotification } from '@tabler/icons-react'
+import { NoticeFeedHeader } from './notice-feed-header'
 import { NoticeFeedList } from './notice-feed-list'
 
 interface Props {
@@ -51,8 +52,16 @@ export function NoticeFeedView({ channelId }: Props) {
             </Flex>
         )
     return (
-        <ScrollArea h="100%" style={{ contain: 'strict' }}>
-            <NoticeFeedList notices={notices} />
-        </ScrollArea>
+        <Flex direction="column" h="100%" w="100%">
+            <Paper>
+                <Paper p="0.25rem 0.5rem">
+                    <NoticeFeedHeader />
+                </Paper>
+                <Divider />
+            </Paper>
+            <ScrollArea flex={1} style={{ contain: 'strict' }}>
+                <NoticeFeedList notices={notices} />
+            </ScrollArea>
+        </Flex>
     )
 }
