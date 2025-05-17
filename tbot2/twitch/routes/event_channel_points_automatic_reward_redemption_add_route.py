@@ -125,7 +125,7 @@ async def emulate_automatic_reward_redemption_route(
                 type='gift',
                 text=f'cheer{reward_cost}',
                 gift=GiftPartRequest(
-                    id='',
+                    id='cheer-100',
                     name='cheer',
                     type='cheermote',
                     count=reward_cost,

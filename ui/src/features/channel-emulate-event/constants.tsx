@@ -1,7 +1,7 @@
 import { api } from '@/utils/api'
 import { EmulateEvent } from './types'
 
-export const EmulateEvents: EmulateEvent[] = [
+export const emulateEvents: EmulateEvent[] = [
     {
         name: 'Redeem custom reward: waste points',
         request: ({ channelId }) => {

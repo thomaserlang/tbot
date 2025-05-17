@@ -16,7 +16,7 @@ interface Props {
 export function ChatMessages({ messages, onViewerClick }: Props) {
     let lastDate = ''
     return (
-        <Flex gap="0.6rem" direction="column">
+        <Flex gap="0.6rem" direction="column" mb="1rem">
             {messages.map((message) => {
                 const date = message.created_at.substring(0, 10)
                 const showDateLine = date !== lastDate
@@ -72,7 +72,11 @@ function DecorateMessage({
             </Box>
         )
     if (message.sub_type == 'channel_points_highlighted')
-        return <Box className={classes.highlight}>{children}</Box>
+        return (
+            <Box m="0 1rem 0 1rem" className={classes.highlight}>
+                {children}
+            </Box>
+        )
     if (message.type !== 'notice')
         return <Box m="0 1rem 0 1rem">{children}</Box>
     return <Box>{children}</Box>

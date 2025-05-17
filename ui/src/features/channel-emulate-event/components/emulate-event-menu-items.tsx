@@ -1,7 +1,7 @@
 import { useCurrentChannel } from '@/features/channel'
 import { toastPromise } from '@/utils/toast'
 import { Menu } from '@mantine/core'
-import { EmulateEvents as emulateEvents } from '../constants'
+import { emulateEvents } from '../constants'
 
 export function EmulateEventMenuItems() {
     const channel = useCurrentChannel()
