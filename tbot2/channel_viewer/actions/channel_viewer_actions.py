@@ -75,12 +75,11 @@ async def get_channel_viewer_stats(
         )
         if result:
             return ChannelViewerStats.model_validate(result)
-        else:
-            return ChannelViewerStats(
-                channel_id=channel_id,
-                provider=provider,
-                provider_viewer_id=provider_viewer_id,
-            )
+        return ChannelViewerStats(
+            channel_id=channel_id,
+            provider=provider,
+            provider_viewer_id=provider_viewer_id,
+        )
 
 
 async def update_channel_viewer_stats(
