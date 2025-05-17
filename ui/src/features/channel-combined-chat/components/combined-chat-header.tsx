@@ -37,7 +37,13 @@ export function ChannelProvidersLiveStatus() {
                                 count={channelProvider.stream_viewer_count}
                             />
                             {channelProvider.stream_live_at && (
-                                <Text size="sm" c="dimmed">
+                                <Text
+                                    size="sm"
+                                    c="dimmed"
+                                    style={{
+                                        fontVariantNumeric: 'tabular-nums',
+                                    }}
+                                >
                                     <TimeCounter
                                         fromDateTime={
                                             channelProvider.stream_live_at

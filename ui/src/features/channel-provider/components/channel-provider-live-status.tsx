@@ -14,7 +14,10 @@ export function ChannelProviderLiveStatus({ channelProvider }: Props) {
                 <HoverCard width={280}>
                     <HoverCard.Target>
                         <Flex gap="0.25rem" align="center">
-                            <Text size="sm">
+                            <Text
+                                size="sm"
+                                style={{ fontVariantNumeric: 'tabular-nums' }}
+                            >
                                 {channelProvider.stream_live_at && (
                                     <TimeCounter
                                         fromDateTime={
