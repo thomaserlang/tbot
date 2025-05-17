@@ -8,32 +8,30 @@ import {
     ViewerSearchButton,
 } from '@/features/channel-viewer'
 import { ChannelId } from '@/features/channel/types/channel.types'
-import { ActionIcon, Divider, Flex, Paper, ScrollArea } from '@mantine/core'
-import { IconDotsVertical } from '@tabler/icons-react'
+import { Divider, Flex, Paper, ScrollArea } from '@mantine/core'
 import { useState } from 'react'
-import { ChatMenu } from './chat-menu'
 import { ChatView } from './chat-view'
 import { CombinedChatHeader } from './combined-chat-header'
 
 interface Props {
     channelId: ChannelId
-    hideHeader?: boolean
+    hideChannelProviders?: boolean
 }
 
-export function CombinedChatView({ channelId, hideHeader }: Props) {
+export function CombinedChatView({ channelId, hideChannelProviders }: Props) {
     const [showViewer, setShowViewer] = useState<ViewerName | null>(null)
 
     return (
         <>
             <Flex direction="column" h="100%" w="100%">
-                {!hideHeader && (
-                    <Paper>
-                        <Paper p="0.25rem 0.5rem">
-                            <CombinedChatHeader />
-                        </Paper>
-                        <Divider />
+                <Paper>
+                    <Paper p="0.25rem 0.5rem">
+                        <CombinedChatHeader
+                            hideChannelProviders={hideChannelProviders}
+                        />
                     </Paper>
-                )}
+                    <Divider />
+                </Paper>
 
                 <Paper h="100%">
                     <ChatView
@@ -46,7 +44,7 @@ export function CombinedChatView({ channelId, hideHeader }: Props) {
 
                 <Divider />
 
-                <Paper p="0.5rem 0 0.5rem 0.5rem">
+                <Paper p="0.5rem">
                     <ScrollArea>
                         <Flex gap="0.5rem">
                             <RunCommercialButton channelId={channelId} />
@@ -55,16 +53,6 @@ export function CombinedChatView({ channelId, hideHeader }: Props) {
                                 <ViewerSearchButton
                                     onSelect={(viewer) => setShowViewer(viewer)}
                                 />
-                                <ChatMenu>
-                                    <ActionIcon variant="subtle" color="gray">
-                                        <IconDotsVertical
-                                            style={{
-                                                width: '70%',
-                                                height: '70%',
-                                            }}
-                                        />
-                                    </ActionIcon>
-                                </ChatMenu>
                             </Flex>
                         </Flex>
                     </ScrollArea>

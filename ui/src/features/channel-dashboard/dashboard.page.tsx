@@ -20,7 +20,10 @@ export function Component() {
                     </Paper>
 
                     <Paper flex={1} withBorder>
-                        <CombinedChatView channelId={channel.id} hideHeader />
+                        <CombinedChatView
+                            channelId={channel.id}
+                            hideChannelProviders
+                        />
                     </Paper>
                 </Flex>
             </Flex>

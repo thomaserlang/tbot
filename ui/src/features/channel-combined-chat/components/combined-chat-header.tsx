@@ -3,13 +3,33 @@ import { ViewerCount } from '@/components/viewer-count'
 import { providerInfo } from '@/constants'
 import { useCurrentChannel } from '@/features/channel'
 import { useGetChannelProviders } from '@/features/channel-provider'
-import { Divider, Flex, Text } from '@mantine/core'
+import { ActionIcon, Divider, Flex, Text } from '@mantine/core'
+import { IconDotsVertical } from '@tabler/icons-react'
 import { Fragment } from 'react/jsx-runtime'
+import { ChatMenu } from './chat-menu'
 
-export function CombinedChatHeader() {
+interface Props {
+    hideChannelProviders?: boolean
+}
+
+export function CombinedChatHeader({ hideChannelProviders }: Props) {
     return (
-        <Flex justify="space-between">
-            <Text fw={500}>Chat</Text> <ChannelProvidersLiveStatus />
+        <Flex gap="1rem">
+            <Text fw={500}>Chat</Text>
+            <Flex ml="auto" gap="0.5rem" align="center">
+                {!hideChannelProviders && <ChannelProvidersLiveStatus />}
+
+                <ChatMenu>
+                    <ActionIcon
+                        variant="subtle"
+                        size="compact-md"
+                        mr="-0.2rem"
+                        color="gray"
+                    >
+                        <IconDotsVertical size={16} />
+                    </ActionIcon>
+                </ChatMenu>
+            </Flex>
         </Flex>
     )
 }
@@ -29,8 +49,6 @@ export function ChannelProvidersLiveStatus() {
                 ?.filter((f) => f.stream_live)
                 .map((channelProvider) => (
                     <Fragment key={channelProvider.id}>
-                        <Divider orientation="vertical" />
-
                         <Flex gap="0.35rem" align="center">
                             {providerInfo[channelProvider.provider].icon}
                             <ViewerCount
@@ -52,6 +70,7 @@ export function ChannelProvidersLiveStatus() {
                                 </Text>
                             )}
                         </Flex>
+                        <Divider orientation="vertical" />
                     </Fragment>
                 ))}
         </Flex>
