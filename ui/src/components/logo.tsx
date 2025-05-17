@@ -10,7 +10,7 @@ export function Logo({ width }: Props) {
         <Flex gap="0.5rem" align="center">
             <Box>
                 <Anchor href="/channels">
-                    <Image src={treeUrl} alt="Synchra" h={40} />
+                    <Image src={treeUrl} alt="Synchra" h="40px" />
                 </Anchor>
             </Box>
             <Anchor href="/channels">
