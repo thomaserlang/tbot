@@ -91,7 +91,7 @@ def tasks() -> None:
             ]
             await asyncio.wait(
                 [asyncio.create_task(fn) for fn in fns],
-                return_when=asyncio.FIRST_COMPLETED,
+                return_when=asyncio.FIRST_EXCEPTION,
             )
 
     with asyncio.Runner() as runner:
