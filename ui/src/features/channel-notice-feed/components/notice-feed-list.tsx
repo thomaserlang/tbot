@@ -11,7 +11,7 @@ interface Props {
 
 export function NoticeFeedList({ notices }: Props) {
     return (
-        <Flex direction="column" gap="0.75rem">
+        <Flex direction="column" gap="0.5rem">
             {notices.map((notice) => (
                 <Fragment key={notice.id}>
                     <Flex direction="column" p="0 1rem">

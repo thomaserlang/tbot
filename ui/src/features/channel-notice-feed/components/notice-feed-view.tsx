@@ -52,7 +52,7 @@ export function NoticeFeedView({ channelId }: Props) {
             </Flex>
         )
     return (
-        <Flex direction="column" h="100%" w="100%">
+        <Flex direction="column" h="100%" w="100%" gap="0.5rem">
             <Paper>
                 <Paper p="0.25rem 0.5rem">
                     <NoticeFeedHeader />
