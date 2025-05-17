@@ -73,5 +73,7 @@ function DecorateMessage({
         )
     if (message.sub_type == 'channel_points_highlighted')
         return <Box className={classes.highlight}>{children}</Box>
+    if (message.type !== 'notice')
+        return <Box m="0 1rem 0 1rem">{children}</Box>
     return <Box>{children}</Box>
 }

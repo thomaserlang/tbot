@@ -35,7 +35,7 @@ export function CombinedChatView({ channelId, hideHeader }: Props) {
                     </Paper>
                 )}
 
-                <Paper pl="0.25rem" pb="0.5rem" h="100%">
+                <Paper h="100%">
                     <ChatView
                         channelId={channelId}
                         onViewerClick={(viewer) => {

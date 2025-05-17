@@ -61,7 +61,7 @@ function subTypeToClassName(subType: ChatMessageSubType) {
         case 'membershipGiftingEvent':
         case 'giftMembershipReceivedEvent':
         case 'gift':
-            return `${classes['gold-border']} ${classes['gold-notice']}`
+            return `${classes['gold-notice']}`
         case 'announcement':
             return classes['announcement-notice']
     }
