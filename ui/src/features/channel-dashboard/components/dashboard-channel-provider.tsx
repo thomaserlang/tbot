@@ -6,7 +6,7 @@ import {
     ChannelProviderTitle,
     UpdateStreamTitleModal,
 } from '@/features/channel-provider'
-import { Flex, Text } from '@mantine/core'
+import { ActionIcon, Flex, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconEdit } from '@tabler/icons-react'
 import { YoutubeDashView } from './youtube/youtube-dash-view'
@@ -40,13 +40,21 @@ export function DashboardChannelProvider({
 
                 {channelProvider.live_stream_id && (
                     <Flex
-                        gap="0.25rem"
                         align="center"
                         style={{ cursor: 'pointer' }}
                         onClick={open}
                     >
-                        <IconEdit size={18} />
-                        <Text truncate>{channelProvider.stream_title}</Text>
+                        <ActionIcon
+                            ml="-0.3rem"
+                            size="sm-compact"
+                            variant="subtle"
+                            color="gray"
+                        >
+                            <IconEdit size={14} />
+                        </ActionIcon>
+                        <Text size="sm" truncate>
+                            {channelProvider.stream_title}
+                        </Text>
                     </Flex>
                 )}
 

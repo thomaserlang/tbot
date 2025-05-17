@@ -64,7 +64,7 @@ export function DashboardProviders({ channelId }: Props) {
                             .map((channelProvider) => (
                                 <Fragment key={channelProvider.id}>
                                     <Flex>
-                                        <Box miw="250px">
+                                        <Box w="250px">
                                             <DashboardChannelProvider
                                                 channelProvider={
                                                     channelProvider
