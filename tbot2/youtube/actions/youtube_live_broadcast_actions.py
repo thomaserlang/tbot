@@ -20,7 +20,7 @@ from .youtube_live_stream_actions import (
     get_live_streams,
 )
 
-PART = {'id', 'snippet', 'status', 'content_details', 'monetizationDetails'}
+PART = {'id', 'snippet', 'status', 'contentDetails', 'monetizationDetails'}
 
 
 async def get_live_broadcasts(
@@ -93,7 +93,9 @@ async def create_live_broadcast(
         params={
             'part': ','.join(PART),
         },
-        json=data.model_dump(exclude_unset=True, exclude_none=True, mode='json'),
+        json=data.model_dump(
+            exclude_unset=True, exclude_none=True, by_alias=True, mode='json'
+        ),
     )
     if response.status_code >= 400:
         raise YouTubeException(response=response, request=response.request)
@@ -112,8 +114,7 @@ async def update_live_broadcast(
     broadcasts = await get_live_broadcasts(channel_id=channel_id, id=live_broadcast_id)
     if not broadcasts:
         raise ErrorMessage(f'{live_broadcast_id} not found in live broadcasts')
-    request = LiveBroadcastUpdate.model_validate(broadcasts[0])
-
+    request = LiveBroadcastUpdate.model_validate(broadcasts[0], by_name=True)
     if snippet_title:
         request.snippet.title = snippet_title
 
@@ -127,7 +128,9 @@ async def update_live_broadcast(
         },
         json={
             'id': live_broadcast_id,
-            **request.model_dump(exclude_unset=True, exclude_none=True, mode='json'),
+            **request.model_dump(
+                exclude_none=True, exclude_unset=True, by_alias=True, mode='json'
+            ),
         },
     )
     if response.status_code >= 400:

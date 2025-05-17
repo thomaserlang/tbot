@@ -175,12 +175,12 @@ class MonitorStream(BaseRequestSchema):
     """
 
     enable_monitor_stream: Annotated[
-        bool | None,
+        bool,
         Field(
             alias='enableMonitorStream',
             description='Whether to enable the monitor stream for the broadcast.',
         ),
-    ] = None
+    ] = True
     broadcast_stream_delay_ms: Annotated[
         int | None,
         Field(
