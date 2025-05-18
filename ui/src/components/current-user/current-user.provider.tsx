@@ -1,9 +1,9 @@
 import { Center, Container } from '@mantine/core'
 import { AxiosError } from 'axios'
 import { createContext, useContext } from 'react'
+import { Navigate } from 'react-router-dom'
 import { ErrorBox } from '../error-box'
 import { Logo } from '../logo'
-import { PageLoader } from '../page-loader'
 import { useGetCurrentUser } from './current-user.api'
 import { ICurrentUser } from './current-user.type'
 
@@ -18,7 +18,8 @@ export function CurrentUserProvider({
 
     if (!data && error) {
         if (error instanceof AxiosError) {
-            if (error?.response?.status == 401) return <PageLoader />
+            if (error?.response?.status == 401)
+                return <Navigate to="/sign-in" />
         }
         return (
             <Container mt="2rem">

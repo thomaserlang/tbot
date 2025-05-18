@@ -17,6 +17,10 @@ import { Logo } from './components/logo'
 
 const protectedRoutes: RouteObject[] = [
     {
+        path: '/',
+        lazy: () => import('./features/channel/channels.page'),
+    },
+    {
         path: '/channels',
         lazy: () => import('./features/channel/channels.page'),
     },
@@ -199,10 +203,6 @@ const protectedRoutes: RouteObject[] = [
 ]
 
 const publicRoutes: RouteObject[] = [
-    {
-        path: '',
-        lazy: () => import('./features/landing-page/landing.page'),
-    },
     {
         path: '/sign-in',
         lazy: () => import('./features/sign-in/sign-in.page'),

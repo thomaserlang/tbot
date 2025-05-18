@@ -22,8 +22,10 @@ export function Component() {
                     <Box h={50}>
                         <Logo width="10rem" />
                     </Box>
-                    <Paper withBorder p="1rem">
-                        <Title order={2}>Sign in</Title>
+                    <Paper bg="var(--mantine-color-dark-9)" withBorder p="1rem">
+                        <Title fw="700" order={2}>
+                            Sign in
+                        </Title>
                         <Flex
                             gap="1rem"
                             h="10rem"
