@@ -8,7 +8,7 @@ export function Component() {
     const user = useCurrentUser()
     const navigate = useNavigate()
     if (user.default_channel_id) {
-        return <Navigate to={`/channels/${user.default_channel_id}`} />
+        return <Navigate to={`/channels/${user.default_channel_id}`} replace />
     }
     return (
         <Container size="xs" pt="0" p="1rem">
