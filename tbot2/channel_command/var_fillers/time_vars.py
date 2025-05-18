@@ -20,7 +20,7 @@ async def time_vars(
         )
     if vars['time'].args[0] not in pytz.all_timezones:
         raise CommandError(
-            'Invalid timezone. Valid list: https://docs.botashell.com/docs/time'
+            'Invalid timezone. Valid list: https://docs.synchra.com/cmd-vars/time'
         )
     dt = datetime_now().astimezone(pytz.timezone(vars['time'].args[0]))
 

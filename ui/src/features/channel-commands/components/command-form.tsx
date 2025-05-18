@@ -1,5 +1,6 @@
 import { accessLevelInfo, providerInfo } from '@/constants'
 import {
+    Anchor,
     Flex,
     NumberInput,
     Select,
@@ -63,7 +64,18 @@ export function CommandForm({ form }: Props) {
 
             <Flex gap="0.10rem" direction="column">
                 <Textarea
-                    label={<>Response</>}
+                    label={
+                        <>
+                            Response{' '}
+                            <Anchor
+                                target="_blank"
+                                href="https://docs.synchra.net/cmd-vars"
+                                size="sm"
+                            >
+                                (help)
+                            </Anchor>
+                        </>
+                    }
                     autosize
                     minRows={3}
                     minLength={1}
