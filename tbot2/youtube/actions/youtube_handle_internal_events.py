@@ -45,9 +45,15 @@ async def update_stream_title(
     channel_provider: ChannelProvider,
     stream_title: str,
 ) -> bool:
+    if not channel_provider.live_stream_id:
+        raise ErrorMessage(
+            'No youtube broadcast was found. '
+            'Create one first before updating the title',
+            type='no_youtube_broadcast',
+        )
     await update_live_broadcast(
         channel_id=channel_provider.channel_id,
-        live_broadcast_id=channel_provider.live_stream_id or '',
+        live_broadcast_id=channel_provider.live_stream_id,
         snippet_title=stream_title[:100],
     )
     return True
