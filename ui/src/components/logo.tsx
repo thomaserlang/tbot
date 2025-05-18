@@ -6,7 +6,7 @@ export function Logo() {
         <Flex gap="0.5rem" align="center">
             <Box>
                 <Anchor href="/channels">
-                    <Image src={treeUrl} alt="Synchra" w={53} h={40} />
+                    <Image src={treeUrl} alt="Synchra" w={44} h={32} />
                 </Anchor>
             </Box>
             <Text fz={24} fw={500} component="a" href="/channels">
