@@ -24,7 +24,7 @@ export function CurrentUserProvider({
         return (
             <Container mt="2rem">
                 <Center mb="2rem">
-                    <Logo width="35rem" />
+                    <Logo />
                 </Center>
                 <ErrorBox errorObj={error} />
             </Container>

@@ -221,7 +221,7 @@ export const router = createBrowserRouter([
                 return (
                     <Container size="xs" pt="1rem">
                         <Center mb="2rem">
-                            <Logo width="35rem" />
+                            <Logo />
                         </Center>
                         <Title order={1}>{error.status}</Title>
                         <Text mb="1rem">{error.statusText}</Text>
@@ -232,7 +232,7 @@ export const router = createBrowserRouter([
             return (
                 <Container pt="1rem">
                     <Center mb="2rem">
-                        <Logo width="35rem" />
+                        <Logo />
                     </Center>
                     <ErrorBox errorObj={error} />
                 </Container>

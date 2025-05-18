@@ -26,7 +26,7 @@ export function Component() {
     return (
         <Container size="xs">
             <Flex h={50} mt="1rem" align="center" mb="1rem">
-                <Logo width="7rem" />
+                <Logo />
                 <Paper bg="none" ml="auto" p="0.3rem 0.5rem" withBorder>
                     <CurrentUserCard />
                 </Paper>

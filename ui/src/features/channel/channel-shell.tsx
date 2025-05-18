@@ -42,7 +42,7 @@ export function ChannelShell({ children }: { children: ReactNode }) {
                             size="sm"
                         />
 
-                        <Logo width="7rem" />
+                        <Logo />
 
                         <Flex ml="auto" mr="0.5rem">
                             <CurrentUserCard />

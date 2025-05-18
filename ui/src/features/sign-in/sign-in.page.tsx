@@ -29,7 +29,7 @@ export function Component() {
             <Container mt="3rem">
                 <Flex gap="1rem" direction="column" align="center">
                     <Box h={50}>
-                        <Logo width="10rem" />
+                        <Logo />
                     </Box>
                     <Paper withBorder p="1rem">
                         <Flex
