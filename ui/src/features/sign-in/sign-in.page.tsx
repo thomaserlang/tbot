@@ -1,7 +1,7 @@
 import { Logo } from '@/components/logo'
 import { providerInfo } from '@/constants'
 import { toastError } from '@/utils/toast'
-import { Box, Button, Container, Flex, Paper, Title } from '@mantine/core'
+import { Box, Button, Container, Flex, Paper } from '@mantine/core'
 import { useGetSignInUrl } from './sign-in.api'
 
 export function Component() {
@@ -17,18 +17,14 @@ export function Component() {
     return (
         <>
             <title>Sign in - Synchra</title>
-            <Container size="xs" mt="3rem">
+            <Container mt="3rem">
                 <Flex gap="1rem" direction="column" align="center">
                     <Box h={50}>
                         <Logo width="10rem" />
                     </Box>
-                    <Paper bg="var(--mantine-color-dark-9)" withBorder p="1rem">
-                        <Title fw="700" order={2}>
-                            Sign in
-                        </Title>
+                    <Paper withBorder p="1rem">
                         <Flex
                             gap="1rem"
-                            h="10rem"
                             justify="center"
                             align="center"
                             direction="column"
@@ -46,7 +42,7 @@ export function Component() {
                                                 provider: provider.key,
                                             })
                                         }}
-                                        w={250}
+                                        w="100%"
                                     >
                                         Sign in with {provider.name}
                                     </Button>
