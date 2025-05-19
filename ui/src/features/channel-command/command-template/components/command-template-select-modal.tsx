@@ -16,7 +16,7 @@ export function CommandTemplateSelectModal({
     return (
         <Modal opened={opened} onClose={onClose} title="Command Templates">
             {opened && (
-                <Box h={300}>
+                <Box h={350}>
                     <CommandTemplateSelectTable
                         onSelect={(commandTemplate) => {
                             onSelect?.(commandTemplate)
