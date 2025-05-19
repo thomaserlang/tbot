@@ -1,4 +1,4 @@
-import { CommandCreate, CommandCreateModal } from '@/features/channel-commands'
+import { CommandCreate, CommandCreateModal } from '@/features/channel-command'
 import { ChannelId } from '@/features/channel/types/channel.types'
 import { Button, Menu } from '@mantine/core'
 import { IconChevronDown } from '@tabler/icons-react'

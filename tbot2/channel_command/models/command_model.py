@@ -50,9 +50,5 @@ class MCommand(Base):
     provider: Mapped[str] = mapped_column(
         sa.String(255), nullable=False, server_default='all'
     )
-    created_at: Mapped[datetime] = mapped_column(
-        sa.DateTime, nullable=False, default=datetime.now
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        sa.DateTime, nullable=False, default=datetime.now
-    )
+    created_at: Mapped[datetime] = mapped_column(sa.DateTime, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(sa.DateTime, nullable=False)

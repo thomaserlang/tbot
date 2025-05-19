@@ -82,19 +82,19 @@ const protectedRoutes: RouteObject[] = [
             },
             {
                 path: 'commands',
-                lazy: () => import('./features/channel-commands/commands.page'),
+                lazy: () => import('./features/channel-command/commands.page'),
             },
             {
                 path: 'commands/:commandId',
-                lazy: () => import('./features/channel-commands/commands.page'),
+                lazy: () => import('./features/channel-command/commands.page'),
             },
             {
                 path: 'timers',
-                lazy: () => import('./features/channel-timers/timers.page'),
+                lazy: () => import('./features/channel-timer/timers.page'),
             },
             {
                 path: 'timers/:timerId',
-                lazy: () => import('./features/channel-timers/timers.page'),
+                lazy: () => import('./features/channel-timer/timers.page'),
             },
             {
                 path: 'chat-filters',
@@ -196,6 +196,20 @@ const protectedRoutes: RouteObject[] = [
                 lazy: () =>
                     import(
                         './features/admin-system-provider/system-provider-bots.page'
+                    ),
+            },
+            {
+                path: 'command-templates',
+                lazy: () =>
+                    import(
+                        './features/channel-command/admin-command-templates.page'
+                    ),
+            },
+            {
+                path: 'command-templates/:commandTemplateId',
+                lazy: () =>
+                    import(
+                        './features/channel-command/admin-command-templates.page'
                     ),
             },
         ],

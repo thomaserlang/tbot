@@ -90,11 +90,10 @@ async def create_command_route(
         channel_id=channel_id,
         access_level=TAccessLevel.MOD,
     )
-    cmd = await create_command(
+    return await create_command(
         channel_id=channel_id,
         data=data,
     )
-    return cmd
 
 
 @router.put(
@@ -119,11 +118,10 @@ async def update_command_route(
             status_code=404,
             detail='Command not found',
         )
-    cmd = await update_command(
+    return await update_command(
         command_id=command_id,
         data=data,
     )
-    return cmd
 
 
 @router.delete(

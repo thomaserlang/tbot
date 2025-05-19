@@ -1,4 +1,4 @@
-# TBot - Multiplatform streaming tools
+# TBot - Multistreaming tools
 
 A set of tools to help you manage your stream on multiple platforms in one place. 
 With a focus on simplicity and ease of use.

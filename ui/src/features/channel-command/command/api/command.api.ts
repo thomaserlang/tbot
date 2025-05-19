@@ -92,17 +92,21 @@ export function useUpdateCommand({
     })
 }
 
-export async function createCommand(channelId: ChannelId, data: CommandCreate) {
+interface CreateProps {
+    channelId: ChannelId
+    data: CommandCreate
+}
+
+export async function createCommand({ channelId, data }: CreateProps) {
     const r = await api.post<Command>(
         `/api/2/channels/${channelId}/commands`,
         data
     )
+    queryClient.setQueryData(getCommandQueryKey(r.data.id), r.data)
+    queryClient.invalidateQueries({
+        queryKey: getCommandsQueryKey(channelId),
+    })
     return r.data
-}
-
-interface CreateProps {
-    channelId: ChannelId
-    data: CommandCreate
 }
 
 export function useCreateCommand({
@@ -113,15 +117,8 @@ export function useCreateCommand({
     onError?: (error: any) => void
 } = {}) {
     return useMutation({
-        mutationFn: (data: CreateProps) =>
-            createCommand(data.channelId, data.data),
-        onSuccess: (data, variables) => {
-            queryClient.setQueryData(getCommandQueryKey(data.id), data)
-            queryClient.invalidateQueries({
-                queryKey: getCommandsQueryKey(variables.channelId),
-            })
-            onSuccess?.(data, variables)
-        },
+        mutationFn: createCommand,
+        onSuccess,
         onError,
     })
 }

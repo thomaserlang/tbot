@@ -1,10 +1,10 @@
 import { ChannelId } from '@/features/channel/types/channel.types'
-import { AccessLevel } from '@/types/access-level.type'
 import { setFormErrors } from '@/utils/form'
 import { toastSuccess } from '@/utils/toast'
 import { Alert, Button, Flex } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useCreateCommand } from '../api/command.api'
+import { COMMAND_INITIAL_VALUES } from '../constants'
 import { Command, CommandCreate } from '../types/command.types'
 import { CommandForm } from './command-form'
 
@@ -31,17 +31,7 @@ export function CommandCreateForm({
     const form = useForm<CommandCreate>({
         mode: 'controlled',
         initialValues: {
-            cmds: [],
-            patterns: [],
-            response: '',
-            active_mode: 'always',
-            global_cooldown: 5,
-            chatter_cooldown: 15,
-            mod_cooldown: 0,
-            enabled: true,
-            public: true,
-            access_level: AccessLevel.PUBLIC.toString(),
-            provider: 'all',
+            ...COMMAND_INITIAL_VALUES,
             ...initialValues,
         },
     })

@@ -33,6 +33,7 @@ async def get_command(
         )
         if result:
             return Command.model_validate(result)
+        return None
 
 
 async def create_command(

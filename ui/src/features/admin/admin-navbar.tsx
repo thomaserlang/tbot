@@ -1,5 +1,5 @@
 import { Box, NavLink } from '@mantine/core'
-import { IconHome, IconRobot } from '@tabler/icons-react'
+import { IconBlocks, IconHome, IconRobot } from '@tabler/icons-react'
 import { NavLink as RouterNavLink } from 'react-router-dom'
 
 export function AdminNavbar() {
@@ -17,6 +17,12 @@ export function AdminNavbar() {
                 to={`/admin/system-provider-bots`}
                 label="System Provider Bots"
                 leftSection={<IconRobot size={20} />}
+            />
+            <NavLink
+                component={RouterNavLink}
+                to={`/admin/command-templates`}
+                label="Command Templates"
+                leftSection={<IconBlocks size={20} />}
             />
         </Box>
     )

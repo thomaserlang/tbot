@@ -60,3 +60,11 @@ class TokenData(BaseUser, BaseModel):
 
     async def is_global_admin(self) -> bool:
         return self.user_id in config.global_admins
+
+    async def require_global_admin(self) -> None:
+        if not await self.is_global_admin():
+            raise ErrorMessage(
+                code=403,
+                type='access_denied',
+                message='Access denied',
+            )

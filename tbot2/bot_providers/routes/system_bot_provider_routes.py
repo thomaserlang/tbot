@@ -21,11 +21,7 @@ async def get_system_bot_providers_route(
     page_query: Annotated[PageCursorQuery, Depends()],
     token_data: Annotated[TokenData, Security(authenticated)],
 ) -> PageCursor[BotProviderPublic]:
-    if not await token_data.is_global_admin():
-        raise HTTPException(
-            status_code=403,
-            detail='Not enough permissions',
-        )
+    await token_data.require_global_admin()
 
     stmt = (
         sa.select(
@@ -51,11 +47,8 @@ async def delete_system_bot_provider_route(
     provider: Provider,
     token_data: Annotated[TokenData, Security(authenticated)],
 ) -> None:
-    if not await token_data.is_global_admin():
-        raise HTTPException(
-            status_code=403,
-            detail='Not enough permissions',
-        )
+    await token_data.require_global_admin()
+
     p = await get_system_bot_provider(
         provider=provider,
     )
@@ -78,11 +71,8 @@ async def get_system_bot_provider_route(
     provider: Provider,
     token_data: Annotated[TokenData, Security(authenticated)],
 ) -> BotProviderPublic:
-    if not await token_data.is_global_admin():
-        raise HTTPException(
-            status_code=403,
-            detail='Not enough permissions',
-        )
+    await token_data.require_global_admin()
+
     p = await get_system_bot_provider(
         provider=provider,
     )

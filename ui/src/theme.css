@@ -127,3 +127,7 @@ body {
 .mantine-Switch-track {
   cursor: pointer;
 }
+
+.pointer {
+  cursor: pointer;
+}
