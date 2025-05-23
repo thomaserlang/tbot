@@ -148,13 +148,6 @@ def get_eventsub_registrations(
             },
         ),
         EventSubRegistration(
-            event_type='channel.channel_points_automatic_reward_redemption.add',
-            version='1',
-            condition={
-                'broadcaster_user_id': broadcaster_user_id,
-            },
-        ),
-        EventSubRegistration(
             event_type='channel.bits.use',
             version='1',
             condition={
@@ -176,7 +169,7 @@ def get_eventsub_registrations(
 async def _register_eventsub(
     registration: EventSubRegistration,
     channel_id: UUID,
-) -> EventSubSubscription:
+) -> None:
     response = await twitch_app_client.post(
         url='/eventsub/subscriptions',
         json={
@@ -194,8 +187,16 @@ async def _register_eventsub(
         },
     )
     if response.status_code >= 400:
-        raise ErrorMessage(f'{response.status_code} {response.text}')
-    return EventSubSubscription.model_validate(response.json()['data'][0])
+        logger.error(
+            f'_register_eventsub: {response.status_code}',
+            extra={
+                'event_type': registration.event_type,
+                'channel_id': channel_id,
+                'registration': registration,
+                'response': response.text,
+            },
+        )
+    return
 
 
 async def delete_eventsub_registration(event_id: str) -> bool:
@@ -285,7 +286,7 @@ async def refresh_all_eventsubs(
     event_type: str | None = None,
 ) -> None:
     await unregister_all_eventsubs(event_type=event_type)
-    await asyncio.sleep(5) # Wait for twitch to process the unregistration
+    await asyncio.sleep(5)  # Wait for twitch to process the unregistration
     await register_all_eventsubs(event_type=event_type)
 
 
