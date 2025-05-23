@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import AsyncGenerator
 from urllib.parse import urljoin
 from uuid import UUID
@@ -14,6 +15,7 @@ from tbot2.channel_provider import (
     on_disconnect_channel_bot_provider,
 )
 from tbot2.common.exceptions import ErrorMessage
+from tbot2.common.utils.chunk_list import chunk_list
 from tbot2.config_settings import config
 
 from ..schemas.event_notification_schema import (
@@ -60,25 +62,18 @@ async def register_channel_eventsubs(
         broadcaster_user_id=channel_provider.provider_user_id or '',
         twitch_bot_user_id=bot_provider.provider_user_id or '',
     )
-    for registration in registrations:
-        if event_type and registration.event_type != event_type:
-            continue
-        try:
-            await _register_eventsub(
+
+    await asyncio.gather(
+        *[
+            _register_eventsub(
                 registration=registration,
                 channel_id=channel_id,
             )
-        except Exception as e:
-            logger.error(
-                f'Failed to register eventsub {registration.event_type}',
-                extra={
-                    'channel_id': channel_id,
-                    'bot_provider_id': bot_provider.id,
-                    'channel_provider_id': channel_provider.id,
-                    'registration': registration,
-                    'error': str(e),
-                },
-            )
+            for registration in registrations
+            if not event_type or registration.event_type == event_type
+        ],
+        return_exceptions=True,
+    )
 
 
 def get_eventsub_registrations(
@@ -170,6 +165,7 @@ def get_eventsub_registrations(
     ]
 
 
+@logger.catch
 async def _register_eventsub(
     registration: EventSubRegistration,
     channel_id: UUID,
@@ -230,14 +226,16 @@ async def unregister_all_eventsubs(event_type: str | None = None) -> None:
     async for eventsubs in await get_eventsubs(
         event_type=event_type,
     ):
-        for eventsub in eventsubs:
-            try:
-                logger.info(f'Deleting eventsub registration {eventsub.id}')
-                await delete_eventsub_registration(eventsub.id)
-            except Exception as e:
-                logger.error(
-                    f'Failed to delete eventsub registration {eventsub.id}: {e}'
-                )
+        for eventsub in chunk_list(eventsubs, 15):
+            eventsub_ids = [eventsub.id for eventsub in eventsub]
+            logger.info(f'Deleting eventsub registrations {eventsub_ids}')
+            await asyncio.gather(
+                *[
+                    delete_eventsub_registration(eventsub_id)
+                    for eventsub_id in eventsub_ids
+                ],
+                return_exceptions=True,
+            )
 
 
 async def unregister_channel_eventsubs(
