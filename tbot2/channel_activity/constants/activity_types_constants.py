@@ -4,7 +4,7 @@ TWITCH_ACTIVITY_TYPE_NAMES: list[ActivityTypeName] = [
     ActivityTypeName(
         name='sub',
         display_name='New Sub',
-        color='#6441A4',  # Twitch main purple
+        color='#EFBF04',  # Gold
         filter_min_count=False,
         provider='twitch',
         count_name='months',
@@ -18,7 +18,7 @@ TWITCH_ACTIVITY_TYPE_NAMES: list[ActivityTypeName] = [
     ActivityTypeName(
         name='resub',
         display_name='Resub',
-        color='#9147FF',  # Bright purple
+        color='#EFBF04',  # Gold
         filter_min_count=False,
         provider='twitch',
         count_name='months',
