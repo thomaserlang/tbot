@@ -43,6 +43,13 @@ async def register_channel_eventsubs(
             'no oauth provider found'
         )
         return
+    
+    if channel_provider.scope_needed:
+        logger.error(
+            f'Failed to register eventsub for channel {channel_id}: '
+            'oauth provider needs scope'
+        )
+        return
 
     bot_provider = channel_provider.bot_provider
 
