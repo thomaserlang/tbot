@@ -285,6 +285,7 @@ async def refresh_all_eventsubs(
     event_type: str | None = None,
 ) -> None:
     await unregister_all_eventsubs(event_type=event_type)
+    await asyncio.sleep(5) # Wait for twitch to process the unregistration
     await register_all_eventsubs(event_type=event_type)
 
 
