@@ -33,7 +33,7 @@ def upgrade() -> None:
         sa.Column('viewer_display_name', sa.String(255), nullable=False),
         sa.Column('count', sa.Integer(), nullable=False),
         sa.Column('count_decimal_place', sa.Integer(), nullable=False),
-        sa.Column('count_currency', sa.String(255), nullable=False),
+        sa.Column('count_currency', sa.String(255), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=False),
         sa.Column('gifted_viewers', sa.JSON(), nullable=True),
         sa.Column('system_message', sa.String(1000), nullable=True),
