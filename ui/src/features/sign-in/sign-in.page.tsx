@@ -44,7 +44,9 @@ export function Component() {
                                     <Button
                                         key={provider.key}
                                         bg={provider.color}
-                                        leftSection={provider.icon}
+                                        leftSection={provider.icon?.({
+                                            size: 18,
+                                        })}
                                         loading={signInUrl.isPending}
                                         onClick={() => {
                                             signInUrl.mutate({
