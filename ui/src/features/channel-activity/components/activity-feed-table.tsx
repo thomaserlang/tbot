@@ -5,7 +5,7 @@ import { ShortRelativeTimeUpdater } from '@/components/relative-time-updater'
 import { ChannelId } from '@/features/channel'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { toastPromise } from '@/utils/toast'
-import { Flex, Text } from '@mantine/core'
+import { Text } from '@mantine/core'
 import { openConfirmModal } from '@mantine/modals'
 import { IconActivity, IconTrash } from '@tabler/icons-react'
 import { useContextMenu } from 'mantine-contextmenu'
@@ -124,15 +124,12 @@ export function ActivityFeedTable({ channelId }: Props) {
                     accessor: 'created_at',
                     textAlign: 'right',
                     noWrap: true,
-
                     render: (activity) => (
-                        <Flex gap="0.25rem" align="center">
-                            <Text size={size} c="dimmed">
-                                <ShortRelativeTimeUpdater
-                                    date={activity.created_at}
-                                />
-                            </Text>
-                        </Flex>
+                        <Text size={size} c="dimmed">
+                            <ShortRelativeTimeUpdater
+                                date={activity.created_at}
+                            />
+                        </Text>
                     ),
                 },
             ]}
