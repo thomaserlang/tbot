@@ -2,7 +2,8 @@
 @import "@mantine/notifications/styles.css" layer(mantine-notifications);
 @import "@mantine/dates/styles.css" layer(mantine-notifications);
 @import "mantine-datatable/styles.css" layer(mantine-datatable);
-@layer mantine-core, mantine-notifications, mantine-datatable;
+@import "mantine-contextmenu/styles.layer.css" layer(mantine-contextmenu);
+@layer mantine-core, mantine-notifications, mantine-datatable, mantine-contextmenu;
 
 body {
   --app-shell-footer-offset: -1rem;
@@ -14,7 +15,7 @@ body {
       )
   );
 
-  --tbot-selected-color: var(--mantine-primary-color-light);
+  --tbot-selected-color: var(--mantine-color-dark-6);
 
   --background-color: light-dark(
     var(--mantine-color-gray-0),

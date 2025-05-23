@@ -1,8 +1,8 @@
 import { useCurrentChannel } from '@/features/channel'
 import { useDocumentTitle } from '@/utils/document-title'
 import { Container, Flex, Paper } from '@mantine/core'
+import { ActivityFeedView } from '../channel-activity'
 import { CombinedChatView } from '../channel-combined-chat'
-import { NoticeFeedView } from '../channel-notice-feed'
 import { DashboardProviders } from './components/dashboard-providers'
 
 export function Component() {
@@ -16,7 +16,7 @@ export function Component() {
 
                 <Flex gap="1rem" flex={1} wrap={'wrap'}>
                     <Paper maw={400} flex={1} withBorder>
-                        <NoticeFeedView channelId={channel.id} />
+                        <ActivityFeedView channelId={channel.id} />
                     </Paper>
 
                     <Paper flex={1} withBorder>

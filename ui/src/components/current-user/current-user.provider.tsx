@@ -4,10 +4,10 @@ import { createContext, useContext } from 'react'
 import { Navigate } from 'react-router-dom'
 import { ErrorBox } from '../error-box'
 import { Logo } from '../logo'
-import { useGetCurrentUser } from './current-user.api'
-import { ICurrentUser } from './current-user.type'
+import { useGetCurrentUser } from './api/current-user.api'
+import { CurrentUser } from './current-user.type'
 
-const CurrentUserContext = createContext<ICurrentUser | undefined>(undefined)
+const CurrentUserContext = createContext<CurrentUser | undefined>(undefined)
 
 export function CurrentUserProvider({
     children,

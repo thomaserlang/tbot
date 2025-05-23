@@ -80,7 +80,7 @@ export function ChannelUserInvitesTable({ channelId }: Props) {
                         ) : (
                             <>
                                 Expires{' '}
-                                <RelativeTimeUpdater dt={item.expires_at} />
+                                <RelativeTimeUpdater date={item.expires_at} />
                             </>
                         )
                     },

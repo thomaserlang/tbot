@@ -77,11 +77,11 @@ async def event_channel_chat_message_route(
         viewer_display_name=data.event.chatter_user_name,
         viewer_color=data.event.color,
         created_at=headers.message_timestamp,
-        message=data.event.message.text,
         msg_id=data.event.message_id,
         provider='twitch',
         provider_id=data.event.broadcaster_user_id,
         badges=twitch_badges_to_badges(data.event.badges),
+        message=data.event.message.text,
         parts=await message_to_parts(
             parts=twitch_fragments_to_parts(data.event.message.fragments),
             provider='twitch',

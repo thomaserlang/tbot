@@ -24,5 +24,29 @@ export function timeSinceStart(startDateTime: string | Date): string {
 }
 
 export function dateToRelativeTime(date: string | Date): string {
-    return dayjs(date).fromNow()
+    return dayjs(date).fromNow(true)
+}
+
+export function dateToShortRelativeTime(date: string | Date): string {
+    const now = dayjs()
+    const then = dayjs(date)
+
+    const diffSec = now.diff(then, 'second')
+
+    if (diffSec < 60) {
+        return `Now`
+    }
+
+    const diffMin = Math.floor(diffSec / 60)
+    if (diffMin < 60) {
+        return `${diffMin}m`
+    }
+
+    const diffHour = Math.floor(diffMin / 60)
+    if (diffHour < 24) {
+        return `${diffHour}h`
+    }
+
+    const diffDay = Math.floor(diffHour / 24)
+    return `${diffDay}d`
 }

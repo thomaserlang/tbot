@@ -82,7 +82,9 @@ export function QueueViewersTable({ channelId, queueId: queueId }: Props) {
                                     title={providerInfo[item.provider].name}
                                     c={providerInfo[item.provider].color}
                                 >
-                                    {providerInfo[item.provider].icon}
+                                    {providerInfo[item.provider].icon?.({
+                                        size: 18,
+                                    })}
                                 </Flex>
                             )
                         },
@@ -107,7 +109,7 @@ export function QueueViewersTable({ channelId, queueId: queueId }: Props) {
                         width: '1%',
                         noWrap: true,
                         render: (item) => (
-                            <RelativeTimeUpdater dt={item.created_at} />
+                            <RelativeTimeUpdater date={item.created_at} />
                         ),
                     },
                     {

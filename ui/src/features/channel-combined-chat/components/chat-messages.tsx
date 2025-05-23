@@ -1,7 +1,7 @@
 import { ViewerName } from '@/features/channel-viewer/types/viewer.type'
 import { strDateFormat } from '@/utils/date'
 import { Box, Divider, Flex } from '@mantine/core'
-import { Fragment } from 'react/jsx-runtime'
+import { Fragment, useMemo } from 'react'
 import { ChatMessage } from '../types/chat-message.type'
 import { ChatMessageLine } from './chat-message-line'
 import classes from './chat-message.module.css'
@@ -32,28 +32,47 @@ export function ChatMessages({ messages, onViewerClick }: Props) {
                                 key={message.created_at}
                             />
                         )}
-
-                        <DecorateMessage message={message}>
-                            {message.type == 'message' && (
-                                <ChatMessageLine
-                                    chatMessage={message}
-                                    onViewerClick={onViewerClick}
-                                />
-                            )}
-
-                            {message.type == 'status' && (
-                                <ChatStatusLine chatMessage={message} />
-                            )}
-
-                            {message.type == 'notice' && (
-                                <ChatNoticeLine chatMessage={message} />
-                            )}
-                        </DecorateMessage>
+                        <MessageLine
+                            message={message}
+                            onViewerClick={onViewerClick}
+                        />
                     </Fragment>
                 )
             })}
         </Flex>
     )
+}
+
+interface MessageLineProps {
+    message: ChatMessage
+    onViewerClick?: (viewer: ViewerName) => void
+}
+
+function MessageLine({ message, onViewerClick }: MessageLineProps) {
+    // Signifantly speeds up rendering with frequent chat messages
+    const c = useMemo(() => {
+        return (
+            <>
+                <DecorateMessage message={message}>
+                    {message.type == 'message' && (
+                        <ChatMessageLine
+                            chatMessage={message}
+                            onViewerClick={onViewerClick}
+                        />
+                    )}
+
+                    {message.type == 'status' && (
+                        <ChatStatusLine chatMessage={message} />
+                    )}
+
+                    {message.type == 'notice' && (
+                        <ChatNoticeLine chatMessage={message} />
+                    )}
+                </DecorateMessage>
+            </>
+        )
+    }, [message.id])
+    return c
 }
 
 function DecorateMessage({

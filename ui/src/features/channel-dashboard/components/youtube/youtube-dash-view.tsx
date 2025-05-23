@@ -18,7 +18,9 @@ export function YoutubeDashView(props: ChannelProviderDashboardProps) {
                     setLoading(true)
                 }}
                 loading={loading}
-                leftSection={providerInfo[props.channelProvider.provider].icon}
+                leftSection={providerInfo[
+                    props.channelProvider.provider
+                ].icon?.({ size: 18 })}
                 variant="default"
                 size="xs"
             >

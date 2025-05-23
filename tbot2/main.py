@@ -11,6 +11,7 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 from tbot2.auth_backend import AuthBackend
 from tbot2.bot_providers.router import bot_provider_routes
 from tbot2.channel.router import channel_router
+from tbot2.channel_activity.router import channel_activity_router
 from tbot2.channel_chat_filters.router import chat_filter_router
 from tbot2.channel_chatlog.router import chatlog_router
 from tbot2.channel_command.router import command_router
@@ -98,6 +99,7 @@ app.include_router(channel_user_access_router, prefix='/api/2')
 app.include_router(channel_point_settings_router, prefix='/api/2')
 app.include_router(channel_gambling_router, prefix='/api/2')
 app.include_router(channel_queue_router, prefix='/api/2')
+app.include_router(channel_activity_router, prefix='/api/2')
 app.include_router(bot_provider_routes, prefix='/api/2')
 app.include_router(chatlog_router, prefix='/api/2')
 app.include_router(youtube_router, prefix='/api/2')

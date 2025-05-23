@@ -67,7 +67,7 @@ export function useGetChatlogsWS({
     params,
     connect,
 }: GetChatlogsWSProps) {
-    useWebSocket(
+    return useWebSocket(
         `/api/2/channels/${channelId}/chat-ws`,
         {
             queryParams: {

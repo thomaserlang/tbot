@@ -11,8 +11,10 @@ from ..schemas.user_schema import UserPublic
 router = APIRouter()
 
 
-@router.get('/me')
-async def me(token_data: Annotated[TokenData, Security(authenticated)]) -> UserPublic:
+@router.get('/me', name='User Info')
+async def me_route(
+    token_data: Annotated[TokenData, Security(authenticated)],
+) -> UserPublic:
     user = await get_user(user_id=token_data.user_id)
     if not user:
         raise HTTPException(
@@ -22,8 +24,8 @@ async def me(token_data: Annotated[TokenData, Security(authenticated)]) -> UserP
     return UserPublic.model_validate(user)
 
 
-@router.delete('/me', status_code=204)
-async def delete_me(
+@router.delete('/me', status_code=204, name='Delete User')
+async def delete_me_route(
     username: str, token_data: Annotated[TokenData, Security(authenticated)]
 ) -> None:
     user = await get_user(user_id=token_data.user_id)

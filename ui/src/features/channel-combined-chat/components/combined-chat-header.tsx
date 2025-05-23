@@ -20,13 +20,8 @@ export function CombinedChatHeader({ hideChannelProviders }: Props) {
                 {!hideChannelProviders && <ChannelProvidersLiveStatus />}
 
                 <ChatMenu>
-                    <ActionIcon
-                        variant="subtle"
-                        size="compact-md"
-                        mr="-0.2rem"
-                        color="gray"
-                    >
-                        <IconDotsVertical size={16} />
+                    <ActionIcon variant="subtle" size="compact-md" color="gray">
+                        <IconDotsVertical size={18} />
                     </ActionIcon>
                 </ChatMenu>
             </Flex>
@@ -50,7 +45,9 @@ export function ChannelProvidersLiveStatus() {
                 .map((channelProvider) => (
                     <Fragment key={channelProvider.id}>
                         <Flex gap="0.35rem" align="center">
-                            {providerInfo[channelProvider.provider].icon}
+                            {providerInfo[channelProvider.provider].icon?.({
+                                size: 18,
+                            })}
                             <ViewerCount
                                 count={channelProvider.stream_viewer_count}
                             />

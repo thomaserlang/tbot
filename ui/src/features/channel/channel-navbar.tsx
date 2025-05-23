@@ -1,13 +1,13 @@
 import { useGetChannelProviders } from '@/features/channel-provider'
 import { Badge, Box, NavLink, Paper } from '@mantine/core'
 import {
+    IconActivity,
     IconBlocks,
     IconClock,
     IconCoin,
     IconGift,
     IconHome,
     IconLink,
-    IconList,
     IconLock,
     IconMessage,
     IconPokerChip,
@@ -45,9 +45,9 @@ export function ChannelNavbar() {
                 />
                 <NavLink
                     component={RouterNavLink}
-                    to={`/channels/${channel.id}/notice-feed`}
-                    label="Notice Feed"
-                    leftSection={<IconList size={20} />}
+                    to={`/channels/${channel.id}/activity-feed`}
+                    label="Activity Feed"
+                    leftSection={<IconActivity size={20} />}
                 />
                 <NavLink
                     component={RouterNavLink}

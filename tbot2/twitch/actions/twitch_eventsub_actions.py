@@ -145,6 +145,28 @@ def get_eventsub_registrations(
                 'broadcaster_user_id': broadcaster_user_id,
             },
         ),
+        EventSubRegistration(
+            event_type='channel.channel_points_automatic_reward_redemption.add',
+            version='1',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+            },
+        ),
+        EventSubRegistration(
+            event_type='channel.bits.use',
+            version='1',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+            },
+        ),
+        EventSubRegistration(
+            event_type='channel.follow',
+            version='2',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+                'moderator_user_id': broadcaster_user_id,
+            },
+        ),
     ]
 
 

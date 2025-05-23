@@ -1,22 +1,32 @@
-import { dateToRelativeTime } from '@/utils/date'
-import { useInterval } from '@mantine/hooks'
+import { dateToRelativeTime, dateToShortRelativeTime } from '@/utils/date'
 import { useEffect, useState } from 'react'
 
 interface Props {
-    dt: string
+    date: string
 }
 
-export function RelativeTimeUpdater({ dt }: Props) {
-    const [time, setTime] = useState(dateToRelativeTime(dt))
-    const interval = useInterval(
-        () => setTime(() => dateToRelativeTime(dt)),
-        1000
-    )
+export function RelativeTimeUpdater({ date }: Props) {
+    const [time, setTime] = useState(dateToRelativeTime(date))
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTime(() => dateToRelativeTime(date))
+        }, 1000)
+        return () => clearInterval(interval)
+    }, [date])
+
+    return time
+}
+
+export function ShortRelativeTimeUpdater({ date }: Props) {
+    const [time, setTime] = useState(dateToShortRelativeTime(date))
 
     useEffect(() => {
-        interval.start()
-        return interval.stop
-    }, [])
+        const interval = setInterval(() => {
+            setTime(() => dateToShortRelativeTime(date))
+        }, 1000)
+
+        return () => clearInterval(interval)
+    }, [date])
 
     return time
 }

@@ -23,7 +23,7 @@ router = APIRouter()
     include_in_schema=False,
     status_code=204,
 )
-async def event_channel_chat_message_route(
+async def event_channel_moderate_route(
     headers: Annotated[EventSubHeaders, Depends(validate_twitch_webhook_signature)],
     request: Request,
     channel_id: UUID,

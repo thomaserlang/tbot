@@ -15,7 +15,7 @@ export function ProviderLogo({ provider }: Props) {
             title={providerInfo[provider].name || ''}
             c={providerInfo[provider].color}
         >
-            {providerInfo[provider].icon}
+            {providerInfo[provider].icon?.({ size: 18 })}
         </Box>
     )
 }

@@ -7,6 +7,8 @@ from uuid6 import uuid7
 
 from tbot2.common import ErrorMessage
 from tbot2.contexts import AsyncSession, get_session
+from tbot2.user.actions.user_settings_actions import create_user_settings
+from tbot2.user.schemas.user_settings_schema import UserSettings
 
 from ..models.user_model import MUser
 from ..schemas.user_schema import User, UserCreate, UserUpdate
@@ -60,6 +62,9 @@ async def create_user(
             user = await get_user(user_id=user_id, session=session)
             if not user:
                 raise Exception('User could not be created')
+            await create_user_settings(
+                user_id=user_id, data=UserSettings(), session=session
+            )
 
             return user
         except IntegrityError as e:

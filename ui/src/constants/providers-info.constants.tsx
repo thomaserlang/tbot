@@ -1,5 +1,6 @@
 import {
     IconBrandDiscord,
+    IconBrandSpotify,
     IconBrandTiktok,
     IconBrandTwitch,
     IconBrandYoutube,
@@ -24,7 +25,7 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
             `https://player.twitch.tv/?channel={provider_user_name}` +
             `&parent=${window.location.hostname}&muted=true&autoplay=true`,
         streamTitleMaxLength: 140,
-        icon: <IconBrandTwitch size={18} />,
+        icon: (props) => <IconBrandTwitch {...props} />,
     },
     youtube: {
         key: 'youtube',
@@ -44,7 +45,7 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
         embedUrl:
             'https://www.youtube.com/embed/{live_stream_id}?mute=1&autoplay=1',
         streamTitleMaxLength: 100,
-        icon: <IconBrandYoutube size={18} />,
+        icon: (props) => <IconBrandYoutube {...props} />,
     },
     tiktok: {
         key: 'tiktok',
@@ -53,7 +54,7 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
         channelProvider: true,
         stream: true,
         chat_read: true,
-        icon: <IconBrandTiktok color="white" size={18} />,
+        icon: (props) => <IconBrandTiktok {...props} color="white" />,
     },
     spotify: {
         key: 'spotify',
@@ -63,11 +64,12 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
         chat_read: false,
         ownBot: true,
         systemBot: false,
+        icon: (props) => <IconBrandSpotify {...props} />,
     },
     discord: {
         key: 'discord',
         name: 'Discord',
         color: '#7289da',
-        icon: <IconBrandDiscord size={18} />,
+        icon: (props) => <IconBrandDiscord {...props} />,
     },
 } as const

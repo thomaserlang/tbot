@@ -13,6 +13,7 @@ import { CurrentUserProvider } from './components/current-user'
 import { AdminShell } from './features/admin/admin-shell'
 import { ChannelShell } from './features/channel/channel-shell'
 
+import { CurrentUserSettingsProvider } from './components/current-user/current-user-settings.provider'
 import { Logo } from './components/logo'
 
 const protectedRoutes: RouteObject[] = [
@@ -114,11 +115,9 @@ const protectedRoutes: RouteObject[] = [
                     ),
             },
             {
-                path: 'notice-feed',
+                path: 'activity-feed',
                 lazy: () =>
-                    import(
-                        './features/channel-notice-feed/channel-notice-feed.page'
-                    ),
+                    import('./features/channel-activity/activity-feed.page'),
             },
             {
                 path: 'user-access',
@@ -263,7 +262,9 @@ export const router = createBrowserRouter([
                     {
                         element: (
                             <CurrentUserProvider>
-                                <Outlet />
+                                <CurrentUserSettingsProvider>
+                                    <Outlet />
+                                </CurrentUserSettingsProvider>
                             </CurrentUserProvider>
                         ),
                         ErrorBoundary: () => {

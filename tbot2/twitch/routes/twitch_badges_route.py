@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 @router.get('/channels/{channel_id}/twitch-badges', name='Get Twitch Badges')
-async def get_twitch_badges(
+async def get_twitch_badges_route(
     channel_id: UUID,
     token_data: Annotated[
         TokenData, Security(authenticated, scopes=[ChatlogsScope.READ])

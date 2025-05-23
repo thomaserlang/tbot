@@ -126,7 +126,7 @@ class ChatMessageRequest(BaseRequestSchema):
         return value
 
     @model_validator(mode='after')
-    def notice_message_not_empty(self) -> Self:
+    def message_default(self) -> Self:
         if self.notice_message and not self.notice_parts:
             self.notice_parts = [
                 ChatMessagePartRequest(

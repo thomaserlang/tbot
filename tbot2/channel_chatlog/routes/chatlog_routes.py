@@ -7,7 +7,7 @@ import sqlalchemy as sa
 from fastapi import APIRouter, Query, Security, WebSocket, WebSocketDisconnect
 from loguru import logger
 
-from tbot2.channel_chatlog.actions.chatlog_action import chatlog_queue_key
+from tbot2.channel_chatlog.actions.chatlog_actions import chatlog_queue_key
 from tbot2.common import (
     ChatMessage,
     ChatMessageType,

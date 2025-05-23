@@ -19,7 +19,9 @@ export function ChannelProviderContextMenu({ channelProvider }: Props) {
             <Menu.Dropdown>
                 <Menu.Item
                     component="a"
-                    leftSection={providerInfo[channelProvider.provider].icon}
+                    leftSection={providerInfo[channelProvider.provider].icon?.({
+                        size: 18,
+                    })}
                     href={getDashboardUrl(channelProvider)}
                     target="_blank"
                 >

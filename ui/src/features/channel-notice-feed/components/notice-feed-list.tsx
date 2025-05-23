@@ -20,14 +20,16 @@ export function NoticeFeedList({ notices }: Props) {
                                 c={providerInfo[notice.provider].color}
                                 mb="-0.5rem"
                             >
-                                {providerInfo[notice.provider].icon}
+                                {providerInfo[notice.provider].icon?.({
+                                    size: 18,
+                                })}
                             </Box>
                             <Text
                                 size="xs"
                                 c="dimmed"
                                 title={notice.created_at}
                             >
-                                <RelativeTimeUpdater dt={notice.created_at} />
+                                <RelativeTimeUpdater date={notice.created_at} />
                             </Text>
                         </Flex>
 

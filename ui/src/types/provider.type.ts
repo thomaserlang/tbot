@@ -1,9 +1,19 @@
-import { ReactNode } from 'react'
+import React from 'react'
 
 export type Provider = 'twitch' | 'youtube' | 'discord' | 'spotify' | 'tiktok'
 
+interface IconProps extends React.ComponentPropsWithoutRef<'svg'> {
+    size?: number | string
+}
+
 export interface ProviderInfo {
-    [key: string]: string | boolean | Provider | undefined | number | ReactNode
+    [key: string]:
+        | string
+        | boolean
+        | Provider
+        | number
+        | undefined
+        | ((props: IconProps) => React.ReactElement)
     key: Provider
     name: string
     channelProvider?: boolean
@@ -18,5 +28,5 @@ export interface ProviderInfo {
     embedUrl?: string
     broadcastEditUrl?: string
     streamTitleMaxLength?: number
-    icon?: ReactNode
+    icon?: (props: IconProps) => React.ReactElement
 }

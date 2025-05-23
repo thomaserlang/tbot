@@ -69,22 +69,28 @@ TwitchChatMessageType = Literal[
     'power_ups_gigantified_emote',
 ]
 
-YoutubeMessageType = Literal[
-    'chatEndedEvent',
-    'messageDeletedEvent',
-    'sponsorOnlyModeEndedEvent',
-    'sponsorOnlyModeStartedEvent',
+YoutubeNoticeType = Literal[
     'newSponsorEvent',
-    'memberMilestoneChatEvent',
     'superChatEvent',
     'superStickerEvent',
-    'textMessageEvent',
-    'tombstone',
-    'userBannedEvent',
     'membershipGiftingEvent',
     'giftMembershipReceivedEvent',
-    'pollDetails',
 ]
+
+YoutubeMessageType = (
+    Literal[
+        'chatEndedEvent',
+        'messageDeletedEvent',
+        'sponsorOnlyModeEndedEvent',
+        'sponsorOnlyModeStartedEvent',
+        'memberMilestoneChatEvent',
+        'textMessageEvent',
+        'tombstone',
+        'userBannedEvent',
+        'pollDetails',
+    ]
+    | YoutubeNoticeType
+)
 
 TiktokNoticeType = Literal['gift']
 

@@ -9,17 +9,20 @@ import { queryClient } from './queryclient'
 import { router } from './routes'
 import { theme } from './theme'
 
+import { ContextMenuProvider } from 'mantine-contextmenu'
 import './theme.css'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <MantineProvider theme={theme} forceColorScheme={'dark'}>
-            <Notifications position="top-right" />
-            <QueryClientProvider client={queryClient}>
-                <ModalsProvider>
-                    <RouterProvider router={router} />
-                </ModalsProvider>
-            </QueryClientProvider>
+            <ContextMenuProvider>
+                <Notifications position="top-right" />
+                <QueryClientProvider client={queryClient}>
+                    <ModalsProvider>
+                        <RouterProvider router={router} />
+                    </ModalsProvider>
+                </QueryClientProvider>
+            </ContextMenuProvider>
         </MantineProvider>
     </React.StrictMode>
 )

@@ -1,9 +1,11 @@
+import asyncio
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Body, Depends, Request, Security
 from uuid6 import uuid7
 
+from tbot2.channel_activity import ActivityCreate, create_activity
 from tbot2.channel_chatlog import create_chatlog, publish_chatlog
 from tbot2.common import (
     ChatMessage,
@@ -39,6 +41,16 @@ async def event_channel_points_custom_reward_redemption_add_route(
         EventChannelPointsCustomRewardRedemption
     ].model_validate_json(await request.body())
 
+    await asyncio.gather(
+        handle_chat_message(channel_id=channel_id, data=data),
+        handle_activity(channel_id=channel_id, data=data),
+    )
+
+
+async def handle_chat_message(
+    channel_id: UUID,
+    data: EventSubNotification[EventChannelPointsCustomRewardRedemption],
+) -> None:
     if data.event.user_input:
         # if it has user input it also gets sent to the channel.chat.message endpoint
         # so we don't need to handle it here. There we get user badges, fragments etc.
@@ -49,20 +61,43 @@ async def event_channel_points_custom_reward_redemption_add_route(
         f'• {data.event.reward.cost}'
     )
 
-    chat_message = ChatMessageRequest(
-        type='notice',
-        sub_type='custom_reward_redemption',
-        channel_id=channel_id,
-        provider_viewer_id=data.event.user_id,
-        viewer_name=data.event.user_login,
-        viewer_display_name=data.event.user_name,
-        created_at=data.event.redeemed_at,
-        notice_message=notice_message,
-        msg_id=data.event.id,
-        provider='twitch',
-        provider_id=data.event.broadcaster_user_id,
+    await create_chatlog(
+        data=ChatMessageRequest(
+            type='notice',
+            sub_type='custom_reward_redemption',
+            channel_id=channel_id,
+            provider_viewer_id=data.event.user_id,
+            viewer_name=data.event.user_login,
+            viewer_display_name=data.event.user_name,
+            created_at=data.event.redeemed_at,
+            notice_message=notice_message,
+            msg_id=data.event.id,
+            provider='twitch',
+            provider_id=data.event.broadcaster_user_id,
+        )
     )
-    await create_chatlog(data=chat_message)
+
+
+async def handle_activity(
+    channel_id: UUID,
+    data: EventSubNotification[EventChannelPointsCustomRewardRedemption],
+) -> None:
+    await create_activity(
+        data=ActivityCreate(
+            type='points',
+            sub_type=data.event.reward.title,
+            count=data.event.reward.cost,
+            provider='twitch',
+            provider_message_id=data.event.id,
+            provider_user_id=data.event.broadcaster_user_id,
+            provider_viewer_id=data.event.user_id,
+            viewer_name=data.event.user_login,
+            viewer_display_name=data.event.user_name,
+            channel_id=channel_id,
+            created_at=data.event.redeemed_at,
+            message=data.event.user_input,
+        )
+    )
 
 
 @router.post(

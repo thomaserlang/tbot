@@ -44,6 +44,7 @@ class NewSponsorDetails(BaseSchema):
 class SuperChatDetails(BaseSchema):
     amount_micros: Annotated[int, Field(alias='amountMicros')]
     currency: str
+    'ISO4217'
     amount_display_string: Annotated[str, Field(alias='amountDisplayString')]
     user_comment: Annotated[str, Field(alias='userComment')]
     tier: int
@@ -61,6 +62,7 @@ class SuperStickerDetails(BaseSchema):
     ]
     amount_micros: Annotated[int, Field(alias='amountMicros')]
     currency: str
+    'ISO4217'
     amount_display_string: Annotated[str, Field(alias='amountDisplayString')]
     tier: int
 

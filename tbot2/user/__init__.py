@@ -23,12 +23,8 @@ from .actions.user_actions import get_user_by_email as get_user_by_email
 from .actions.user_actions import get_user_by_username as get_user_by_username
 from .actions.user_actions import update_user as update_user
 from .models.oauth_provider_model import MUserOAuthProvider as MUserOAuthProvider
-
-# Models
 from .models.user_model import MUser as MUser
 from .schemas.oauth_provider_schema import UserOAuthProvider as UserOAuthProvider
-
-# Schemas
 from .schemas.user_schema import User as User
 from .schemas.user_schema import UserCreate as UserCreate
 from .schemas.user_schema import UserUpdate as UserUpdate

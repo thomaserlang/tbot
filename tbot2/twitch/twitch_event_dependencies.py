@@ -56,7 +56,7 @@ async def validate_twitch_webhook_signature(
 
     asyncio.create_task(
         conn.elasticsearch.index(
-            index='twitch-eventsub',
+            index='twitch_events',
             document={
                 'message_id': headers.message_id,
                 'message_timestamp': headers.message_timestamp,

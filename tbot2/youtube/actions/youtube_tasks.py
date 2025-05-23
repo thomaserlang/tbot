@@ -18,7 +18,6 @@ from tbot2.channel_stream import (
 from tbot2.common import datetime_now
 from tbot2.common.utils.chunk_list import chunk_list
 from tbot2.database import conn
-from tbot2.youtube.actions.youtube_video_actions import get_youtube_videos
 
 from ..actions.youtube_handle_message import handle_message
 from ..actions.youtube_live_broadcast_actions import (
@@ -28,6 +27,7 @@ from ..actions.youtube_live_chat_message_actions import (
     LiveChatMessages,
     get_live_chat_messages,
 )
+from ..actions.youtube_video_actions import get_youtube_videos
 from ..exceptions import YouTubeException
 from ..schemas.youtube_live_broadcast_schema import LiveBroadcast
 
