@@ -28,4 +28,6 @@ async def get_twitch_chatters(
             response=response,
             request=response.request,
         )
-    return get_twitch_pagination_yield(response, schema=Chatter)
+    return get_twitch_pagination_yield(
+        client=twitch_user_client, response=response, response_model=Chatter
+    )

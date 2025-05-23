@@ -43,7 +43,7 @@ async def register_channel_eventsubs(
             'no oauth provider found'
         )
         return
-    
+
     if channel_provider.scope_needed:
         logger.error(
             f'Failed to register eventsub for channel {channel_id}: '
@@ -225,7 +225,9 @@ async def get_eventsubs(
     )
     if response.status_code >= 400:
         raise ErrorMessage(f'{response.status_code} {response.text}')
-    return get_twitch_pagination_yield(response, EventSubSubscription)
+    return get_twitch_pagination_yield(
+        client=twitch_app_client, response=response, response_model=EventSubSubscription
+    )
 
 
 async def unregister_all_eventsubs(event_type: str | None = None) -> None:

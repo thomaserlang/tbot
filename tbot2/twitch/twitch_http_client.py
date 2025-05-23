@@ -76,16 +76,18 @@ T = typing.TypeVar('T', bound=BaseModel)
 
 
 async def get_twitch_pagination_yield(
+    *,
+    client: AsyncClient,
     response: Response,
-    schema: type[T],
+    response_model: type[T],
 ) -> typing.AsyncGenerator[list[T]]:
     data = response.json()
 
-    yield [schema.model_validate(item) for item in data['data']]
+    yield [response_model.model_validate(item) for item in data['data']]
 
     pagination = data.get('pagination')
     while pagination:
-        response = await twitch_user_client.get(
+        response = await client.get(
             response.url.path.replace('/helix', ''),
             params={
                 **response.url.params,
@@ -96,5 +98,5 @@ async def get_twitch_pagination_yield(
         if response.status_code >= 400:
             raise ErrorMessage(f'{response.status_code} {response.text}')
         data = response.json()
-        yield [schema.model_validate(item) for item in data['data']]
+        yield [response_model.model_validate(item) for item in data['data']]
         pagination = data.get('pagination')
