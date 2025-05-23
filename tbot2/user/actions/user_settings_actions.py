@@ -45,7 +45,7 @@ async def update_user_settings(
     session: AsyncSession | None = None,
 ) -> None:
     async with get_session(session) as session:
-        data_ = data.model_dump(exclude_unset=True, exclude_defaults=True, mode='json')
+        data_ = data.model_dump(exclude_unset=True, mode='json')
         if not data_:
             return
 
