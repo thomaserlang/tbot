@@ -23,7 +23,7 @@ export function ShortRelativeTimeUpdater({ date }: Props) {
     useEffect(() => {
         const interval = setInterval(() => {
             setTime(() => dateToShortRelativeTime(date))
-        }, 1000)
+        }, 60000)
 
         return () => clearInterval(interval)
     }, [date])
