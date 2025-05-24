@@ -82,16 +82,6 @@ async def handle_chat_message(
         if data.event.notice_type == 'announcement':
             notice_message = 'Announcement'
 
-    message_parts = (
-        await message_to_parts(
-            parts=twitch_fragments_to_parts(data.event.message.fragments),
-            provider='twitch',
-            provider_channel_id=data.event.broadcaster_user_id,
-        )
-        if data.event.message.text
-        else []
-    )
-
     await create_chat_message(
         data=ChatMessageCreate(
             type='notice',
@@ -107,8 +97,14 @@ async def handle_chat_message(
             provider='twitch',
             provider_channel_id=data.event.broadcaster_user_id,
             message=data.event.message.text,
+            message_parts=await message_to_parts(
+                parts=twitch_fragments_to_parts(data.event.message.fragments),
+                provider='twitch',
+                provider_channel_id=data.event.broadcaster_user_id,
+            )
+            if data.event.message.text
+            else [],
             badges=twitch_badges_to_badges(data.event.badges),
-            message_parts=message_parts,
         )
     )
 
@@ -199,6 +195,14 @@ async def handle_activity(
             created_at=headers.message_timestamp,
             gifted_viewers=gifted_viewers,
             system_message=data.event.system_message,
+            message=data.event.message.text,
+            message_parts=await message_to_parts(
+                parts=twitch_fragments_to_parts(data.event.message.fragments),
+                provider='twitch',
+                provider_channel_id=data.event.broadcaster_user_id,
+            )
+            if data.event.message.text
+            else [],
         )
     )
 
