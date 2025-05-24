@@ -10,6 +10,7 @@ from tbot2.common import (
     ChatMessageCreate,
     ChatMessagePartRequest,
     GiftPartRequest,
+    PubSubEvent,
     TAccessLevel,
     TokenData,
 )
@@ -138,5 +139,10 @@ async def emulate_automatic_reward_redemption_route(
         provider_channel_id='123',
     )
     await publish_chat_message(
-        channel_id=channel_id, event=ChatMessage.model_validate(chat_message)
+        channel_id=channel_id,
+        event=PubSubEvent[ChatMessage](
+            type='chat_message',
+            action='new',
+            data=ChatMessage.model_validate(chat_message),
+        ),
     )

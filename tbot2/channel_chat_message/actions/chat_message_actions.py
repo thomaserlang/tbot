@@ -92,7 +92,7 @@ async def create_chat_message(
         await publish_chat_message(
             channel_id=data.channel_id,
             event=PubSubEvent[ChatMessage](
-                type='activity', action='new', data=chat_message
+                type='chat_message', action='new', data=chat_message
             ),
         )
     return chat_message

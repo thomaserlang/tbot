@@ -14,6 +14,7 @@ from tbot2.channel_provider import get_channel_provider
 from tbot2.common import (
     ChatMessage,
     ChatMessageCreate,
+    PubSubEvent,
     TAccessLevel,
     TokenData,
 )
@@ -173,7 +174,12 @@ async def emulate_channel_chat_message_route(
         chat_message.notice_message = f'Cheered {cheer.bits} bits'
 
     await publish_chat_message(
-        channel_id=channel_id, event=ChatMessage.model_validate(chat_message)
+        channel_id=channel_id,
+        event=PubSubEvent[ChatMessage](
+            type='chat_message',
+            action='new',
+            data=ChatMessage.model_validate(chat_message),
+        ),
     )
 
 
