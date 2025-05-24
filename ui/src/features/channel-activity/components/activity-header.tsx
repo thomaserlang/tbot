@@ -27,7 +27,12 @@ export function ActivityFeedHeader() {
                 </ActivityFilters>
 
                 <ActivityMenu>
-                    <ActionIcon variant="subtle" size="compact-md" color="gray">
+                    <ActionIcon
+                        variant="subtle"
+                        size="compact-md"
+                        color="gray"
+                        mr="-0.25rem"
+                    >
                         <IconDotsVertical size={18} />
                     </ActionIcon>
                 </ActivityMenu>

@@ -24,7 +24,12 @@ export function CombinedChatHeader({ hideChannelProviders }: Props) {
             )}
             <Flex ml="auto" gap="0.75rem" align="center">
                 <ChatMenu>
-                    <ActionIcon variant="subtle" size="compact-md" color="gray">
+                    <ActionIcon
+                        variant="subtle"
+                        size="compact-md"
+                        color="gray"
+                        mr="-0.25rem"
+                    >
                         <IconDotsVertical size={18} />
                     </ActionIcon>
                 </ChatMenu>
