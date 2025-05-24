@@ -109,8 +109,7 @@ async def publish_activity(
     channel_id: UUID,
     event: PubSubEvent[Activity],
 ) -> None:
-    key = activity_queue_key(channel_id=channel_id)
     await conn.redis.publish(  # type: ignore
-        key,
+        activity_queue_key(channel_id=channel_id),
         event.model_dump_json(),
     )

@@ -106,8 +106,7 @@ async def publish_chat_message(
     channel_id: UUID,
     event: PubSubEvent[ChatMessage],
 ) -> None:
-    key = chat_message_queue_key(channel_id=channel_id)
     await conn.redis.publish(  # type: ignore
-        key,
+        chat_message_queue_key(channel_id=channel_id),
         event.model_dump_json(),
     )
