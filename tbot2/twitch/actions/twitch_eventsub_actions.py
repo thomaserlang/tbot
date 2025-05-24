@@ -148,6 +148,13 @@ def get_eventsub_registrations(
             },
         ),
         EventSubRegistration(
+            event_type='channel.channel_points_custom_reward_redemption.update',
+            version='1',
+            condition={
+                'broadcaster_user_id': broadcaster_user_id,
+            },
+        ),
+        EventSubRegistration(
             event_type='channel.bits.use',
             version='1',
             condition={

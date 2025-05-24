@@ -13,13 +13,17 @@ from ..types.activity_types import ActivityId
 
 async def get_activity(
     *,
-    activity_id: ActivityId,
+    activity_id: ActivityId | None = None,
+    provider_message_id: str | None = None,
     session: AsyncSession | None = None,
 ) -> Activity | None:
     async with get_session(session) as session:
-        result = await session.scalar(
-            sa.select(MActivity).where(MActivity.id == activity_id)
-        )
+        stmt = sa.select(MActivity)
+        if activity_id:
+            stmt = stmt.where(MActivity.id == activity_id)
+        if provider_message_id:
+            stmt = stmt.where(MActivity.provider_message_id == provider_message_id)
+        result = await session.scalar(stmt)
         if result:
             return Activity.model_validate(result)
         return None

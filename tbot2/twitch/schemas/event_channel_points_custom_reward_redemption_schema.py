@@ -38,3 +38,8 @@ class EventChannelPointsCustomRewardRedemption(BaseSchema):
     reward: Reward
     'Basic information about the reward that was redeemed, at the time it was redeemed.'
     redeemed_at: datetime
+
+
+class EventChannelPointsCustomRewardRedemptionUpdate(
+    EventChannelPointsCustomRewardRedemption
+): ...
