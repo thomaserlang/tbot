@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 import { VList, VListHandle } from 'virtua'
 import {
     GetChatMessageParams,
-    useGetChatlogs,
+    useGetMessages,
     useWSChatMessages,
 } from '../api/chat-messages.api'
 import { ChatMessages } from './chat-messages'
@@ -31,7 +31,7 @@ export function ChatView({
 }: Props) {
     const viewport = useRef<VListHandle>(null)
     const [autoScroll, setAutoScroll] = useState(true)
-    const data = useGetChatlogs({
+    const data = useGetMessages({
         channelId,
         params,
     })

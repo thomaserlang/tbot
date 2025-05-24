@@ -23,13 +23,13 @@ interface GetProps {
         refetchInterval?: number
     }
 }
-export function getChatMessageQueryKey({ channelId }: GetProps) {
-    return ['chatlogs', channelId]
+export function getChatMessageQueryKey({ channelId, params = {} }: GetProps) {
+    return ['chat-messages', channelId, params]
 }
 
 export async function getChatMessages({
     channelId,
-    params,
+    params = {},
 }: GetProps & {
     params?: GetChatMessageParams & { cursor?: string }
 }) {
@@ -45,9 +45,9 @@ export async function getChatMessages({
     return r.data
 }
 
-export function useGetChatlogs({ channelId, params, options }: GetProps) {
+export function useGetMessages({ channelId, params, options }: GetProps) {
     return useInfiniteQuery({
-        queryKey: getChatMessageQueryKey({ channelId }),
+        queryKey: getChatMessageQueryKey({ channelId, params }),
         queryFn: ({ pageParam }) =>
             getChatMessages({
                 channelId,

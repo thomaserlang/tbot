@@ -1,7 +1,7 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
 import { ChannelId } from '@/features/channel'
-import { useGetChatlogs, useWSChatMessages } from '@/features/channel-chat'
+import { useGetMessages, useWSChatMessages } from '@/features/channel-chat'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { Divider, Flex, Paper, ScrollArea, Text } from '@mantine/core'
 import { IconNotification } from '@tabler/icons-react'
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function NoticeFeedView({ channelId }: Props) {
-    const data = useGetChatlogs({
+    const data = useGetMessages({
         channelId,
         params: {
             type: 'notice',
