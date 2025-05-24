@@ -36,9 +36,9 @@ async def register_tiktok_username_route(
         channel_id=channel_id,
         provider='tiktok',
         data=ChannelProviderRequest(
-            provider_user_name=username,
-            provider_user_display_name=username,
-            provider_user_id=username,
+            provider_channel_name=username,
+            provider_channel_display_name=username,
+            provider_channel_id=username,
             live_stream_id=username,
             stream_title=username,
             stream_chat_id=username,

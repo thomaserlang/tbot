@@ -23,14 +23,14 @@ async def test_add_viewer_count(client: AsyncClient) -> None:
         channel_id=user.channel.id,
         data=ChannelProviderCreate(
             provider='twitch',
-            provider_user_id='12345',
+            provider_channel_id='12345',
         ),
     )
 
     channel_provider_stream = await create_channel_provider_stream(
         channel_id=user.channel.id,
         provider='twitch',
-        provider_user_id='12345',
+        provider_channel_id='12345',
         provider_stream_id='12345',
         started_at=datetime_now(),
     )

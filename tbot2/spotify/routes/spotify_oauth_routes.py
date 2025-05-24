@@ -112,9 +112,9 @@ async def spotify_auth_route(
         provider='spotify',
         data=ChannelProviderRequest(
             scope=channel_provider_scopes['spotify'],
-            provider_user_id=user_info['id'],
-            provider_user_name=user_info['id'],
-            provider_user_display_name=user_info['display_name'],
+            provider_channel_id=user_info['id'],
+            provider_channel_name=user_info['id'],
+            provider_channel_display_name=user_info['display_name'],
         ),
     )
     await save_channel_provider_oauth(

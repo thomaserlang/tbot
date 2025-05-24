@@ -66,8 +66,8 @@ async def register_channel_eventsubs(
             return
 
     registrations = get_eventsub_registrations(
-        broadcaster_user_id=channel_provider.provider_user_id or '',
-        twitch_bot_user_id=bot_provider.provider_user_id or '',
+        broadcaster_user_id=channel_provider.provider_channel_id or '',
+        twitch_bot_user_id=bot_provider.provider_channel_id or '',
     )
 
     await asyncio.gather(

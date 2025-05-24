@@ -13,12 +13,12 @@ router = APIRouter()
 
 
 @router.get(
-    '/channels/{channel_id}/twitch/gift-image/{provider_user_id}/{size}/{id}',
+    '/channels/{channel_id}/twitch/gift-image/{provider_channel_id}/{size}/{id}',
     name='Get Twitch Cheermote Image',
 )
 async def get_twitch_gift_image_route(
     channel_id: UUID,
-    provider_user_id: str,
+    provider_channel_id: str,
     id: Annotated[str, Path(description='Format: {prefix}-{tier}')],
     size: ImageSizeType,
 ) -> RedirectResponse:

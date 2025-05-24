@@ -15,7 +15,7 @@ export interface Activity {
     channel_id: ChannelId
     provider: Provider
     provider_message_id: string
-    provider_user_id: string
+    provider_channel_id: string
     provider_viewer_id: string
     viewer_name: string
     viewer_display_name: string

@@ -34,7 +34,7 @@ async def get_channel_provider(
         )
         if provider_channel_id:
             stmt = stmt.where(
-                MChannelProvider.provider_user_id == provider_channel_id
+                MChannelProvider.provider_channel_id == provider_channel_id
             )
         channel_provider = await session.scalar(stmt)
         if channel_provider:
@@ -63,7 +63,7 @@ async def get_channel_provider_by_provider_id(
         channel_provider = await session.scalar(
             sa.select(MChannelProvider).where(
                 MChannelProvider.provider == provider,
-                MChannelProvider.provider_user_id == provider_channel_id,
+                MChannelProvider.provider_channel_id == provider_channel_id,
             )
         )
         if channel_provider:

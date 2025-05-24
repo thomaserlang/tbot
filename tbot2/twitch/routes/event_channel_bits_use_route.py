@@ -46,7 +46,7 @@ async def event_channel_bits_use_route(
             count=data.event.bits,
             provider='twitch',
             provider_message_id=headers.message_id,
-            provider_user_id=data.event.broadcaster_user_id,
+            provider_channel_id=data.event.broadcaster_user_id,
             provider_viewer_id=data.event.user_id,
             viewer_name=data.event.user_login,
             viewer_display_name=data.event.user_name,
@@ -56,7 +56,7 @@ async def event_channel_bits_use_route(
             message_parts=await message_to_parts(
                 parts=twitch_fragments_to_parts(data.event.message.fragments),
                 provider='twitch',
-                provider_user_id=data.event.broadcaster_user_id,
+                provider_channel_id=data.event.broadcaster_user_id,
             )
             if data.event.message
             else None,
@@ -84,7 +84,7 @@ async def emulate_cheer_route(
         type='bits',
         provider='twitch',
         provider_message_id='123',
-        provider_user_id='123',
+        provider_channel_id='123',
         provider_viewer_id='123',
         viewer_name='testuser',
         viewer_display_name='Test User',

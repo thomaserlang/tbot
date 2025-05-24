@@ -60,11 +60,11 @@ def text_to_emote_parts(
 )  # type: ignore
 async def get_emotes(
     provider: Provider,
-    provider_user_id: str,
+    provider_channel_id: str,
 ) -> EmotesCached:
     results = await asyncio.gather(
         get_global_emotes(),
-        get_channel_emotes(provider, provider_user_id),
+        get_channel_emotes(provider, provider_channel_id),
     )
     emotes = {emote.name: emote for emote in itertools.chain.from_iterable(results)}
     emote_ids = set(emotes.keys())
@@ -84,11 +84,11 @@ async def get_global_emotes() -> list[EmotePartRequest]:
 
 
 async def get_channel_emotes(
-    provider: Provider, provider_user_id: str
+    provider: Provider, provider_channel_id: str
 ) -> list[EmotePartRequest]:
     results = await asyncio.gather(
-        get_channel_betterttv_emotes(provider, provider_user_id),
-        get_channel_seventv_emotes(provider, provider_user_id),
+        get_channel_betterttv_emotes(provider, provider_channel_id),
+        get_channel_seventv_emotes(provider, provider_channel_id),
     )
     return list(itertools.chain.from_iterable(results))
 
@@ -117,18 +117,18 @@ async def get_global_seventv_emotes() -> list[EmotePartRequest]:
 
 
 async def get_channel_seventv_emotes(
-    provider: Provider, provider_user_id: str
+    provider: Provider, provider_channel_id: str
 ) -> list[EmotePartRequest]:
     try:
         r = await http_client.get(
-            f'https://7tv.io/v3/users/{provider}/{provider_user_id}',
+            f'https://7tv.io/v3/users/{provider}/{provider_channel_id}',
         )
         if r.status_code > 299:
             logger.trace(
                 'Failed to get channel 7tv emotes',
                 extra={
                     'response': r.text,
-                    'provider_user_id': provider_user_id,
+                    'provider_channel_id': provider_channel_id,
                     provider: provider,
                 },
             )
@@ -172,18 +172,18 @@ async def get_global_betterttv_emotes() -> list[EmotePartRequest]:
 
 
 async def get_channel_betterttv_emotes(
-    provider: Provider, provider_user_id: str
+    provider: Provider, provider_channel_id: str
 ) -> list[EmotePartRequest]:
     try:
         r = await http_client.get(
-            f'https://api.betterttv.net/3/cached/users/{provider}/{provider_user_id}'
+            f'https://api.betterttv.net/3/cached/users/{provider}/{provider_channel_id}'
         )
         if r.status_code > 299:
             logger.trace(
                 'Failed to get channel bttv emotes',
                 extra={
                     'response': r.text,
-                    'provider_user_id': provider_user_id,
+                    'provider_channel_id': provider_channel_id,
                     'provider': provider,
                 },
             )

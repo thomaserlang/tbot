@@ -140,7 +140,7 @@ async def tiktok_auth_route(
         case 'sign_in':
             result = await get_or_create_user(
                 provider='tiktok',
-                provider_user_id=user_info.open_id,
+                provider_channel_id=user_info.open_id,
                 data=UserCreate(
                     username=user_info.username,
                     display_name=user_info.display_name,
@@ -153,9 +153,9 @@ async def tiktok_auth_route(
                     provider='tiktok',
                     data=ChannelProviderRequest(
                         scope=params.scope,
-                        provider_user_name=user_info.username,
-                        provider_user_display_name=user_info.display_name,
-                        provider_user_id=user_info.open_id,
+                        provider_channel_name=user_info.username,
+                        provider_channel_display_name=user_info.display_name,
+                        provider_channel_id=user_info.open_id,
                     ),
                 )
                 await save_channel_provider_oauth(
@@ -178,9 +178,9 @@ async def tiktok_auth_route(
                 provider='tiktok',
                 data=ChannelProviderRequest(
                     scope=channel_provider_scopes['tiktok'],
-                    provider_user_id=user_info.open_id,
-                    provider_user_name=user_info.username,
-                    provider_user_display_name=user_info.display_name,
+                    provider_channel_id=user_info.open_id,
+                    provider_channel_name=user_info.username,
+                    provider_channel_display_name=user_info.display_name,
                 ),
             )
             await save_channel_provider_oauth(

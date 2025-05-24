@@ -38,7 +38,7 @@ async def get_current_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: Provider,
-    provider_user_id: str | None = None,
+    provider_channel_id: str | None = None,
     provider_stream_id: str | None = None,
     session: AsyncSession | None = None,
 ) -> ChannelProviderStream | None:
@@ -48,9 +48,9 @@ async def get_current_channel_provider_stream(
             MChannelProviderStream.provider == provider,
             MChannelProviderStream.ended_at.is_(None),
         )
-        if provider_user_id:
+        if provider_channel_id:
             stmt = stmt.where(
-                MChannelProviderStream.provider_user_id == provider_user_id
+                MChannelProviderStream.provider_channel_id == provider_channel_id
             )
         if provider_stream_id:
             stmt = stmt.where(
@@ -66,7 +66,7 @@ async def create_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: Provider,
-    provider_user_id: str,
+    provider_channel_id: str,
     provider_stream_id: str,
     started_at: datetime,
     live_stream_id: str | None = None,
@@ -84,14 +84,14 @@ async def create_channel_provider_stream(
         stream = await get_current_channel_provider_stream(
             channel_id=channel_id,
             provider=provider,
-            provider_user_id=provider_user_id,
+            provider_channel_id=provider_channel_id,
             session=session,
         )
         if stream:
             await end_channel_provider_stream(
                 channel_id=channel_id,
                 provider=provider,
-                provider_user_id=provider_user_id,
+                provider_channel_id=provider_channel_id,
                 ended_at=datetime_now(),
                 session=session,
             )
@@ -107,7 +107,7 @@ async def create_channel_provider_stream(
                     channel_id=channel_id,
                     channel_stream_id=stream.id,
                     provider=provider,
-                    provider_user_id=provider_user_id,
+                    provider_channel_id=provider_channel_id,
                     provider_stream_id=provider_stream_id,
                     started_at=started_at,
                     ended_at=ended_at,
@@ -146,7 +146,7 @@ async def get_or_create_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: Provider,
-    provider_user_id: str,
+    provider_channel_id: str,
     provider_stream_id: str,
     started_at: datetime,
     live_stream_id: str | None = None,
@@ -160,7 +160,7 @@ async def get_or_create_channel_provider_stream(
     stream = await get_current_channel_provider_stream(
         channel_id=channel_id,
         provider=provider,
-        provider_user_id=provider_user_id,
+        provider_channel_id=provider_channel_id,
         provider_stream_id=provider_stream_id,
         session=session,
     )
@@ -169,7 +169,7 @@ async def get_or_create_channel_provider_stream(
     return await create_channel_provider_stream(
         channel_id=channel_id,
         provider=provider,
-        provider_user_id=provider_user_id,
+        provider_channel_id=provider_channel_id,
         provider_stream_id=provider_stream_id,
         started_at=started_at,
         live_stream_id=live_stream_id,
@@ -180,7 +180,7 @@ async def end_channel_provider_stream(
     *,
     channel_id: UUID,
     provider: Provider,
-    provider_user_id: str | None = None,
+    provider_channel_id: str | None = None,
     provider_stream_id: str | None = None,
     ended_at: datetime | None = None,
     reset_live_stream_id: bool = False,
@@ -196,7 +196,7 @@ async def end_channel_provider_stream(
         stream = await get_current_channel_provider_stream(
             channel_id=channel_id,
             provider=provider,
-            provider_user_id=provider_user_id,
+            provider_channel_id=provider_channel_id,
             session=session,
         )
         if stream and not stream.ended_at:

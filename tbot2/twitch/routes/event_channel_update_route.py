@@ -40,8 +40,8 @@ async def event_channel_update_route(
         await update_channel_provider(
             channel_provider_id=channel_provider.id,
             data=ChannelProviderUpdate(
-                provider_user_display_name=data.event.broadcaster_user_name,
-                provider_user_name=data.event.broadcaster_user_name,
+                provider_channel_display_name=data.event.broadcaster_user_name,
+                provider_channel_name=data.event.broadcaster_user_name,
                 stream_title=data.event.title,
             ),
         )

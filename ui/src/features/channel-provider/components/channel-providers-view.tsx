@@ -33,7 +33,7 @@ export function ProvidersView({ channelProviders: channelProviders }: Props) {
 
                     <Flex gap="0.5rem" align="center">
                         <Text c="dimmed">
-                            {channelProvider.provider_user_display_name}
+                            {channelProvider.provider_channel_display_name}
                         </Text>
 
                         <Button

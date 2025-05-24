@@ -25,7 +25,7 @@ async def twitch_delete_message(
         url='/moderation/chat',
         params={
             'broadcaster_id': broadcaster_id,
-            'moderator_id': bot_provider.provider_user_id or '',
+            'moderator_id': bot_provider.provider_channel_id or '',
             'message_id': message_id,
         },
         headers={

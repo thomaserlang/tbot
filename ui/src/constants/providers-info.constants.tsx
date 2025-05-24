@@ -20,9 +20,9 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
         ownBot: true,
         systemBot: true,
         dashboardUrl:
-            'https://dashboard.twitch.tv/u/{provider_user_name}/stream-manager',
+            'https://dashboard.twitch.tv/u/{provider_channel_name}/stream-manager',
         embedUrl:
-            `https://player.twitch.tv/?channel={provider_user_name}` +
+            `https://player.twitch.tv/?channel={provider_channel_name}` +
             `&parent=${window.location.hostname}&muted=true&autoplay=true`,
         streamTitleMaxLength: 140,
         icon: (props) => <IconBrandTwitch {...props} />,
@@ -39,7 +39,7 @@ export const providerInfo: { [key in Provider]: ProviderInfo } = {
         ownBot: true,
         systemBot: true,
         dashboardUrl:
-            'https://studio.youtube.com/channel/{provider_user_id}/livestreaming',
+            'https://studio.youtube.com/channel/{provider_channel_id}/livestreaming',
         broadcastEditUrl:
             'https://studio.youtube.com/video/{live_stream_id}/livestreaming',
         embedUrl:

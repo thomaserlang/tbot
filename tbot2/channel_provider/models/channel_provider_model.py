@@ -19,13 +19,13 @@ class MChannelProvider(Base):
         sa.UUID, sa.ForeignKey('channels.id', ondelete='CASCADE', onupdate='CASCADE')
     )
     provider: Mapped[str] = mapped_column(sa.String(255))
-    provider_user_id: Mapped[str | None] = mapped_column(
+    provider_channel_id: Mapped[str | None] = mapped_column(
         sa.String(255), nullable=True
     )
-    provider_user_name: Mapped[str | None] = mapped_column(
+    provider_channel_name: Mapped[str | None] = mapped_column(
         sa.String(255), nullable=True
     )
-    provider_user_display_name: Mapped[str | None] = mapped_column(
+    provider_channel_display_name: Mapped[str | None] = mapped_column(
         sa.String(255), nullable=True
     )
     scope: Mapped[str | None] = mapped_column(sa.String(2000), nullable=True)

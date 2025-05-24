@@ -5,7 +5,7 @@ from .actions.oauth_provider_actions import (
     delete_oauth_provider as delete_oauth_provider,
 )
 from .actions.oauth_provider_actions import (
-    get_oauth_provider_by_provider_user_id as get_oauth_provider_by_provider_user_id,
+    get_oauth_provider_by_provider_channel_id as get_oauth_provider_by_provider_channel_id,
 )
 from .actions.oauth_provider_actions import (
     get_oauth_provider_by_user_and_provider as get_oauth_provider_by_user_and_provider,

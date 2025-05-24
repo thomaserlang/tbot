@@ -63,7 +63,7 @@ async def handle_message_response(
                     # Check that the bot is not replying to itself
                     # causing an infinite loop
                     if (
-                        response.bot_provider.provider_user_id
+                        response.bot_provider.provider_channel_id
                         == chat_message.provider_viewer_id
                     ):
                         logger.debug('Bot is replying to itself, skipping')

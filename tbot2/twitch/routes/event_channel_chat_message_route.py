@@ -85,7 +85,7 @@ async def event_channel_chat_message_route(
         message_parts=await message_to_parts(
             parts=twitch_fragments_to_parts(data.event.message.fragments),
             provider='twitch',
-            provider_user_id=data.event.broadcaster_user_id,
+            provider_channel_id=data.event.broadcaster_user_id,
         ),
         access_level=badges_to_access_level(data.event.badges),
     )
@@ -164,7 +164,7 @@ async def emulate_channel_chat_message_route(
         message_parts=await message_to_parts(
             parts=twitch_fragments_to_parts(fragments),
             provider='twitch',
-            provider_user_id='123',
+            provider_channel_id='123',
         ),
     )
     if cheer:

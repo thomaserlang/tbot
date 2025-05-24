@@ -17,7 +17,7 @@ class MBotProvider(Base):
     id: Mapped[UUID] = mapped_column(sa.UUID, primary_key=True)
     provider: Mapped[Provider] = mapped_column(sa.String(255), nullable=False)
     system_default: Mapped[bool | None] = mapped_column(sa.Boolean(), nullable=True)
-    provider_user_id: Mapped[str] = mapped_column(sa.String(255), nullable=False)
+    provider_channel_id: Mapped[str] = mapped_column(sa.String(255), nullable=False)
     access_token: Mapped[str | None] = mapped_column(sa.String(2000), nullable=True)
     refresh_token: Mapped[str | None] = mapped_column(sa.String(2000), nullable=True)
     expires_at: Mapped[datetime | None] = mapped_column(UtcDateTime(), nullable=True)

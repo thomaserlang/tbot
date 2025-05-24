@@ -38,7 +38,7 @@ async def handle_comment_event(
                 message_parts=await message_to_parts(
                     message=event.comment,
                     provider='tiktok',
-                    provider_user_id=channel_provider.provider_user_id or '',
+                    provider_channel_id=channel_provider.provider_channel_id or '',
                 ),
                 provider_message_id=str(event.base_message.message_id),
             )
@@ -100,7 +100,7 @@ async def handle_gift_chat_message(
                 sub_type='gift',
                 channel_id=channel_provider.channel_id,
                 provider='tiktok',
-                provider_channel_id=channel_provider.provider_user_id or '',
+                provider_channel_id=channel_provider.provider_channel_id or '',
                 provider_viewer_id=event.user.unique_id,
                 viewer_display_name=event.user.nickname,
                 viewer_name=event.user.unique_id,
@@ -133,7 +133,7 @@ async def handle_gift_activity(
                 count=event.gift.diamond_count * event.repeat_count,
                 provider='tiktok',
                 provider_message_id=str(event.base_message.message_id),
-                provider_user_id=channel_provider.provider_user_id or '',
+                provider_channel_id=channel_provider.provider_channel_id or '',
                 provider_viewer_id=event.user.unique_id,
                 viewer_display_name=event.user.nickname,
                 viewer_name=event.user.unique_id,

@@ -86,7 +86,7 @@ async def handle_chat_message(
         await message_to_parts(
             parts=twitch_fragments_to_parts(data.event.message.fragments),
             provider='twitch',
-            provider_user_id=data.event.broadcaster_user_id,
+            provider_channel_id=data.event.broadcaster_user_id,
         )
         if data.event.message.text
         else []
@@ -191,7 +191,7 @@ async def handle_activity(
             count_currency=count_currency,
             provider='twitch',
             provider_message_id=data.event.message_id,
-            provider_user_id=data.event.broadcaster_user_id,
+            provider_channel_id=data.event.broadcaster_user_id,
             provider_viewer_id=data.event.chatter_user_id,
             viewer_name=data.event.chatter_user_login,
             viewer_display_name=data.event.chatter_user_name,
@@ -248,7 +248,7 @@ async def emulate_subscription_route(
         sub_type='1000',
         provider='twitch',
         provider_message_id='123',
-        provider_user_id='123',
+        provider_channel_id='123',
         provider_viewer_id='123',
         viewer_name='testuser',
         viewer_display_name='Test User',

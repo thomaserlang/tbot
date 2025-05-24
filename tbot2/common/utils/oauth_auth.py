@@ -265,7 +265,7 @@ class ChannelProviderBotOAuthHelper(Auth):
             await save_bot_provider(
                 data=BotProviderRequest(
                     provider=self.provider,
-                    provider_user_id=bot_provider.provider_user_id,
+                    provider_channel_id=bot_provider.provider_channel_id,
                     access_token=data['access_token'],
                     refresh_token=data['refresh_token']
                     if 'refresh_token' in data

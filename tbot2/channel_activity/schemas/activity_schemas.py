@@ -42,7 +42,7 @@ class ActivityCreate(BaseRequestSchema):
     ] = ''
     provider: Provider
     provider_message_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
-    provider_user_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
+    provider_channel_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     provider_viewer_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     viewer_name: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     viewer_display_name: Annotated[str, StringConstraints(min_length=1, max_length=255)]
@@ -88,7 +88,7 @@ class Activity(BaseSchema):
     channel_id: UUID
     provider: Provider
     provider_message_id: str
-    provider_user_id: str
+    provider_channel_id: str
     provider_viewer_id: str
     viewer_name: str
     viewer_display_name: str

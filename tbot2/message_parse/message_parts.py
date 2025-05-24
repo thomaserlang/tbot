@@ -6,13 +6,13 @@ from .emotes_to_parts import EmotesCached, get_emotes, text_to_emote_parts
 async def message_to_parts(
     *,
     provider: Provider,
-    provider_user_id: str,
+    provider_channel_id: str,
     message: str | None = None,
     parts: list[ChatMessagePartRequest] | None = None,
 ) -> list[ChatMessagePartRequest]:
     if message is None and parts is None:
         raise ValueError('Either `message` or `parts` must be provided')
-    emotes = await get_emotes(provider, provider_user_id)
+    emotes = await get_emotes(provider, provider_channel_id)
     if parts is None:
         parts = [ChatMessagePartRequest(type='text', text=message or '')]
     new_parts: list[ChatMessagePartRequest] = []

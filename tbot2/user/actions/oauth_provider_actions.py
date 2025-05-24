@@ -39,7 +39,7 @@ class GetOrCreateUserResult:
 async def get_or_create_user(
     *,
     provider: Provider,
-    provider_user_id: str,
+    provider_channel_id: str,
     data: UserCreate,
     session: AsyncSession | None = None,
 ) -> GetOrCreateUserResult:
@@ -49,9 +49,9 @@ async def get_or_create_user(
     from tbot2.channel_user_access import set_channel_user_access_level
 
     async with get_session(session) as session:
-        p = await get_oauth_provider_by_provider_user_id(
+        p = await get_oauth_provider_by_provider_channel_id(
             provider=provider,
-            provider_user_id=provider_user_id,
+            provider_channel_id=provider_channel_id,
             session=session,
         )
         if not p:
@@ -62,7 +62,7 @@ async def get_or_create_user(
             await create_user_oauth_provider(
                 user_id=user.id,
                 provider=provider,
-                provider_user_id=provider_user_id,
+                provider_channel_id=provider_channel_id,
                 session=session,
             )
 
@@ -112,7 +112,7 @@ async def create_user_oauth_provider(
     *,
     user_id: UUID,
     provider: Provider,
-    provider_user_id: str,
+    provider_channel_id: str,
     session: AsyncSession | None = None,
 ) -> UserOAuthProvider:
     async with get_session(session) as session:
@@ -124,7 +124,7 @@ async def create_user_oauth_provider(
                     created_at=datetime_now(),
                     user_id=user_id,
                     provider=provider,
-                    provider_user_id=provider_user_id,
+                    provider_channel_id=provider_channel_id,
                 )
             )
             p = await get_user_oauth_provider(
@@ -146,9 +146,9 @@ async def create_user_oauth_provider(
                     type='oauth_provider_already_connected',
                 ) from None
 
-            p = await get_oauth_provider_by_provider_user_id(
+            p = await get_oauth_provider_by_provider_channel_id(
                 provider=provider,
-                provider_user_id=provider_user_id,
+                provider_channel_id=provider_channel_id,
                 session=session,
             )
             if p:
@@ -192,17 +192,17 @@ async def get_oauth_provider_by_user_and_provider(
         return UserOAuthProvider.model_validate(p)
 
 
-async def get_oauth_provider_by_provider_user_id(
+async def get_oauth_provider_by_provider_channel_id(
     *,
     provider: Provider,
-    provider_user_id: str,
+    provider_channel_id: str,
     session: AsyncSession | None = None,
 ) -> UserOAuthProvider | None:
     async with get_session(session) as session:
         p = await session.scalar(
             sa.select(MUserOAuthProvider).where(
                 MUserOAuthProvider.provider == provider,
-                MUserOAuthProvider.provider_user_id == provider_user_id,
+                MUserOAuthProvider.provider_channel_id == provider_channel_id,
             )
         )
         if not p:
@@ -224,13 +224,13 @@ async def get_oauth_providers_by_user(
 
 async def delete_oauth_provider(
     *,
-    provider_id: UUID,
+    oauth_provider_id: UUID,
     session: AsyncSession | None = None,
 ) -> bool:
     async with get_session(session) as session:
         result = await session.execute(
             sa.delete(MUserOAuthProvider.__table__).where(  # type: ignore
-                MUserOAuthProvider.id == provider_id,
+                MUserOAuthProvider.id == oauth_provider_id,
             )
         )
         return result.rowcount > 0

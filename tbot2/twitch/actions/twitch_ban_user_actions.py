@@ -40,7 +40,7 @@ async def twitch_ban_user(
         url='/moderation/bans',
         params={
             'broadcaster_id': broadcaster_id,
-            'moderator_id': bot_provider.provider_user_id or '',
+            'moderator_id': bot_provider.provider_channel_id or '',
         },
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),
@@ -73,7 +73,7 @@ async def twitch_unban_user(
         url='/moderation/bans',
         params={
             'broadcaster_id': broadcaster_id,
-            'moderator_id': bot_provider.provider_user_id or '',
+            'moderator_id': bot_provider.provider_channel_id or '',
             'user_id': twitch_user_id,
         },
         headers={

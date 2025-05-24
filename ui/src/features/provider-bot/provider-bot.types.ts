@@ -7,7 +7,7 @@ export interface ProviderBot {
     id: BotProviderId
     provider: Provider
     name: string
-    provider_user_id: string | null
+    provider_channel_id: string | null
     scope: string | null
     scope_needed: boolean
 }

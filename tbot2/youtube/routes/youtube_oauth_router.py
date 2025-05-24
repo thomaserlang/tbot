@@ -214,7 +214,7 @@ async def youtube_auth_route(
             async with get_session() as session:
                 result = await get_or_create_user(
                     provider='youtube',
-                    provider_user_id=response.id_token['sub'],
+                    provider_channel_id=response.id_token['sub'],
                     data=UserCreate(
                         username=channel.snippet.title.lower(),
                         display_name=channel.snippet.title,
@@ -228,9 +228,9 @@ async def youtube_auth_route(
                         provider='youtube',
                         data=ChannelProviderRequest(
                             scope=params.scope,
-                            provider_user_name=channel.snippet.title.lower(),
-                            provider_user_display_name=channel.snippet.title,
-                            provider_user_id=channel.id,
+                            provider_channel_name=channel.snippet.title.lower(),
+                            provider_channel_display_name=channel.snippet.title,
+                            provider_channel_id=channel.id,
                         ),
                         session=session,
                     )
@@ -247,9 +247,9 @@ async def youtube_auth_route(
                 provider='youtube',
                 data=ChannelProviderRequest(
                     scope=params.scope,
-                    provider_user_id=channel.id,
-                    provider_user_name=channel.snippet.title,
-                    provider_user_display_name=channel.snippet.title,
+                    provider_channel_id=channel.id,
+                    provider_channel_name=channel.snippet.title,
+                    provider_channel_display_name=channel.snippet.title,
                 ),
             )
             await save_channel_provider_oauth(
@@ -266,7 +266,7 @@ async def youtube_auth_route(
             bot_provider = await save_bot_provider(
                 data=BotProviderRequest(
                     provider='youtube',
-                    provider_user_id=channel.id,
+                    provider_channel_id=channel.id,
                     access_token=response.access_token,
                     refresh_token=response.refresh_token,
                     expires_in=response.expires_in,
@@ -286,7 +286,7 @@ async def youtube_auth_route(
             await save_bot_provider(
                 data=BotProviderRequest(
                     provider='youtube',
-                    provider_user_id=channel.id,
+                    provider_channel_id=channel.id,
                     access_token=response.access_token,
                     refresh_token=response.refresh_token,
                     expires_in=response.expires_in,

@@ -78,14 +78,14 @@ async def handle_channel(
     with logger.contextualize(channel_provider_id=channel_provider.id):
         logger.debug('Handling tiktok channel')
         try:
-            client = TikTokLiveClient(unique_id=f'@{channel_provider.provider_user_id}')
+            client = TikTokLiveClient(unique_id=f'@{channel_provider.provider_channel_id}')
 
             if not await client.is_live():
                 if channel_provider.stream_live:
                     await end_channel_provider_stream(
                         channel_id=channel_provider.channel_id,
                         provider='tiktok',
-                        provider_user_id=channel_provider.provider_user_id,
+                        provider_channel_id=channel_provider.provider_channel_id,
                         ended_at=datetime_now(),
                     )
                 return
@@ -100,7 +100,7 @@ async def handle_channel(
                     await get_or_create_channel_provider_stream(
                         channel_id=channel_provider.channel_id,
                         provider='tiktok',
-                        provider_user_id=channel_provider.provider_user_id or '',
+                        provider_channel_id=channel_provider.provider_channel_id or '',
                         provider_stream_id=str(event.room_id),
                         started_at=datetime_now(),
                     )
@@ -139,7 +139,7 @@ async def handle_channel(
                 await end_channel_provider_stream(
                     channel_id=channel_provider.channel_id,
                     provider='tiktok',
-                    provider_user_id=channel_provider.provider_user_id,
+                    provider_channel_id=channel_provider.provider_channel_id,
                     ended_at=datetime_now(),
                 )
                 await client.disconnect()
@@ -148,7 +148,7 @@ async def handle_channel(
                 channel_provider_stream = await get_current_channel_provider_stream(
                     channel_id=channel_provider.channel_id,
                     provider='tiktok',
-                    provider_user_id=channel_provider.provider_user_id or '',
+                    provider_channel_id=channel_provider.provider_channel_id or '',
                 )
                 if channel_provider_stream:
                     await add_viewer_count(

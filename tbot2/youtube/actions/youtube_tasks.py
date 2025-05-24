@@ -186,7 +186,7 @@ async def check_for_broadcast(channel_provider: ChannelProvider) -> None:
                 await get_or_create_channel_provider_stream(
                     channel_id=channel_provider.channel_id,
                     provider='youtube',
-                    provider_user_id=live_broadcast.snippet.channel_id,
+                    provider_channel_id=live_broadcast.snippet.channel_id,
                     provider_stream_id=live_broadcast.id,
                     started_at=live_broadcast.snippet.actual_start_time,
                 )
@@ -321,7 +321,7 @@ async def end_stream(
             await end_channel_provider_stream(
                 channel_id=channel_provider.channel_id,
                 provider='youtube',
-                provider_user_id=channel_provider.provider_user_id,
+                provider_channel_id=channel_provider.provider_channel_id,
                 ended_at=datetime_now(),
                 reset_live_stream_id=True,
             )
@@ -330,7 +330,7 @@ async def end_stream(
     await end_channel_provider_stream(
         channel_id=channel_provider.channel_id,
         provider='youtube',
-        provider_user_id=live_broadcast.snippet.channel_id,
+        provider_channel_id=live_broadcast.snippet.channel_id,
         provider_stream_id=live_broadcast.id,
         ended_at=live_broadcast.snippet.actual_end_time,
         reset_live_stream_id=True,

@@ -19,6 +19,6 @@ class MUserOAuthProvider(Base):
         sa.UUID, sa.ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE')
     )
     provider: Mapped[str] = mapped_column(sa.String(255))  # 'google', 'github', etc
-    provider_user_id: Mapped[str] = mapped_column(sa.String(255))
+    provider_channel_id: Mapped[str] = mapped_column(sa.String(255))
     created_at: Mapped[datetime] = mapped_column(UtcDateTime())
     updated_at: Mapped[datetime | None] = mapped_column(UtcDateTime(), nullable=True)

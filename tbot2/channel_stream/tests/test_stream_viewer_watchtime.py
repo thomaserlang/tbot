@@ -15,7 +15,7 @@ async def test_stream_viewer_watchtime(db: None) -> None:
     stream = await create_channel_provider_stream(
         channel_id=channel.id,
         provider='twitch',
-        provider_id='123456789',
+        provider_channel_id='123456789',
         provider_stream_id='123456789',
         started_at=datetime_now(),
     )

@@ -98,7 +98,7 @@ async def is_timer_active(
         stream = await get_current_channel_provider_stream(
             channel_id=timer.channel_id,
             provider=channel_provider.provider,
-            provider_user_id=channel_provider.provider_user_id,
+            provider_channel_id=channel_provider.provider_channel_id,
             session=session,
         )
         if timer.active_mode == 'online' and stream:

@@ -89,7 +89,7 @@ async def handle_activity(
             count=data.event.reward.cost,
             provider='twitch',
             provider_message_id=data.event.id,
-            provider_user_id=data.event.broadcaster_user_id,
+            provider_channel_id=data.event.broadcaster_user_id,
             provider_viewer_id=data.event.user_id,
             viewer_name=data.event.user_login,
             viewer_display_name=data.event.user_name,

@@ -10,7 +10,7 @@ from tbot2.common import BaseRequestSchema, BaseSchema, Provider, bot_provider_s
 class BotProvider(BaseSchema):
     id: UUID
     provider: Provider
-    provider_user_id: str
+    provider_channel_id: str
     access_token: str
     refresh_token: str
     expires_at: datetime
@@ -27,7 +27,7 @@ class BotProvider(BaseSchema):
 class BotProviderPublic(BaseSchema):
     id: UUID
     provider: Provider
-    provider_user_id: str | None
+    provider_channel_id: str | None
     scope: str | None
     name: str | None
 
@@ -40,7 +40,7 @@ class BotProviderPublic(BaseSchema):
 
 class BotProviderRequest(BaseRequestSchema):
     provider: Provider
-    provider_user_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
+    provider_channel_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     access_token: (
         Annotated[str, StringConstraints(min_length=1, max_length=2000)] | None
     ) = None

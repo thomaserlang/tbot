@@ -34,7 +34,7 @@ async def twitch_warn_chat_user(
         url='/moderation/warnings',
         params={
             'broadcaster_id': broadcaster_id,
-            'moderator_id': provider.provider_user_id or '',
+            'moderator_id': provider.provider_channel_id or '',
         },
         headers={
             TBOT_CHANNEL_ID_HEADER: str(channel_id),

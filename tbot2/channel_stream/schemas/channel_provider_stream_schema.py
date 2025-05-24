@@ -9,7 +9,7 @@ class ChannelProviderStream(BaseSchema):
     channel_id: UUID
     channel_stream_id: UUID
     provider: Provider
-    provider_user_id: str
+    provider_channel_id: str
     provider_stream_id: str
     started_at: datetime
     ended_at: datetime | None

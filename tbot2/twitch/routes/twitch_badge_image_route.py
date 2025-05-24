@@ -14,16 +14,16 @@ router = APIRouter()
 
 
 @router.get(
-    '/channels/{channel_id}/twitch/badge-image/{provider_user_id}/{size}/{id}',
+    '/channels/{channel_id}/twitch/badge-image/{provider_channel_id}/{size}/{id}',
     name='Get Twitch Badge Image',
 )
 async def get_twitch_badge_image_route(
     channel_id: UUID,
-    provider_user_id: str,
+    provider_channel_id: str,
     id: Annotated[str, Path(description='Format: {set_id}-{id}')],
     size: ImageSizeType,
 ) -> RedirectResponse:
-    data = await get_twitch_cached_badges(provider_user_id)
+    data = await get_twitch_cached_badges(provider_channel_id)
     if id not in data:
         raise ErrorMessage(
             message='Badge not found', code=404, type='twitch_badge_not_found'

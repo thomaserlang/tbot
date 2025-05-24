@@ -11,8 +11,8 @@ async def twitch_bot_send_message(
 ) -> bool:
     bot_provider = await channel_provider.get_default_or_system_bot_provider()
     data = {
-        'broadcaster_id': channel_provider.provider_user_id or '',
-        'sender_id': bot_provider.provider_user_id or '',
+        'broadcaster_id': channel_provider.provider_channel_id or '',
+        'sender_id': bot_provider.provider_channel_id or '',
         'message': message,
     }
     if reply_parent_message_id:

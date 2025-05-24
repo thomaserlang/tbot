@@ -39,7 +39,7 @@ async def update_stream_title(
 ) -> bool:
     await update_twitch_channel_information(
         channel_id=channel_provider.channel_id,
-        broadcaster_id=channel_provider.provider_user_id or '',
+        broadcaster_id=channel_provider.provider_channel_id or '',
         data=ModifyChannelInformationRequest(
             title=stream_title,
         ),
@@ -73,7 +73,7 @@ async def ban_user(
 ) -> bool:
     return await twitch_ban_user(
         channel_id=data.channel_provider.channel_id,
-        broadcaster_id=data.channel_provider.provider_user_id or '',
+        broadcaster_id=data.channel_provider.provider_channel_id or '',
         twitch_user_id=data.provider_viewer_id,
         duration=data.ban_duration,
     )
@@ -85,7 +85,7 @@ async def unban_user(
 ) -> bool:
     return await twitch_unban_user(
         channel_id=data.channel_provider.channel_id,
-        broadcaster_id=data.channel_provider.provider_user_id or '',
+        broadcaster_id=data.channel_provider.provider_channel_id or '',
         twitch_user_id=data.provider_viewer_id,
     )
 
@@ -97,7 +97,7 @@ async def run_commercial(
 ) -> bool:
     await twitch_run_commercial(
         channel_id=channel_provider.channel_id,
-        broadcaster_id=channel_provider.provider_user_id or '',
+        broadcaster_id=channel_provider.provider_channel_id or '',
         length=length,
     )
     return True

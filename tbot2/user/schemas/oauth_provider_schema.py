@@ -8,6 +8,6 @@ class UserOAuthProvider(BaseSchema):
     id: UUID
     user_id: UUID
     provider: Provider
-    provider_user_id: str
+    provider_channel_id: str
     created_at: datetime
     updated_at: datetime | None

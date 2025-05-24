@@ -57,16 +57,16 @@ async def twitch_tasks() -> None:
 async def update_viewer_count(channel_providers: list[ChannelProvider]) -> None:
     logger.debug('Updating viewer count')
     for chunk in chunk_list(channel_providers, 100):
-        provider_user_ids = [
-            channel_provider.provider_user_id
+        provider_channel_ids = [
+            channel_provider.provider_channel_id
             for channel_provider in chunk
-            if channel_provider.provider_user_id
+            if channel_provider.provider_channel_id
         ]
-        streams = await get_twitch_streams(user_ids=provider_user_ids)
+        streams = await get_twitch_streams(user_ids=provider_channel_ids)
 
         streams_by_user_id = {stream.user_id: stream for stream in streams}
         for channel_provider in chunk:
-            stream = streams_by_user_id.get(channel_provider.provider_user_id or '')
+            stream = streams_by_user_id.get(channel_provider.provider_channel_id or '')
             if not stream or not channel_provider.channel_provider_stream_id:
                 continue
             if channel_provider.stream_viewer_count == stream.viewer_count:
@@ -111,7 +111,7 @@ async def update_viewer_watchtime(channel_provider: ChannelProvider) -> None:
     )
     async for chatters in await get_twitch_chatters(
         channel_id=channel_provider.channel_id,
-        broadcaster_id=channel_provider.provider_user_id or '',
+        broadcaster_id=channel_provider.provider_channel_id or '',
     ):
         if point_settings.enabled:
             await inc_bulk_points(

@@ -36,7 +36,7 @@ async def get_twitch_badges_route(
         )
 
     data = await asyncio.gather(
-        twitch_channel_badges(provider.provider_user_id or ''),
+        twitch_channel_badges(provider.provider_channel_id or ''),
         twitch_global_badges(),
     )
 

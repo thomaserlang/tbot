@@ -25,7 +25,7 @@ async def test_activity_gift_recipient_actions(db: None) -> None:
         sub_type='1000',
         provider='twitch',
         provider_message_id='123',
-        provider_user_id='123',
+        provider_channel_id='123',
         provider_viewer_id='123',
         viewer_name='testuser',
         viewer_display_name='Test User',

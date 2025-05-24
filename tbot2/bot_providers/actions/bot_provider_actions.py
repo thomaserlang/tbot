@@ -14,21 +14,22 @@ from ..schemas.bot_provider_schemas import (
 )
 
 
-async def get_bot_provider_by_provider_user_id(
+async def get_bot_provider_by_provider_channel_id(
     *,
     provider: Provider,
-    provider_user_id: str,
+    provider_channel_id: str,
     session: AsyncSession | None = None,
 ) -> BotProvider | None:
     async with get_session(session) as session:
         bot_provider = await session.scalar(
             sa.select(MBotProvider).where(
                 MBotProvider.provider == provider,
-                MBotProvider.provider_user_id == provider_user_id,
+                MBotProvider.provider_channel_id == provider_channel_id,
             )
         )
         if bot_provider:
             return BotProvider.model_validate(bot_provider)
+        return None
 
 
 async def get_system_bot_provider(
@@ -45,6 +46,7 @@ async def get_system_bot_provider(
         )
         if bot_provider:
             return BotProvider.model_validate(bot_provider)
+        return None
 
 
 async def save_bot_provider(
@@ -66,7 +68,7 @@ async def save_bot_provider(
                 sa.update(MBotProvider)
                 .where(
                     MBotProvider.provider == data.provider,
-                    MBotProvider.provider_user_id != data.provider_user_id,
+                    MBotProvider.provider_channel_id != data.provider_channel_id,
                     MBotProvider.system_default.is_(True),
                 )
                 .values(system_default=None)
@@ -76,7 +78,7 @@ async def save_bot_provider(
             sa.update(MBotProvider)
             .where(
                 MBotProvider.provider == data.provider,
-                MBotProvider.provider_user_id == data.provider_user_id,
+                MBotProvider.provider_channel_id == data.provider_channel_id,
             )
             .values(**data_)
         )
@@ -90,9 +92,9 @@ async def save_bot_provider(
                 )
             )
 
-        bot_provider = await get_bot_provider_by_provider_user_id(
+        bot_provider = await get_bot_provider_by_provider_channel_id(
             provider=data.provider,
-            provider_user_id=data.provider_user_id,
+            provider_channel_id=data.provider_channel_id,
             session=session,
         )
         if not bot_provider:

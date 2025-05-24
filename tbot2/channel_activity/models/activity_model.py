@@ -19,7 +19,7 @@ class MActivity(Base):
     provider_message_id: Mapped[str] = mapped_column(
         sa.String(100), nullable=False, unique=True
     )
-    provider_user_id: Mapped[str] = mapped_column(sa.String(100), nullable=False)
+    provider_channel_id: Mapped[str] = mapped_column(sa.String(100), nullable=False)
     provider_viewer_id: Mapped[str] = mapped_column(sa.String(100), nullable=False)
     viewer_name: Mapped[str] = mapped_column(sa.String(100), nullable=False)
     viewer_display_name: Mapped[str] = mapped_column(sa.String(100), nullable=False)

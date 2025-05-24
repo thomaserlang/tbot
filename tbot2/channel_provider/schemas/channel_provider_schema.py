@@ -19,9 +19,9 @@ class ChannelProviderBase(BaseSchema):
     id: UUID
     channel_id: UUID
     provider: Provider
-    provider_user_id: str | None
-    provider_user_name: str | None
-    provider_user_display_name: str | None
+    provider_channel_id: str | None
+    provider_channel_name: str | None
+    provider_channel_display_name: str | None
     scope: str | None
     stream_title: str | None
     live_stream_id: str | None
@@ -69,13 +69,13 @@ class ChannelProviderPublic(ChannelProviderBase):
 
 
 class ChannelProviderRequest(BaseRequestSchema):
-    provider_user_id: (
+    provider_channel_id: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
-    provider_user_name: (
+    provider_channel_name: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
-    provider_user_display_name: (
+    provider_channel_display_name: (
         Annotated[str, StringConstraints(min_length=1, max_length=255)] | None
     ) = None
     scope: Annotated[str, StringConstraints(min_length=1, max_length=2000)] | None = (

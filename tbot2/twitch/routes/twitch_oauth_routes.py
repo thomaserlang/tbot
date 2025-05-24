@@ -202,7 +202,7 @@ async def twitch_auth_route(
         case 'sign_in':
             result = await get_or_create_user(
                 provider='twitch',
-                provider_user_id=twitch_user.id,
+                provider_channel_id=twitch_user.id,
                 data=UserCreate(
                     username=twitch_user.login,
                     display_name=twitch_user.display_name,
@@ -215,9 +215,9 @@ async def twitch_auth_route(
                     provider='twitch',
                     data=ChannelProviderRequest(
                         scope=params.scope,
-                        provider_user_name=twitch_user.login,
-                        provider_user_display_name=twitch_user.display_name,
-                        provider_user_id=twitch_user.id,
+                        provider_channel_name=twitch_user.login,
+                        provider_channel_display_name=twitch_user.display_name,
+                        provider_channel_id=twitch_user.id,
                     ),
                 )
                 await save_channel_provider_oauth(
@@ -241,9 +241,9 @@ async def twitch_auth_route(
                 provider='twitch',
                 data=ChannelProviderRequest(
                     scope=params.scope,
-                    provider_user_name=twitch_user.login,
-                    provider_user_display_name=twitch_user.display_name,
-                    provider_user_id=twitch_user.id,
+                    provider_channel_name=twitch_user.login,
+                    provider_channel_display_name=twitch_user.display_name,
+                    provider_channel_id=twitch_user.id,
                     live_stream_id=twitch_user.login,
                 ),
             )
@@ -261,7 +261,7 @@ async def twitch_auth_route(
             ):
                 await twitch_add_channel_moderator(
                     channel_id=channel_id,
-                    twitch_user_id=provider.provider_user_id,
+                    twitch_user_id=provider.provider_channel_id,
                     broadcaster_id=twitch_user.id,
                 )
 
@@ -274,7 +274,7 @@ async def twitch_auth_route(
             bot_provider = await save_bot_provider(
                 data=BotProviderRequest(
                     provider='twitch',
-                    provider_user_id=twitch_user.id,
+                    provider_channel_id=twitch_user.id,
                     access_token=response.access_token,
                     refresh_token=response.refresh_token,
                     expires_in=response.expires_in,
@@ -297,7 +297,7 @@ async def twitch_auth_route(
                 await twitch_add_channel_moderator(
                     channel_id=channel_id,
                     twitch_user_id=twitch_user.id,
-                    broadcaster_id=provider.provider_user_id or '',
+                    broadcaster_id=provider.provider_channel_id or '',
                 )
             await asyncio.gather(
                 refresh_channel_eventsubs(
@@ -312,7 +312,7 @@ async def twitch_auth_route(
             await save_bot_provider(
                 data=BotProviderRequest(
                     provider='twitch',
-                    provider_user_id=twitch_user.id,
+                    provider_channel_id=twitch_user.id,
                     access_token=response.access_token,
                     refresh_token=response.refresh_token,
                     expires_in=response.expires_in,
