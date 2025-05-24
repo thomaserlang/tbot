@@ -123,6 +123,7 @@ async def sync_all_eventsubs() -> None:
                 f'[{channel_provider.channel_id}] '
                 f'Skipping eventsub sync for channel, missing scopes'
             )
+            continue
         await sync_channel_eventsubs(
             channel_provider=channel_provider,
             eventsubs=eventsubs.get(channel_provider.provider_channel_id or '', []),
