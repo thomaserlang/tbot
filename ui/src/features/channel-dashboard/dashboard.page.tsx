@@ -14,7 +14,7 @@ export function Component() {
             <Flex
                 direction="column"
                 h="calc(var(--tbot-content-height) + var(--app-shell-padding))"
-                gap="0.25rem"
+                gap="0.5rem"
                 mt="calc(var(--app-shell-padding) * -1)"
                 ml="calc(var(--app-shell-padding) * -1)"
                 mr="calc(var(--app-shell-padding) * -1)"
@@ -23,7 +23,7 @@ export function Component() {
                     <DashboardProviders channelId={channel.id} />
                 </Paper>
 
-                <Flex gap="0.25rem" flex={1} wrap={'wrap'}>
+                <Flex gap="0.5rem" flex={1} wrap={'wrap'}>
                     <Paper maw={400} flex={1} miw={300}>
                         <ActivityFeedView channelId={channel.id} />
                     </Paper>
