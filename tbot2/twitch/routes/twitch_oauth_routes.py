@@ -40,8 +40,8 @@ from tbot2.twitch import TwitchUser
 from tbot2.user import UserCreate, get_or_create_user
 
 from ..actions.twitch_eventsub_actions import (
-    refresh_all_eventsubs,
-    refresh_channel_eventsubs,
+    sync_all_eventsubs,
+    sync_channel_eventsubs,
 )
 from ..actions.twitch_mod_user_actions import twitch_add_channel_moderator
 
@@ -256,18 +256,18 @@ async def twitch_auth_route(
                 ),
             )
 
-            if provider := await get_system_bot_provider(
-                provider='twitch',
-            ):
-                await twitch_add_channel_moderator(
-                    channel_id=channel_id,
-                    twitch_user_id=provider.provider_channel_id,
-                    broadcaster_id=twitch_user.id,
-                )
+            if bot_provider := await get_system_bot_provider(provider='twitch'):
+                asyncio.create_task(
+                    twitch_add_channel_moderator(
+                        channel_id=channel_id,
+                        twitch_user_id=bot_provider.provider_channel_id,
+                        broadcaster_id=twitch_user.id,
+                    )
+                )  # TODO: Move to task queue
 
-            await refresh_channel_eventsubs(
-                channel_id=channel_id,
-            )
+            asyncio.create_task(
+                sync_channel_eventsubs(channel_provider=channel_provider)
+            )  # TODO: Move to task queue
 
         case 'connect_bot':
             channel_id = UUID(params.state['channel_id'])
@@ -289,24 +289,22 @@ async def twitch_auth_route(
                     bot_provider_id=bot_provider.id,
                 ),
             )
-            provider = await get_channel_provider(
+            channel_provider = await get_channel_provider(
                 channel_id=channel_id,
+                provider_channel_id=twitch_user.id,
                 provider='twitch',
             )
-            if provider:
-                await twitch_add_channel_moderator(
-                    channel_id=channel_id,
-                    twitch_user_id=twitch_user.id,
-                    broadcaster_id=provider.provider_channel_id or '',
+            if channel_provider:
+                asyncio.create_task(
+                    twitch_add_channel_moderator(
+                        channel_id=channel_id,
+                        twitch_user_id=twitch_user.id,
+                        broadcaster_id=channel_provider.provider_channel_id or '',
+                    )
                 )
-            await asyncio.gather(
-                refresh_channel_eventsubs(
-                    channel_id=channel_id, event_type='channel.chat.message'
-                ),
-                refresh_channel_eventsubs(
-                    channel_id=channel_id, event_type='channel.chat.notification'
-                ),
-            )
+                asyncio.create_task(
+                    sync_channel_eventsubs(channel_provider=channel_provider)
+                )  # TODO: Move to task queue
 
         case 'connect_system_provider_bot':
             await save_bot_provider(
@@ -321,10 +319,7 @@ async def twitch_auth_route(
                     system_default=True,
                 ),
             )
-            await asyncio.gather(
-                refresh_all_eventsubs(event_type='channel.chat.message'),
-                refresh_all_eventsubs(event_type='channel.chat.notification'),
-            )
+            asyncio.create_task(sync_all_eventsubs())  # TODO: Move to task queue
 
         case _:
             raise HTTPException(

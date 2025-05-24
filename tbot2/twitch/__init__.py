@@ -14,15 +14,7 @@ from .actions.twitch_eventsub_actions import (
     delete_eventsub_registration as delete_eventsub_registration,
 )
 from .actions.twitch_eventsub_actions import get_eventsubs as get_eventsubs
-from .actions.twitch_eventsub_actions import (
-    refresh_all_eventsubs as refresh_all_eventsubs,
-)
-from .actions.twitch_eventsub_actions import (
-    register_all_eventsubs as register_all_eventsubs,
-)
-from .actions.twitch_eventsub_actions import (
-    register_channel_eventsubs as register_channel_eventsubs,
-)
+from .actions.twitch_eventsub_actions import sync_all_eventsubs as sync_all_eventsubs
 from .actions.twitch_eventsub_actions import (
     unregister_all_eventsubs as unregister_all_eventsubs,
 )

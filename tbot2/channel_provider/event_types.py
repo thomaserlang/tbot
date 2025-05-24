@@ -1,7 +1,5 @@
 from collections.abc import Awaitable, Callable
-from uuid import UUID
 
-from tbot2.bot_providers import BotProvider
 from tbot2.common import Provider
 from tbot2.common.utils.event import add_event_handler, fire_event_async
 
@@ -153,12 +151,12 @@ def on_event_unban_user(
 def on_disconnect_channel_bot_provider(
     priority: int = 128,
 ) -> Callable[
-    [Callable[[UUID, BotProvider], Awaitable[None]]],
-    Callable[[UUID, BotProvider], Awaitable[None]],
+    [Callable[[ChannelProvider], Awaitable[None]]],
+    Callable[[ChannelProvider], Awaitable[None]],
 ]:
     def decorator(
-        func: Callable[[UUID, BotProvider], Awaitable[None]],
-    ) -> Callable[[UUID, BotProvider], Awaitable[None]]:
+        func: Callable[[ChannelProvider], Awaitable[None]],
+    ) -> Callable[[ChannelProvider], Awaitable[None]]:
         add_event_handler('disconnect_channel_bot_provider', func, priority)
         return func
 
@@ -166,14 +164,10 @@ def on_disconnect_channel_bot_provider(
 
 
 async def fire_disconnect_channel_bot_provider(
-    *,
-    channel_id: UUID,
-    bot_provider: BotProvider,
+    *, channel_provider: ChannelProvider
 ) -> None:
     await fire_event_async(
-        'disconnect_channel_bot_provider',
-        channel_id=channel_id,
-        bot_provider=bot_provider,
+        'disconnect_channel_bot_provider', channel_provider=channel_provider
     )
 
 

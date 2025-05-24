@@ -1,6 +1,7 @@
 from uuid import UUID
 
 import sqlalchemy as sa
+from loguru import logger
 
 from tbot2.bot_providers import BotProvider, MBotProvider, delete_bot_provider
 from tbot2.common import ErrorMessage, Provider
@@ -77,11 +78,14 @@ async def disconnect_channel_bot_provider(
                 type='bot_provider_not_found',
             )
 
-        await update_channel_provider(
+        updated_channel_provider = await update_channel_provider(
             channel_provider_id=channel_provider_id,
             data=ChannelProviderUpdate(bot_provider_id=None),
             session=session,
         )
+        b = await updated_channel_provider.get_default_or_system_bot_provider()
+        logger.info(b.provider_channel_id)
+        logger.info('asd')
 
         providers_left = await session.scalar(
             sa.select(sa.func.count('*')).where(
@@ -94,6 +98,5 @@ async def disconnect_channel_bot_provider(
                 session=session,
             )
         await fire_disconnect_channel_bot_provider(
-            channel_id=channel_id,
-            bot_provider=channel_provider.bot_provider,
+            channel_provider=updated_channel_provider
         )

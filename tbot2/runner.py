@@ -64,12 +64,24 @@ async def db() -> AsyncGenerator[None]:
 
 
 @cli.command()
-def refresh_twitch_eventsubs() -> None:
-    from tbot2.twitch import refresh_all_eventsubs
+def twitch_eventsubs_sync() -> None:
+    from tbot2.twitch import sync_all_eventsubs
 
     async def run() -> None:
         async with db():
-            await refresh_all_eventsubs()
+            await sync_all_eventsubs()
+
+    with asyncio.Runner() as runner:
+        runner.run(run())
+
+
+@cli.command()
+def twitch_eventsubs_unregister() -> None:
+    from tbot2.twitch import unregister_all_eventsubs
+
+    async def run() -> None:
+        async with db():
+            await unregister_all_eventsubs()
 
     with asyncio.Runner() as runner:
         runner.run(run())

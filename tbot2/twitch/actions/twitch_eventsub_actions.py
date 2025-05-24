@@ -5,11 +5,8 @@ from uuid import UUID
 
 from loguru import logger
 
-from tbot2.bot_providers import BotProvider
 from tbot2.channel_provider import (
     ChannelProvider,
-    get_channel_bot_provider,
-    get_channel_provider,
     get_channels_providers,
     on_delete_channel_provider,
     on_disconnect_channel_bot_provider,
@@ -26,61 +23,6 @@ from ..twitch_http_client import (
     get_twitch_pagination_yield,
     twitch_app_client,
 )
-
-
-async def register_channel_eventsubs(
-    channel_id: UUID,
-    event_type: str | None = None,
-) -> None:
-    logger.info(f'Registering eventsub for channel {channel_id}')
-    channel_provider = await get_channel_provider(
-        channel_id=channel_id,
-        provider='twitch',
-    )
-    if not channel_provider:
-        logger.error(
-            f'Failed to register eventsub for channel {channel_id}: '
-            'no oauth provider found'
-        )
-        return
-
-    if channel_provider.scope_needed:
-        logger.error(
-            f'Failed to register eventsub for channel {channel_id}: '
-            'oauth provider needs scope'
-        )
-        return
-
-    bot_provider = channel_provider.bot_provider
-
-    if not bot_provider:
-        bot_provider = await get_channel_bot_provider(
-            channel_id=channel_id,
-            provider='twitch',
-        )
-        if not bot_provider:
-            logger.error(
-                f'Failed to register eventsub for channel {channel_id}: '
-                'no bot provider found'
-            )
-            return
-
-    registrations = get_eventsub_registrations(
-        broadcaster_user_id=channel_provider.provider_channel_id or '',
-        twitch_bot_user_id=bot_provider.provider_channel_id or '',
-    )
-
-    await asyncio.gather(
-        *[
-            _register_eventsub(
-                registration=registration,
-                channel_id=channel_id,
-            )
-            for registration in registrations
-            if not event_type or registration.event_type == event_type
-        ],
-        return_exceptions=True,
-    )
 
 
 def get_eventsub_registrations(
@@ -172,38 +114,84 @@ def get_eventsub_registrations(
     ]
 
 
-@logger.catch
-async def _register_eventsub(
-    registration: EventSubRegistration,
-    channel_id: UUID,
-) -> None:
-    response = await twitch_app_client.post(
-        url='/eventsub/subscriptions',
-        json={
-            'type': registration.event_type,
-            'version': registration.version,
-            'condition': registration.condition,
-            'transport': {
-                'method': 'webhook',
-                'callback': urljoin(
-                    str(config.twitch.eventsub_callback_base_url or config.base_url),
-                    f'/api/2/twitch/eventsub/{registration.event_type}?channel_id={channel_id}',
-                ),
-                'secret': config.twitch.eventsub_secret,
-            },
-        },
-    )
-    if response.status_code >= 400:
-        logger.error(
-            f'_register_eventsub: {response.status_code}',
-            extra={
-                'event_type': registration.event_type,
-                'channel_id': channel_id,
-                'registration': registration,
-                'response': response.text,
-            },
+async def sync_all_eventsubs() -> None:
+    logger.info('Syncing Twitch eventsub registrations')
+    eventsubs = await eventsubs_grouped_by_broadcaster()
+    async for channel_provider in get_channels_providers(provider='twitch'):
+        if channel_provider.scope_needed:
+            logger.info(
+                f'[{channel_provider.channel_id}] '
+                f'Skipping eventsub sync for channel, missing scopes'
+            )
+        await sync_channel_eventsubs(
+            channel_provider=channel_provider,
+            eventsubs=eventsubs.get(channel_provider.provider_channel_id or '', []),
         )
-    return
+
+
+async def sync_channel_eventsubs(
+    channel_provider: ChannelProvider,
+    eventsubs: list[EventSubSubscription] | None = None,
+) -> None:
+    if not eventsubs:
+        eventsubs = await get_channel_eventsubs(
+            provider_channel_id=channel_provider.provider_channel_id or '',
+            channel_id=channel_provider.channel_id,
+        )
+
+    bot_provider = await channel_provider.get_default_or_system_bot_provider()
+    registrations = get_eventsub_registrations(
+        broadcaster_user_id=channel_provider.provider_channel_id or '',
+        twitch_bot_user_id=bot_provider.provider_channel_id,
+    )
+    subs_to_remove = eventsubs[:]
+    to_register: list[EventSubRegistration] = []
+    for reg in registrations:
+        for sub in eventsubs:
+            if reg.event_type != sub.type:
+                continue
+            if sub.status != 'enabled':
+                logger.warning(
+                    f'[{channel_provider.channel_id}] Twitch eventsub {sub.id} '
+                    f'status: {sub.status}'
+                )
+                continue
+
+            if (
+                all(
+                    key in sub.condition and sub.condition[key] == value
+                    for key, value in reg.condition.items()
+                )
+                and reg.version == sub.version
+                and sub.transport.callback
+                == callback_url(
+                    event_type=reg.event_type, channel_id=channel_provider.channel_id
+                )
+            ):
+                subs_to_remove.remove(sub)
+                break
+        else:
+            to_register.append(reg)
+    logger.info(
+        f'[{channel_provider.channel_id}] Twitch eventsubs: {len(subs_to_remove)} '
+        f'to remove, {len(to_register)} to register'
+    )
+    if subs_to_remove:
+        await asyncio.gather(
+            *[delete_eventsub_registration(sub.id) for sub in subs_to_remove],
+            return_exceptions=True,
+        )
+    if to_register and not channel_provider.scope_needed:
+        await asyncio.gather(
+            *[
+                register_eventsub(
+                    registration=registration,
+                    channel_id=channel_provider.channel_id,
+                )
+                for registration in to_register
+            ],
+            return_exceptions=True,
+        )
 
 
 async def delete_eventsub_registration(event_id: str) -> bool:
@@ -221,16 +209,16 @@ async def delete_eventsub_registration(event_id: str) -> bool:
 async def get_eventsubs(
     event_type: str | None = None,
     status: str | None = None,
+    user_id: str | None = None,
 ) -> AsyncGenerator[list[EventSubSubscription]]:
     params: dict[str, str] = {}
     if event_type:
         params['type'] = event_type
     if status:
         params['status'] = status
-    response = await twitch_app_client.get(
-        url='/eventsub/subscriptions',
-        params=params,
-    )
+    if user_id:
+        params['user_id'] = user_id
+    response = await twitch_app_client.get(url='/eventsub/subscriptions', params=params)
     if response.status_code >= 400:
         raise ErrorMessage(f'{response.status_code} {response.text}')
     return get_twitch_pagination_yield(
@@ -238,11 +226,9 @@ async def get_eventsubs(
     )
 
 
-async def unregister_all_eventsubs(event_type: str | None = None) -> None:
-    logger.info(f'Unregistering {event_type or "all"} eventsub registrations')
-    async for eventsubs in await get_eventsubs(
-        event_type=event_type,
-    ):
+async def unregister_all_eventsubs() -> None:
+    logger.info('Unregistering all eventsub registrations')
+    async for eventsubs in await get_eventsubs():
         for eventsub in chunk_list(eventsubs, 15):
             eventsub_ids = [eventsub.id for eventsub in eventsub]
             logger.info(f'Deleting eventsub registrations {eventsub_ids}')
@@ -256,65 +242,97 @@ async def unregister_all_eventsubs(event_type: str | None = None) -> None:
 
 
 async def unregister_channel_eventsubs(
-    channel_id: UUID,
-    event_type: str | None = None,
+    provider_channel_id: str, channel_id: UUID | None = None
 ) -> None:
-    logger.info(
-        f'Unregistering {event_type or "all"} eventsub registrations '
-        f'for channel {channel_id}'
+    logger.info('Unregistering all eventsub registrations for channel')
+    eventsubs = await get_channel_eventsubs(
+        provider_channel_id=provider_channel_id, channel_id=channel_id
     )
-    channel_id_str = str(channel_id)
-    async for eventsubs in await get_eventsubs(
-        event_type=event_type,
-    ):
-        for eventsub in eventsubs:
-            if channel_id_str not in eventsub.transport.callback:
-                continue
-            try:
-                logger.info(f'Deleting eventsub registration {eventsub.id}')
-                await delete_eventsub_registration(eventsub.id)
-            except Exception as e:
-                logger.info(
-                    f'Failed to delete eventsub registration {eventsub.id}: {e}'
-                )
+    await asyncio.gather(
+        *[delete_eventsub_registration(eventsub.id) for eventsub in eventsubs],
+        return_exceptions=True,
+    )
 
 
-async def register_all_eventsubs(
-    event_type: str | None = None,
-) -> None:
-    logger.info(f'Registering {event_type or "all"} eventsub registrations')
-    async for channel_provider in get_channels_providers(provider='twitch'):
-        await register_channel_eventsubs(
-            channel_id=channel_provider.channel_id, event_type=event_type
+async def get_channel_eventsubs(
+    provider_channel_id: str, channel_id: UUID | None = None
+) -> list[EventSubSubscription]:
+    eventsubs: list[EventSubSubscription] = []
+    async for e in await get_eventsubs(user_id=provider_channel_id):
+        eventsubs.extend(
+            [
+                a
+                for a in e
+                if (a.condition.get('broadcaster_user_id') == provider_channel_id)
+                and (not channel_id or str(channel_id) in a.transport.callback)
+            ]
         )
+    return eventsubs
 
 
-async def refresh_all_eventsubs(
-    event_type: str | None = None,
-) -> None:
-    await unregister_all_eventsubs(event_type=event_type)
-    await asyncio.sleep(5)  # Wait for twitch to process the unregistration
-    await register_all_eventsubs(event_type=event_type)
+async def eventsubs_grouped_by_broadcaster() -> dict[str, list[EventSubSubscription]]:
+    eventsubs: list[EventSubSubscription] = []
+    async for e in await get_eventsubs():
+        eventsubs.extend(e)
+    eventsubs_grouped_broadcaster: dict[str, list[EventSubSubscription]] = {}
+    for eventsub in eventsubs:
+        broadcaster_id = eventsub.condition.get('broadcaster_user_id')
+        if not broadcaster_id:
+            continue
+        eventsubs_grouped_broadcaster.setdefault(broadcaster_id, []).append(eventsub)
+    return eventsubs_grouped_broadcaster
 
 
-async def refresh_channel_eventsubs(
+def callback_url(
+    event_type: str,
     channel_id: UUID,
-    event_type: str | None = None,
+) -> str:
+    return urljoin(
+        str(config.twitch.eventsub_callback_base_url or config.base_url),
+        f'/api/2/twitch/eventsub/{event_type}?channel_id={channel_id}',
+    )
+
+
+async def register_eventsub(
+    registration: EventSubRegistration,
+    channel_id: UUID,
 ) -> None:
-    await unregister_channel_eventsubs(channel_id=channel_id, event_type=event_type)
-    await register_channel_eventsubs(channel_id=channel_id, event_type=event_type)
+    response = await twitch_app_client.post(
+        url='/eventsub/subscriptions',
+        json={
+            'type': registration.event_type,
+            'version': registration.version,
+            'condition': registration.condition,
+            'transport': {
+                'method': 'webhook',
+                'callback': callback_url(
+                    event_type=registration.event_type, channel_id=channel_id
+                ),
+                'secret': config.twitch.eventsub_secret,
+            },
+        },
+    )
+    if response.status_code >= 400:
+        logger.error(
+            f'register_eventsub: {response.status_code}',
+            extra={
+                'event_type': registration.event_type,
+                'channel_id': channel_id,
+                'registration': registration,
+                'response': response.text,
+            },
+        )
+    return
 
 
 @on_disconnect_channel_bot_provider()
 async def handle_disconnect_channel_bot_provider(
-    channel_id: UUID,
-    bot_provider: BotProvider,
+    channel_provider: ChannelProvider,
 ) -> None:
-    if bot_provider.provider != 'twitch':
+    if channel_provider.provider != 'twitch':
         return
-    await refresh_channel_eventsubs(
-        channel_id=channel_id, event_type='channel.chat.message'
-    )
+
+    await sync_channel_eventsubs(channel_provider=channel_provider)
 
 
 @on_delete_channel_provider()
@@ -323,6 +341,8 @@ async def handle_delete_channel_provider(
 ) -> None:
     if channel_provider.provider != 'twitch':
         return
-    await unregister_channel_eventsubs(
-        channel_id=channel_provider.channel_id,
-    )
+    if channel_provider.provider_channel_id:
+        await unregister_channel_eventsubs(
+            provider_channel_id=channel_provider.provider_channel_id,
+            channel_id=channel_provider.channel_id,
+        )

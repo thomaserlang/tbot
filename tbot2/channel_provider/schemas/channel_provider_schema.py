@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import Field, StringConstraints, computed_field
 
-from tbot2.bot_providers import BotProvider, BotProviderPublic
+from tbot2.bot_providers import BotProvider, BotProviderPublic, get_system_bot_provider
 from tbot2.common import (
     BaseRequestSchema,
     BaseSchema,
@@ -48,16 +48,11 @@ class ChannelProvider(ChannelProviderBase):
         self,
         session: AsyncSession | None = None,
     ) -> BotProvider:
-        from ..actions.channel_bot_provider_actions import (
-            get_channel_bot_provider,
-        )
 
         bot_provider = self.bot_provider
         if not bot_provider:
-            bot_provider = await get_channel_bot_provider(
-                provider=self.provider,
-                channel_id=self.channel_id,
-                session=session,
+            bot_provider = await get_system_bot_provider(
+                provider=self.provider, session=session
             )
             if not bot_provider:
                 raise ErrorMessage(f'No bot provider found for {self.provider}')
