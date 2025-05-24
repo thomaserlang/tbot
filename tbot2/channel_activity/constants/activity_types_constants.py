@@ -90,7 +90,7 @@ TWITCH_ACTIVITY_TYPE_NAMES: list[ActivityTypeName] = [
     ),
     ActivityTypeName(
         name='points',
-        display_name='Points',
+        display_name='Redeem',
         color='#9E9E9E',  # Gray
         filter_min_count=True,
         provider='twitch',
