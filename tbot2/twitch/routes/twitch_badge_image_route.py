@@ -16,6 +16,7 @@ router = APIRouter()
 @router.get(
     '/channels/{channel_id}/twitch/badge-image/{provider_channel_id}/{size}/{id}',
     name='Get Twitch Badge Image',
+    status_code=301,
 )
 async def get_twitch_badge_image_route(
     channel_id: UUID,
@@ -34,4 +35,5 @@ async def get_twitch_badge_image_route(
         else data[id].image_url_2x
         if size == 'md'
         else data[id].image_url_4x,
+        status_code=301,
     )
