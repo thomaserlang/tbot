@@ -239,7 +239,12 @@ async def emulate_subscription_route(
         provider_channel_id='123',
     )
     await publish_chat_message(
-        channel_id=channel_id, event=ChatMessage.model_validate(chat_message)
+        channel_id=channel_id,
+        event=PubSubEvent[ChatMessage](
+            type='activity',
+            action='new',
+            data=ChatMessage.model_validate(chat_message),
+        ),
     )
 
     activity = ActivityCreate(

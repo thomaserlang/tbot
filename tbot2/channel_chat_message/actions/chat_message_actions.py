@@ -50,9 +50,10 @@ async def create_chat_message(
     data_['message_parts'] = [
         part.model_dump(exclude_unset=True) for part in data.message_parts
     ]
-    data_['notice_message_parts'] = [
-        part.model_dump(exclude_unset=True) for part in data.notice_message_parts
-    ]
+    if data.notice_message_parts is not None:
+        data_['notice_message_parts'] = [
+            part.model_dump(exclude_unset=True) for part in data.notice_message_parts
+        ]
 
     async with get_session(session) as session:
         try:
