@@ -15,11 +15,11 @@ export function Component() {
                 <DashboardProviders channelId={channel.id} />
 
                 <Flex gap="1rem" flex={1} wrap={'wrap'}>
-                    <Paper maw={400} flex={1} withBorder>
+                    <Paper maw={400} flex={1} withBorder miw={300}>
                         <ActivityFeedView channelId={channel.id} />
                     </Paper>
 
-                    <Paper flex={1} withBorder>
+                    <Paper flex={1} withBorder miw={300}>
                         <CombinedChatView
                             channelId={channel.id}
                             hideChannelProviders

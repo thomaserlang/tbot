@@ -23,7 +23,7 @@ export function CombinedChatView({ channelId, hideChannelProviders }: Props) {
 
     return (
         <>
-            <Flex direction="column" h="100%" w="100%" miw={300}>
+            <Flex direction="column" h="100%" w="100%">
                 <Paper>
                     <Paper p="0.25rem 0.5rem">
                         <CombinedChatHeader
