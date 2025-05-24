@@ -1,5 +1,7 @@
 from typing import Literal
 
+from pydantic import field_validator
+
 from tbot2.common import BaseSchema
 from tbot2.common.types.chat_message_type import TwitchNoticeType
 
@@ -144,3 +146,19 @@ class EventChannelChatNotification(BaseSchema):
     shared_chat_pay_it_forward: PayItForwardNoticeMetadata | None
     shared_chat_raid: RaidNoticeMetadata | None
     shared_chat_announcement: AnnouncementNoticeMetadata | None
+
+    @field_validator(
+        'chatter_user_id', 'chatter_user_login', 'chatter_user_name', mode='before'
+    )
+    @classmethod
+    def validate_chatter(cls, value: str | None) -> str:
+        if value is None:
+            return 'anonymous'
+        return value.strip().lower()
+
+    @field_validator('chatter_user_id', mode='before')
+    @classmethod
+    def validate_chatter_id(cls, value: str | None) -> str:
+        if value is None:
+            return '0197043e-aac2-7d64-9650-d72d691ece3f'
+        return value.strip().lower()
