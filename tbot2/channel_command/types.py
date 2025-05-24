@@ -2,7 +2,7 @@ from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
 from typing import Literal
 
-from tbot2.common import ChatMessageRequest, Provider, Scope
+from tbot2.common import ChatMessageCreate, Provider, Scope
 
 
 @dataclass(slots=True)
@@ -27,7 +27,7 @@ class FillVars:
 
 
 MessageVars = dict[str, MessageVar]
-FillerType = Callable[[ChatMessageRequest, TCommand, MessageVars], Awaitable[None]]
+FillerType = Callable[[ChatMessageCreate, TCommand, MessageVars], Awaitable[None]]
 
 
 class CommandScope(Scope):

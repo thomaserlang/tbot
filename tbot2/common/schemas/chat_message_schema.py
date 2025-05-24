@@ -8,7 +8,7 @@ from typing_extensions import Doc
 from ..types.chat_message_type import ChatMessageType
 from ..types.provider_type import Provider
 from .base_schema import BaseSchema
-from .chat_message_request_schema import ChatMessagePartRequest
+from .chat_message_request_schemas import ChatMessagePartRequest
 from .image_urls_schema import ImageUrls
 
 
@@ -79,24 +79,28 @@ class ChatMessage(BaseSchema):
         None
     )
     created_at: datetime
-    provider: Provider
-    provider_id: str
     channel_id: Annotated[UUID, Doc('The ID of the TBot channel')]
+    provider: Provider
+    provider_channel_id: str
+    provider_message_id: str
     provider_viewer_id: str
     viewer_name: str
     viewer_display_name: str
     viewer_color: Annotated[str, Doc('Hex color')] | None = None
     message: str
-    msg_id: str
+    message_parts: list[ChatMessagePart] = []
     badges: list[ChatMessageBadge] = []
-    parts: list[ChatMessagePart] = []
     notice_message: str = ''
-    notice_parts: list[ChatMessagePart] = []
+    notice_message_parts: list[ChatMessagePart] = []
 
     def message_without_parts(self) -> str:
-        if not self.parts:
+        if not self.message_parts:
             return self.message
-        return ''.join(parts.text for parts in self.parts if parts.type == 'text')
+        return ''.join(
+            parts.text for parts in self.message_parts if parts.type == 'text'
+        )
 
     def parts_to_request(self) -> list[ChatMessagePartRequest]:
-        return [ChatMessagePartRequest.model_validate(part) for part in self.parts]
+        return [
+            ChatMessagePartRequest.model_validate(part) for part in self.message_parts
+        ]

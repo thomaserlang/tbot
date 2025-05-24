@@ -1,5 +1,5 @@
 import { PageLoader } from '@/components/page-loader'
-import { ChatView } from '@/features/channel-combined-chat'
+import { ChatView } from '@/features/channel-chat'
 import { useCurrentChannel } from '@/features/channel/current-channel.provider'
 import { Feature } from '@/types/feature.type'
 import { Provider } from '@/types/provider.type'

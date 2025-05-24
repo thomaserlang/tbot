@@ -6,7 +6,7 @@ from uuid6 import uuid7
 
 from tbot2.channel_command import TCommand
 from tbot2.channel_command.fill_message import fill_message
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 from tbot2.testbase import run_file
 
 
@@ -19,7 +19,7 @@ async def test_countdown(mocker: MockFixture) -> None:
 
     text = await fill_message(
         response_message='Countdown: {countdown "2024-05-20T20:00:00+02:00"} since',
-        chat_message=ChatMessageRequest(
+        chat_message=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
@@ -29,8 +29,8 @@ async def test_countdown(mocker: MockFixture) -> None:
             viewer_name='test_user',
             viewer_display_name='Test User',
             provider='twitch',
-            provider_id='123',
-            msg_id='123',
+            provider_channel_id='123',
+            provider_message_id='123',
         ),
         command=TCommand(name='countdown', args=[]),
     )
@@ -38,7 +38,7 @@ async def test_countdown(mocker: MockFixture) -> None:
 
     text = await fill_message(
         response_message='Countdown until: {countdown "2024-05-30T20:00:00+02:00"}',
-        chat_message=ChatMessageRequest(
+        chat_message=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
@@ -48,8 +48,8 @@ async def test_countdown(mocker: MockFixture) -> None:
             viewer_name='test_user',
             viewer_display_name='Test User',
             provider='twitch',
-            provider_id='123',
-            msg_id='123',
+            provider_channel_id='123',
+            provider_message_id='123',
         ),
         command=TCommand(name='countdown', args=[]),
     )

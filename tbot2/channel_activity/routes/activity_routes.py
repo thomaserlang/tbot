@@ -16,7 +16,7 @@ from tbot2.page_cursor import PageCursor, PageCursorQueryDep, page_cursor
 
 from ..models.activity_model import MActivity
 from ..schemas.activity_schemas import Activity, ActivityUpdate
-from ..types.activity_type import ActivityId, ActivityScope, ActivityType
+from ..types.activity_types import ActivityId, ActivityScope, ActivityType
 
 router = APIRouter()
 

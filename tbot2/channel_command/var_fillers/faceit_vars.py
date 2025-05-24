@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 from tbot2.config_settings import config
 
 from ..exceptions import CommandError
@@ -26,7 +26,7 @@ faceit_client = AsyncClient(
     ),
 )
 async def faceit_elo_vars(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     if not vars['faceit.username'].args:
         raise CommandError('{faceit.username <username>} is missing')

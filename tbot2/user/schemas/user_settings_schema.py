@@ -1,6 +1,6 @@
 from pydantic import Field
 
-from tbot2.channel_activity.types.activity_type import ActivityType
+from tbot2.channel_activity.types.activity_types import ActivityType
 from tbot2.common import BaseRequestSchema
 
 

@@ -109,10 +109,7 @@ const protectedRoutes: RouteObject[] = [
             },
             {
                 path: 'combined-chat',
-                lazy: () =>
-                    import(
-                        './features/channel-combined-chat/combined-chat.page'
-                    ),
+                lazy: () => import('./features/channel-chat/channel-chat.page'),
             },
             {
                 path: 'activity-feed',

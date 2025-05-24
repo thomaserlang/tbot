@@ -6,10 +6,10 @@ from fastapi import APIRouter, Body, Depends, Request, Security
 from uuid6 import uuid7
 
 from tbot2.channel_activity import ActivityCreate, create_activity
-from tbot2.channel_chatlog import create_chatlog, publish_chatlog
+from tbot2.channel_chat_message import create_chat_message, publish_chat_message
 from tbot2.common import (
     ChatMessage,
-    ChatMessageRequest,
+    ChatMessageCreate,
     TAccessLevel,
     TokenData,
 )
@@ -61,8 +61,8 @@ async def handle_chat_message(
         f'• {data.event.reward.cost}'
     )
 
-    await create_chatlog(
-        data=ChatMessageRequest(
+    await create_chat_message(
+        data=ChatMessageCreate(
             type='notice',
             sub_type='custom_reward_redemption',
             channel_id=channel_id,
@@ -71,9 +71,9 @@ async def handle_chat_message(
             viewer_display_name=data.event.user_name,
             created_at=data.event.redeemed_at,
             notice_message=notice_message,
-            msg_id=data.event.id,
+            provider_message_id=data.event.id,
             provider='twitch',
-            provider_id=data.event.broadcaster_user_id,
+            provider_channel_id=data.event.broadcaster_user_id,
         )
     )
 
@@ -123,7 +123,7 @@ async def emulate_custom_reward_redemption_route(
         else f'TestUser redeemed {reward_title}'
     )
 
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='notice',
         sub_type='custom_reward_redemption',
         channel_id=channel_id,
@@ -132,10 +132,10 @@ async def emulate_custom_reward_redemption_route(
         viewer_display_name='TestUser',
         notice_message=notice_message,
         message=user_input,
-        msg_id=str(uuid7()),
+        provider_message_id=str(uuid7()),
         provider='twitch',
-        provider_id='123',
+        provider_channel_id='123',
     )
-    await publish_chatlog(
-        channel_id=channel_id, data=ChatMessage.model_validate(chat_message)
+    await publish_chat_message(
+        channel_id=channel_id, event=ChatMessage.model_validate(chat_message)
     )

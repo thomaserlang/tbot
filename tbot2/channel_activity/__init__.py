@@ -20,5 +20,5 @@ from .actions.activity_seed_actions import seed_activity as seed_activity
 from .schemas.activity_schemas import Activity as Activity
 from .schemas.activity_schemas import ActivityCreate as ActivityCreate
 from .schemas.activity_schemas import ActivityUpdate as ActivityUpdate
-from .types.activity_type import ActivityId as ActivityId
-from .types.activity_type import ActivityType as ActivityType
+from .types.activity_types import ActivityId as ActivityId
+from .types.activity_types import ActivityType as ActivityType

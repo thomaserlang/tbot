@@ -7,13 +7,13 @@ from loguru import logger
 from uuid6 import uuid7
 
 from tbot2.channel_chat_filters import matches_filter
-from tbot2.channel_chatlog import create_chatlog, publish_chatlog
+from tbot2.channel_chat_message import create_chat_message, publish_chat_message
 from tbot2.channel_command import CommandError, TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_provider import get_channel_provider
 from tbot2.common import (
     ChatMessage,
-    ChatMessageRequest,
+    ChatMessageCreate,
     TAccessLevel,
     TokenData,
 )
@@ -68,7 +68,7 @@ async def event_channel_chat_message_route(
     ):
         return
 
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='message',
         sub_type=data.event.message_type,
         channel_id=channel_id,
@@ -77,12 +77,12 @@ async def event_channel_chat_message_route(
         viewer_display_name=data.event.chatter_user_name,
         viewer_color=data.event.color,
         created_at=headers.message_timestamp,
-        msg_id=data.event.message_id,
+        provider_message_id=data.event.message_id,
         provider='twitch',
-        provider_id=data.event.broadcaster_user_id,
+        provider_channel_id=data.event.broadcaster_user_id,
         badges=twitch_badges_to_badges(data.event.badges),
         message=data.event.message.text,
-        parts=await message_to_parts(
+        message_parts=await message_to_parts(
             parts=twitch_fragments_to_parts(data.event.message.fragments),
             provider='twitch',
             provider_user_id=data.event.broadcaster_user_id,
@@ -112,25 +112,25 @@ async def event_channel_chat_message_route(
             channel_provider = await get_channel_provider(
                 channel_id=chat_message.channel_id,
                 provider='twitch',
-                provider_id=chat_message.provider_id,
+                provider_channel_id=chat_message.provider_channel_id,
             )
             if not channel_provider:
                 logger.warning(
                     f'Channel provider not found for '
-                    f'{chat_message.channel_id} {chat_message.provider_id}'
+                    f'{chat_message.channel_id} {chat_message.provider_channel_id}'
                 )
                 return
             await twitch_bot_send_message(
                 channel_provider=channel_provider,
                 message=response.response,
-                reply_parent_message_id=chat_message.msg_id,
+                reply_parent_message_id=chat_message.provider_message_id,
             )
     except Exception as e:
         logger.exception(e)
 
     await asyncio.gather(
         handle_filter_message(chat_message=chat_message),
-        create_chatlog(data=chat_message),
+        create_chat_message(data=chat_message),
     )
 
 
@@ -151,17 +151,17 @@ async def emulate_channel_chat_message_route(
         access_level=TAccessLevel.MOD,
     )
 
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='message',
         sub_type=message_type,
         channel_id=channel_id,
         provider_viewer_id='123',
         viewer_name='test_user',
         viewer_display_name='TestUser',
-        msg_id=str(uuid7()),
+        provider_message_id=str(uuid7()),
         provider='twitch',
-        provider_id='123',
-        parts=await message_to_parts(
+        provider_channel_id='123',
+        message_parts=await message_to_parts(
             parts=twitch_fragments_to_parts(fragments),
             provider='twitch',
             provider_user_id='123',
@@ -172,13 +172,13 @@ async def emulate_channel_chat_message_route(
         chat_message.sub_type = 'cheer'
         chat_message.notice_message = f'Cheered {cheer.bits} bits'
 
-    await publish_chatlog(
-        channel_id=channel_id, data=ChatMessage.model_validate(chat_message)
+    await publish_chat_message(
+        channel_id=channel_id, event=ChatMessage.model_validate(chat_message)
     )
 
 
 async def handle_filter_message(
-    chat_message: ChatMessageRequest,
+    chat_message: ChatMessageCreate,
 ) -> None:
     try:
         match = await matches_filter(chat_message=chat_message)
@@ -187,13 +187,13 @@ async def handle_filter_message(
         if match.action == 'warning':
             await twitch_delete_message(
                 channel_id=chat_message.channel_id,
-                broadcaster_id=chat_message.provider_id,
-                message_id=chat_message.msg_id,
+                broadcaster_id=chat_message.provider_channel_id,
+                message_id=chat_message.provider_message_id,
             )
             if match.filter.warning_message:
                 await twitch_warn_chat_user(
                     channel_id=chat_message.channel_id,
-                    broadcaster_id=chat_message.provider_id,
+                    broadcaster_id=chat_message.provider_channel_id,
                     twitch_user_id=chat_message.provider_viewer_id,
                     reason=await fill_message(
                         response_message=match.filter.warning_message,
@@ -215,7 +215,7 @@ async def handle_filter_message(
 
             await twitch_ban_user(
                 channel_id=chat_message.channel_id,
-                broadcaster_id=chat_message.provider_id,
+                broadcaster_id=chat_message.provider_channel_id,
                 twitch_user_id=chat_message.provider_viewer_id,
                 duration=match.filter.timeout_duration,
                 reason=timeout_message,

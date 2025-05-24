@@ -1,4 +1,4 @@
-from ..types.activity_type import ActivityTypeName
+from ..types.activity_types import ActivityTypeName
 
 TWITCH_ACTIVITY_TYPE_NAMES: list[ActivityTypeName] = [
     ActivityTypeName(

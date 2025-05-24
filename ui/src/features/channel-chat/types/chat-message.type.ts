@@ -137,18 +137,18 @@ export interface ChatMessage {
     id: ChatMessageId
     type: ChatMessageType
     sub_type: ChatMessageSubType
-    provider: Provider
-    provider_id: string
     channel_id: ChannelId
+    provider: Provider
+    provider_channel_id: string
+    provider_message_id: string
     provider_viewer_id: ProviderViewerId
     viewer_name: string
     viewer_display_name: string
     viewer_color: string | null
     message: string
-    msg_id: string
+    message_parts: ChatMessagePart[]
     created_at: string
-    parts: ChatMessagePart[]
     badges: ChatMessageBadge[]
     notice_message: string
-    notice_parts: ChatMessagePart[]
+    notice_message_parts: ChatMessagePart[]
 }

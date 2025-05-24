@@ -4,11 +4,11 @@ from uuid import UUID
 from fastapi import APIRouter, Body, Depends, Request, Security
 from uuid6 import uuid7
 
-from tbot2.channel_chatlog import create_chatlog, publish_chatlog
+from tbot2.channel_chat_message import create_chat_message, publish_chat_message
 from tbot2.common import (
     ChatMessage,
+    ChatMessageCreate,
     ChatMessagePartRequest,
-    ChatMessageRequest,
     GiftPartRequest,
     TAccessLevel,
     TokenData,
@@ -54,7 +54,7 @@ async def event_channel_points_automatic_reward_redemption_add_route(
         else (f'{data.event.user_name} redeemed {title}')
     )
 
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='notice',
         sub_type='automatic_reward_redemption',
         channel_id=channel_id,
@@ -64,7 +64,7 @@ async def event_channel_points_automatic_reward_redemption_add_route(
         created_at=data.event.redeemed_at,
         message=data.event.user_input or '',
         notice_message=f'{notice_message} ♢ {data.event.reward.cost}',
-        notice_parts=[
+        notice_message_parts=[
             ChatMessagePartRequest(
                 type='text',
                 text=f'{notice_message} ',
@@ -80,11 +80,11 @@ async def event_channel_points_automatic_reward_redemption_add_route(
                 ),
             ),
         ],
-        msg_id=data.event.id,
+        provider_message_id=data.event.id,
         provider='twitch',
-        provider_id=data.event.broadcaster_user_id,
+        provider_channel_id=data.event.broadcaster_user_id,
     )
-    await create_chatlog(data=chat_message)
+    await create_chat_message(data=chat_message)
 
 
 @router.post(
@@ -108,7 +108,7 @@ async def emulate_automatic_reward_redemption_route(
         f'Redeemed {reward_type}' if user_input else f'TestUser redeemed {reward_type}'
     )
 
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='notice',
         sub_type='automatic_reward_redemption',
         channel_id=channel_id,
@@ -116,7 +116,7 @@ async def emulate_automatic_reward_redemption_route(
         viewer_name='test_user',
         viewer_display_name='TestUser',
         notice_message=f'{notice_message} ♢ {reward_cost}',
-        notice_parts=[
+        notice_message_parts=[
             ChatMessagePartRequest(
                 type='text',
                 text=f'{notice_message} ',
@@ -133,10 +133,10 @@ async def emulate_automatic_reward_redemption_route(
             ),
         ],
         message=user_input,
-        msg_id=str(uuid7()),
+        provider_message_id=str(uuid7()),
         provider='twitch',
-        provider_id='123',
+        provider_channel_id='123',
     )
-    await publish_chatlog(
-        channel_id=channel_id, data=ChatMessage.model_validate(chat_message)
+    await publish_chat_message(
+        channel_id=channel_id, event=ChatMessage.model_validate(chat_message)
     )

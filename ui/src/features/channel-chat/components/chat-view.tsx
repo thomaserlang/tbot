@@ -8,10 +8,10 @@ import { IconMessage } from '@tabler/icons-react'
 import { useEffect, useRef, useState } from 'react'
 import { VList, VListHandle } from 'virtua'
 import {
-    GetChatlogsParams,
+    GetChatMessageParams,
     useGetChatlogs,
-    useGetChatlogsWS,
-} from '../api/chatlogs.api'
+    useWSChatMessages,
+} from '../api/chat-messages.api'
 import { ChatMessages } from './chat-messages'
 import { LoadMoreButton } from './load-more-button'
 import { ResumeChatButton } from './resume-chat-button'
@@ -19,7 +19,7 @@ import { ResumeChatButton } from './resume-chat-button'
 interface Props {
     channelId: ChannelId
     liveUpdates?: boolean
-    params?: GetChatlogsParams
+    params?: GetChatMessageParams
     onViewerClick?: (viewer: ViewerName) => void
 }
 
@@ -35,7 +35,7 @@ export function ChatView({
         channelId,
         params,
     })
-    useGetChatlogsWS({
+    useWSChatMessages({
         channelId,
         connect: liveUpdates,
         params,

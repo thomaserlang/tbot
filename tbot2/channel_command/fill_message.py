@@ -1,6 +1,6 @@
 import re
 
-from tbot2.common import ChatMessageRequest, split
+from tbot2.common import ChatMessageCreate, split
 
 from . import var_fillers as var_fillers
 from .types import FillerType, MessageVar, TCommand
@@ -8,7 +8,7 @@ from .var_filler import filler_vars, var_filler_registery
 
 
 async def fill_message(
-    *, response_message: str, command: TCommand, chat_message: ChatMessageRequest
+    *, response_message: str, command: TCommand, chat_message: ChatMessageCreate
 ) -> str:
     """
     Handle exceptions:

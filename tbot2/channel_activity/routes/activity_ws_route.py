@@ -13,7 +13,7 @@ from tbot2.common.utils.split_list_util import split_list
 from tbot2.database import conn
 
 from ..schemas.activity_schemas import Activity
-from ..types.activity_type import ActivityType
+from ..types.activity_types import ActivityType
 
 router = APIRouter()
 
@@ -93,17 +93,17 @@ async def handle_connection(
                 if not data:
                     continue
 
-                activity = PubSubEvent[Activity].model_validate_json(data['data'])
-                if type and activity.data.type not in type:
+                event = PubSubEvent[Activity].model_validate_json(data['data'])
+                if type and event.data.type not in type:
                     continue
 
-                if not_type and activity.data.type in not_type:
+                if not_type and event.data.type in not_type:
                     continue
 
-                if activity.data.type in min_count_dict:
-                    if activity.data.count < min_count_dict[activity.data.type]:
+                if event.data.type in min_count_dict:
+                    if event.data.count < min_count_dict[event.data.type]:
                         continue
 
-                await websocket.send_text(activity.model_dump_json())
+                await websocket.send_text(event.model_dump_json())
             except RuntimeError:
                 return

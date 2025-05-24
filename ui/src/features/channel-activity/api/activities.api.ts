@@ -62,7 +62,6 @@ export function useWSActivities({
 }: WSActivityProps) {
     return useWebSocket(
         `/api/2/channels/${channelId}/activity-ws`,
-
         {
             // @ts-ignore
             queryParams: params,

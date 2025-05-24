@@ -8,7 +8,7 @@ from tbot2.channel import ChannelCreate, create_channel
 from tbot2.channel_command import TCommand
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_points import inc_points
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 from tbot2.testbase import run_file
 from tbot2.twitch import TwitchUser
 
@@ -58,18 +58,18 @@ async def test_points_vars(db: None, mocker: MockFixture) -> None:
 
     message = await fill_message(
         response_message='Points: {points} rank {points_rank}',
-        chat_message=ChatMessageRequest(
+        chat_message=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             provider='twitch',
-            provider_id='1234',
+            provider_channel_id='1234',
             channel_id=channel.id,
             provider_viewer_id='test_chatter',
             viewer_name='test',
             viewer_display_name='Test',
             message='!points',
-            msg_id='123',
+            provider_message_id='123',
         ),
         command=TCommand(args=[], name='points'),
     )

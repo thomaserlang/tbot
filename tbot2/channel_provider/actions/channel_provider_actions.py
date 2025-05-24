@@ -24,7 +24,7 @@ async def get_channel_provider(
     *,
     channel_id: UUID,
     provider: Provider,
-    provider_id: str | None = None,
+    provider_channel_id: str | None = None,
     session: AsyncSession | None = None,
 ) -> ChannelProvider | None:
     async with get_session(session) as session:
@@ -32,8 +32,10 @@ async def get_channel_provider(
             MChannelProvider.channel_id == channel_id,
             MChannelProvider.provider == provider,
         )
-        if provider_id:
-            stmt = stmt.where(MChannelProvider.provider_user_id == provider_id)
+        if provider_channel_id:
+            stmt = stmt.where(
+                MChannelProvider.provider_user_id == provider_channel_id
+            )
         channel_provider = await session.scalar(stmt)
         if channel_provider:
             return ChannelProvider.model_validate(channel_provider)
@@ -55,13 +57,13 @@ async def get_channel_provider_by_id(
 
 
 async def get_channel_provider_by_provider_id(
-    *, provider: Provider, provider_id: str, session: AsyncSession | None = None
+    *, provider: Provider, provider_channel_id: str, session: AsyncSession | None = None
 ) -> ChannelProvider | None:
     async with get_session(session) as session:
         channel_provider = await session.scalar(
             sa.select(MChannelProvider).where(
                 MChannelProvider.provider == provider,
-                MChannelProvider.provider_user_id == provider_id,
+                MChannelProvider.provider_user_id == provider_channel_id,
             )
         )
         if channel_provider:
@@ -203,6 +205,7 @@ async def create_or_update_channel_provider(
 
 
 async def reset_channel_provider_live_state(
+    *,
     channel_id: UUID,
     provider: Provider,
     reset_live_stream_id: bool = False,

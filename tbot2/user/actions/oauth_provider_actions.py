@@ -94,19 +94,18 @@ async def get_or_create_user(
                     scopes=Scope.get_all_scopes(),
                 ),
             )
-        else:
-            user = await get_user(user_id=p.user_id, session=session)
-            if not user:
-                raise Exception('User not found')
-            return GetOrCreateUserResult(
-                user=user,
-                channel=None,
-                created=False,
-                token_data=TokenData(
-                    user_id=user.id,
-                    scopes=Scope.get_all_scopes(),
-                ),
-            )
+        user = await get_user(user_id=p.user_id, session=session)
+        if not user:
+            raise Exception('User not found')
+        return GetOrCreateUserResult(
+            user=user,
+            channel=None,
+            created=False,
+            token_data=TokenData(
+                user_id=user.id,
+                scopes=Scope.get_all_scopes(),
+            ),
+        )
 
 
 async def create_user_oauth_provider(
@@ -118,10 +117,10 @@ async def create_user_oauth_provider(
 ) -> UserOAuthProvider:
     async with get_session(session) as session:
         try:
-            provider_id = uuid7()
+            user_oauth_provider_id = uuid7()
             await session.execute(
                 sa.insert(MUserOAuthProvider.__table__).values(  # type: ignore
-                    id=provider_id,
+                    id=user_oauth_provider_id,
                     created_at=datetime_now(),
                     user_id=user_id,
                     provider=provider,
@@ -129,7 +128,7 @@ async def create_user_oauth_provider(
                 )
             )
             p = await get_user_oauth_provider(
-                provider_id=provider_id,
+                user_oauth_provider_id=user_oauth_provider_id,
                 session=session,
             )
             if not p:
@@ -164,12 +163,14 @@ async def create_user_oauth_provider(
 
 async def get_user_oauth_provider(
     *,
-    provider_id: UUID,
+    user_oauth_provider_id: UUID,
     session: AsyncSession | None = None,
 ) -> UserOAuthProvider | None:
     async with get_session(session) as session:
         provider = await session.scalar(
-            sa.select(MUserOAuthProvider).where(MUserOAuthProvider.id == provider_id)
+            sa.select(MUserOAuthProvider).where(
+                MUserOAuthProvider.id == user_oauth_provider_id
+            )
         )
         if not provider:
             return None

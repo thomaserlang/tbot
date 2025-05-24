@@ -52,7 +52,7 @@ export function ChatMessageLine({
                 <Badges
                     channelId={chatMessage.channel_id}
                     provider={chatMessage.provider}
-                    providerUserId={chatMessage.provider_id}
+                    providerUserId={chatMessage.provider_channel_id}
                     badges={chatMessage.badges}
                 />
             )}
@@ -82,11 +82,11 @@ export function ChatMessageLine({
             :
             <Text component="span" size={size} className={classes.text}>
                 <AssembleParts
-                    parts={chatMessage.parts}
+                    parts={chatMessage.message_parts}
                     subType={chatMessage.sub_type}
                     channelId={chatMessage.channel_id}
                     provider={chatMessage.provider}
-                    providerUserId={chatMessage.provider_id}
+                    providerUserId={chatMessage.provider_channel_id}
                 />
             </Text>
         </Box>

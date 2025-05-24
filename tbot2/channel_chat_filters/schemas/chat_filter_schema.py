@@ -8,7 +8,7 @@ from typing_extensions import Doc
 from tbot2.common import (
     BaseRequestSchema,
     BaseSchema,
-    ChatMessageRequest,
+    ChatMessageCreate,
     Provider,
     TAccessLevel,
 )
@@ -44,7 +44,7 @@ class ChatFilterBase(BaseSchema):
     timeout_message: str
     timeout_duration: int
 
-    async def check_message(self, message: ChatMessageRequest) -> FilterMatchResult:
+    async def check_message(self, message: ChatMessageCreate) -> FilterMatchResult:
         return FilterMatchResult(filter=self, matched=False)
 
 

@@ -1,10 +1,7 @@
 import { ErrorBox } from '@/components/error-box'
 import { PageLoader } from '@/components/page-loader'
 import { ChannelId } from '@/features/channel'
-import {
-    useGetChatlogs,
-    useGetChatlogsWS,
-} from '@/features/channel-combined-chat'
+import { useGetChatlogs, useWSChatMessages } from '@/features/channel-chat'
 import { pageRecordsFlatten } from '@/utils/page-records'
 import { Divider, Flex, Paper, ScrollArea, Text } from '@mantine/core'
 import { IconNotification } from '@tabler/icons-react'
@@ -23,7 +20,7 @@ export function NoticeFeedView({ channelId }: Props) {
         },
     })
 
-    useGetChatlogsWS({
+    useWSChatMessages({
         channelId,
         connect: true,
         params: {

@@ -4,19 +4,19 @@ from .exceptions import ExternalApiError as ExternalApiError
 from .exceptions import TBotBaseException as TBotBaseException
 from .schemas.base_request_schema import BaseRequestSchema as BaseRequestSchema
 from .schemas.base_schema import BaseSchema as BaseSchema
-from .schemas.chat_message_request_schema import (
+from .schemas.chat_message_request_schemas import (
     ChatMessageBadgeRequest as ChatMessageBadgeRequest,
 )
-from .schemas.chat_message_request_schema import (
+from .schemas.chat_message_request_schemas import (
+    ChatMessageCreate as ChatMessageCreate,
+)
+from .schemas.chat_message_request_schemas import (
     ChatMessagePartRequest as ChatMessagePartRequest,
 )
-from .schemas.chat_message_request_schema import (
-    ChatMessageRequest as ChatMessageRequest,
-)
-from .schemas.chat_message_request_schema import ChatMessageType as ChatMessageType
-from .schemas.chat_message_request_schema import EmotePartRequest as EmotePartRequest
-from .schemas.chat_message_request_schema import GiftPartRequest as GiftPartRequest
-from .schemas.chat_message_request_schema import (
+from .schemas.chat_message_request_schemas import ChatMessageType as ChatMessageType
+from .schemas.chat_message_request_schemas import EmotePartRequest as EmotePartRequest
+from .schemas.chat_message_request_schemas import GiftPartRequest as GiftPartRequest
+from .schemas.chat_message_request_schemas import (
     MentionPartRequest as MentionPartRequest,
 )
 from .schemas.chat_message_schema import ChatMessage as ChatMessage

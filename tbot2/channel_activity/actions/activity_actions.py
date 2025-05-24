@@ -8,7 +8,7 @@ from tbot2.database import conn
 
 from ..models.activity_model import MActivity
 from ..schemas.activity_schemas import Activity, ActivityCreate, ActivityUpdate
-from ..types.activity_type import ActivityId
+from ..types.activity_types import ActivityId
 
 
 async def get_activity(
@@ -28,6 +28,7 @@ async def get_activity(
 async def create_activity(
     *,
     data: ActivityCreate,
+    publish: bool = True,
     session: AsyncSession | None = None,
 ) -> Activity:
     async with get_session(session) as session:
@@ -35,14 +36,11 @@ async def create_activity(
         await session.execute(sa.insert(MActivity).values(data_))
 
     activity = Activity.model_validate(data)
-    await publish_activity(
-        channel_id=data.channel_id,
-        event=PubSubEvent[Activity](
-            type='activity',
-            action='new',
-            data=activity,
-        ),
-    )
+    if publish:
+        await publish_activity(
+            channel_id=data.channel_id,
+            event=PubSubEvent[Activity](type='activity', action='new', data=activity),
+        )
     return activity
 
 
@@ -50,6 +48,7 @@ async def update_activity(
     *,
     activity_id: ActivityId,
     data: ActivityUpdate,
+    publish: bool = True,
     session: AsyncSession | None = None,
 ) -> Activity:
     async with get_session(session) as session:
@@ -64,20 +63,22 @@ async def update_activity(
         )
         if not activity:
             raise Exception('Activity not updated')
-    await publish_activity(
-        channel_id=activity.channel_id,
-        event=PubSubEvent[Activity](
-            type='activity',
-            action='updated',
-            data=activity,
-        ),
-    )
+    if publish:
+        await publish_activity(
+            channel_id=activity.channel_id,
+            event=PubSubEvent[Activity](
+                type='activity',
+                action='updated',
+                data=activity,
+            ),
+        )
     return activity
 
 
 async def delete_activity(
     *,
     activity_id: ActivityId,
+    publish: bool = True,
     session: AsyncSession | None = None,
 ) -> bool:
     async with get_session(session) as session:
@@ -88,14 +89,15 @@ async def delete_activity(
         if not activity:
             return False
         await session.execute(sa.delete(MActivity).where(MActivity.id == activity_id))
-    await publish_activity(
-        channel_id=activity.channel_id,
-        event=PubSubEvent[Activity](
-            type='activity',
-            action='deleted',
-            data=activity,
-        ),
-    )
+    if publish:
+        await publish_activity(
+            channel_id=activity.channel_id,
+            event=PubSubEvent[Activity](
+                type='activity',
+                action='deleted',
+                data=activity,
+            ),
+        )
     return True
 
 

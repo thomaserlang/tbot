@@ -1,19 +1,19 @@
 import pytest
 from uuid6 import uuid7
 
-from tbot2.channel_chatlog import ChatlogsScope, create_chatlog
-from tbot2.common import ChatMessageRequest, datetime_now
+from tbot2.channel_chat_message import ChatMessageScope, create_chat_message
+from tbot2.common import ChatMessageCreate, datetime_now
 from tbot2.testbase import AsyncClient, run_file, user_signin
 
 
 @pytest.mark.asyncio
-async def test_create_chatlog(client: AsyncClient) -> None:
+async def test_chat_messages_routes(client: AsyncClient) -> None:
     user = await user_signin(
         client=client,
-        scopes=[ChatlogsScope.READ],
+        scopes=[ChatMessageScope.READ],
     )
-    await create_chatlog(
-        data=ChatMessageRequest(
+    await create_chat_message(
+        data=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),
@@ -22,13 +22,13 @@ async def test_create_chatlog(client: AsyncClient) -> None:
             viewer_name='test',
             viewer_display_name='test',
             message='test',
-            msg_id='test1',
+            provider_message_id='test1',
             provider='twitch',
-            provider_id='123',
+            provider_channel_id='123',
         )
     )
-    await create_chatlog(
-        data=ChatMessageRequest(
+    await create_chat_message(
+        data=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),
@@ -37,14 +37,14 @@ async def test_create_chatlog(client: AsyncClient) -> None:
             viewer_name='test2',
             viewer_display_name='test2',
             message='test2',
-            msg_id='test2',
+            provider_message_id='test2',
             provider='twitch',
-            provider_id='123',
+            provider_channel_id='123',
         )
     )
 
     r = await client.get(
-        f'/api/2/channels/{user.channel.id}/chatlogs',
+        f'/api/2/channels/{user.channel.id}/chat-messages',
     )
     assert r.status_code == 200
     data = r.json()
@@ -53,7 +53,7 @@ async def test_create_chatlog(client: AsyncClient) -> None:
     assert data['records'][1]['message'] == 'test'
 
     r = await client.get(
-        f'/api/2/channels/{user.channel.id}/chatlogs',
+        f'/api/2/channels/{user.channel.id}/chat-messages',
         params={
             'provider': 'twitch',
             'provider_viewer_id': 'test',

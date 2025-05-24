@@ -103,13 +103,13 @@ def tasks() -> None:
 @click.option('--channel-id', help='Channel ID', required=True)
 def seed_data(channel_id: str) -> None:
     from tbot2.channel_activity import seed_activity
-    from tbot2.channel_chatlog import seed_chatlog
+    from tbot2.channel_chat_message import seed_chat_messages
 
     async def run() -> None:
         async with db():
             await asyncio.gather(
                 seed_activity(channel_id=UUID(channel_id)),
-                seed_chatlog(channel_id=UUID(channel_id), num_messages=250),
+                seed_chat_messages(channel_id=UUID(channel_id), num_messages=250),
             )
 
     with asyncio.Runner() as runner:

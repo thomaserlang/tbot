@@ -1,7 +1,7 @@
 import { RelativeTimeUpdater } from '@/components/relative-time-updater'
 import { providerInfo } from '@/constants'
-import { ChatMessage } from '@/features/channel-combined-chat'
-import { ChatMessageLine } from '@/features/channel-combined-chat/components/chat-message-line'
+import { ChatMessage } from '@/features/channel-chat'
+import { ChatMessageLine } from '@/features/channel-chat/components/chat-message-line'
 import { Box, Divider, Flex, Text } from '@mantine/core'
 import { Fragment } from 'react/jsx-runtime'
 
@@ -34,7 +34,7 @@ export function NoticeFeedList({ notices }: Props) {
                         </Flex>
 
                         <Text>{notice.notice_message}</Text>
-                        {notice.parts.length > 0 && (
+                        {notice.message_parts.length > 0 && (
                             <ChatMessageLine
                                 chatMessage={notice}
                                 hideProviderLogo

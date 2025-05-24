@@ -1,5 +1,5 @@
 import { ChannelId } from '@/features/channel'
-import { ChatMessagePart, MentionPart } from '@/features/channel-combined-chat'
+import { ChatMessagePart, MentionPart } from '@/features/channel-chat'
 import { DateTimeString } from '@/types/datetime.type'
 import { Provider } from '@/types/provider.type'
 import { Branded } from '@/utils/brand'

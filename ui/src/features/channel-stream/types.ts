@@ -9,7 +9,7 @@ export interface ChannelProviderStream {
     channel_id: ChannelId
     channel_stream_id: string
     provider: Provider
-    provider_id: string
+    provider_user_id: string
     provider_stream_id: string
     started_at: string
     ended_at: string | null

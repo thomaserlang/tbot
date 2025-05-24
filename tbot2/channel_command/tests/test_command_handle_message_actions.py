@@ -4,7 +4,7 @@ from uuid6 import uuid7
 
 from tbot2.channel_command import CommandCreate, create_command, handle_message_response
 from tbot2.channel_command import var_fillers as var_fillers
-from tbot2.common import ChatMessageRequest, datetime_now
+from tbot2.common import ChatMessageCreate, datetime_now
 from tbot2.testbase import run_file, user_signin
 
 
@@ -22,7 +22,7 @@ async def test_handle_message(db: None) -> None:
     )
 
     response = await handle_message_response(
-        chat_message=ChatMessageRequest(
+        chat_message=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),
@@ -32,8 +32,8 @@ async def test_handle_message(db: None) -> None:
             viewer_name='test_user',
             viewer_display_name='Test User',
             provider='twitch',
-            provider_id='123',
-            msg_id='123',
+            provider_channel_id='123',
+            provider_message_id='123',
         ),
     )
     assert response is not None
@@ -42,7 +42,7 @@ async def test_handle_message(db: None) -> None:
 
     # test pattern
     response = await handle_message_response(
-        chat_message=ChatMessageRequest(
+        chat_message=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),
@@ -52,8 +52,8 @@ async def test_handle_message(db: None) -> None:
             viewer_name='test_user',
             viewer_display_name='Test User',
             provider='twitch',
-            provider_id='123',
-            msg_id='123',
+            provider_channel_id='123',
+            provider_message_id='123',
         ),
     )
     assert response is not None
@@ -68,7 +68,7 @@ async def test_handle_message(db: None) -> None:
         ),
     )
     response = await handle_message_response(
-        chat_message=ChatMessageRequest(
+        chat_message=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),
@@ -78,8 +78,8 @@ async def test_handle_message(db: None) -> None:
             viewer_name='test_user',
             viewer_display_name='Test User',
             provider='twitch',
-            provider_id='123',
-            msg_id='123',
+            provider_channel_id='123',
+            provider_message_id='123',
         ),
     )
     assert response is not None
@@ -87,7 +87,7 @@ async def test_handle_message(db: None) -> None:
     assert response.response == 'Message from: Test User'
 
     response = await handle_message_response(
-        chat_message=ChatMessageRequest(
+        chat_message=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime_now(),
@@ -97,8 +97,8 @@ async def test_handle_message(db: None) -> None:
             viewer_name='test_user',
             viewer_display_name='Test User',
             provider='twitch',
-            provider_id='123',
-            msg_id='123',
+            provider_channel_id='123',
+            provider_message_id='123',
         ),
     )
     assert response is None

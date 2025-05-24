@@ -4,11 +4,12 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid6 import uuid7
 
-from tbot2.channel_chatlog import create_chatlog
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
+
+from ..actions.chat_message_actions import create_chat_message
 
 
-async def seed_chatlog(
+async def seed_chat_messages(
     *, channel_id: UUID, num_messages: int = 15, session: AsyncSession | None = None
 ) -> None:
     usernames: list[tuple[str, str]] = [
@@ -44,20 +45,20 @@ async def seed_chatlog(
 
     for _ in range(num_messages):
         username, display_name = random.choice(usernames)
-        provider_id = str(random.randint(10000, 99999))
+        provider_channel_id = str(random.randint(10000, 99999))
 
         message = random.choice(messages)
 
-        await create_chatlog(
-            ChatMessageRequest(
+        await create_chat_message(
+            ChatMessageCreate(
                 type='message',
                 channel_id=channel_id,
-                provider_viewer_id=provider_id,
+                provider_viewer_id=provider_channel_id,
                 viewer_name=username,
                 viewer_display_name=display_name,
-                msg_id=str(uuid7()),
+                provider_message_id=str(uuid7()),
                 provider='twitch',
-                provider_id=provider_id,
+                provider_channel_id=provider_channel_id,
                 message=message,
             ),
             session=session,

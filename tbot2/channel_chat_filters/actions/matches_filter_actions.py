@@ -4,14 +4,14 @@ from uuid import UUID
 from async_lru import alru_cache
 
 from tbot2.channel_chat_filters.actions.warning_actions import give_warning, has_warning
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 
 from ..schemas.chat_filter_schema import FilterMatchResult
 from .chat_filter_actions import ChatFilterBase, get_chat_filters
 from .permit_actions import has_permit
 
 
-async def matches_filter(chat_message: ChatMessageRequest) -> FilterMatchResult | None:
+async def matches_filter(chat_message: ChatMessageCreate) -> FilterMatchResult | None:
     filters = await get_channel_filters_cached(chat_message.channel_id)
     for filter in filters:
         if filter.enabled is False:

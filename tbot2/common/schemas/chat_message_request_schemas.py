@@ -58,7 +58,7 @@ class ChatMessagePartRequest(BaseRequestSchema):
     mention: MentionPartRequest | None = None
 
 
-class ChatMessageRequest(BaseRequestSchema):
+class ChatMessageCreate(BaseRequestSchema):
     id: UUID = Field(default_factory=uuid7)
     type: ChatMessageType
     sub_type: (
@@ -68,9 +68,10 @@ class ChatMessageRequest(BaseRequestSchema):
         | None
     ) = None
     created_at: datetime = Field(default_factory=datetime_now)
-    provider: Provider
-    provider_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     channel_id: Annotated[UUID, Doc('The ID of the TBot channel')]
+    provider: Provider
+    provider_channel_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
+    provider_message_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     provider_viewer_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
     viewer_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
     viewer_display_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
@@ -86,9 +87,7 @@ class ChatMessageRequest(BaseRequestSchema):
         default_factory=lambda data: username_color_generator(data['viewer_name'])
     )
     message: Annotated[str, StringConstraints(min_length=0, max_length=2000)] = ''
-    msg_id: Annotated[str, StringConstraints(min_length=1, max_length=255)]
-    badges: list[ChatMessageBadgeRequest] = []
-    parts: list[ChatMessagePartRequest] = Field(
+    message_parts: list[ChatMessagePartRequest] = Field(
         default_factory=lambda data: [
             ChatMessagePartRequest(
                 type='text',
@@ -98,9 +97,10 @@ class ChatMessageRequest(BaseRequestSchema):
         if data['message']
         else []
     )
+    badges: list[ChatMessageBadgeRequest] = []
     access_level: TAccessLevel = TAccessLevel.PUBLIC
     notice_message: Annotated[str, StringConstraints(min_length=0, max_length=500)] = ''
-    notice_parts: list[ChatMessagePartRequest] | None = Field(
+    notice_message_parts: list[ChatMessagePartRequest] | None = Field(
         default_factory=lambda data: [
             ChatMessagePartRequest(
                 type='text',
@@ -127,15 +127,15 @@ class ChatMessageRequest(BaseRequestSchema):
 
     @model_validator(mode='after')
     def message_default(self) -> Self:
-        if self.notice_message and not self.notice_parts:
-            self.notice_parts = [
+        if self.notice_message and not self.notice_message_parts:
+            self.notice_message_parts = [
                 ChatMessagePartRequest(
                     type='text',
                     text=self.notice_message,
                 )
             ]
-        if self.message and not self.parts:
-            self.parts = [
+        if self.message and not self.message_parts:
+            self.message_parts = [
                 ChatMessagePartRequest(
                     type='text',
                     text=self.message,
@@ -144,6 +144,8 @@ class ChatMessageRequest(BaseRequestSchema):
         return self
 
     def message_without_parts(self) -> str:
-        if not self.parts:
+        if not self.message_parts:
             return self.message
-        return ''.join(parts.text for parts in self.parts if parts.type == 'text')
+        return ''.join(
+            parts.text for parts in self.message_parts if parts.type == 'text'
+        )

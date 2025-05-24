@@ -1,6 +1,6 @@
 from tbot2.channel_points import get_channel_point_settings, get_points, inc_points
 from tbot2.common import (
-    ChatMessageRequest,
+    ChatMessageCreate,
     convert_to_points,
     safe_username,
 )
@@ -14,7 +14,7 @@ from ..var_filler import fills_vars
 
 @fills_vars(provider='twitch', vars=('give_points',))
 async def give_points_vars(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     if len(command.args) != 2:
         raise CommandSyntaxError(f'Syntax: !{command.name} <user> <points>')

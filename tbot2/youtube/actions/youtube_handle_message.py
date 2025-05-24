@@ -12,12 +12,12 @@ from tbot2.channel_activity import (
 )
 from tbot2.channel_activity.schemas.activity_schemas import ISO4217
 from tbot2.channel_chat_filters import matches_filter
-from tbot2.channel_chatlog import create_chatlog
+from tbot2.channel_chat_message import create_chat_message
 from tbot2.channel_command import TCommand, handle_message_response
 from tbot2.channel_command.fill_message import fill_message
 from tbot2.channel_provider import ChannelProvider
 from tbot2.common import (
-    ChatMessageRequest,
+    ChatMessageCreate,
     MentionPartRequest,
     TAccessLevel,
     datetime_now,
@@ -104,7 +104,7 @@ async def handle_text_message_event(
 ) -> None:
     if not message.snippet.text_message_details:
         raise Exception('Missing text_message_details')
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='message',
         channel_id=channel_provider.channel_id,
         provider_viewer_id=message.author_details.channel_id,
@@ -112,14 +112,14 @@ async def handle_text_message_event(
         viewer_display_name=message.author_details.display_name,
         created_at=message.snippet.published_at,
         message=message.snippet.text_message_details.message_text,
-        parts=await message_to_parts(
+        message_parts=await message_to_parts(
             message=message.snippet.text_message_details.message_text,
             provider='youtube',
             provider_user_id=channel_provider.provider_user_id or '',
         ),
-        msg_id=message.id,
+        provider_message_id=message.id,
         provider='youtube',
-        provider_id=channel_provider.provider_user_id or '',
+        provider_channel_id=channel_provider.provider_user_id or '',
         access_level=access_level_from_live_chat_message(message),
     )
 
@@ -141,7 +141,7 @@ async def handle_text_message_event(
             chat_message=chat_message,
             live_chat_id=message.snippet.live_chat_id,
         ),
-        create_chatlog(data=chat_message),
+        create_chat_message(data=chat_message),
     )
 
 
@@ -159,7 +159,7 @@ def access_level_from_live_chat_message(
 
 async def handle_filter_message(
     channel_provider: ChannelProvider,
-    chat_message: ChatMessageRequest,
+    chat_message: ChatMessageCreate,
     live_chat_id: str,
 ) -> None:
     try:
@@ -169,7 +169,7 @@ async def handle_filter_message(
         if match.action == 'warning':
             await delete_live_chat_message(
                 channel_id=channel_provider.channel_id,
-                message_id=chat_message.msg_id,
+                message_id=chat_message.provider_message_id,
             )
             if match.filter.warning_message:
                 message = await fill_message(
@@ -203,12 +203,12 @@ async def handle_type_message_deleted_event(
     details = live_message.snippet.message_deleted_details
     if not details:
         raise Exception('Missing message_deleted_details')
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='status',
         sub_type='delete_message',
         channel_id=channel_provider.channel_id,
         provider='youtube',
-        provider_id=channel_provider.provider_user_id or '',
+        provider_channel_id=channel_provider.provider_user_id or '',
         provider_viewer_id=live_message.author_details.channel_id,
         viewer_name=live_message.author_details.display_name,
         viewer_display_name=live_message.author_details.display_name,
@@ -216,9 +216,9 @@ async def handle_type_message_deleted_event(
         created_at=live_message.snippet.published_at,
         notice_message=f'{live_message.author_details.display_name} deleted message '
         f'"{details.deleted_message_id}"',
-        msg_id=live_message.id,
+        provider_message_id=live_message.id,
     )
-    await create_chatlog(data=chat_message)
+    await create_chat_message(data=chat_message)
 
 
 async def handle_type_user_banned_event(
@@ -249,20 +249,20 @@ async def handle_type_user_banned_event(
         logger.error(f'Unknown ban type: {details.ban_type} ')
         return
 
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='status',
         sub_type=sub_type,
         channel_id=channel_provider.channel_id,
         provider='youtube',
-        provider_id=channel_provider.provider_user_id or '',
+        provider_channel_id=channel_provider.provider_user_id or '',
         provider_viewer_id=details.banned_user_details.channel_id,
         viewer_name=details.banned_user_details.display_name,
         viewer_display_name=details.banned_user_details.display_name,
         created_at=live_message.snippet.published_at,
         notice_message=msg,
-        msg_id=live_message.id,
+        provider_message_id=live_message.id,
     )
-    await create_chatlog(data=chat_message)
+    await create_chat_message(data=chat_message)
 
 
 async def handle_notice(
@@ -285,20 +285,20 @@ async def handle_notice_chat_message(
     channel_provider: ChannelProvider,
     live_message: LiveChatMessage,
 ) -> None:
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='notice',
         sub_type=live_message.snippet.type,
         channel_id=channel_provider.channel_id,
         provider='youtube',
-        provider_id=channel_provider.provider_user_id or '',
+        provider_channel_id=channel_provider.provider_user_id or '',
         provider_viewer_id=live_message.author_details.channel_id,
         viewer_name=live_message.author_details.display_name,
         viewer_display_name=live_message.author_details.display_name,
         created_at=live_message.snippet.published_at,
         notice_message=live_message.snippet.display_message,
-        msg_id=live_message.id,
+        provider_message_id=live_message.id,
     )
-    await create_chatlog(data=chat_message)
+    await create_chat_message(data=chat_message)
 
 
 async def handle_notice_activity(
@@ -384,19 +384,19 @@ async def handle_sponsor_only_mode(
     channel_provider: ChannelProvider,
     live_message: LiveChatMessage,
 ) -> None:
-    await create_chatlog(
-        data=ChatMessageRequest(
+    await create_chat_message(
+        data=ChatMessageCreate(
             type='notice',
             sub_type=live_message.snippet.type,
             channel_id=channel_provider.channel_id,
             provider='youtube',
-            provider_id=channel_provider.provider_user_id or '',
+            provider_channel_id=channel_provider.provider_user_id or '',
             provider_viewer_id=live_message.author_details.channel_id,
             viewer_name=live_message.author_details.display_name,
             viewer_display_name=live_message.author_details.display_name,
             created_at=live_message.snippet.published_at,
             notice_message=live_message.snippet.display_message,
-            msg_id=live_message.id,
+            provider_message_id=live_message.id,
         )
     )
 
@@ -405,17 +405,17 @@ async def handle_poll_details(
     channel_provider: ChannelProvider,
     live_message: LiveChatMessage,
 ) -> None:
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='status',
         sub_type='poll',
         channel_id=channel_provider.channel_id,
         provider='youtube',
-        provider_id=channel_provider.provider_user_id or '',
+        provider_channel_id=channel_provider.provider_user_id or '',
         provider_viewer_id=live_message.author_details.channel_id,
         viewer_name=live_message.author_details.display_name,
         viewer_display_name=live_message.author_details.display_name,
         created_at=live_message.snippet.published_at,
         notice_message=live_message.snippet.display_message,
-        msg_id=live_message.id,
+        provider_message_id=live_message.id,
     )
-    await create_chatlog(data=chat_message)
+    await create_chat_message(data=chat_message)

@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 
 from pydantic import Field
 
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
@@ -40,7 +40,7 @@ class ChatFilterNonLatin(ChatFilterBase):
     type: Literal['non_latin']
     settings: ChatFilterNonLatinSettings
 
-    async def check_message(self, message: ChatMessageRequest) -> FilterMatchResult:
+    async def check_message(self, message: ChatMessageCreate) -> FilterMatchResult:
         chars = sub(r'[\W]', '', message.message_without_parts())
         if not chars:
             return FilterMatchResult(filter=self, matched=False)

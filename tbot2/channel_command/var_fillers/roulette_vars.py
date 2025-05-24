@@ -1,5 +1,5 @@
 from tbot2.channel_gambling import roulette
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 from tbot2.common.exceptions import ErrorMessage
 
 from ..exceptions import CommandSyntaxError
@@ -9,7 +9,7 @@ from ..var_filler import fills_vars
 
 @fills_vars(provider='all', vars=('gamble_roulette',))
 async def roulette_vars(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     try:
         result = await roulette(

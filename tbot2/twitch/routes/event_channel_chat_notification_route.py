@@ -16,11 +16,11 @@ from tbot2.channel_activity import (
 )
 from tbot2.channel_activity.actions.activity_actions import publish_activity
 from tbot2.channel_activity.schemas.activity_schemas import ISO4217
-from tbot2.channel_chatlog import create_chatlog, publish_chatlog
+from tbot2.channel_chat_message import create_chat_message, publish_chat_message
 from tbot2.common import (
     ChatMessage,
+    ChatMessageCreate,
     ChatMessagePartRequest,
-    ChatMessageRequest,
     MentionPartRequest,
     PubSubEvent,
     TAccessLevel,
@@ -92,8 +92,8 @@ async def handle_chat_message(
         else []
     )
 
-    await create_chatlog(
-        data=ChatMessageRequest(
+    await create_chat_message(
+        data=ChatMessageCreate(
             type='notice',
             sub_type=data.event.notice_type,
             channel_id=channel_id,
@@ -103,12 +103,12 @@ async def handle_chat_message(
             viewer_color=data.event.color,
             created_at=headers.message_timestamp,
             notice_message=notice_message,
-            msg_id=data.event.message_id,
+            provider_message_id=data.event.message_id,
             provider='twitch',
-            provider_id=data.event.broadcaster_user_id,
+            provider_channel_id=data.event.broadcaster_user_id,
             message=data.event.message.text,
             badges=twitch_badges_to_badges(data.event.badges),
-            parts=message_parts,
+            message_parts=message_parts,
         )
     )
 
@@ -219,7 +219,7 @@ async def emulate_subscription_route(
 
     notice_message = "TestUser subscribed at Tier 1. They've subscribed for 41 months!"
 
-    chat_message = ChatMessageRequest(
+    chat_message = ChatMessageCreate(
         type='notice',
         sub_type='sub',
         channel_id=channel_id,
@@ -227,19 +227,19 @@ async def emulate_subscription_route(
         viewer_name='test_user',
         viewer_display_name='TestUser',
         notice_message=notice_message,
-        notice_parts=[
+        notice_message_parts=[
             ChatMessagePartRequest(
                 type='text',
                 text=notice_message,
             ),
         ],
         message='Wohoo!!',
-        msg_id=str(uuid7()),
+        provider_message_id=str(uuid7()),
         provider='twitch',
-        provider_id='123',
+        provider_channel_id='123',
     )
-    await publish_chatlog(
-        channel_id=channel_id, data=ChatMessage.model_validate(chat_message)
+    await publish_chat_message(
+        channel_id=channel_id, event=ChatMessage.model_validate(chat_message)
     )
 
     activity = ActivityCreate(

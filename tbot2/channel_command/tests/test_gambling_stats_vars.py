@@ -10,7 +10,7 @@ from tbot2.channel_gambling import (
     ChatterGamblingStatsUpdate,
     inc_chatter_gambling_stats,
 )
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 from tbot2.testbase import run_file
 
 
@@ -32,18 +32,18 @@ async def test_gambling_stats_vars(db: None) -> None:
             '{gambling_stats.slots_total_games} total games, '
             '{gambling_stats.slots_win_percent} win percent'
         ),
-        chat_message=ChatMessageRequest(
+        chat_message=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             provider='twitch',
-            provider_id='1234',
+            provider_channel_id='1234',
             channel_id=channel.id,
             provider_viewer_id='test_chatter',
             viewer_name='test',
             viewer_display_name='Test',
             message='!gambling_stats',
-            msg_id='123',
+            provider_message_id='123',
         ),
         command=TCommand(args=[], name='gambling_stats'),
     )
@@ -57,18 +57,18 @@ async def test_gambling_stats_vars(db: None) -> None:
             '{gambling_stats.roulette_total_games} total games, '
             '{gambling_stats.roulette_win_percent} win percent'
         ),
-        chat_message=ChatMessageRequest(
+        chat_message=ChatMessageCreate(
             id=uuid7(),
             type='message',
             created_at=datetime.now(tz=UTC),
             provider='twitch',
-            provider_id='1234',
+            provider_channel_id='1234',
             channel_id=channel.id,
             provider_viewer_id='test_chatter',
             viewer_name='test',
             viewer_display_name='Test',
             message='!gambling_stats',
-            msg_id='123',
+            provider_message_id='123',
         ),
         command=TCommand(args=[], name='gambling_stats'),
     )

@@ -1,5 +1,6 @@
 import asyncio
 
+from loguru import logger
 from TikTokLive import TikTokLiveClient  # type: ignore
 from TikTokLive.events import (  # type: ignore
     CommentEvent,
@@ -7,13 +8,14 @@ from TikTokLive.events import (  # type: ignore
 )
 
 from tbot2.channel_activity import ActivityCreate, create_activity
-from tbot2.channel_chatlog import create_chatlog
+from tbot2.channel_chat_message import create_chat_message
 from tbot2.channel_provider import (
     ChannelProvider,
 )
 from tbot2.common import (
+    ChatMessageCreate,
     ChatMessagePartRequest,
-    ChatMessageRequest,
+    ErrorMessage,
     GiftPartRequest,
 )
 from tbot2.message_parse import message_to_parts
@@ -22,24 +24,33 @@ from tbot2.message_parse import message_to_parts
 async def handle_comment_event(
     client: TikTokLiveClient, channel_provider: ChannelProvider, event: CommentEvent
 ) -> None:
-    await create_chatlog(
-        data=ChatMessageRequest(
-            type='message',
-            channel_id=channel_provider.channel_id,
-            provider='tiktok',
-            provider_id=client.unique_id,
-            provider_viewer_id=event.user.unique_id,
-            viewer_display_name=event.user.nickname,
-            viewer_name=event.user.unique_id,
-            message=event.comment,
-            parts=await message_to_parts(
-                message=event.comment,
+    try:
+        await create_chat_message(
+            data=ChatMessageCreate(
+                type='message',
+                channel_id=channel_provider.channel_id,
                 provider='tiktok',
-                provider_user_id=channel_provider.provider_user_id or '',
-            ),
-            msg_id=str(event.base_message.message_id),
+                provider_channel_id=client.unique_id,
+                provider_viewer_id=event.user.unique_id,
+                viewer_display_name=event.user.nickname,
+                viewer_name=event.user.unique_id,
+                message=event.comment,
+                message_parts=await message_to_parts(
+                    message=event.comment,
+                    provider='tiktok',
+                    provider_user_id=channel_provider.provider_user_id or '',
+                ),
+                provider_message_id=str(event.base_message.message_id),
+            )
         )
-    )
+    except ErrorMessage as e:
+        if e.type == 'duplicate_provider_message_id' and e.code == 409:
+            logger.debug(
+                'Duplicate gift message id, ignoring',
+                extra={'provider_message_id': str(event.base_message.message_id)},
+            )
+            return
+        raise e
 
 
 async def handle_gift_event(
@@ -82,21 +93,30 @@ async def handle_gift_chat_message(
             text=f' x{event.repeat_count} ({diamonds} {name})',
         ),
     ]
-    await create_chatlog(
-        data=ChatMessageRequest(
-            type='notice',
-            sub_type='gift',
-            channel_id=channel_provider.channel_id,
-            provider='tiktok',
-            provider_id=channel_provider.provider_user_id or '',
-            provider_viewer_id=event.user.unique_id,
-            viewer_display_name=event.user.nickname,
-            viewer_name=event.user.unique_id,
-            message=message,
-            parts=parts,
-            msg_id=str(event.base_message.message_id),
+    try:
+        await create_chat_message(
+            data=ChatMessageCreate(
+                type='notice',
+                sub_type='gift',
+                channel_id=channel_provider.channel_id,
+                provider='tiktok',
+                provider_channel_id=channel_provider.provider_user_id or '',
+                provider_viewer_id=event.user.unique_id,
+                viewer_display_name=event.user.nickname,
+                viewer_name=event.user.unique_id,
+                message=message,
+                message_parts=parts,
+                provider_message_id=str(event.base_message.message_id),
+            )
         )
-    )
+    except ErrorMessage as e:
+        if e.type == 'duplicate_provider_message_id' and e.code == 409:
+            logger.debug(
+                'Duplicate gift message id, ignoring',
+                extra={'provider_message_id': str(event.base_message.message_id)},
+            )
+            return
+        raise e
 
 
 async def handle_gift_activity(
@@ -104,18 +124,26 @@ async def handle_gift_activity(
 ) -> None:
     if event.gift.streakable and event.streaking:  # type: ignore
         return  # wait til streak ends
-
-    await create_activity(
-        data=ActivityCreate(
-            channel_id=channel_provider.channel_id,
-            type='gift',
-            sub_type=event.gift.name,
-            count=event.gift.diamond_count * event.repeat_count,
-            provider='tiktok',
-            provider_message_id=str(event.base_message.message_id),
-            provider_user_id=channel_provider.provider_user_id or '',
-            provider_viewer_id=event.user.unique_id,
-            viewer_display_name=event.user.nickname,
-            viewer_name=event.user.unique_id,
+    try:
+        await create_activity(
+            data=ActivityCreate(
+                channel_id=channel_provider.channel_id,
+                type='gift',
+                sub_type=event.gift.name,
+                count=event.gift.diamond_count * event.repeat_count,
+                provider='tiktok',
+                provider_message_id=str(event.base_message.message_id),
+                provider_user_id=channel_provider.provider_user_id or '',
+                provider_viewer_id=event.user.unique_id,
+                viewer_display_name=event.user.nickname,
+                viewer_name=event.user.unique_id,
+            )
         )
-    )
+    except ErrorMessage as e:
+        if e.type == 'duplicate_provider_message_id' and e.code == 409:
+            logger.debug(
+                'Duplicate gift message id, ignoring',
+                extra={'provider_message_id': str(event.base_message.message_id)},
+            )
+            return
+        raise e

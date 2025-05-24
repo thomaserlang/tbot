@@ -1,4 +1,4 @@
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 from tbot2.twitch import (
     ModifyChannelInformationRequest,
     get_twitch_channel_information,
@@ -15,7 +15,7 @@ from ..var_filler import fills_vars
     vars=('set_title',),
 )
 async def change_twitch_title_vars(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     title = ' '.join(command.args)
     if not title and vars['set_title'].args:
@@ -24,7 +24,7 @@ async def change_twitch_title_vars(
         raise CommandSyntaxError(f'No title provided. Usage: !{command.name} <title>')
     await update_twitch_channel_information(
         channel_id=chat_message.channel_id,
-        broadcaster_id=chat_message.provider_id or '',
+        broadcaster_id=chat_message.provider_channel_id or '',
         data=ModifyChannelInformationRequest(
             title=title[:140],
         ),
@@ -37,11 +37,11 @@ async def change_twitch_title_vars(
     vars=('title',),
 )
 async def get_twitch_title_vars(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     channel = await get_twitch_channel_information(
         channel_id=chat_message.channel_id,
-        broadcaster_id=chat_message.provider_id or '',
+        broadcaster_id=chat_message.provider_channel_id or '',
     )
     if channel:
         vars['title'].value = channel.title

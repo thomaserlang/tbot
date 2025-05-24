@@ -2,7 +2,7 @@ from typing import Annotated, Literal
 
 from pydantic import Field
 
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 
 from ..schemas.chat_filter_schema import (
     ChatFilterBase,
@@ -37,7 +37,7 @@ class ChatFilterParagraph(ChatFilterBase):
     type: Literal['paragraph']
     settings: ChatFilterParagraphSettings
 
-    async def check_message(self, message: ChatMessageRequest) -> FilterMatchResult:
+    async def check_message(self, message: ChatMessageCreate) -> FilterMatchResult:
         return FilterMatchResult(
             filter=self,
             matched=len(message.message_without_parts()) > self.settings.max_length,

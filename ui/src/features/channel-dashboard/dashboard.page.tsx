@@ -2,7 +2,7 @@ import { useCurrentChannel } from '@/features/channel'
 import { useDocumentTitle } from '@/utils/document-title'
 import { Container, Flex, Paper } from '@mantine/core'
 import { ActivityFeedView } from '../channel-activity'
-import { CombinedChatView } from '../channel-combined-chat'
+import { CombinedChatView } from '../channel-chat'
 import { DashboardProviders } from './components/dashboard-providers'
 
 export function Component() {

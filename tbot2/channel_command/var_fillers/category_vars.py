@@ -1,4 +1,4 @@
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 from tbot2.twitch import (
     ModifyChannelInformationRequest,
     get_twitch_channel_information,
@@ -16,7 +16,7 @@ from ..var_filler import fills_vars
     vars=('set_game', 'set_category'),
 )
 async def change_twitch_category_vars(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     name = ' '.join(command.args)
     if not name and vars['set_game'].args:
@@ -35,7 +35,7 @@ async def change_twitch_category_vars(
         raise CommandSyntaxError(f'No category found for: {name}')
     await update_twitch_channel_information(
         channel_id=chat_message.channel_id,
-        broadcaster_id=chat_message.provider_id or '',
+        broadcaster_id=chat_message.provider_channel_id or '',
         data=ModifyChannelInformationRequest(
             game_id=game.id,
         ),
@@ -49,11 +49,11 @@ async def change_twitch_category_vars(
     vars=('game', 'category'),
 )
 async def get_twitch_category_vars(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     channel = await get_twitch_channel_information(
         channel_id=chat_message.channel_id,
-        broadcaster_id=chat_message.provider_id or '',
+        broadcaster_id=chat_message.provider_channel_id or '',
     )
     if channel:
         vars['game'].value = channel.game_name

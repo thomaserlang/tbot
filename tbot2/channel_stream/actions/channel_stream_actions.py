@@ -20,6 +20,7 @@ async def get_channel_stream(
         )
         if result:
             return ChannelStream.model_validate(result)
+        return None
 
 
 async def get_existing_channel_stream(
@@ -35,6 +36,7 @@ async def get_existing_channel_stream(
         )
         if result:
             return ChannelStream.model_validate(result)
+        return None
 
 
 async def get_or_create_channel_stream(

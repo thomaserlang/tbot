@@ -7,7 +7,7 @@ from tbot2.channel_queue import (
     get_queue_viewer_by_provider,
     get_queues,
 )
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 
 from ..exceptions import CommandError
 from ..types import MessageVars, TCommand
@@ -16,7 +16,7 @@ from ..var_filler import fills_vars
 
 @fills_vars(provider='all', vars=('queue_join', 'queue_join.position'))
 async def queue_join_vars(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     queue = await get_queue(
         chat_message.channel_id,
@@ -48,7 +48,7 @@ async def queue_join_vars(
 
 @fills_vars(provider='all', vars=('queue.position',))
 async def queue_position_vars(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     queue = await get_queue(
         chat_message.channel_id, name=' '.join(vars['queue.position'].args)
@@ -65,7 +65,7 @@ async def queue_position_vars(
 
 @fills_vars(provider='all', vars=('queue.leave',))
 async def queue_leave_vars(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     queue = await get_queue(
         chat_message.channel_id, name=' '.join(vars['queue.leave'].args)

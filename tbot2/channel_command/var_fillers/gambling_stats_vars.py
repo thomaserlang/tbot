@@ -1,5 +1,5 @@
 from tbot2.channel_gambling import get_chatter_gambling_stats
-from tbot2.common import ChatMessageRequest, safe_username
+from tbot2.common import ChatMessageCreate, safe_username
 from tbot2.twitch import lookup_twitch_user
 
 from ..exceptions import CommandError
@@ -21,7 +21,7 @@ from ..var_filler import fills_vars
     ),
 )
 async def gambling_stats(
-    chat_message: ChatMessageRequest, command: TCommand, vars: MessageVars
+    chat_message: ChatMessageCreate, command: TCommand, vars: MessageVars
 ) -> None:
     for_provider_viewer_id = chat_message.provider_viewer_id
     if len(command.args) > 0:

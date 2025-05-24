@@ -5,7 +5,7 @@ from uuid import UUID
 
 from async_lru import alru_cache
 
-from tbot2.common import ChatMessageRequest
+from tbot2.common import ChatMessageCreate
 
 from ..actions.link_allow_actions import (
     LinkAllow,
@@ -40,7 +40,7 @@ class ChatFilterLinkUpdate(ChatFilterBaseUpdate):
 class ChatFilterLink(ChatFilterBase):
     type: Literal['link']
 
-    async def check_message(self, message: ChatMessageRequest) -> FilterMatchResult:
+    async def check_message(self, message: ChatMessageCreate) -> FilterMatchResult:
         matches = RE_URL.findall(message.message_without_parts())
         if not matches:
             return FilterMatchResult(filter=self, matched=False)

@@ -26,7 +26,7 @@ from tbot2.common import (
 )
 from tbot2.common.schemas.chat_message_schema import MentionPart
 
-from ..types.activity_type import (
+from ..types.activity_types import (
     ActivityId,
     ActivitySubType,
     ActivityType,
