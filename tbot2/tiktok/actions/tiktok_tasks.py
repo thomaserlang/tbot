@@ -78,7 +78,9 @@ async def handle_channel(
     with logger.contextualize(channel_provider_id=channel_provider.id):
         logger.debug('Handling tiktok channel')
         try:
-            client = TikTokLiveClient(unique_id=f'@{channel_provider.provider_channel_id}')
+            client = TikTokLiveClient(
+                unique_id=f'@{channel_provider.provider_channel_id}'
+            )
 
             if not await client.is_live():
                 if channel_provider.stream_live:

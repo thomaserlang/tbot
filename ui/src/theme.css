@@ -19,10 +19,13 @@ body {
 
   --background-color: light-dark(
     var(--mantine-color-gray-0),
-    var(--mantine-color-dark-8)
+    var(--mantine-color-dark-9)
   );
   background-color: var(--background-color);
-  --mantine-color-body: var(--background-color);
+  --mantine-color-body: light-dark(
+    var(--mantine-color-gray-1),
+    var(--mantine-color-dark-8)
+  );
 
   @mixin light {
     --tbot-border-color: var(--mantine-color-gray-3);
@@ -62,17 +65,11 @@ body {
 }
 
 .mantine-AppShell-header {
-  background-color: light-dark(
-    var(--mantine-color-gray-0),
-    var(--mantine-color-dark-8)
-  );
+  background-color: var(--background-color);
 }
 
 .mantine-AppShell-navbar {
-  background-color: light-dark(
-    var(--mantine-color-gray-0),
-    var(--mantine-color-dark-8)
-  );
+  background-color: var(--background-color);
 }
 
 .mantine-datatable-scroll-area-bottom-shadow {

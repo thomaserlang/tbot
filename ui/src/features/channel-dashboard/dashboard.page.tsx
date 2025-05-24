@@ -11,15 +11,24 @@ export function Component() {
 
     return (
         <Container size="xl">
-            <Flex direction="column" h="var(--tbot-content-height)" gap="1rem">
-                <DashboardProviders channelId={channel.id} />
+            <Flex
+                direction="column"
+                h="calc(var(--tbot-content-height) + var(--app-shell-padding))"
+                gap="0.25rem"
+                mt="calc(var(--app-shell-padding) * -1)"
+                ml="calc(var(--app-shell-padding) * -1)"
+                mr="calc(var(--app-shell-padding) * -1)"
+            >
+                <Paper p="0.5rem" radius="0">
+                    <DashboardProviders channelId={channel.id} />
+                </Paper>
 
-                <Flex gap="1rem" flex={1} wrap={'wrap'}>
-                    <Paper maw={400} flex={1} withBorder miw={300}>
+                <Flex gap="0.25rem" flex={1} wrap={'wrap'}>
+                    <Paper maw={400} flex={1} miw={300}>
                         <ActivityFeedView channelId={channel.id} />
                     </Paper>
 
-                    <Paper flex={1} withBorder miw={300}>
+                    <Paper flex={1} miw={300}>
                         <CombinedChatView
                             channelId={channel.id}
                             hideChannelProviders

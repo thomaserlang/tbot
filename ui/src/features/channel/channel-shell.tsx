@@ -24,7 +24,7 @@ export function ChannelShell({ children }: { children: ReactNode }) {
                     breakpoint: 'md',
                     collapsed: { mobile: !opened },
                 }}
-                header={{ height: 50 }}
+                header={{ height: 45 }}
                 padding="md"
             >
                 <AppShell.Header>

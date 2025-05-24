@@ -9,10 +9,10 @@ export function Component() {
 
     return (
         <Paper
-            h="calc(var(--tbot-content-height) + 1rem)"
-            mt="-1rem"
-            ml="-1rem"
-            mr="-1rem"
+            h="calc(var(--tbot-content-height) + var(--app-shell-padding))"
+            mt="calc(var(--app-shell-padding) * -1)"
+            ml="calc(var(--app-shell-padding) * -1)"
+            mr="calc(var(--app-shell-padding) * -1)"
         >
             <CombinedChatView channelId={channel.id} />
         </Paper>
